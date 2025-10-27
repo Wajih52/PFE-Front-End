@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UtilisateurRoleResponse } from '../models/utilisateur-role-response.model';
+import { UtilisateurRoleResponse } from '../core/models/utilisateur-role-response.model';
 import { RoleResponse } from '../core/models';
 import { variables } from '../core/environement/variables';
 

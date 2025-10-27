@@ -1,0 +1,414 @@
+<!-- src/app/features/admin/pages/produits-list/produits-list.component.html -->
+
+<div class="produits-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>📦 Gestion des Produits</h1>
+      <p class="subtitle">Sprint 3 - Gestion des produits et du stock</p>
+    </div>
+    <button class="btn btn-primary" (click)="goToCreate()">
+      <span>➕</span> Nouveau produit
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    ✅ {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📦</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.total }}</span>
+        <span class="stat-label">Total produits</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-success">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.disponibles }}</span>
+        <span class="stat-label">Disponibles</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-warning">
+      <div class="stat-icon">⚠️</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.critique }}</span>
+        <span class="stat-label">Stock critique</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-danger">
+      <div class="stat-icon">❌</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.rupture }}</span>
+        <span class="stat-label">En rupture</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-info">
+      <div class="stat-icon">💰</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.valeurTotale | number:'1.2-2' }} TND</span>
+        <span class="stat-label">Valeur totale</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="🔍 Rechercher par nom, code ou description..."
+        class="form-control"
+      />
+    </div>
+
+    <div class="filters-row">
+      <select
+        [(ngModel)]="filterCategorie"
+        (ngModelChange)="applyFilters()"
+        class="form-select"
+      >
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let cat of categoriesList" [value]="cat">
+          {{ CategorieLabels[cat] }}
+        </option>
+      </select>
+
+      <select
+        [(ngModel)]="filterType"
+        (ngModelChange)="applyFilters()"
+        class="form-select"
+      >
+        <option value="">Tous les types</option>
+        <option *ngFor="let type of typesList" [value]="type">
+          {{ TypeProduitLabels[type] }}
+        </option>
+      </select>
+
+      <select
+        [(ngModel)]="filterStatut"
+        (ngModelChange)="applyFilters()"
+        class="form-select"
+      >
+        <option value="">Tous les statuts</option>
+        <option value="disponible">Disponibles</option>
+        <option value="critique">Stock critique</option>
+        <option value="rupture">En rupture</option>
+      </select>
+
+      <button class="btn btn-secondary" (click)="resetFilters()">
+        🔄 Réinitialiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau des produits -->
+  <div class="table-container">
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement des produits...</p>
+    </div>
+
+    <table *ngIf="!isLoading" class="table">
+      <thead>
+      <tr>
+        <th (click)="sortBy('codeProduit')" class="sortable">
+          Code
+          <span *ngIf="sortColumn === 'codeProduit'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th>Image</th>
+        <th (click)="sortBy('nomProduit')" class="sortable">
+          Nom
+          <span *ngIf="sortColumn === 'nomProduit'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th>Catégorie</th>
+        <th>Type</th>
+        <th (click)="sortBy('prixUnitaire')" class="sortable">
+          Prix
+          <span *ngIf="sortColumn === 'prixUnitaire'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th (click)="sortBy('quantiteDisponible')" class="sortable">
+          Stock
+          <span *ngIf="sortColumn === 'quantiteDisponible'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let produit of paginatedProduits">
+        <td>
+          <code>{{ produit.codeProduit }}</code>
+        </td>
+        <td>
+          <div class="product-image">
+            <img
+              *ngIf="produit.image"
+              [src]="'http://localhost:8080' + produit.image"
+              [alt]="produit.nomProduit"
+            />
+            <div *ngIf="!produit.image" class="no-image">📦</div>
+          </div>
+        </td>
+        <td>
+          <strong>{{ produit.nomProduit }}</strong>
+          <small *ngIf="produit.descriptionProduit" class="text-muted">
+            {{ produit.descriptionProduit | slice:0:50 }}{{ produit.descriptionProduit.length > 50 ? '...' : '' }}
+          </small>
+        </td>
+        <td>
+            <span class="badge badge-secondary">
+              {{ CategorieLabels[produit.categorieProduit] }}
+            </span>
+        </td>
+        <td>
+            <span class="badge" [class.badge-info]="produit.typeProduit === TypeProduit.AVEC_REFERENCE">
+              {{ TypeProduitLabels[produit.typeProduit] }}
+            </span>
+        </td>
+        <td>{{ produit.prixUnitaire | number:'1.2-2' }} TND</td>
+        <td>
+            <span class="stock-info" [class]="getStockStatusClass(produit)">
+              {{ produit.quantiteDisponible }}
+              <span *ngIf="produit.quantiteReservee > 0" class="text-muted">
+                ({{ produit.quantiteReservee }} rés.)
+              </span>
+            </span>
+        </td>
+        <td>
+            <span
+              class="badge"
+              [class.badge-success]="produit.estActif"
+              [class.badge-secondary]="!produit.estActif"
+            >
+              {{ produit.estActif ? 'Actif' : 'Inactif' }}
+            </span>
+          <br />
+          <span
+            class="badge"
+            [class]="getStockStatusClass(produit)"
+          >
+              {{ getStockStatusLabel(produit) }}
+            </span>
+        </td>
+        <td>
+          <div class="action-buttons">
+            <button
+              class="btn btn-sm btn-info"
+              (click)="showDetails(produit)"
+              title="Détails"
+            >
+              👁️
+            </button>
+            <button
+              class="btn btn-sm btn-primary"
+              (click)="goToEdit(produit.idProduit)"
+              title="Modifier"
+            >
+              ✏️
+            </button>
+            <button
+              *ngIf="produit.typeProduit === TypeProduit.AVEC_REFERENCE"
+              class="btn btn-sm btn-secondary"
+              (click)="goToInstances(produit.idProduit)"
+              title="Gérer les instances"
+            >
+              🔢
+            </button>
+            <button
+              class="btn btn-sm btn-warning"
+              (click)="goToMouvements(produit.idProduit)"
+              title="Historique"
+            >
+              📊
+            </button>
+            <button
+              class="btn btn-sm"
+              [class.btn-success]="!produit.estActif"
+              [class.btn-secondary]="produit.estActif"
+              (click)="toggleActif(produit)"
+              [title]="produit.estActif ? 'Désactiver' : 'Activer'"
+            >
+              {{ produit.estActif ? '🔒' : '🔓' }}
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deleteProduit(produit)"
+              title="Supprimer"
+            >
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngIf="filteredProduits.length === 0">
+        <td colspan="9" class="text-center text-muted">
+          <p>Aucun produit trouvé</p>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="pagination">
+    <button
+      class="btn btn-sm"
+      [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)"
+    >
+      ← Précédent
+    </button>
+
+    <span class="page-info">
+      Page {{ currentPage }} / {{ totalPages }}
+      ({{ filteredProduits.length }} produits)
+    </span>
+
+    <button
+      class="btn btn-sm"
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)"
+    >
+      Suivant →
+    </button>
+  </div>
+</div>
+
+<!-- Modal détails produit -->
+<div *ngIf="showDetailsModal && selectedProduit" class="modal-overlay" (click)="closeDetailsModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>📦 Détails du produit</h2>
+      <button class="btn-close" (click)="closeDetailsModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="product-details">
+        <div *ngIf="selectedProduit.image" class="product-image-large">
+          <img [src]="'http://localhost:8080' + selectedProduit.image" [alt]="selectedProduit.nomProduit" />
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <strong>Code:</strong>
+            <span>{{ selectedProduit.codeProduit }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Nom:</strong>
+            <span>{{ selectedProduit.nomProduit }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Catégorie:</strong>
+            <span>{{ CategorieLabels[selectedProduit.categorieProduit] }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Type:</strong>
+            <span>{{ TypeProduitLabels[selectedProduit.typeProduit] }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Prix unitaire:</strong>
+            <span>{{ selectedProduit.prixUnitaire | number:'1.2-2' }} TND</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Stock disponible:</strong>
+            <span [class]="getStockStatusClass(selectedProduit)">
+              {{ selectedProduit.quantiteDisponible }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Stock réservé:</strong>
+            <span>{{ selectedProduit.quantiteReservee }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Seuil critique:</strong>
+            <span>{{ selectedProduit.seuilCritique }}</span>
+          </div>
+
+          <div *ngIf="selectedProduit.typeProduit === TypeProduit.AVEC_REFERENCE" class="detail-item full-width">
+            <strong>Instances:</strong>
+            <div class="instances-summary">
+              <span>✅ Disponibles: {{ selectedProduit.nombreInstancesDisponibles }}</span>
+              <span>📝 Réservées: {{ selectedProduit.nombreInstancesReservees }}</span>
+              <span>🔧 En maintenance: {{ selectedProduit.nombreInstancesEnMaintenance }}</span>
+              <span>❌ Hors service: {{ selectedProduit.nombreInstancesHorsService }}</span>
+            </div>
+          </div>
+
+          <div *ngIf="selectedProduit.descriptionProduit" class="detail-item full-width">
+            <strong>Description:</strong>
+            <p>{{ selectedProduit.descriptionProduit }}</p>
+          </div>
+
+          <div class="detail-item">
+            <strong>Créé le:</strong>
+            <span>{{ selectedProduit.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Modifié le:</strong>
+            <span>{{ selectedProduit.dateModification | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          <div *ngIf="selectedProduit.ajoutePar" class="detail-item">
+            <strong>Ajouté par:</strong>
+            <span>{{ selectedProduit.ajoutePar }}</span>
+          </div>
+
+          <div *ngIf="selectedProduit.modifiePar" class="detail-item">
+            <strong>Modifié par:</strong>
+            <span>{{ selectedProduit.modifiePar }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="goToEdit(selectedProduit.idProduit)">
+        ✏️ Modifier
+      </button>
+      <button
+        *ngIf="selectedProduit.typeProduit === TypeProduit.AVEC_REFERENCE"
+        class="btn btn-secondary"
+        (click)="goToInstances(selectedProduit.idProduit)"
+      >
+        🔢 Gérer les instances
+      </button>
+      <button class="btn btn-warning" (click)="goToMouvements(selectedProduit.idProduit)">
+        📊 Historique
+      </button>
+      <button class="btn btn-secondary" (click)="closeDetailsModal()">
+        Fermer
+      </button>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './core/guards/auth.guard';
 import {authResolver} from './core/resolvers/auth.resolver';
 import {RolesManagementComponent} from './features/admin/pages/roles-management/roles-management.component';
+import {ProduitsListComponent} from './features/admin/pages/produits-list/produits-list.component';
 
 export const routes: Routes = [
 
@@ -92,6 +93,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component')
           .then(m => m.DashboardComponent)
       },
+      {
+        path: 'produits',
+        component: ProduitsListComponent,
+        data: { roles: ['ADMIN', 'EMPLOYE'] }
+      }
       ]
   },
   // ==================== ROUTE RACINE (LANDING) ====================

@@ -4,7 +4,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UtilisateurRoleService } from '../../../../services/utilisateur-role.service';
-import { UtilisateurRoleResponse } from '../../../../models/utilisateur-role-response.model';
+import { UtilisateurRoleResponse } from '../../../../core/models/utilisateur-role-response.model';
 import { RoleResponse } from '../../../../core/models';
 
 @Component({
