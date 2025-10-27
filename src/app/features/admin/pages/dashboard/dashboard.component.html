@@ -103,13 +103,13 @@
         <div class="action-card" *ngIf="hasRole('ADMIN')">
           <h3>👥 Utilisateurs</h3>
           <p>Gérer les utilisateurs</p>
-          <button class="btn-action">Gérer</button>
+          <button class="btn-action" routerLink="/admin/users">Gérer</button>
         </div>
 
         <div class="action-card">
           <h3>⚙️ Mon Profil</h3>
           <p>Modifier mes informations</p>
-          <button class="btn-action">Éditer</button>
+          <button class="btn-action" routerLink="/profile">Éditer</button>
         </div>
       </div>
     </section>

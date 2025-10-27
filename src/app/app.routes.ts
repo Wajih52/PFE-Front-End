@@ -5,6 +5,7 @@ import { authGuard, roleGuard } from './core/guards/auth.guard';
 import {authResolver} from './core/resolvers/auth.resolver';
 import {RolesManagementComponent} from './features/admin/pages/roles-management/roles-management.component';
 import {ProduitsListComponent} from './features/admin/pages/produits-list/produits-list.component';
+import {ProduitFormComponent} from './features/admin/pages/produit-form/produit-form.component';
 
 export const routes: Routes = [
 
@@ -93,9 +94,22 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component')
           .then(m => m.DashboardComponent)
       },
+      // Liste des produits
       {
         path: 'produits',
         component: ProduitsListComponent,
+        data: { roles: ['ADMIN', 'EMPLOYE'] }
+      },
+      // Création d'un produit
+      {
+        path: 'produits/create',
+        component: ProduitFormComponent,
+        data: { roles: ['ADMIN', 'EMPLOYE'] }
+      },
+      // Modification d'un produit
+      {
+        path: 'produits/edit/:id',
+        component: ProduitFormComponent,
         data: { roles: ['ADMIN', 'EMPLOYE'] }
       }
       ]

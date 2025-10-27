@@ -1,0 +1,277 @@
+<!-- src/app/features/admin/pages/produit-form/produit-form.component.html -->
+<app-menu-navigation></app-menu-navigation>
+<div class="form-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>{{ pageTitle }}</h1>
+      <p class="subtitle">Sprint 3 - Gestion des produits et du stock</p>
+    </div>
+    <button class="btn btn-secondary" (click)="onCancel()">
+      ← Retour à la liste
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement du produit...</p>
+  </div>
+
+  <!-- Formulaire -->
+  <form *ngIf="!isLoading" [formGroup]="produitForm" (ngSubmit)="onSubmit()" class="produit-form">
+
+    <!-- Section : Informations de base -->
+    <div class="form-section">
+      <h2 class="section-title">📝 Informations de base</h2>
+
+      <div class="form-row">
+        <!-- Nom du produit -->
+        <div class="form-group">
+          <label for="nomProduit" class="required">Nom du produit</label>
+          <input
+            type="text"
+            id="nomProduit"
+            formControlName="nomProduit"
+            class="form-control"
+            [class.is-invalid]="hasError('nomProduit', 'required') || hasError('nomProduit', 'minlength')"
+            placeholder="Ex: Chaise blanche"
+          />
+          <div *ngIf="produitForm.get('nomProduit')?.touched || produitForm.get('nomProduit')?.dirty" class="error-message">
+            {{ getErrorMessage('nomProduit') }}
+          </div>
+        </div>
+
+        <!-- Catégorie -->
+        <div class="form-group">
+          <label for="categorieProduit" class="required">Catégorie</label>
+          <select
+            id="categorieProduit"
+            formControlName="categorieProduit"
+            class="form-control"
+            [class.is-invalid]="hasError('categorieProduit', 'required')"
+          >
+            <option value="">-- Sélectionnez une catégorie --</option>
+            <option *ngFor="let cat of categoriesList" [value]="cat">
+              {{ CategorieLabels[cat] }}
+            </option>
+          </select>
+          <div *ngIf="produitForm.get('categorieProduit')?.touched" class="error-message">
+            {{ getErrorMessage('categorieProduit') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="descriptionProduit" class="required">Description</label>
+        <textarea
+          id="descriptionProduit"
+          formControlName="descriptionProduit"
+          class="form-control"
+          rows="4"
+          [class.is-invalid]="hasError('descriptionProduit', 'required') || hasError('descriptionProduit', 'minlength')"
+          placeholder="Décrivez le produit en détail (minimum 10 caractères)..."
+        ></textarea>
+        <div class="char-count">
+          {{ produitForm.get('descriptionProduit')?.value?.length || 0 }} / 1000 caractères
+        </div>
+        <div *ngIf="produitForm.get('descriptionProduit')?.touched || produitForm.get('descriptionProduit')?.dirty" class="error-message">
+          {{ getErrorMessage('descriptionProduit') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Section : Type et Stock -->
+    <div class="form-section">
+      <h2 class="section-title">📦 Type et Stock</h2>
+
+      <div class="form-row">
+        <!-- Type de produit -->
+        <div class="form-group">
+          <label for="typeProduit" class="required">Type de produit</label>
+          <select
+            id="typeProduit"
+            formControlName="typeProduit"
+            class="form-control"
+            [class.is-invalid]="hasError('typeProduit', 'required')"
+          >
+            <option value="">-- Sélectionnez un type --</option>
+            <option *ngFor="let type of typesList" [value]="type">
+              {{ TypeProduitLabels[type] }}
+            </option>
+          </select>
+          <div class="help-text">
+            <span *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.AVEC_REFERENCE">
+              ℹ️ Produit avec numéros de série individuels (ex: projecteur, caméra)
+            </span>
+            <span *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.SANS_REFERENCE">
+              ℹ️ Produit en quantité globale (ex: chaises, assiettes)
+            </span>
+          </div>
+          <div *ngIf="produitForm.get('typeProduit')?.touched" class="error-message">
+            {{ getErrorMessage('typeProduit') }}
+          </div>
+        </div>
+
+        <!-- Quantité initiale -->
+        <div class="form-group">
+          <label for="quantiteInitial" [class.required]="produitForm.get('typeProduit')?.value === TypeProduit.SANS_REFERENCE">
+            Quantité initiale
+          </label>
+          <input
+            type="number"
+            id="quantiteInitial"
+            formControlName="quantiteInitial"
+            class="form-control"
+            [class.is-invalid]="hasError('quantiteInitial', 'required') || hasError('quantiteInitial', 'min')"
+            min="0"
+            placeholder="0"
+          />
+          <div class="help-text" *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.AVEC_REFERENCE">
+            ℹ️ Pour les produits avec référence, vous créerez les instances séparément
+          </div>
+          <div *ngIf="produitForm.get('quantiteInitial')?.touched || produitForm.get('quantiteInitial')?.dirty" class="error-message">
+            {{ getErrorMessage('quantiteInitial') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Prix unitaire -->
+        <div class="form-group">
+          <label for="prixUnitaire" class="required">Prix unitaire (TND)</label>
+          <input
+            type="number"
+            id="prixUnitaire"
+            formControlName="prixUnitaire"
+            class="form-control"
+            [class.is-invalid]="hasError('prixUnitaire', 'required') || hasError('prixUnitaire', 'min')"
+            min="0.01"
+            step="0.01"
+            placeholder="0.00"
+          />
+          <div *ngIf="produitForm.get('prixUnitaire')?.touched || produitForm.get('prixUnitaire')?.dirty" class="error-message">
+            {{ getErrorMessage('prixUnitaire') }}
+          </div>
+        </div>
+
+        <!-- Seuil critique -->
+        <div class="form-group">
+          <label for="seuilCritique">Seuil critique</label>
+          <input
+            type="number"
+            id="seuilCritique"
+            formControlName="seuilCritique"
+            class="form-control"
+            min="0"
+            placeholder="5"
+          />
+          <div class="help-text">
+            ℹ️ Vous serez alerté quand le stock atteint ce seuil
+          </div>
+        </div>
+      </div>
+
+      <!-- Maintenance requise -->
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            formControlName="maintenanceRequise"
+          />
+          <span>Ce produit nécessite une maintenance régulière</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Section : Image -->
+    <div class="form-section">
+      <h2 class="section-title">🖼️ Image du produit</h2>
+
+      <div class="image-upload-section">
+        <!-- Prévisualisation -->
+        <div class="image-preview" *ngIf="previewImage">
+          <img [src]="previewImage" alt="Aperçu du produit" />
+          <button
+            type="button"
+            class="btn-remove-image"
+            (click)="removeImage()"
+            title="Supprimer l'image"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Zone d'upload -->
+        <div class="upload-zone" *ngIf="!previewImage">
+          <div class="upload-icon">📷</div>
+          <p>Cliquez pour sélectionner une image</p>
+          <p class="upload-hint">JPG, PNG ou GIF - Max 5MB</p>
+        </div>
+
+        <!-- Input file caché -->
+        <input
+          type="file"
+          #fileInput
+          accept="image/*"
+          (change)="onFileSelect($event)"
+          style="display: none"
+        />
+
+        <!-- Boutons -->
+        <div class="upload-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="fileInput.click()"
+            [disabled]="isLoadingImage"
+          >
+            <span *ngIf="!isLoadingImage">📁 {{ previewImage ? 'Changer l\'image' : 'Sélectionner une image' }}</span>
+            <span *ngIf="isLoadingImage">⏳ Traitement...</span>
+          </button>
+          <button
+            *ngIf="previewImage"
+            type="button"
+            class="btn btn-danger"
+            (click)="removeImage()"
+          >
+            🗑️ Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions du formulaire -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="produitForm.invalid || isSubmitting"
+      >
+        <span *ngIf="!isSubmitting">{{ submitButtonText }}</span>
+        <span *ngIf="isSubmitting">
+          <span class="spinner-small"></span>
+          {{ submitButtonText }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

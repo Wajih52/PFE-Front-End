@@ -2,7 +2,7 @@
 
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { StorageService } from '../../../../core/services/storage.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import {ConfirmationService} from '../../../../core/services/confirmation.service';
@@ -11,7 +11,7 @@ import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.compon
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MenuNavigationComponent],
+  imports: [CommonModule, MenuNavigationComponent, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

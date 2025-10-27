@@ -1,4 +1,4 @@
-// src/app/features/admin/pages/produits-list/produits-list.component.ts
+// src/app/features/admin/pages/produits-list/produits-list.component.ts (VERSION CORRIGÉE)
 
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,7 @@ import {
   CategorieLabels,
   TypeProduitLabels
 } from '../../../../core/models';
+import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
 
 /**
  * Composant de liste des produits avec recherche, filtres et gestion
@@ -21,7 +22,7 @@ import {
 @Component({
   selector: 'app-produits-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MenuNavigationComponent],
   templateUrl: './produits-list.component.html',
   styleUrls: ['./produits-list.component.scss']
 })
@@ -40,8 +41,7 @@ export class ProduitsListComponent implements OnInit {
     total: 0,
     disponibles: 0,
     rupture: 0,
-    critique: 0,
-    valeurTotale: 0
+    critique: 0
   };
 
   // Recherche et filtres
@@ -75,7 +75,6 @@ export class ProduitsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProduits();
-    this.loadStatistiques();
   }
 
   /**
@@ -101,36 +100,13 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * Charger les statistiques globales
-   */
-  loadStatistiques(): void {
-    this.produitService.getStatistiquesStock().subscribe({
-      next: (stats) => {
-        this.stats.total = stats.totalProduits;
-        this.stats.disponibles = stats.produitsDisponibles;
-        this.stats.rupture = stats.produitsEnRupture;
-        this.stats.critique = stats.produitsStockCritique;
-        this.stats.valeurTotale = stats.valeurTotaleStock;
-      },
-      error: (error) => {
-        console.error('Erreur chargement statistiques:', error);
-      }
-    });
-  }
-
-  /**
    * Calculer les statistiques locales
    */
   calculateStats(): void {
     this.stats.total = this.allProduits.length;
     this.stats.disponibles = this.allProduits.filter(p => p.quantiteDisponible > 0).length;
     this.stats.rupture = this.allProduits.filter(p => p.quantiteDisponible === 0).length;
-    this.stats.critique = this.allProduits.filter(p =>
-      p.quantiteDisponible > 0 && p.quantiteDisponible <= p.seuilCritique
-    ).length;
-    this.stats.valeurTotale = this.allProduits.reduce(
-      (sum, p) => sum + (p.quantiteDisponible * p.prixUnitaire), 0
-    );
+    this.stats.critique = this.allProduits.filter(p => p.alerteStockCritique).length;
   }
 
   /**
@@ -165,9 +141,7 @@ export class ProduitsListComponent implements OnInit {
     } else if (this.filterStatut === 'rupture') {
       result = result.filter(p => p.quantiteDisponible === 0);
     } else if (this.filterStatut === 'critique') {
-      result = result.filter(p =>
-        p.quantiteDisponible > 0 && p.quantiteDisponible <= p.seuilCritique
-      );
+      result = result.filter(p => p.alerteStockCritique);
     }
 
     this.filteredProduits = result;
@@ -269,40 +243,7 @@ export class ProduitsListComponent implements OnInit {
    * Naviguer vers l'historique des mouvements
    */
   goToMouvements(id: number): void {
-    this.router.navigate(['/admin/produits', id, 'mouvements']);
-  }
-
-  /**
-   * Activer/Désactiver un produit
-   */
-  async toggleActif(produit: ProduitResponse): Promise<void> {
-    const action = produit.estActif ? 'désactiver' : 'activer';
-    const confirmed = await this.confirmationService.confirm({
-      title: `${action.charAt(0).toUpperCase() + action.slice(1)} le produit`,
-      message: `Voulez-vous vraiment ${action} le produit "${produit.nomProduit}" ?`,
-      confirmText: `Oui, ${action}`,
-      type: 'warning'
-    });
-
-    if (!confirmed) return;
-
-    this.produitService.toggleActifProduit(produit.idProduit, !produit.estActif).subscribe({
-      next: (updated) => {
-        this.successMessage = `Produit ${action} avec succès`;
-        // Mettre à jour dans la liste
-        const index = this.allProduits.findIndex(p => p.idProduit === updated.idProduit);
-        if (index !== -1) {
-          this.allProduits[index] = updated;
-        }
-        this.applyFilters();
-        setTimeout(() => this.successMessage = '', 3000);
-      },
-      error: (error) => {
-        console.error(`Erreur ${action} produit:`, error);
-        this.errorMessage = error.error?.message || `Erreur lors de la ${action}`;
-        setTimeout(() => this.errorMessage = '', 3000);
-      }
-    });
+    this.router.navigate(['/admin/produits', id, 'historique']);
   }
 
   /**
@@ -337,7 +278,7 @@ export class ProduitsListComponent implements OnInit {
    */
   getStockStatusClass(produit: ProduitResponse): string {
     if (produit.quantiteDisponible === 0) return 'stock-rupture';
-    if (produit.quantiteDisponible <= produit.seuilCritique) return 'stock-critique';
+    if (produit.alerteStockCritique) return 'stock-critique';
     return 'stock-ok';
   }
 
@@ -346,7 +287,7 @@ export class ProduitsListComponent implements OnInit {
    */
   getStockStatusLabel(produit: ProduitResponse): string {
     if (produit.quantiteDisponible === 0) return 'Rupture';
-    if (produit.quantiteDisponible <= produit.seuilCritique) return 'Critique';
+    if (produit.alerteStockCritique) return 'Critique';
     return 'Disponible';
   }
 }

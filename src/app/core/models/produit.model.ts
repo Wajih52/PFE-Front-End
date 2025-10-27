@@ -1,57 +1,63 @@
-// src/app/core/models/produit.model.ts
+// src/app/core/models/produit.model.ts (VERSION FINALE CORRIGÉE)
 
 import { Categorie, TypeProduit } from './produit.enums';
 
 /**
  * Requête de création/modification de produit (ProduitRequestDto.java)
+ * ⚠️ Les noms des champs correspondent EXACTEMENT au backend
  */
 export interface ProduitRequest {
-  nom: string;
-  description?: string;
-  categorie: Categorie;
-  typeProduit: TypeProduit;
+  nomProduit: string;
+  descriptionProduit: string;
+  categorieProduit: Categorie;
   prixUnitaire: number;
-  quantiteDisponible?: number;  // Pour produits SANS_REFERENCE
-  seuilCritique?: number;       // Seuil d'alerte de stock
-  image?: string;               // Base64
+  quantiteInitial: number;
+  typeProduit: TypeProduit;
+  maintenanceRequise?: boolean;      // Optionnel, défaut: false
+  imageProduit?: string;             // Base64
+  seuilCritique?: number;            // Optionnel
 }
 
 /**
  * Réponse produit (ProduitResponseDto.java)
+ * ⚠️ Correspondance EXACTE avec le backend
  */
 export interface ProduitResponse {
+  // Champs principaux
   idProduit: number;
   codeProduit: string;
   nomProduit: string;
-  descriptionProduit?: string;
+  descriptionProduit: string;
+  imageProduit?: string;
   categorieProduit: Categorie;
-  typeProduit: TypeProduit;
   prixUnitaire: number;
+  quantiteInitial: number;
   quantiteDisponible: number;
-  quantiteReservee: number;
+  maintenanceRequise: boolean;
+  typeProduit: TypeProduit;
   seuilCritique: number;
-  image?: string;
-  estActif: boolean;
-  dateCreation: string;         // ISO 8601
-  dateModification: string;     // ISO 8601
-  ajoutePar?: string;
-  modifiePar?: string;
 
-  // Champs calculés (si TypeProduit = AVEC_REFERENCE)
-  nombreInstancesDisponibles?: number;
-  nombreInstancesReservees?: number;
-  nombreInstancesEnMaintenance?: number;
-  nombreInstancesHorsService?: number;
+  // Indicateurs (calculés par le backend)
+  enStock: boolean;                   // true si quantiteDisponible > 0
+  alerteStockCritique: boolean;       // true si stock <= seuilCritique
+
+  // Statistiques (optionnelles)
+  nombreReservations?: number;
+  moyenneNotes?: number;              // Note moyenne (0-5)
+  nombreAvis?: number;
+
+  // Dates
+  dateCreation?: string;               // Date (ISO format)
+  dateDerniereModification?: string;   // Date (ISO format)
 }
 
 /**
  * Statistiques de stock (StockStatistiquesDto.java)
  */
 export interface StockStatistiques {
-  totalProduits: number;
-  produitsDisponibles: number;
-  produitsEnRupture: number;
-  produitsStockCritique: number;
-  valeurTotaleStock: number;
-  mouvements30Jours: number;
+  totalEntrees: number;
+  totalSorties: number;
+  quantiteActuelle: number;
+  nombreMouvements: number;
+  dateDernierMouvement?: string;      // Date (ISO format)
 }

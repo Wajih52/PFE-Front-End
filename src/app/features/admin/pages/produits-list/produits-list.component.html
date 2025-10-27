@@ -1,11 +1,11 @@
-<!-- src/app/features/admin/pages/produits-list/produits-list.component.html -->
-
+<!-- src/app/features/admin/pages/produits-list/produits-list.component.html (VERSION CORRIGÉE) -->
+<app-menu-navigation></app-menu-navigation>
 <div class="produits-container">
   <!-- En-tête -->
   <div class="page-header">
     <div class="header-content">
       <h1>📦 Gestion des Produits</h1>
-      <p class="subtitle">Sprint 3 - Gestion des produits et du stock</p>
+      <p class="subtitle">Gestion des produits et du stock</p>
     </div>
     <button class="btn btn-primary" (click)="goToCreate()">
       <span>➕</span> Nouveau produit
@@ -51,14 +51,6 @@
       <div class="stat-content">
         <span class="stat-value">{{ stats.rupture }}</span>
         <span class="stat-label">En rupture</span>
-      </div>
-    </div>
-
-    <div class="stat-card stat-info">
-      <div class="stat-icon">💰</div>
-      <div class="stat-content">
-        <span class="stat-value">{{ stats.valeurTotale | number:'1.2-2' }} TND</span>
-        <span class="stat-label">Valeur totale</span>
       </div>
     </div>
   </div>
@@ -164,17 +156,18 @@
         <td>
           <div class="product-image">
             <img
-              *ngIf="produit.image"
-              [src]="'http://localhost:8080' + produit.image"
+              *ngIf="produit.imageProduit"
+              [src]="'http://localhost:8080' + produit.imageProduit"
               [alt]="produit.nomProduit"
             />
-            <div *ngIf="!produit.image" class="no-image">📦</div>
+            <div *ngIf="!produit.imageProduit" class="no-image">📦</div>
           </div>
         </td>
         <td>
           <strong>{{ produit.nomProduit }}</strong>
+          <br>
           <small *ngIf="produit.descriptionProduit" class="text-muted">
-            {{ produit.descriptionProduit | slice:0:50 }}{{ produit.descriptionProduit.length > 50 ? '...' : '' }}
+            {{ produit.descriptionProduit | slice:0:20 }}{{ produit.descriptionProduit.length > 20 ? '...' : '' }}
           </small>
         </td>
         <td>
@@ -191,24 +184,16 @@
         <td>
             <span class="stock-info" [class]="getStockStatusClass(produit)">
               {{ produit.quantiteDisponible }}
-              <span *ngIf="produit.quantiteReservee > 0" class="text-muted">
-                ({{ produit.quantiteReservee }} rés.)
-              </span>
             </span>
+          <div *ngIf="produit.maintenanceRequise" class="maintenance-badge">
+            🔧 Maintenance
+          </div>
         </td>
         <td>
             <span
               class="badge"
-              [class.badge-success]="produit.estActif"
-              [class.badge-secondary]="!produit.estActif"
+              [class]="getStockStatusClass(produit)"
             >
-              {{ produit.estActif ? 'Actif' : 'Inactif' }}
-            </span>
-          <br />
-          <span
-            class="badge"
-            [class]="getStockStatusClass(produit)"
-          >
               {{ getStockStatusLabel(produit) }}
             </span>
         </td>
@@ -242,15 +227,6 @@
               title="Historique"
             >
               📊
-            </button>
-            <button
-              class="btn btn-sm"
-              [class.btn-success]="!produit.estActif"
-              [class.btn-secondary]="produit.estActif"
-              (click)="toggleActif(produit)"
-              [title]="produit.estActif ? 'Désactiver' : 'Activer'"
-            >
-              {{ produit.estActif ? '🔒' : '🔓' }}
             </button>
             <button
               class="btn btn-sm btn-danger"
@@ -307,8 +283,8 @@
 
     <div class="modal-body">
       <div class="product-details">
-        <div *ngIf="selectedProduit.image" class="product-image-large">
-          <img [src]="'http://localhost:8080' + selectedProduit.image" [alt]="selectedProduit.nomProduit" />
+        <div *ngIf="selectedProduit.imageProduit" class="product-image-large">
+          <img [src]="'http://localhost:8080' + selectedProduit.imageProduit" [alt]="selectedProduit.nomProduit" />
         </div>
 
         <div class="details-grid">
@@ -338,6 +314,11 @@
           </div>
 
           <div class="detail-item">
+            <strong>Quantité initiale:</strong>
+            <span>{{ selectedProduit.quantiteInitial }}</span>
+          </div>
+
+          <div class="detail-item">
             <strong>Stock disponible:</strong>
             <span [class]="getStockStatusClass(selectedProduit)">
               {{ selectedProduit.quantiteDisponible }}
@@ -345,23 +326,20 @@
           </div>
 
           <div class="detail-item">
-            <strong>Stock réservé:</strong>
-            <span>{{ selectedProduit.quantiteReservee }}</span>
-          </div>
-
-          <div class="detail-item">
             <strong>Seuil critique:</strong>
             <span>{{ selectedProduit.seuilCritique }}</span>
           </div>
 
-          <div *ngIf="selectedProduit.typeProduit === TypeProduit.AVEC_REFERENCE" class="detail-item full-width">
-            <strong>Instances:</strong>
-            <div class="instances-summary">
-              <span>✅ Disponibles: {{ selectedProduit.nombreInstancesDisponibles }}</span>
-              <span>📝 Réservées: {{ selectedProduit.nombreInstancesReservees }}</span>
-              <span>🔧 En maintenance: {{ selectedProduit.nombreInstancesEnMaintenance }}</span>
-              <span>❌ Hors service: {{ selectedProduit.nombreInstancesHorsService }}</span>
-            </div>
+          <div class="detail-item">
+            <strong>Maintenance requise:</strong>
+            <span>{{ selectedProduit.maintenanceRequise ? 'Oui' : 'Non' }}</span>
+          </div>
+
+          <div class="detail-item">
+            <strong>En stock:</strong>
+            <span [class.text-success]="selectedProduit.enStock" [class.text-danger]="!selectedProduit.enStock">
+              {{ selectedProduit.enStock ? 'Oui' : 'Non' }}
+            </span>
           </div>
 
           <div *ngIf="selectedProduit.descriptionProduit" class="detail-item full-width">
@@ -376,17 +354,17 @@
 
           <div class="detail-item">
             <strong>Modifié le:</strong>
-            <span>{{ selectedProduit.dateModification | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span>{{ selectedProduit.dateDerniereModification | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
 
-          <div *ngIf="selectedProduit.ajoutePar" class="detail-item">
-            <strong>Ajouté par:</strong>
-            <span>{{ selectedProduit.ajoutePar }}</span>
+          <div *ngIf="selectedProduit.nombreReservations" class="detail-item">
+            <strong>Nombre de réservations:</strong>
+            <span>{{ selectedProduit.nombreReservations }}</span>
           </div>
 
-          <div *ngIf="selectedProduit.modifiePar" class="detail-item">
-            <strong>Modifié par:</strong>
-            <span>{{ selectedProduit.modifiePar }}</span>
+          <div *ngIf="selectedProduit.moyenneNotes" class="detail-item">
+            <strong>Note moyenne:</strong>
+            <span>{{ selectedProduit.moyenneNotes | number:'1.1-1' }} / 5 ⭐ ({{ selectedProduit.nombreAvis }} avis)</span>
           </div>
         </div>
       </div>
