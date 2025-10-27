@@ -1,0 +1,297 @@
+<!-- src/app/features/pages/profile/profile.component.html -->
+
+<div class="profile-container">
+
+  <!-- Header avec photo -->
+  <div class="profile-header">
+    <div class="avatar-section">
+      <div class="avatar-large">
+        <img *ngIf="previewImage" [src]="previewImage" alt="Photo de profil">
+        <div *ngIf="!previewImage" class="avatar-placeholder">
+          {{ getUserInitials() }}
+        </div>
+
+        <!-- Loader pendant upload -->
+        <div *ngIf="isLoadingImage" class="avatar-loader">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <input type="file" #fileInput (change)="onFileSelect($event)" accept="image/*" hidden>
+
+      <div class="avatar-buttons">
+        <button class="btn-upload" (click)="fileInput.click()" [disabled]="isLoadingImage">
+          📷 {{ previewImage ? 'Changer' : 'Ajouter' }} photo
+        </button>
+        <button
+          *ngIf="previewImage"
+          class="btn-delete-image"
+          (click)="deleteImage()"
+          [disabled]="isLoadingImage"
+        >
+          🗑️ Supprimer
+        </button>
+      </div>
+
+
+    </div>
+
+    <div class="user-info">
+      <h1>{{ user?.prenom }} {{ user?.nom }}</h1>
+      <p class="email">{{ user?.email }}</p>
+      <p class="code">Code: {{ user?.codeUtilisateur }}</p>
+      <div class="roles">
+        <span *ngFor="let role of user?.roles" class="role-badge">{{ role }}</span>
+      </div>
+    </div>
+    <div>
+      <button
+        class="btn-logout"
+        (click)="logout()"
+        [disabled]="isLoggingOut"
+      >
+        <span *ngIf="!isLoggingOut">🚪 Se déconnecter</span>
+        <span *ngIf="isLoggingOut">Déconnexion...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Card Informations -->
+  <div class="card">
+    <div class="card-header">
+      <h2>📋 Informations personnelles</h2>
+      <button
+        class="btn-edit"
+        (click)="isEditingProfile = !isEditingProfile"
+        *ngIf="!isEditingProfile"
+      >
+        ✏️ Modifier
+      </button>
+      <button
+        class="btn-cancel"
+        (click)="isEditingProfile = false; profileForm.patchValue(user)"
+        *ngIf="isEditingProfile"
+      >
+        ✖️ Annuler
+      </button>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom <span class="required">*</span></label>
+          <input
+            formControlName="nom"
+            [readonly]="!isEditingProfile"
+            [class.error]="hasError('profile', 'nom')"
+          >
+          <span class="error-text" *ngIf="hasError('profile', 'nom')">
+            Nom obligatoire (min 2 caractères)
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Prénom <span class="required">*</span></label>
+          <input
+            formControlName="prenom"
+            [readonly]="!isEditingProfile"
+            [class.error]="hasError('profile', 'prenom')"
+          >
+          <span class="error-text" *ngIf="hasError('profile', 'prenom')">
+            Prénom obligatoire (min 2 caractères)
+          </span>
+        </div>
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Pseudo <span class="required">*</span></label>
+          <input
+            formControlName="pseudo"
+            [readonly]="!isEditingProfile"
+            [class.error]="hasError('profile', 'pseudo')"
+          >
+          <span class="error-text" *ngIf="hasError('profile', 'pseudo')">
+      Pseudo obligatoire (min 3 caractères)
+    </span>
+        </div>
+
+        <div class="form-group">
+          <label>Email <span class="required">*</span></label>
+          <input
+            type="email"
+            formControlName="email"
+            [readonly]="!isEditingProfile"
+            [class.error]="hasError('profile', 'email')"
+          >
+          <span class="error-text" *ngIf="hasError('profile', 'email')">
+      Email obligatoire et valide
+    </span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Genre</label>
+        <select formControlName="genre" [disabled]="!isEditingProfile">
+          <option value="">Non spécifié</option>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Téléphone <span class="required">*</span></label>
+          <input
+            type="number"
+            formControlName="telephone"
+            [readonly]="!isEditingProfile"
+            [class.error]="hasError('profile', 'telephone')"
+          >
+          <span class="error-text" *ngIf="hasError('profile', 'telephone')">
+            Téléphone obligatoire
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Adresse</label>
+          <input
+            formControlName="adresse"
+            [readonly]="!isEditingProfile"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea
+          formControlName="bio"
+          [readonly]="!isEditingProfile"
+          rows="3"
+          placeholder="Parlez-nous de vous..."
+        ></textarea>
+        <small>{{ profileForm.value.bio?.length || 0 }}/500 caractères</small>
+      </div>
+
+      <button
+        *ngIf="isEditingProfile"
+        type="submit"
+        class="btn-save"
+        [disabled]="isLoadingProfile || profileForm.invalid"
+      >
+        {{ isLoadingProfile ? '💾 Enregistrement...' : '💾 Enregistrer' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Card Sécurité -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🔐 Sécurité</h2>
+      <button
+        class="btn-edit"
+        (click)="isEditingPassword = !isEditingPassword"
+        *ngIf="!isEditingPassword"
+      >
+        🔑 Changer mot de passe
+      </button>
+      <button
+        class="btn-cancel"
+        (click)="isEditingPassword = false; passwordForm.reset()"
+        *ngIf="isEditingPassword"
+      >
+        ✖️ Annuler
+      </button>
+    </div>
+
+    <form *ngIf="isEditingPassword" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <div class="form-group">
+        <label>Ancien mot de passe <span class="required">*</span></label>
+        <input
+          type="password"
+          formControlName="ancienMotDePasse"
+          placeholder="Votre mot de passe actuel"
+          [class.error]="hasError('password', 'ancienMotDePasse')"
+        >
+        <span class="error-text" *ngIf="hasError('password', 'ancienMotDePasse')">
+          Ancien mot de passe obligatoire
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label>Nouveau mot de passe <span class="required">*</span></label>
+        <input
+          type="password"
+          formControlName="nouveauMotDePasse"
+          placeholder="Minimum 8 caractères"
+          [class.error]="hasError('password', 'nouveauMotDePasse')"
+        >
+        <span class="error-text" *ngIf="hasError('password', 'nouveauMotDePasse')">
+          Minimum 8 caractères
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label>Confirmer le mot de passe <span class="required">*</span></label>
+        <input
+          type="password"
+          formControlName="confirmMotDePasse"
+          placeholder="Retapez le nouveau mot de passe"
+          [class.error]="hasError('password', 'confirmMotDePasse')"
+        >
+        <span class="error-text" *ngIf="hasError('password', 'confirmMotDePasse')">
+          Confirmation obligatoire
+        </span>
+      </div>
+
+      <div class="password-requirements">
+        <p><strong>Votre mot de passe doit contenir :</strong></p>
+        <ul>
+          <li>Au moins 8 caractères</li>
+          <li>Une lettre majuscule et une minuscule</li>
+          <li>Un chiffre et un caractère spécial</li>
+        </ul>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-save"
+        [disabled]="isLoadingPassword || passwordForm.invalid"
+      >
+        {{ isLoadingPassword ? '🔄 Modification...' : '✅ Modifier le mot de passe' }}
+      </button>
+    </form>
+
+    <p *ngIf="!isEditingPassword" class="info-text">
+      💡 Changez régulièrement votre mot de passe pour plus de sécurité
+    </p>
+  </div>
+
+  <div class="danger-zone">
+    <h3>⚠️ Zone dangereuse</h3>
+    <p>La désactivation de votre compte vous déconnectera immédiatement.</p>
+    <div>
+    <button class="btn-info" (click)="deactivateAccount()">
+      🔒 Désactiver mon compte
+    </button>
+    </div>
+    <br>
+
+    <div>
+    <button class="btn-danger" (click)="supprimerAccount()">
+      🗑️ Supprimer mon compte
+    </button>
+    </div>
+  </div>
+
+</div>

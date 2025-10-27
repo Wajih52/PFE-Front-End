@@ -1,0 +1,135 @@
+<!-- src/app/components/manage-user-roles-modal/manage-user-roles-modal.component.html -->
+
+<!-- Modal Overlay -->
+<div *ngIf="isVisible" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <i class="fas fa-user-shield"></i>
+        Gérer les rôles de <strong>{{ utilisateurPseudo }}</strong>
+      </h2>
+      <button class="btn-close" (click)="closeModal()" aria-label="Fermer">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- Messages -->
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success">
+        <i class="fas fa-check-circle"></i> {{ successMessage }}
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i> Chargement...
+      </div>
+
+      <div *ngIf="!isLoading">
+
+        <!-- Section : Rôles actuels -->
+        <div class="section">
+          <h3 class="section-title">
+            <i class="fas fa-list"></i>
+            Rôles actuels ({{ utilisateurRoles.length }})
+          </h3>
+
+          <div *ngIf="utilisateurRoles.length === 0" class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Aucun rôle attribué</p>
+          </div>
+
+          <div *ngIf="utilisateurRoles.length > 0" class="roles-list">
+            <div *ngFor="let userRole of utilisateurRoles" class="role-card">
+              <div class="role-info">
+                <div class="role-badge">
+                  <i class="fas fa-shield-alt"></i>
+                  <span class="role-name">{{ userRole.nomRole }}</span>
+                </div>
+                <p class="role-description" *ngIf="userRole.descriptionRole">
+                  {{ userRole.descriptionRole }}
+                </p>
+                <div class="role-meta">
+                  <span class="meta-item">
+                    <i class="fas fa-user"></i>
+                    <strong>Attribué par:</strong> {{ userRole.attribuePar }}
+                  </span>
+                  <span class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <strong>Le:</strong> {{ formatDate(userRole.dateAffectationRole) }}
+                  </span>
+                </div>
+              </div>
+              <button
+                class="btn-delete"
+                (click)="deleteRole(userRole)"
+                [disabled]="utilisateurRoles.length <= 1"
+                [title]="utilisateurRoles.length <= 1 ? 'Au moins un rôle est requis' : 'Supprimer ce rôle'"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <p class="info-text" *ngIf="utilisateurRoles.length === 1">
+            <i class="fas fa-info-circle"></i>
+            Cet utilisateur doit avoir au moins un rôle.
+          </p>
+        </div>
+
+        <!-- Section : Ajouter un rôle -->
+        <div class="section">
+          <h3 class="section-title">
+            <i class="fas fa-plus-circle"></i>
+            Ajouter un rôle
+          </h3>
+
+          <div *ngIf="rolesNonAttribues.length === 0" class="empty-state">
+            <i class="fas fa-check-double"></i>
+            <p>Tous les rôles disponibles ont été attribués</p>
+          </div>
+
+          <div *ngIf="rolesNonAttribues.length > 0" class="add-role-form">
+            <div class="form-group">
+              <label for="roleSelect">Sélectionnez un rôle :</label>
+              <select
+                id="roleSelect"
+                class="form-control"
+                [(ngModel)]="selectedRoleIdToAdd"
+              >
+                <option [value]="null" disabled selected>-- Choisir un rôle --</option>
+                <option *ngFor="let role of rolesNonAttribues" [value]="role.id">
+                  {{ role.nom }}
+                  <span *ngIf="role.description"> - {{ role.description }}</span>
+                </option>
+              </select>
+            </div>
+            <button
+              class="btn btn-primary"
+              (click)="addRole()"
+              [disabled]="!selectedRoleIdToAdd"
+            >
+              <i class="fas fa-plus"></i>
+              Ajouter
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">
+        <i class="fas fa-times"></i> Fermer
+      </button>
+    </div>
+
+  </div>
+</div>

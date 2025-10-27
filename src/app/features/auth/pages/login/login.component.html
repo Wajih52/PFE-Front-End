@@ -1,0 +1,115 @@
+<!-- src/app/features/auth/pages/login/login.component.html -->
+
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo / Titre -->
+    <div class="login-header">
+      <h1>Elegant Hive</h1>
+      <p>Connexion à votre compte</p>
+    </div>
+
+    <!-- Message de succès (activation compte) -->
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <!-- Message d'erreur -->
+    <div class="error-message" *ngIf="errorMessage">
+      ⚠️ {{ errorMessage }}
+
+      <!-- Bouton pour renvoyer l'email d'activation -->
+      <button
+        *ngIf="showResendButton"
+        type="button"
+        class="btn-resend"
+        (click)="resendActivationEmail()"
+        [disabled]="isResending"
+      >
+        <span *ngIf="!isResending">📧 Renvoyer l'email d'activation</span>
+        <span *ngIf="isResending">Envoi en cours...</span>
+      </button>
+    </div>
+
+    <!-- Formulaire -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <!-- Champ Identifiant -->
+      <div class="form-group">
+        <label for="identifiant">Email / Pseudo</label>
+        <input
+          type="text"
+          id="identifiant"
+          formControlName="identifiant"
+          placeholder="Entrez votre identifiant"
+          [class.error]="hasError('identifiant')"
+        />
+        <span class="error-text" *ngIf="hasError('identifiant')">
+          {{ getErrorMessage('identifiant') }}
+        </span>
+      </div>
+
+      <!-- Champ Mot de passe -->
+      <div class="form-group">
+        <label for="motDePasse">Mot de passe</label>
+        <div class="password-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="motDePasse"
+            formControlName="motDePasse"
+            placeholder="Entrez votre mot de passe"
+            [class.error]="hasError('motDePasse')"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+          >
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <span class="error-text" *ngIf="hasError('motDePasse')">
+          {{ getErrorMessage('motDePasse') }}
+        </span>
+      </div>
+
+      <!-- Lien Mot de passe oublié -->
+      <div class="forgot-password">
+        <a routerLink="/auth/forgot-password">Mot de passe oublié ?</a>
+      </div>
+
+      <!-- Bouton de connexion -->
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">Se connecter</span>
+        <span *ngIf="isLoading">Connexion en cours...</span>
+      </button>
+
+      <!-- Séparateur OU -->
+      <div class="separator">
+        <span>OU</span>
+      </div>
+
+      <!-- Bouton Google OAuth2 -->
+      <a
+        href="http://localhost:8080/oauth2/authorization/google"
+        class="btn-google"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
+          <path d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.957C.347 6.175 0 7.55 0 9.002c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
+        </svg>
+        Se connecter avec Google
+      </a>
+
+      <!-- Lien vers inscription -->
+      <div class="register-link">
+        <p>Pas encore de compte ? <a routerLink="/auth/register">Créer un compte</a></p>
+      </div>
+    </form>
+  </div>
+</div>

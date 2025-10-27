@@ -1,0 +1,207 @@
+<!-- EXEMPLE D'AJOUT DU LIEN DANS LE MENU DE NAVIGATION ADMIN -->
+
+<!--
+  Ajoutez ce lien dans votre menu de navigation admin
+  (généralement dans app.component.html ou dans un composant sidebar)
+-->
+
+<!-- Option 1 : Menu horizontal-->
+<nav class="admin-navbar">
+  <a routerLink="/admin/dashboard" routerLinkActive="active">
+    📊 Dashboard
+  </a>
+
+  <a routerLink="/admin/users" routerLinkActive="active">
+    👥 Utilisateurs
+  </a>
+
+  <!-- 🎭 NOUVEAU : Lien vers la gestion des rôles -->
+  <a routerLink="/admin/roles" routerLinkActive="active">
+    🎭 Rôles
+  </a>
+
+  <!-- Autres liens... -->
+  <a routerLink="/admin/produits" routerLinkActive="active">
+    📦 Produits
+  </a>
+
+  <a routerLink="/admin/reservations" routerLinkActive="active">
+    📅 Réservations
+  </a>
+</nav>
+
+<!--
+&lt;!&ndash; Option 2 : Menu vertical (sidebar) &ndash;&gt;
+<aside class="admin-sidebar">
+  <ul class="menu-list">
+    <li>
+      <a routerLink="/admin/dashboard" routerLinkActive="active">
+        <i class="icon">📊</i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+
+    <li>
+      <a routerLink="/admin/users" routerLinkActive="active">
+        <i class="icon">👥</i>
+        <span>Gestion des Utilisateurs</span>
+      </a>
+    </li>
+
+    &lt;!&ndash; 🎭 NOUVEAU : Lien vers la gestion des rôles &ndash;&gt;
+    <li>
+      <a routerLink="/admin/roles" routerLinkActive="active">
+        <i class="icon">🎭</i>
+        <span>Gestion des Rôles</span>
+      </a>
+    </li>
+
+    &lt;!&ndash; Autres liens... &ndash;&gt;
+    <li>
+      <a routerLink="/admin/produits" routerLinkActive="active">
+        <i class="icon">📦</i>
+        <span>Gestion des Produits</span>
+      </a>
+    </li>
+  </ul>
+</aside>
+-->
+
+<!--
+&lt;!&ndash; Option 3 : Dropdown menu&ndash;&gt;
+<div class="dropdown">
+  <button class="dropdown-toggle">
+    ⚙️ Administration
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <a routerLink="/admin/dashboard">📊 Dashboard</a>
+    </li>
+    <li>
+      <a routerLink="/admin/users">👥 Utilisateurs</a>
+    </li>
+
+    &lt;!&ndash; 🎭 NOUVEAU &ndash;&gt;
+    <li>
+      <a routerLink="/admin/roles">🎭 Rôles</a>
+    </li>
+
+    <li>
+      <a routerLink="/admin/produits">📦 Produits</a>
+    </li>
+  </ul>
+</div>
+-->
+
+<!--
+  STYLES CSS RECOMMANDÉS pour le menu
+-->
+<style>
+  /* Menu horizontal */
+  .admin-navbar {
+    display: flex;
+    gap: 20px;
+    padding: 15px 30px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .admin-navbar a {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #2c3e50;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .admin-navbar a:hover {
+    background: #f8f9fa;
+  }
+
+  .admin-navbar a.active {
+    background: linear-gradient(135deg, #605639 0%, #d5c727 100%);
+    color: white;
+  }
+
+  /* Menu vertical (sidebar) */
+  .admin-sidebar {
+    width: 250px;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+
+  .menu-list {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+  }
+
+  .menu-list li a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s;
+  }
+
+  .menu-list li a:hover {
+    background: #f8f9fa;
+    padding-left: 30px;
+  }
+
+  .menu-list li a.active {
+    background: linear-gradient(135deg, #605639 0%, #d5c727 100%);
+    color: white;
+    border-left: 4px solid #d5c727;
+  }
+
+  .menu-list li a .icon {
+    font-size: 20px;
+  }
+
+  /* Dropdown menu */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-toggle {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    list-style: none;
+    padding: 10px 0;
+    margin-top: 5px;
+    min-width: 200px;
+  }
+
+  .dropdown-menu li a {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.2s;
+  }
+
+  .dropdown-menu li a:hover {
+    background: #f8f9fa;
+  }
+</style>

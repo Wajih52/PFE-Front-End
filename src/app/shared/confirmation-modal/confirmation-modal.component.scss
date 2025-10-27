@@ -1,0 +1,120 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+  text-align: center;
+
+  &.danger {
+    border-top: 5px solid #dc3545;
+  }
+
+  &.warning {
+    border-top: 5px solid #ffc107;
+  }
+
+  &.info {
+    border-top: 5px solid #17a2b8;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 30px 0;
+  color: #666;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 120px;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+
+  &:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+  }
+}
+
+.modal.warning .btn-confirm {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #212529;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.modal.info .btn-confirm {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}

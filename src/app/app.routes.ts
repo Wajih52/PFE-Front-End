@@ -1,3 +1,195 @@
-import { Routes } from '@angular/router';
+// src/app/app.routes.ts
 
-export const routes: Routes = [];
+import { Routes } from '@angular/router';
+import { authGuard, roleGuard } from './core/guards/auth.guard';
+import {authResolver} from './core/resolvers/auth.resolver';
+import {RolesManagementComponent} from './features/admin/pages/roles-management/roles-management.component';
+
+export const routes: Routes = [
+
+
+  // Routes d'authentification (non protégées)
+  {
+    path: 'auth',
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/pages/login/login.component')
+          .then(m => m.LoginComponent)
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./features/auth/pages/register/register.component')
+          .then(m => m.RegisterComponent)
+      },
+      {
+        path: 'oauth2/redirect',
+        loadComponent: () => import('./features/auth/pages/oauth2-redirect/oauth2-redirect.component')
+          .then(m => m.OAuth2RedirectComponent)
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () => import('./features/auth/pages/forgot-password/forgot-password.component')
+          .then(m => m.ForgotPasswordComponent)
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./features/auth/pages/reset-password/reset-password.component')
+          .then(m => m.ResetPasswordComponent)
+      },
+      {
+        path: 'first-login',
+        loadComponent: () => import('./features/auth/pages/first-login/first-login.component')
+          .then(m => m.FirstLoginComponent)
+      },
+      {
+        path: 'change-password',
+        loadComponent: () => import('./features/auth/pages/change-password/change-password.component')
+          .then(m => m.ChangePasswordComponent)
+      }
+      ]
+  },
+
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    resolve: { auth: authResolver },
+    loadComponent: () => import('./features/pages/profile/profile.component')
+      .then(m => m.ProfileComponent)
+  },
+  {
+    path: 'loading',
+    loadComponent: () => import('./features/pages/loading/loading.component')
+      .then(m => m.LoadingComponent)
+  },
+  {
+    path: 'test-jwt',
+    loadComponent: () => import('./test-jwt/test-jwt.component')
+      .then(m => m.TestJwtComponent)
+  },
+  {
+    path: 'access-denied',
+    loadComponent: () => import('./shared/access-denied/access-denied.component')
+      .then(m => m.AccessDeniedComponent)
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard, roleGuard(['ADMIN'])],
+    resolve: { auth: authResolver },// ✅ Vérifie token + rôle ADMIN
+    children: [
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/pages/users-management/users-management.component')
+          .then(m => m.UsersManagementComponent)
+      },
+      { path: 'roles',
+        loadComponent: () => import('./features/admin/pages/roles-management/roles-management.component')
+          .then(m => m.RolesManagementComponent),
+        data: { role: 'ADMIN' }
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component')
+          .then(m => m.DashboardComponent)
+      },
+      ]
+  },
+  // ==================== ROUTE RACINE (LANDING) ====================
+  // on charge une landing page qui vérifie l'auth et redirige intelligemment
+  {
+    path: '**',
+    loadComponent: () => import('./features/pages/landing/landing.component')
+      .then(m => m.LandingComponent)
+  },
+
+
+  /*,
+      {
+        path: 'activation',
+        loadComponent: () => import('./features/auth/pages/activation/activation.component')
+          .then(m => m.ActivationComponent)
+      }
+    ]
+  },
+
+  // ==================== ROUTES PROTÉGÉES ====================
+
+  // Dashboard - Accessible à tous les utilisateurs connectés
+  {
+    path: 'dashboard',
+    canActivate: [authGuard], // ✅ Vérifie token + expiration
+    loadComponent: () => import('./features/pages/dashboard/dashboard.component')
+      .then(m => m.DashboardComponent)
+  },
+
+  // Profil utilisateur - Accessible à tous
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/pages/profile/profile.component')
+      .then(m => m.ProfileComponent)
+  },
+
+  // ==================== ROUTES CLIENT ====================
+  {
+    path: 'client',
+    canActivate: [authGuard, roleGuard(['CLIENT'])], // ✅ Vérifie token + rôle CLIENT
+    children: [
+      {
+        path: 'reservations',
+        loadComponent: () => import('./features/client/pages/reservations/reservations.component')
+          .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'catalogue',
+        loadComponent: () => import('./features/client/pages/catalogue/catalogue.component')
+          .then(m => m.CatalogueComponent)
+      }
+    ]
+  },
+
+  // ==================== ROUTES ADMIN ====================
+  {
+    path: 'admin',
+    canActivate: [authGuard, roleGuard(['ADMIN'])], // ✅ Vérifie token + rôle ADMIN
+    children: [
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/pages/users/users.component')
+          .then(m => m.UsersComponent)
+      },
+      {
+        path: 'statistics',
+        loadComponent: () => import('./features/admin/pages/statistics/statistics.component')
+          .then(m => m.StatisticsComponent)
+      }
+    ]
+  },
+
+  // ==================== ROUTES EMPLOYÉ ====================
+  {
+    path: 'employee',
+    canActivate: [authGuard, roleGuard(['EMPLOYE'])], // ✅ Vérifie token + rôle EMPLOYE
+    children: [
+      {
+        path: 'tasks',
+        loadComponent: () => import('./features/employee/pages/tasks/tasks.component')
+          .then(m => m.TasksComponent)
+      }
+    ]
+  },
+
+  // ==================== PAGES D'ERREUR ====================
+  {
+    path: 'access-denied',
+    loadComponent: () => import('./features/pages/access-denied/access-denied.component')
+      .then(m => m.AccessDeniedComponent)
+  },
+
+  // 404 - Page non trouvée
+  {
+    path: '**',
+    loadComponent: () => import('./features/pages/not-found/not-found.component')
+      .then(m => m.NotFoundComponent)
+  }*/
+];

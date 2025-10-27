@@ -1,0 +1,385 @@
+<!-- src/app/features/admin/pages/roles-management/roles-management.component.html -->
+<div >
+<app-menu-navigation></app-menu-navigation>
+</div>
+<div class="roles-management-container">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div>
+      <h1>🎭 Gestion des Rôles</h1>
+      <p class="subtitle">Configuration et contrôle des rôles système</p>
+    </div>
+    <button class="btn-primary" (click)="openAddModal()">
+      + Nouveau rôle
+    </button>
+  </header>
+
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ stats.total }}</h3>
+        <p>Total rôles</p>
+      </div>
+    </div>
+
+    <div class="stat-card actif">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{ stats.actifs }}</h3>
+        <p>Rôles actifs</p>
+      </div>
+    </div>
+
+    <div class="stat-card inactif">
+      <div class="stat-icon">🔒</div>
+      <div class="stat-content">
+        <h3>{{ stats.inactifs }}</h3>
+        <p>Rôles inactifs</p>
+      </div>
+    </div>
+
+    <div class="stat-card recent">
+      <div class="stat-icon">🆕</div>
+      <div class="stat-content">
+        <h3>{{ stats.recentlyAdded }}</h3>
+        <p>Ajoutés récemment</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Filtres et Recherche -->
+  <div class="filters-card">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="🔍 Rechercher par nom ou description..."
+        class="search-input"
+      >
+    </div>
+
+    <div class="filters-row">
+      <button class="btn-reset" (click)="resetFilters()">
+        🔄 Réinitialiser
+      </button>
+    </div>
+
+    <div class="results-info">
+      <p>{{ filteredRoles.length }} résultat(s) trouvé(s)</p>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des rôles...</p>
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!isLoading" class="table-card">
+    <div class="table-wrapper">
+      <table class="roles-table">
+        <thead>
+        <tr>
+          <th (click)="sortBy('id')" class="sortable">
+            ID
+            <span class="sort-icon" *ngIf="sortColumn === 'id'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('nom')" class="sortable">
+            Nom
+            <span class="sort-icon" *ngIf="sortColumn === 'nom'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th>Description</th>
+          <th (click)="sortBy('creationDate')" class="sortable">
+            Date de création
+            <span class="sort-icon" *ngIf="sortColumn === 'creationDate'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('modificationDate')" class="sortable">
+            Dernière modification
+            <span class="sort-icon" *ngIf="sortColumn === 'modificationDate'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('active')" class="sortable">
+            Statut
+            <span class="sort-icon" *ngIf="sortColumn === 'active'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th class="actions-column">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let role of paginatedRoles">
+          <td>
+            <span class="code-badge">{{ role.id }}</span>
+          </td>
+          <td>
+            <strong>{{ role.nom }}</strong>
+          </td>
+          <td>
+            <span class="description-text">
+              {{ role.description || 'Aucune description' }}
+            </span>
+          </td>
+          <td>
+            {{ formatDate(role.creationDate) }}
+          </td>
+          <td>
+            {{ formatDate(role.modificationDate) }}
+          </td>
+          <td>
+            <span class="statut-badge" [class.active]="role.active" [class.inactive]="!role.active">
+              {{ role.active ? '✅ Actif' : '🔒 Inactif' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button
+                class="btn-action btn-users"
+                (click)="showUsersForRole(role)"
+                title="Voir les utilisateurs"
+              >
+                👥
+              </button>
+              <button
+                class="btn-action btn-edit"
+                (click)="openEditModal(role)"
+                title="Modifier"
+              >
+                ✏️
+              </button>
+              <button
+                class="btn-action btn-delete"
+                (click)="deleteRole(role)"
+                title="Supprimer"
+              >
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button
+          class="pagination-btn"
+          (click)="prevPage()"
+          [disabled]="currentPage === 1"
+        >
+          ← Précédent
+        </button>
+
+        <div class="pagination-numbers">
+          <button
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            class="pagination-number"
+            [class.active]="currentPage === i + 1"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+        >
+          Suivant →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout -->
+  <div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeAddModal()">✖</button>
+
+      <div class="modal-header">
+        <h2>➕ Ajouter un nouveau rôle</h2>
+      </div>
+
+      <div class="modal-content">
+        <form [formGroup]="roleForm" (ngSubmit)="saveRole()">
+
+          <div class="form-field">
+            <label>Nom du rôle *</label>
+            <input
+              type="text"
+              formControlName="nom"
+              placeholder="Ex: MANAGER, SUPERVISEUR, etc."
+            />
+            <span class="error-message" *ngIf="getErrorMessage('nom', roleForm)">
+              {{ getErrorMessage('nom', roleForm) }}
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label>Description</label>
+            <textarea
+              formControlName="description"
+              placeholder="Description du rôle et de ses responsabilités..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeAddModal()">
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn-save"
+              [disabled]="isSubmitting || roleForm.invalid"
+            >
+              {{ isSubmitting ? 'Création...' : 'Créer le rôle' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Édition -->
+  <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeEditModal()">✖</button>
+
+      <div class="modal-header">
+        <h2>✏️ Modifier le rôle</h2>
+      </div>
+
+      <div class="modal-content">
+        <form [formGroup]="editForm" (ngSubmit)="updateRole()">
+
+          <div class="form-field">
+            <label>Nom du rôle *</label>
+            <input
+              type="text"
+              formControlName="nom"
+              placeholder="Nom du rôle"
+            />
+            <span class="error-message" *ngIf="getErrorMessage('nom', editForm)">
+              {{ getErrorMessage('nom', editForm) }}
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label>Description</label>
+            <textarea
+              formControlName="description"
+              placeholder="Description du rôle et de ses responsabilités..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeEditModal()">
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn-save"
+              [disabled]="isSubmitting || editForm.invalid"
+            >
+              {{ isSubmitting ? 'Modification...' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Utilisateurs -->
+  <div class="modal-overlay" *ngIf="showUsersModal" (click)="closeUsersModal()">
+    <div class="modal-container modal-large" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeUsersModal()">✖</button>
+
+      <div class="modal-header">
+        <h2>👥 Utilisateurs avec le rôle "{{ selectedRole?.nom }}"</h2>
+      </div>
+
+      <div class="modal-content">
+        <div *ngIf="usersForSelectedRole.length === 0" class="empty-state">
+          <p> Aucun utilisateur n'a ce rôle pour le moment</p>
+        </div>
+
+        <div *ngIf="usersForSelectedRole.length > 0" class="users-list">
+          <div class="user-item" *ngFor="let userRole of usersForSelectedRole">
+            <div class="user-avatar">
+              <img
+                *ngIf="userRole.utilisateur.image"
+                [src]="getImageUrl(userRole.utilisateur.image)"
+                alt="Photo de {{ userRole.utilisateur?.prenom }} {{ userRole.utilisateur?.nom }}"
+                (error)="onImageError($event)"
+                (click)="openImageModal(userRole.utilisateur.image)"
+              />
+              <div *ngIf="!userRole.utilisateur.image" class="avatar-placeholder">
+                {{ (userRole.utilisateur.prenom?.charAt(0) || '') + (userRole.utilisateur.nom?.charAt(0) || '')}}
+              </div>
+            </div>
+            <div class="user-info">
+              <h4>{{ userRole.utilisateur.nom }} {{ userRole.utilisateur.prenom }}</h4>
+              <p>📧 {{ userRole.utilisateur.email }}</p>
+              <p>📞 {{ userRole.utilisateur.telephone }}</p>
+            </div>
+            <div class="user-meta">
+              <span class="date-badge">
+                Assigné le: {{ formatDate(userRole.dateAffectationRole) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Image Agrandie -->
+  <div class="modal-overlay" *ngIf="showImageModal" (click)="closeImageModal()">
+    <div class="image-modal-container" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeImageModal()">✖</button>
+
+      <div class="image-modal-content">
+        <img
+          [src]="selectedImage"
+          alt="Image agrandie"
+          (error)="onImageError($event)"
+          class="enlarged-image"
+          [class.zoomed]="isZoomed"
+          (click)="isZoomed = !isZoomed"
+        />
+      </div>
+
+      <div class="image-modal-actions">
+        <button class="btn-download" (click)="downloadImage(selectedImage)">
+          📥 Télécharger
+        </button>
+        <button class="btn-close" (click)="closeImageModal()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

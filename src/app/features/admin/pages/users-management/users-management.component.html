@@ -1,0 +1,823 @@
+<!-- src/app/features/admin/pages/users-management/users-management.component.html -->
+
+<app-menu-navigation></app-menu-navigation>
+<div class="users-management-container">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div>
+      <h1>👥 Gestion des Utilisateurs</h1>
+      <p class="subtitle">Administration et contrôle des comptes</p>
+    </div>
+    <!-- Bouton pour ouvrir le modal d'ajout -->
+    <button class="btn-primary" (click)="openAddModal()">
+      + Nouvel utilisateur
+    </button>
+  </header>
+
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ stats.total }}</h3>
+        <p>Total utilisateurs</p>
+      </div>
+    </div>
+
+    <div class="stat-card actif">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{ stats.actifs }}</h3>
+        <p>Comptes actifs</p>
+      </div>
+    </div>
+
+    <div class="stat-card suspendu">
+      <div class="stat-icon">⛔</div>
+      <div class="stat-content">
+        <h3>{{ stats.suspendus }}</h3>
+        <p>Comptes suspendus</p>
+      </div>
+    </div>
+
+    <div class="stat-card desactive">
+      <div class="stat-icon">🔒</div>
+      <div class="stat-content">
+        <h3>{{ stats.desactives }}</h3>
+        <p>Comptes désactivés</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages dans le composant principale  -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Filtres et Recherche -->
+  <div class="filters-card">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="🔍 Rechercher par nom, email, pseudo, code..."
+        class="search-input"
+      >
+    </div>
+
+    <div class="filters-row">
+      <select [(ngModel)]="filterRole" (change)="applyFilters()" class="filter-select">
+        <option value="">Tous les rôles</option>
+        <option *ngFor="let role of uniqueRoles" [value]="role">{{ role }}</option>
+      </select>
+
+      <select [(ngModel)]="filterStatut" (change)="applyFilters()" class="filter-select">
+        <option value="">Tous les statuts</option>
+        <option value="ACTIVE">Actifs</option>
+        <option value="SUSPENDU">Suspendus</option>
+        <option value="DESACTIVE">Désactivés</option>
+        <option value="ARCHIVE">Archivés</option>
+      </select>
+
+      <select [(ngModel)]="filterPoste" (change)="applyFilters()" class="filter-select">
+        <option value="">Tous les postes</option>
+        <option *ngFor="let poste of uniquePostes" [value]="poste">{{ poste }}</option>
+      </select>
+
+      <button class="btn-reset" (click)="resetFilters()">
+        🔄 Réinitialiser
+      </button>
+    </div>
+
+    <div class="results-info">
+      <p>{{ filteredUsers.length }} résultat(s) trouvé(s)</p>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des utilisateurs...</p>
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!isLoading" class="table-card">
+    <div class="table-wrapper">
+      <table class="users-table">
+        <thead>
+        <tr>
+          <th (click)="sortBy('codeUtilisateur')" class="sortable">
+            Code
+            <span class="sort-icon" *ngIf="sortColumn === 'codeUtilisateur'">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+          </th>
+          <th (click)="sortBy('nom')" class="sortable">
+            Nom
+            <span class="sort-icon" *ngIf="sortColumn === 'nom'">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+          </th>
+          <th (click)="sortBy('prenom')" class="sortable">
+            Prénom
+            <span class="sort-icon" *ngIf="sortColumn === 'prenom'">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+          </th>
+          <th (click)="sortBy('pseudo')" class="sortable">
+            Pseudo
+            <span class="sort-icon" *ngIf="sortColumn === 'pseudo'">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+          </th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Rôles</th>
+          <th (click)="sortBy('etatCompte')" class="sortable">
+            Statut
+            <span class="sort-icon" *ngIf="sortColumn === 'etatCompte'">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+          </th>
+          <th class="actions-column">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let user of paginatedUsers">
+          <td>
+            <span class="code-badge">{{ user.codeUtilisateur }}</span>
+          </td>
+          <td>{{ user.nom }}</td>
+          <td>{{ user.prenom }}</td>
+          <td>
+            <span class="pseudo">{{ user.pseudo }}</span>
+          </td>
+          <td>
+            <a [href]="'mailto:' + user.email" class="email-link">
+              {{ user.email }}
+            </a>
+          </td>
+          <td>{{ user.telephone }}</td>
+          <td>
+            <div class="roles-badges">
+                <span *ngFor="let role of user.roles" class="role-badge" [class]="'role-' + role.toLowerCase()">
+                  {{ role }}
+                </span>
+            </div>
+          </td>
+          <td>
+              <span class="statut-badge" [class]="getStatutClass(user.etatCompte)">
+                {{ getStatutIcon(user.etatCompte) }} {{ user.etatCompte }}
+              </span>
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button
+                class="btn-action btn-details"
+                (click)="showDetails(user)"
+                title="Voir détails"
+              >
+                👁️
+              </button>
+              <button
+                class="btn-action btn-roles "
+                (click)="openManageRolesModal(user)"
+                title="Gérer les rôles"
+              >
+
+                🎭
+              </button>
+
+              <button
+                *ngIf="user.etatCompte === 'ACTIVE'"
+                class="btn-action btn-suspend"
+                (click)="suspendAccount(user)"
+                title="Suspendre"
+              >
+                ⛔
+              </button>
+
+              <button
+                *ngIf="user.etatCompte === 'ACTIVE' || user.etatCompte === 'SUSPENDU'"
+                class="btn-action btn-deactivate"
+                (click)="deactivateAccount(user)"
+                title="Désactiver"
+              >
+                🔒
+              </button>
+
+              <button
+                *ngIf="user.etatCompte === 'DESACTIVE' || user.etatCompte === 'SUSPENDU'||user.etatCompte === 'ARCHIVE'"
+                class="btn-action btn-activate"
+                (click)="activateAccount(user)"
+                title="Activer"
+              >
+                ✅
+              </button>
+
+              <button
+                class="btn-action btn-delete"
+                (click)="deleteUser(user)"
+                title="Supprimer"
+              >
+                🗑️
+              </button>
+
+              <button
+                class="btn-action btn-edit"
+                (click)="editUser(user)"
+                title="Modifier"
+              >
+                ✏️
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button
+        class="page-btn"
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        ◀ Précédent
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of pageNumbers"
+          class="page-number"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        class="page-btn"
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Suivant ▶
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DETAILS -->
+  <div *ngIf="showDetailsModal && selectedUser" class="modal-overlay" (click)="closeDetails()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeDetails()">✖</button>
+
+      <div class="modal-header">
+        <div class="user-avatar">
+          <img *ngIf="selectedUser.image"  [src]="getImageUrl(selectedUser.image) || 'assets/images/default-avatar.png'"
+               alt="Avatar"
+               (error)="onImageError($event)"
+               (click)="openImageModal(selectedUser.image)" >
+          <div *ngIf="!selectedUser.image" class="avatar-placeholder">
+            {{ selectedUser.prenom.charAt(0) }}{{ selectedUser.nom.charAt(0) }}
+          </div>
+        </div>
+        <div>
+          <h2>{{ selectedUser.prenom }} {{ selectedUser.nom }}</h2>
+          <p class="user-pseudo">{{ selectedUser.pseudo }}</p>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-section">
+          <h3>📋 Informations générales</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Code utilisateur</span>
+              <span class="detail-value">{{ selectedUser.codeUtilisateur }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">{{ selectedUser.email }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Téléphone</span>
+              <span class="detail-value">{{ selectedUser.telephone }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Genre</span>
+              <span class="detail-value">{{ selectedUser.genre || 'Non renseigné' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Adresse</span>
+              <span class="detail-value">{{ selectedUser.adresse || 'Non renseigné' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Date de création</span>
+              <span class="detail-value">{{ formatDate(selectedUser.dateCreation) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedUser.bio">
+          <h3>💬 Biographie</h3>
+          <p class="bio-text">{{ selectedUser.bio }}</p>
+        </div>
+
+        <div class="detail-section">
+          <h3>🔐 Statut et rôles</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">État du compte</span>
+              <span class="statut-badge" [class]="getStatutClass(selectedUser.etatCompte)">
+                {{ getStatutIcon(selectedUser.etatCompte) }} {{ selectedUser.etatCompte }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Rôles</span>
+              <div class="roles-badges">
+                <span *ngFor="let role of selectedUser.roles" class="role-badge" [class]="'role-' + role.toLowerCase()">
+                  {{ role }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedUser.poste || selectedUser.dateEmbauche">
+          <h3>💼 Informations d'emploi</h3>
+          <div class="detail-grid">
+            <div class="detail-item" *ngIf="selectedUser.poste">
+              <span class="detail-label">Poste</span>
+              <span class="detail-value">{{ selectedUser.poste }}</span>
+            </div>
+            <div class="detail-item" *ngIf="selectedUser.statutEmploye">
+              <span class="detail-label">Statut employé</span>
+              <span class="detail-value">{{ selectedUser.statutEmploye }}</span>
+            </div>
+            <div class="detail-item" *ngIf="selectedUser.dateEmbauche">
+              <span class="detail-label">Date d'embauche</span>
+              <span class="detail-value">{{ selectedUser.dateEmbauche }}</span>
+            </div>
+            <div class="detail-item" *ngIf="selectedUser.dateFinContrat">
+              <span class="detail-label">Date fin contrat</span>
+              <span class="detail-value">{{ selectedUser.dateFinContrat }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT -->
+  <div *ngIf="showEditModal" class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-edit" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeEditModal()">✖</button>
+
+      <h2>✏️ Modifier un utilisateur</h2>
+
+      <!-- Messages d'alerte dans le modal -->
+      <div *ngIf="editSuccessMessage" class="alert alert-success">{{ editSuccessMessage }}</div>
+      <div *ngIf="editErrorMessage" class="alert alert-error">{{ editErrorMessage }}</div>
+
+      <!-- Section Image de profil -->
+      <div class="profile-image-section">
+        <label>Image de profil</label>
+
+        <!-- Aperçu de l'image actuelle -->
+        <div class="image-preview-container">
+          <img
+            [src]="editPreviewImage || getImageUrl(editForm.get('image')?.value)"
+            alt="Avatar"
+            class="preview-image"
+            (error)="onImageError($event)">
+        </div>
+
+        <!-- Input file caché -->
+        <input
+          type="file"
+          #editImageInput
+          accept="image/*"
+          (change)="onEditImageSelect($event)"
+          style="display: none;">
+
+        <!-- Boutons d'action -->
+        <div class="image-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="editImageInput.click()">
+            📷 Choisir une image
+          </button>
+
+          <button
+            *ngIf="editPreviewImage"
+            type="button"
+            class="btn btn-danger"
+            (click)="clearEditImage()">
+            🗑️ Annuler
+          </button>
+
+          <button
+            *ngIf="editPreviewImage"
+            type="button"
+            class="btn btn-primary"
+            (click)="saveImage()">
+            💾 Enregistrer l'image
+          </button>
+        </div>
+
+        <small class="text-muted">Format: JPG, PNG, GIF (max 5MB)</small>
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="saveUserChanges()">
+        <div class="form-grid">
+          <!-- Nom -->
+          <div class="form-field">
+            <label>Nom *</label>
+            <input type="text" formControlName="nom" placeholder="Nom" />
+            <span class="error-message" *ngIf="getErrorMessage('nom')">
+              {{ getErrorMessage('nom') }}
+            </span>
+          </div>
+
+          <!-- Prénom -->
+          <div class="form-field">
+            <label>Prénom *</label>
+            <input type="text" formControlName="prenom" placeholder="Prénom" />
+            <span class="error-message" *ngIf="getErrorMessage('prenom')">
+              {{ getErrorMessage('prenom') }}
+            </span>
+          </div>
+
+          <!-- Pseudo -->
+          <div class="form-field">
+            <label>Pseudo *</label>
+            <input type="text" formControlName="pseudo" placeholder="Pseudo" />
+            <span class="error-message" *ngIf="getErrorMessage('pseudo')">
+              {{ getErrorMessage('pseudo') }}
+            </span>
+          </div>
+
+          <!-- Email -->
+          <div class="form-field">
+            <label>Email *</label>
+            <input type="email" formControlName="email" placeholder="Email" />
+            <span class="error-message" *ngIf="getErrorMessage('email')">
+              {{ getErrorMessage('email') }}
+            </span>
+          </div>
+
+          <!-- Téléphone -->
+          <div class="form-field">
+            <label>Téléphone *</label>
+            <input type="number" formControlName="telephone" placeholder="Téléphone" />
+            <span class="error-message" *ngIf="getErrorMessage('telephone')">
+              {{ getErrorMessage('telephone') }}
+            </span>
+          </div>
+
+          <!-- Genre -->
+          <div class="form-field">
+            <label>Genre *</label>
+            <select formControlName="genre">
+              <option value="" disabled selected>Sélectionner un genre</option>
+              <option value="Homme">Homme</option>
+              <option value="Femme">Femme</option>
+              <option value="Autre">Autre</option>
+            </select>
+            <span class="error-message" *ngIf="getErrorMessage('genre')">
+              {{ getErrorMessage('genre') }}
+            </span>
+          </div>
+
+          <!-- Adresse -->
+          <div class="form-field" style="grid-column: span 2;">
+            <label>Adresse</label>
+            <input type="text" formControlName="adresse" placeholder="Adresse" />
+            <span class="error-message" *ngIf="getErrorMessage('adresse')">
+              {{ getErrorMessage('adresse') }}
+            </span>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-field" style="grid-column: span 2;">
+            <label>Biographie</label>
+            <textarea formControlName="bio" placeholder="Biographie..." rows="3"></textarea>
+          </div>
+
+          <!-- État du compte -->
+          <div class="form-field">
+            <label>État du compte *</label>
+            <select formControlName="etatCompte">
+              <option value="ACTIVE">✅ Actif</option>
+              <option value="SUSPENDU">⛔ Suspendu</option>
+              <option value="DESACTIVE">🔒 Désactivé</option>
+              <option value="ARCHIVE">📦 Archivé</option>
+            </select>
+            <span class="error-message" *ngIf="getErrorMessage('etatCompte')">
+              {{ getErrorMessage('etatCompte') }}
+            </span>
+          </div>
+
+          <!-- Rôles (lecture seule) -->
+          <div class="form-field">
+            <label>Rôles</label>
+            <input type="text" [value]="getRolesDisplay()" readonly class="readonly-field" />
+            <small style="color: #7f8c8d; font-style: italic;">Les rôles ne peuvent pas être modifiés ici</small>
+          </div>
+
+          <!-- Champs spécifiques aux employés -->
+          <ng-container *ngIf="isEmployeOrAdmin()">
+            <!-- Poste -->
+            <div class="form-field">
+              <label>Poste</label>
+              <input type="text" formControlName="poste" placeholder="Poste" />
+            </div>
+
+            <!-- Statut Employé -->
+            <div class="form-field">
+              <label>Statut employé</label>
+              <select formControlName="statutEmploye">
+                <option value="">Sélectionner</option>
+                <option value="EnTravail">En travail</option>
+                <option value="Demissionne">Démissionné</option>
+                <option value="EnConge">En congé</option>
+              </select>
+            </div>
+
+            <!-- Date d'embauche -->
+            <div class="form-field">
+              <label>Date d'embauche</label>
+              <input type="date" formControlName="dateEmbauche" />
+            </div>
+
+            <!-- Date fin contrat -->
+            <div class="form-field">
+              <label>Date fin contrat</label>
+              <input type="date" formControlName="dateFinContrat" />
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeEditModal()">Annuler</button>
+          <button type="submit" class="btn-save" [disabled]="isSubmitting || editForm.invalid">
+            {{ isSubmitting ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ✅ MODAL ADD (CORRIGÉ) -->
+  <div *ngIf="showAddModal" class="modal-overlay" (click)="closeAddModal()">
+    <div class="modal-add-container" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeAddModal()">✖</button>
+
+      <!-- ✅ Header sticky -->
+      <div class="modal-header-add">
+        <h2>➕ Ajouter un nouvel utilisateur</h2>
+      </div>
+
+      <!-- ✅ Messages STICKY en haut (toujours visibles) -->
+      <div class="modal-messages-sticky">
+        <div *ngIf="addSuccessMessage" class="alert alert-success">{{ addSuccessMessage }}</div>
+        <div *ngIf="addErrorMessage" class="alert alert-error">{{ addErrorMessage }}</div>
+      </div>
+
+      <!-- ✅ Contenu scrollable -->
+      <div class="modal-add-content">
+        <form [formGroup]="addForm" (ngSubmit)="saveNewUser()">
+
+          <!-- ✅ Section image SÉPARÉE (en haut, avant le formulaire) -->
+          <div class="image-section-top">
+            <h3 class="section-title">📷 Photo de profil</h3>
+            <div class="avatar-upload-section">
+              <div class="avatar-preview">
+                <img *ngIf="previewImage" [src]="previewImage" alt="Aperçu de l'image" class="image-preview">
+                <div *ngIf="!previewImage" class="avatar-placeholder">
+                  👤 Aucune image
+                </div>
+              </div>
+              <div class="avatar-actions">
+                <input
+                  type="file"
+                  #fileInput
+                  (change)="onAddImageSelect($event)"
+                  accept="image/*"
+                  hidden
+                >
+                <button type="button" class="btn-upload" (click)="fileInput.click()">
+                  📷 Choisir une image
+                </button>
+                <button
+                  *ngIf="previewImage"
+                  type="button"
+                  class="btn-delete-image"
+                  (click)="clearAddImage()"
+                >
+                  🗑️ Supprimer
+                </button>
+              </div>
+              <small style="color: #7f8c8d; font-style: italic; text-align: center; display: block; margin-top: 8px;">
+                Formats acceptés: JPG, PNG, GIF • Max: 5MB
+              </small>
+            </div>
+          </div>
+
+          <!-- ✅ Grille du formulaire SANS l'image -->
+          <div class="form-grid">
+            <!-- Nom -->
+            <div class="form-field">
+              <label>Nom *</label>
+              <input type="text" formControlName="nom" placeholder="Nom" />
+              <span class="error-message" *ngIf="getErrorMessage('nom', addForm)">
+                {{ getErrorMessage('nom', addForm) }}
+              </span>
+            </div>
+
+            <!-- Prénom -->
+            <div class="form-field">
+              <label>Prénom *</label>
+              <input type="text" formControlName="prenom" placeholder="Prénom" />
+              <span class="error-message" *ngIf="getErrorMessage('prenom', addForm)">
+                {{ getErrorMessage('prenom', addForm) }}
+              </span>
+            </div>
+
+            <!-- Pseudo -->
+            <div class="form-field">
+              <label>Pseudo *</label>
+              <input type="text" formControlName="pseudo" placeholder="Pseudo" />
+              <span class="error-message" *ngIf="getErrorMessage('pseudo', addForm)">
+                {{ getErrorMessage('pseudo', addForm) }}
+              </span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-field">
+              <label>Email *</label>
+              <input type="email" formControlName="email" placeholder="Email" />
+              <span class="error-message" *ngIf="getErrorMessage('email', addForm)">
+                {{ getErrorMessage('email', addForm) }}
+              </span>
+            </div>
+
+            <!-- Téléphone -->
+            <div class="form-field">
+              <label>Téléphone *</label>
+              <input type="number" formControlName="telephone" placeholder="Téléphone" />
+              <span class="error-message" *ngIf="getErrorMessage('telephone', addForm)">
+                {{ getErrorMessage('telephone', addForm) }}
+              </span>
+            </div>
+
+            <!-- Genre -->
+            <div class="form-field">
+              <label>Genre *</label>
+              <select formControlName="genre">
+                <option value="" disabled selected>Sélectionner un genre</option>
+                <option value="Homme">Homme</option>
+                <option value="Femme">Femme</option>
+                <option value="Autre">Autre</option>
+              </select>
+              <span class="error-message" *ngIf="getErrorMessage('genre', addForm)">
+                {{ getErrorMessage('genre', addForm) }}
+              </span>
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="form-field" style="grid-column: span 2;">
+              <label>Mot de passe *</label>
+              <input type="password" formControlName="motDePasse" placeholder="Mot de passe" />
+              <span class="error-message" *ngIf="getErrorMessage('motDePasse', addForm)">
+                {{ getErrorMessage('motDePasse', addForm) }}
+              </span>
+            </div>
+
+            <!-- Adresse -->
+            <div class="form-field" style="grid-column: span 2;">
+              <label>Adresse</label>
+              <input type="text" formControlName="adresse" placeholder="Adresse" />
+              <span class="error-message" *ngIf="getErrorMessage('adresse', addForm)">
+                {{ getErrorMessage('adresse', addForm) }}
+              </span>
+            </div>
+
+            <!-- Bio -->
+            <div class="form-field" style="grid-column: span 2;">
+              <label>Biographie</label>
+              <textarea formControlName="bio" placeholder="Biographie..." rows="3"></textarea>
+            </div>
+
+            <!-- État du compte -->
+            <div class="form-field">
+              <label>État du compte *</label>
+              <select formControlName="etatCompte">
+                <option value="ACTIVE">✅ Actif</option>
+                <option value="SUSPENDU">⛔ Suspendu</option>
+                <option value="DESACTIVE">🔒 Désactivé</option>
+              </select>
+              <span class="error-message" *ngIf="getErrorMessage('etatCompte', addForm)">
+                {{ getErrorMessage('etatCompte', addForm) }}
+              </span>
+            </div>
+
+            <!--  Rôle unique (select simple) -->
+            <div class="form-field">
+              <label>Rôle *</label>
+              <select formControlName="role" class="role-select">
+                <option value="">Sélectionner un rôle</option>
+                <option value="CLIENT">Client</option>
+                <option value="EMPLOYE">Employé</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+              <span class="error-message" *ngIf="getErrorMessage('role', addForm)">
+              {{ getErrorMessage('role', addForm) }}
+            </span>
+            </div>
+
+            <!-- Champs spécifiques aux employés -->
+            <ng-container *ngIf="isAddFormEmployeOrAdmin()">
+              <!-- Poste -->
+              <div class="form-field">
+                <label>Poste</label>
+                <input type="text" formControlName="poste" placeholder="Poste" />
+              </div>
+
+              <!-- Statut Employé -->
+              <div class="form-field">
+                <label>Statut employé</label>
+                <select formControlName="statutEmploye">
+                  <option value="">Sélectionner</option>
+                  <option value="EnTravail">En travail</option>
+                  <option value="Demissionne">Démissionné</option>
+                  <option value="EnConge">En congé</option>
+                </select>
+              </div>
+
+              <!-- Date d'embauche -->
+              <div class="form-field">
+                <label>Date d'embauche</label>
+                <input type="date" formControlName="dateEmbauche" />
+              </div>
+
+              <!-- Date fin contrat -->
+              <div class="form-field">
+                <label>Date fin contrat</label>
+                <input type="date" formControlName="dateFinContrat" />
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeAddModal()">Annuler</button>
+            <button type="submit" class="btn-save" [disabled]="isSubmittingAdd || addForm.invalid">
+              {{ isSubmittingAdd ? 'Création...' : 'Ajouter' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Image Agrandie -->
+  <div class="modal-overlay" *ngIf="showImageModal" (click)="closeImageModal()">
+    <div class="image-modal-container" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeImageModal()">✖</button>
+
+      <div class="image-modal-content">
+        <img
+          [src]="selectedImage"
+          alt="Image agrandie"
+          (error)="onImageError($event)"
+          class="enlarged-image"
+          [class.zoomed]="isZoomed"
+          (click)="isZoomed = !isZoomed"
+        />
+      </div>
+
+      <div class="image-modal-actions">
+        <button class="btn-download" (click)="downloadImage(selectedImage)">
+          📥 Télécharger
+        </button>
+        <button class="btn-close" (click)="closeImageModal()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<app-manage-user-roles-modal
+  #manageRolesModal
+  (close)="onRolesUpdated()"
+  (rolesUpdated)="onRolesUpdated()"
+></app-manage-user-roles-modal>

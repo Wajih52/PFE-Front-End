@@ -1,0 +1,123 @@
+<!-- src/app/features/dashboard/dashboard.component.html -->
+
+<div >
+  <app-menu-navigation></app-menu-navigation>
+</div>
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="logo">
+      <h2>Elegant Hive</h2>
+    </div>
+    <div class="user-actions">
+      <button
+        class="btn-logout"
+        (click)="logout()"
+        [disabled]="isLoggingOut"
+      >
+        <span *ngIf="!isLoggingOut">🚪 Se déconnecter</span>
+        <span *ngIf="isLoggingOut">Déconnexion...</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de vos informations...</p>
+  </div>
+
+  <!-- Main Content -->
+  <main *ngIf="!isLoading" class="dashboard-main">
+
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <div class="avatar">
+        <img *ngIf="userImage" [src]="userImage" [alt]="userName">
+        <div *ngIf="!userImage" class="avatar-placeholder">
+          {{ getUserInitials() }}
+        </div>
+      </div>
+      <div class="welcome-text">
+        <h1>🎉 Bienvenue, {{ userName }} !</h1>
+        <p>Vous êtes connecté avec succès à votre espace.</p>
+      </div>
+    </section>
+
+    <!-- User Info Card -->
+    <section class="info-section">
+      <div class="info-card">
+        <h2>📋 Informations du compte</h2>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Email :</span>
+            <span class="info-value">{{ userEmail }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Code utilisateur :</span>
+            <span class="info-value">{{ userCode }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="userPhone">
+            <span class="info-label">Téléphone :</span>
+            <span class="info-value">{{ userPhone }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Rôle(s) :</span>
+            <span class="info-value">
+              <span
+                *ngFor="let role of userRoles"
+                class="role-badge"
+                [class.role-admin]="role === 'ADMIN'"
+                [class.role-client]="role === 'CLIENT'"
+                [class.role-employe]="role === 'EMPLOYE'"
+              >
+                {{ role }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="actions-section">
+      <h2>⚡ Actions rapides</h2>
+
+      <div class="actions-grid">
+        <div class="action-card" *ngIf="hasRole('CLIENT')">
+          <h3>🎊 Mes Réservations</h3>
+          <p>Consultez vos événements</p>
+          <button class="btn-action">Voir</button>
+        </div>
+
+        <div class="action-card" *ngIf="hasRole('CLIENT')">
+          <h3>📦 Catalogue</h3>
+          <p>Parcourir les produits</p>
+          <button class="btn-action">Explorer</button>
+        </div>
+
+        <div class="action-card" *ngIf="hasRole('ADMIN')">
+          <h3>👥 Utilisateurs</h3>
+          <p>Gérer les utilisateurs</p>
+          <button class="btn-action">Gérer</button>
+        </div>
+
+        <div class="action-card">
+          <h3>⚙️ Mon Profil</h3>
+          <p>Modifier mes informations</p>
+          <button class="btn-action">Éditer</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <p>&copy; 2025 Elegant Hive - Agence Événementielle</p>
+  </footer>
+</div>

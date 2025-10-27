@@ -1,0 +1,268 @@
+/* src/app/features/auth/pages/login/login.component.css */
+
+/* Container principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+/* Carte de connexion */
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Header */
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-header h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Message de succès */
+.success-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 1px solid #a5d6a7;
+}
+
+/* Message d'erreur */
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 1px solid #fcc;
+}
+
+/* Bouton de renvoi d'email */
+.btn-resend {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-resend:hover:not(:disabled) {
+  background-color: #1976D2;
+}
+
+.btn-resend:disabled {
+  background-color: #90CAF9;
+  cursor: not-allowed;
+}
+
+/* Groupe de formulaire */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #333;
+}
+
+.form-group input.error {
+  border-color: #c33;
+}
+
+/* Message d'erreur de champ */
+.error-text {
+  display: block;
+  color: #c33;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Wrapper mot de passe */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 45px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+}
+
+/* Lien mot de passe oublié */
+.forgot-password {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot-password a {
+  color: #666;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+/* Bouton de connexion */
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-login:hover:not(:disabled) {
+  background-color: #333;
+}
+
+.btn-login:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+/* Séparateur OU */
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.separator span {
+  padding: 0 10px;
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Bouton Google */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.btn-google:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-google svg {
+  flex-shrink: 0;
+}
+
+/* Lien vers inscription */
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.register-link p {
+  color: #666;
+  font-size: 14px;
+}
+
+.register-link a {
+  color: #000;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+
+  .login-header h1 {
+    font-size: 24px;
+  }
+}
