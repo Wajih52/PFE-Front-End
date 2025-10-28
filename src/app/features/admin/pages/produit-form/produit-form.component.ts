@@ -16,6 +16,7 @@ import {
   TypeProduitLabels
 } from '../../../../core/models';
 import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
+import {ScrollService} from '../../../../services/scroll.service';
 
 /**
  * Composant de formulaire pour créer ou modifier un produit
@@ -35,6 +36,7 @@ export class ProduitFormComponent implements OnInit {
   private produitService = inject(ProduitService);
   private imageService = inject(ImageService);
   private confirmationService = inject(ConfirmationService);
+  private scrollService =inject(ScrollService);
 
   // Formulaire
   produitForm!: FormGroup;
@@ -263,7 +265,9 @@ export class ProduitFormComponent implements OnInit {
       next: (response) => {
         this.successMessage = `✅ Produit ${this.isEditMode ? 'modifié' : 'créé'} avec succès !`;
         this.isSubmitting = false;
-
+        setTimeout(() => {
+          this.scrollService.scrollToTop();
+        }, 100);
         // Rediriger après 1.5 secondes
         setTimeout(() => {
           if (this.isEditMode) {
@@ -288,6 +292,9 @@ export class ProduitFormComponent implements OnInit {
           const backendErrors = Object.values(error.error.errors).join(', ');
           this.errorMessage += ` : ${backendErrors}`;
         }
+        setTimeout(() => {
+          this.scrollService.scrollToFirstError();
+        }, 100);
       }
     });
   }
@@ -305,7 +312,9 @@ export class ProduitFormComponent implements OnInit {
     });
 
     if (goToInstances) {
-      this.router.navigate(['/admin/produits', produitId, 'instances']);
+      this.router.navigate(['/admin/instances/new'], {
+        queryParams: { idProduit: produitId }
+      });
     } else {
       this.router.navigate(['/admin/produits']);
     }

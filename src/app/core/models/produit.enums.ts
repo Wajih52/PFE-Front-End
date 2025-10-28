@@ -9,10 +9,13 @@
  * Catégories de produits
  */
 export enum Categorie {
- LUMIERE = 'Lumiere',
- MOBILIER = 'Mobilier',
- DECORATION = 'Decoration',
- ACCESSOIRES = 'Accessoires'
+ LUMIERE = 'LUMIERE',
+ MOBILIER = 'MOBILIER',
+ DECORATION = 'DECORATION',
+ ACCESSOIRES = 'ACCESSOIRES',
+ STRUCTURE = 'STRUCTURE',
+ SONORISATION ='SONORISATION',
+ MATERIEL_RESTAURATION='MATERIEL_RESTAURATION'
 }
 
 /**
@@ -20,7 +23,7 @@ export enum Categorie {
  */
 export enum TypeProduit {
   AVEC_REFERENCE = 'avecReference',    // Ex: projecteur, caméra (numéro de série)
-  SANS_REFERENCE = 'enQuantite'     // Ex: chaise, assiette (quantité globale)
+  EN_QUANTITE = 'enQuantite'     // Ex: chaise, assiette (quantité globale)
 }
 
 /**
@@ -30,7 +33,6 @@ export enum StatutInstance {
   DISPONIBLE = 'DISPONIBLE',
   RESERVE = 'RESERVE',
   EN_LIVRAISON = 'EN_LIVRAISON',
-  EN_UTILISATION = 'EN_UTILISATION',
   EN_RETOUR = 'EN_RETOUR',
   EN_MAINTENANCE = 'EN_MAINTENANCE',
   HORS_SERVICE = 'HORS_SERVICE',
@@ -62,19 +64,21 @@ export const CategorieLabels: Record<Categorie, string> = {
   [Categorie.MOBILIER]: 'Mobilier',
   [Categorie.DECORATION]: 'Décoration',
   [Categorie.LUMIERE]: 'Lumiere',
-  [Categorie.ACCESSOIRES] : 'Accessoires'
+  [Categorie.ACCESSOIRES] : 'Accessoires',
+    [Categorie.STRUCTURE]: 'Structure',
+  [Categorie.SONORISATION]: 'Sonorisation',
+  [Categorie.MATERIEL_RESTAURATION]: 'Materiel Restauration',
 };
 
 export const TypeProduitLabels: Record<TypeProduit, string> = {
-  [TypeProduit.AVEC_REFERENCE]: 'Avec référence',
-  [TypeProduit.SANS_REFERENCE]: 'Sans référence'
+  [TypeProduit.AVEC_REFERENCE]: 'Avec Référence',
+  [TypeProduit.EN_QUANTITE]: 'En Quantité'
 };
 
 export const StatutInstanceLabels: Record<StatutInstance, string> = {
   [StatutInstance.DISPONIBLE]: 'Disponible',
   [StatutInstance.RESERVE]: 'Réservé',
   [StatutInstance.EN_LIVRAISON]: 'En livraison',
-  [StatutInstance.EN_UTILISATION]: 'En utilisation',
   [StatutInstance.EN_RETOUR]: 'En retour',
   [StatutInstance.EN_MAINTENANCE]: 'En maintenance',
   [StatutInstance.HORS_SERVICE]: 'Hors service',

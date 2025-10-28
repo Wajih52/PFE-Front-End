@@ -1,0 +1,33 @@
+<div
+  class="notification-overlay"
+  *ngIf="config"
+  (click)="close()"
+>
+  <div
+    class="notification-container"
+    [class.notification-visible]="isVisible"
+    [class.notification-closing]="isClosing"
+    (click)="$event.stopPropagation()"
+  >
+    <div
+      class="notification-content"
+      [class]="getNotificationClass()"
+    >
+      <div class="notification-icon" *ngIf="config.showIcon !== false">
+        {{ getIcon() }}
+      </div>
+
+      <div class="notification-message">
+        {{ config.message }}
+      </div>
+
+      <button
+        class="notification-close"
+        (click)="close()"
+        aria-label="Fermer"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>

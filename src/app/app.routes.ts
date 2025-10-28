@@ -6,6 +6,9 @@ import {authResolver} from './core/resolvers/auth.resolver';
 import {RolesManagementComponent} from './features/admin/pages/roles-management/roles-management.component';
 import {ProduitsListComponent} from './features/admin/pages/produits-list/produits-list.component';
 import {ProduitFormComponent} from './features/admin/pages/produit-form/produit-form.component';
+import {InstancesListComponent} from './features/admin/pages/instances-list/instances-list.component';
+import {InstanceFormComponent} from './features/admin/pages/instance-form/instance-form.component';
+import {InstanceDetailComponent} from './features/admin/pages/instance-detail/instance-detail.component';
 
 export const routes: Routes = [
 
@@ -111,6 +114,23 @@ export const routes: Routes = [
         path: 'produits/edit/:id',
         component: ProduitFormComponent,
         data: { roles: ['ADMIN', 'EMPLOYE'] }
+      },
+      // Routes de gestion des instances
+      {
+        path: 'instances',
+        component: InstancesListComponent,
+      },
+      {
+        path: 'instances/new',
+        component: InstanceFormComponent,
+      },
+      {
+        path: 'instances/edit/:id',
+        component: InstanceFormComponent,
+      },
+      {
+        path: 'instances/:id',
+        component: InstanceDetailComponent,
       }
       ]
   },

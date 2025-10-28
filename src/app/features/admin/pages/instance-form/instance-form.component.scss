@@ -1,0 +1,399 @@
+// src/app/features/admin/pages/instance-form/instance-form.component.scss
+
+.instance-form-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+// ========== EN-TÊTE ==========
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+  }
+}
+
+// ========== TOGGLE MODE CRÉATION ==========
+.creation-mode-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  .toggle-btn {
+    flex: 1;
+    padding: 1rem 2rem;
+    border: none;
+    background: #ecf0f1;
+    color: #7f8c8d;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background: #d5d8dc;
+    }
+
+    &.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+  }
+}
+
+// ========== CARTE FORMULAIRE ==========
+.form-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+// ========== GROUPES DE FORMULAIRE ==========
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+
+    &.required::after {
+      content: ' *';
+      color: #e74c3c;
+    }
+
+    small {
+      font-weight: 400;
+      color: #7f8c8d;
+      margin-left: 0.5rem;
+    }
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    &.error {
+      border-color: #e74c3c;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+      }
+    }
+
+    &:disabled {
+      background-color: #f8f9fa;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  select.form-control {
+    cursor: pointer;
+  }
+
+  .error-message {
+    display: block;
+    margin-top: 0.5rem;
+    color: #e74c3c;
+    font-size: 0.875rem;
+  }
+
+  .help-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.875rem;
+  }
+}
+
+// ========== INFORMATIONS DU PRODUIT ==========
+.product-info {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #667eea;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.25rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .info-item {
+    .label {
+      font-weight: 600;
+      color: #7f8c8d;
+      margin-right: 0.5rem;
+    }
+
+    .value {
+      color: #2c3e50;
+
+      code {
+        background: rgba(0,0,0,0.05);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+      }
+    }
+  }
+}
+
+// ========== CRÉATION EN LOT ==========
+.batch-creation {
+  h2 {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+
+  .description {
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+}
+
+.batch-preview {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #27ae60;
+
+  h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    color: #7f8c8d;
+  }
+
+  .preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+
+    code {
+      background: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      color: #2c3e50;
+      border: 1px solid #e0e0e0;
+    }
+
+    .more-indicator {
+      color: #7f8c8d;
+      font-style: italic;
+    }
+  }
+}
+
+// ========== ACTIONS DU FORMULAIRE ==========
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #ecf0f1;
+}
+
+// ========== BOUTONS ==========
+.btn {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-secondary {
+    background: #ecf0f1;
+    color: #2c3e50;
+
+    &:hover:not(:disabled) {
+      background: #d5d8dc;
+    }
+  }
+}
+
+// ========== ALERTES ==========
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+
+  &.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  &.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+}
+
+// ========== LOADING ==========
+.loading {
+  text-align: center;
+  padding: 3rem;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 1rem;
+    border: 4px solid #ecf0f1;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: #7f8c8d;
+    margin: 0;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ========== UTILITAIRES ==========
+.text-muted {
+  color: #7f8c8d;
+}
+
+.text-danger {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+code {
+  background: #ecf0f1;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 768px) {
+  .instance-form-container {
+    padding: 1rem;
+  }
+
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .form-card {
+    padding: 1.5rem;
+  }
+
+  .creation-mode-toggle {
+    .toggle-btn {
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .product-info {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .batch-preview {
+    .preview-list {
+      flex-direction: column;
+      align-items: stretch;
+
+      code {
+        text-align: center;
+      }
+    }
+  }
+}

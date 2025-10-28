@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import {TokenMonitorService} from './core/services/token-monitor.service';
 import {StorageService} from './core/services/storage.service';
 import {ConfirmationModalComponent} from './shared/confirmation-modal/confirmation-modal.component';
+import {NotificationWrapperComponent} from './shared/notification-wrapper/notification-wrapper.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmationModalComponent],
+  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.scss'

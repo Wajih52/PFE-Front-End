@@ -8,7 +8,7 @@ import { StatutInstance } from './produit.enums';
 export interface InstanceProduitRequest {
   idProduit: number;
   numeroSerie?: string;         // Auto-généré si non fourni
-  commentaire?: string;
+  observation?: string;
   statut?: StatutInstance;      // DISPONIBLE par défaut
 }
 
@@ -19,10 +19,10 @@ export interface InstanceProduitResponse {
   idInstance: number;
   numeroSerie: string;
   statut: StatutInstance;
-  commentaire?: string;
-  dateAjout: string;            // ISO 8601
-  dateModification?: string;    // ISO 8601
-  ajoutePar?: string;
+  observation?: string;
+  dateAcquisition: string;
+  dateModification?: string;
+  ajoutPar?: string;
   modifiePar?: string;
 
   // Informations du produit parent
@@ -41,11 +41,3 @@ export interface InstanceProduitResponse {
   clientReservation?: string;
 }
 
-/**
- * Demande de maintenance (MaintenanceRequestDto.java)
- */
-export interface MaintenanceRequest {
-  dateDebutMaintenance: string;  // ISO 8601
-  dateFinPrevue: string;         // ISO 8601
-  motif: string;
-}

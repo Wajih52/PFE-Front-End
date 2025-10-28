@@ -1,0 +1,261 @@
+<!-- src/app/features/admin/pages/instance-form/instance-form.component.html -->
+
+<app-menu-navigation></app-menu-navigation>
+
+<div class="instance-form-container">
+  <div class="form-header">
+    <h1>
+      {{ isEditMode ? '✏️ Modifier une instance' : '➕ Créer une instance' }}
+    </h1>
+    <button class="btn btn-secondary" (click)="onCancel()">
+      ← Retour
+    </button>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Formulaire principal -->
+  <div *ngIf="!isLoading" class="form-card">
+    <!-- Toggle création simple/lot -->
+    <div *ngIf="!isEditMode" class="creation-mode-toggle">
+      <button
+        class="toggle-btn"
+        [class.active]="!showBatchCreation"
+        (click)="showBatchCreation = false"
+      >
+        📝 Création simple
+      </button>
+      <button
+        class="toggle-btn"
+        [class.active]="showBatchCreation"
+        (click)="showBatchCreation = true"
+      >
+        📦 Création en lot
+      </button>
+    </div>
+
+    <!-- CRÉATION SIMPLE -->
+    <form *ngIf="!showBatchCreation" [formGroup]="instanceForm" (ngSubmit)="onSubmit()">
+      <!-- Sélection du produit -->
+      <div class="form-group">
+        <label for="idProduit" class="required">Produit *</label>
+        <select
+          id="idProduit"
+          formControlName="idProduit"
+          (change)="onProduitChange()"
+          class="form-control"
+          [class.error]="hasError('idProduit', 'required')"
+          [disabled]="isEditMode"
+        >
+          <option value="">-- Sélectionner un produit --</option>
+          <option *ngFor="let produit of produitsAvecReference" [value]="produit.idProduit">
+            {{ produit.nomProduit }} ({{ produit.codeProduit }})
+          </option>
+        </select>
+        <span *ngIf="hasError('idProduit', 'required')" class="error-message">
+          Le produit est obligatoire
+        </span>
+      </div>
+
+      <!-- Informations du produit sélectionné -->
+      <div *ngIf="selectedProduit" class="product-info">
+        <h3>📦 Informations du produit</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nom :</span>
+            <span class="value">{{ selectedProduit.nomProduit }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Code :</span>
+            <span class="value"><code>{{ selectedProduit.codeProduit }}</code></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Catégorie :</span>
+            <span class="value">{{ selectedProduit.categorieProduit }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Stock actuel :</span>
+            <span class="value" [class.text-danger]="selectedProduit.quantiteDisponible === 0">
+              {{ selectedProduit.quantiteDisponible }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Numéro de série -->
+      <div class="form-group">
+        <label for="numeroSerie">
+          Numéro de série
+          <small class="text-muted">Génération automatique de préfixe</small>
+        </label>
+        <input
+          type="text"
+          id="numeroSerie"
+          formControlName="numeroSerie"
+          placeholder="Préfixe"
+          [value]=selectedProduit?.codeProduit
+          class="form-control"
+          readonly
+        />
+        <small class="help-text">
+           un numéro sera généré automatiquement basé sur le Code du produit
+        </small>
+      </div>
+
+      <!-- Statut -->
+      <div class="form-group">
+        <label for="statut" class="required">Statut *</label>
+        <select
+          id="statut"
+          formControlName="statut"
+          class="form-control"
+          [class.error]="hasError('statut', 'required')"
+        >
+          <option *ngFor="let statut of statutsList" [value]="statut">
+            {{ StatutInstanceLabels[statut] }}
+          </option>
+        </select>
+        <span *ngIf="hasError('statut', 'required')" class="error-message">
+          Le statut est obligatoire
+        </span>
+      </div>
+
+      <!-- Commentaire -->
+      <div class="form-group">
+        <label for="observation">Commentaire / Observations</label>
+        <textarea
+          id="observation"
+          formControlName="observation"
+          rows="3"
+          placeholder="Notes ou observations sur cette instance..."
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || instanceForm.invalid">
+          {{ isSubmitting ? '⏳ Enregistrement...' : (isEditMode ? '✅ Modifier' : '➕ Créer') }}
+        </button>
+      </div>
+    </form>
+
+    <!-- CRÉATION EN LOT -->
+    <div *ngIf="showBatchCreation && !isEditMode" class="batch-creation">
+      <h2>📦 Création d'instances en lot</h2>
+      <p class="description">
+        Créez plusieurs instances d'un même produit en une seule opération.
+        Les numéros de série seront générés automatiquement avec une numérotation séquentielle.
+      </p>
+
+      <!-- Sélection du produit -->
+      <div class="form-group">
+        <label for="batchProduit" class="required">Produit *</label>
+        <select
+          id="batchProduit"
+          [(ngModel)]="instanceForm.value.idProduit"
+          (ngModelChange)="instanceForm.patchValue({ idProduit: $event }); onProduitChange()"
+          class="form-control"
+        >
+          <option value="">-- Sélectionner un produit --</option>
+          <option *ngFor="let produit of produitsAvecReference" [value]="produit.idProduit">
+            {{ produit.nomProduit }} ({{ produit.codeProduit }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Informations du produit -->
+      <div *ngIf="selectedProduit" class="product-info">
+        <h3>📦 {{ selectedProduit.nomProduit }}</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Stock actuel :</span>
+            <span class="value">{{ selectedProduit.quantiteDisponible }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Catégorie :</span>
+            <span class="value">{{ selectedProduit.categorieProduit }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantité -->
+      <div class="form-group">
+        <label for="batchQuantity" class="required">Quantité d'instances à créer *</label>
+        <input
+          type="number"
+          id="batchQuantity"
+          [(ngModel)]="batchQuantity"
+          min="1"
+          max="100"
+          class="form-control"
+        />
+        <small class="help-text">
+          Maximum 100 instances à la fois
+        </small>
+      </div>
+
+      <!-- Préfixe du numéro de série -->
+      <div class="form-group">
+        <label for="batchPrefix">Préfixe du numéro de série</label>
+        <input
+          type="text"
+          id="batchPrefix"
+          [value]=selectedProduit?.codeProduit
+          placeholder="Ce Champ est géneré automatiquement "
+          class="form-control"
+          readonly
+        />
+        <small class="help-text">
+          Exemple: avec le préfixe de code produit {{selectedProduit?.codeProduit}},
+          les numéros seront: {{selectedProduit?.codeProduit}}-0001, {{selectedProduit?.codeProduit}}-0002, etc.
+        </small>
+      </div>
+
+      <!-- Aperçu -->
+      <div *ngIf="selectedProduit && batchQuantity > 0" class="batch-preview">
+        <h4>📋 Aperçu de la création</h4>
+        <p>
+          <strong>{{ batchQuantity }}</strong> instance(s) du produit
+          <strong>{{ selectedProduit.nomProduit }}</strong> seront créées avec les numéros de série suivants :
+        </p>
+        <div class="preview-list">
+          <code *ngFor="let i of [].constructor(Math.min(batchQuantity, 5)); let idx = index">
+            {{ selectedProduit.codeProduit }}-{{ (idx + 1).toString().padStart(4, '0') }}
+          </code>
+          <span *ngIf="batchQuantity > 5" class="more-indicator">
+            ... et {{ batchQuantity - 5 }} autres
+          </span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+          Annuler
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onBatchCreate()"
+          [disabled]="isSubmitting || !selectedProduit || batchQuantity < 1"
+        >
+          {{ isSubmitting ? '⏳ Création...' : '📦 Créer ' + batchQuantity + ' instance(s)' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -52,6 +52,17 @@ export class ProduitService {
    */
   supprimerProduit(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`);
+
+  }
+
+  /**
+   * Supprimer (De la base de données) un produit
+   * DELETE /api/produits/{id}
+   * @requires ROLE: ADMIN
+   */
+  supprimerProduitDeBase(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}/base`);
+
   }
 
   /**

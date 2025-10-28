@@ -5,7 +5,7 @@
   <div class="page-header">
     <div class="header-content">
       <h1>{{ pageTitle }}</h1>
-      <p class="subtitle">Sprint 3 - Gestion des produits et du stock</p>
+      <p class="subtitle">Gestion des produits et du stock</p>
     </div>
     <button class="btn btn-secondary" (click)="onCancel()">
       ← Retour à la liste
@@ -113,7 +113,7 @@
             <span *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.AVEC_REFERENCE">
               ℹ️ Produit avec numéros de série individuels (ex: projecteur, caméra)
             </span>
-            <span *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.SANS_REFERENCE">
+            <span *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.EN_QUANTITE">
               ℹ️ Produit en quantité globale (ex: chaises, assiettes)
             </span>
           </div>
@@ -124,7 +124,7 @@
 
         <!-- Quantité initiale -->
         <div class="form-group">
-          <label for="quantiteInitial" [class.required]="produitForm.get('typeProduit')?.value === TypeProduit.SANS_REFERENCE">
+          <label for="quantiteInitial" [class.required]="produitForm.get('typeProduit')?.value === TypeProduit.EN_QUANTITE">
             Quantité initiale
           </label>
           <input
@@ -189,7 +189,11 @@
             formControlName="maintenanceRequise"
           />
           <span>Ce produit nécessite une maintenance régulière</span>
+
         </label>
+        <div class="help-text">
+          ℹ️géré automatiquement pour les produits de réference
+        </div>
       </div>
     </div>
 

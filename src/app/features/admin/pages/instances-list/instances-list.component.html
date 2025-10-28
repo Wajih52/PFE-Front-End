@@ -1,0 +1,396 @@
+<!-- src/app/features/admin/pages/instances-list/instances-list.component.html -->
+
+<app-menu-navigation></app-menu-navigation>
+
+<div class="instances-container">
+  <!-- En-tête -->
+  <div class="header">
+    <div class="header-content">
+      <h1>
+        🔖 Gestion des Instances
+        <span *ngIf="nomProduitFilter" class="product-filter-badge">
+          {{ nomProduitFilter }}
+        </span>
+      </h1>
+      <div class="header-actions">
+        <button *ngIf="idProduitFilter" class="btn btn-secondary" (click)="goToProducts()">
+          ← Retour aux produits
+        </button>
+        <button class="btn btn-primary" (click)="goToCreate()">
+          ➕ Nouvelle Instance
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-cards">
+    <div class="stat-card stat-total">
+      <div class="stat-icon">📦</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Total instances</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-disponible">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.disponibles }}</div>
+        <div class="stat-label">Disponibles</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-reserve">
+      <div class="stat-icon">🔒</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.reserves }}</div>
+        <div class="stat-label">Réservées</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-maintenance">
+      <div class="stat-icon">🔧</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.enMaintenance }}</div>
+        <div class="stat-label">En maintenance</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-hors-service">
+      <div class="stat-icon">❌</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.horsService }}</div>
+        <div class="stat-label">Hors service</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="filters-section">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="🔍 Rechercher par numéro de série, produit..."
+        class="form-control"
+      />
+    </div>
+
+    <div class="filters">
+      <select
+        [(ngModel)]="filterStatut"
+        (ngModelChange)="applyFilters()"
+        class="form-select"
+      >
+        <option value="">Tous les statuts</option>
+        <option *ngFor="let statut of statutsList" [value]="statut">
+          {{ StatutInstanceLabels[statut] }}
+        </option>
+      </select>
+
+      <input
+        type="text"
+        [(ngModel)]="filterProduit"
+        (ngModelChange)="applyFilters()"
+        placeholder="Filtrer par produit..."
+        class="form-control"
+      />
+
+      <button class="btn btn-secondary" (click)="resetFilters()">
+        🔄 Réinitialiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Résultats -->
+  <div class="results-info">
+    <p>
+      <strong>{{ filteredInstances.length }}</strong> instance(s) trouvée(s)
+      <span *ngIf="filteredInstances.length !== allInstances.length">
+        sur {{ allInstances.length }} au total
+      </span>
+    </p>
+    <div class="pagination-controls">
+      <label>
+        Afficher
+        <select [(ngModel)]="itemsPerPage" (ngModelChange)="onItemsPerPageChange()" class="form-select-sm">
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+        par page
+      </label>
+    </div>
+  </div>
+
+  <!-- Tableau des instances -->
+  <div class="table-container">
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement des instances...</p>
+    </div>
+
+    <table *ngIf="!isLoading" class="table">
+      <thead>
+      <tr>
+        <th (click)="sortBy('numeroSerie')" class="sortable">
+          Numéro de série
+          <span *ngIf="sortColumn === 'numeroSerie'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th (click)="sortBy('nomProduit')" class="sortable">
+          Produit
+          <span *ngIf="sortColumn === 'nomProduit'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th (click)="sortBy('statut')" class="sortable">
+          Statut
+          <span *ngIf="sortColumn === 'statut'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th>Commentaire</th>
+        <th (click)="sortBy('dateAcquisition')" class="sortable">
+          Date d'ajout
+          <span *ngIf="sortColumn === 'dateAcquisition'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+        </th>
+        <th>Maintenance</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let instance of paginatedInstances" (click)="goToDetails(instance)" class="clickable-row">
+        <td>
+          <code class="numero-serie">{{ instance.numeroSerie }}</code>
+        </td>
+        <td>
+          <strong>{{ instance.nomProduit }}</strong>
+          <br>
+          <small class="text-muted">{{ instance.categorieProduit }}</small>
+        </td>
+        <td>
+            <span class="status-badge" [ngClass]="getStatutClass(instance.statut)">
+              {{ StatutInstanceLabels[instance.statut] }}
+            </span>
+        </td>
+        <td>
+          <small *ngIf="instance.observation" class="text-muted">
+            {{ instance.observation | slice:0:30 }}{{ instance.observation.length > 30 ? '...' : '' }}
+          </small>
+          <span *ngIf="!instance.observation" class="text-muted">-</span>
+        </td>
+        <td>
+          {{ instance.dateAcquisition | date:'dd/MM/yyyy' }}
+          <br>
+          <small class="text-muted">par <strong>{{ instance.ajoutPar }}</strong></small>
+        </td>
+        <td>
+          <div *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE" class="maintenance-info">
+            <span class="maintenance-badge">🔧 En maintenance</span>
+            <small *ngIf="instance.dateFinPrevueMaintenance">
+              Jusqu'au {{ instance.dateFinPrevueMaintenance | date:'dd/MM/yyyy' }}
+            </small>
+          </div>
+          <span *ngIf="instance.statut !== StatutInstance.EN_MAINTENANCE" class="text-muted">-</span>
+        </td>
+        <td (click)="$event.stopPropagation()" class="actions-cell">
+          <div class="action-buttons">
+            <!-- Menu déroulant pour changement de statut -->
+            <div class="dropdown">
+              <button class="btn btn-sm btn-secondary dropdown-toggle">
+                🔄 Statut
+              </button>
+              <div class="dropdown-menu">
+                <button
+                  *ngFor="let statut of statutsFiltresDropdown"
+                  [disabled]="statut === instance.statut"
+                  (click)="changerStatut(instance, statut)"
+                  class="dropdown-item"
+                >
+                  {{ StatutInstanceLabels[statut] }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Bouton maintenance -->
+            <button
+              *ngIf="instance.statut === StatutInstance.DISPONIBLE"
+              class="btn btn-sm btn-warning"
+              (click)="openMaintenanceModal(instance)"
+              title="Envoyer en maintenance"
+            >
+              🔧
+            </button>
+
+            <!-- Bouton retour de maintenance -->
+            <button
+              *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE"
+              class="btn btn-sm btn-success"
+              (click)="openRetourMaintenanceModal(instance)"
+              title="Retour de maintenance"
+            >
+              ✅
+            </button>
+
+            <!-- Bouton éditer -->
+            <button
+              class="btn btn-sm btn-primary"
+              (click)="goToEdit(instance)"
+              title="Modifier"
+            >
+              ✏️
+            </button>
+
+            <!-- Bouton supprimer -->
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deleteInstance(instance)"
+              title="Supprimer"
+            >
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngIf="paginatedInstances.length === 0">
+        <td colspan="7" class="no-data">
+          <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <p>Aucune instance trouvée</p>
+            <button class="btn btn-primary" (click)="goToCreate()">
+              ➕ Créer la première instance
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="filteredInstances.length > 0" class="pagination">
+    <button
+      class="btn btn-sm btn-secondary"
+      [disabled]="currentPage === 1"
+      (click)="previousPage()"
+    >
+      ← Précédent
+    </button>
+
+    <div class="page-numbers">
+      <button
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        class="btn btn-sm"
+        [ngClass]="{'btn-primary': currentPage === i + 1, 'btn-secondary': currentPage !== i + 1}"
+        (click)="goToPage(i + 1)"
+      >
+        {{ i + 1 }}
+      </button>
+    </div>
+
+    <button
+      class="btn btn-sm btn-secondary"
+      [disabled]="currentPage === totalPages"
+      (click)="nextPage()"
+    >
+      Suivant →
+    </button>
+  </div>
+</div>
+
+<!-- Modal de maintenance -->
+<div *ngIf="showMaintenanceModal" class="modal-overlay" (click)="closeMaintenanceModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>🔧 Envoyer en maintenance</h3>
+      <button class="close-btn" (click)="closeMaintenanceModal()">✖</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Instance :</strong> {{ instanceForMaintenance?.numeroSerie }}</p>
+      <p><strong>Produit :</strong> {{ instanceForMaintenance?.nomProduit }}</p>
+
+      <form #maintenanceForm="ngForm">
+        <div class="form-group">
+          <label for="motif">Motif de la maintenance *</label>
+          <textarea
+            id="motif"
+            name="motif"
+            #motif="ngModel"
+            [(ngModel)]="maintenanceData.motif"
+            required
+            rows="3"
+            class="form-control"
+            placeholder="Décrivez la raison de la maintenance..."
+          ></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeMaintenanceModal()">
+        Annuler
+      </button>
+      <button
+        class="btn btn-warning"
+        [disabled]="!maintenanceForm.valid"
+        (click)="envoyerEnMaintenance(maintenanceData.motif)"
+      >
+        🔧 Envoyer en maintenance
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Retour De maintenance -->
+<div *ngIf="showRetourMaintenanceModal" class="modal-overlay" (click)="closeRetourMaintenanceModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>🔧✅ Retour De la maintenance</h3>
+      <button class="close-btn" (click)="closeRetourMaintenanceModal()">✖</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Instance :</strong> {{ instanceForRetourMaintenance?.numeroSerie }}</p>
+      <p><strong>Produit :</strong> {{ instanceForRetourMaintenance?.nomProduit }}</p>
+
+      <form #maintenanceForm="ngForm">
+        <div class="form-group">
+            <label for="dateProchain">Date de Prochain Maintenance prévue *</label>
+            <input
+              type="date"
+              id="dateProchain"
+              name="dateProchain"
+              #dateProchain="ngModel"
+              [(ngModel)]="retourMaintenanceData.dateProchaineMaintenance"
+              required
+              class="form-control"
+            />
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeMaintenanceModal()">
+        Annuler
+      </button>
+      <button
+        class="btn btn-warning"
+        [disabled]="!maintenanceForm.valid"
+        (click)="retourDeMaintenance()"
+      >
+        ✅ Retour De la maintenance
+      </button>
+    </div>
+  </div>
+</div>
+

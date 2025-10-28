@@ -176,7 +176,8 @@
             </span>
         </td>
         <td>
-            <span class="badge" [class.badge-info]="produit.typeProduit === TypeProduit.AVEC_REFERENCE">
+            <span class="badge" [class.badge-info]="produit.typeProduit === TypeProduit.AVEC_REFERENCE"
+                  [class.badge-info-2]="produit.typeProduit === TypeProduit.EN_QUANTITE">
               {{ TypeProduitLabels[produit.typeProduit] }}
             </span>
         </td>
@@ -216,7 +217,7 @@
             <button
               *ngIf="produit.typeProduit === TypeProduit.AVEC_REFERENCE"
               class="btn btn-sm btn-secondary"
-              (click)="goToInstances(produit.idProduit)"
+              (click)="goToInstances(produit)"
               title="Gérer les instances"
             >
               🔢
@@ -377,7 +378,7 @@
       <button
         *ngIf="selectedProduit.typeProduit === TypeProduit.AVEC_REFERENCE"
         class="btn btn-secondary"
-        (click)="goToInstances(selectedProduit.idProduit)"
+        (click)="goToInstances(selectedProduit)"
       >
         🔢 Gérer les instances
       </button>

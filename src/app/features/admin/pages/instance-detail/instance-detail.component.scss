@@ -1,0 +1,511 @@
+// src/app/features/admin/pages/instance-detail/instance-detail.component.scss
+
+.instance-detail-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// ========== EN-TÊTE ==========
+.header {
+  margin-bottom: 2rem;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// ========== GRILLE DE DÉTAILS ==========
+.detail-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+// ========== CARTE PRINCIPALE ==========
+.main-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+
+  .header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    h2 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: white;
+    }
+  }
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+// ========== SECTIONS D'INFORMATIONS ==========
+.info-section {
+  margin-bottom: 2.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #ecf0f1;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .label {
+    font-weight: 600;
+    color: #7f8c8d;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .value {
+    color: #2c3e50;
+    font-size: 1rem;
+
+    code {
+      background: #ecf0f1;
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// ========== CARTE PRODUIT ==========
+.product-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid #667eea;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+
+  .product-info {
+    h4 {
+      margin: 0 0 0.5rem 0;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .category {
+      margin: 0;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+  }
+
+  .btn-link {
+    background: none;
+    border: none;
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #764ba2;
+    }
+  }
+}
+
+// ========== BOÎTE DE COMMENTAIRE ==========
+.comment-box {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: #2c3e50;
+  line-height: 1.6;
+  border-left: 4px solid #3498db;
+}
+
+// ========== CARTE DE MAINTENANCE ==========
+.maintenance-card {
+  background: #fff3cd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #f39c12;
+
+  .maintenance-motif {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+}
+
+// ========== CARTE DE RÉSERVATION ==========
+.reservation-card {
+  background: #d1ecf1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #17a2b8;
+}
+
+// ========== CARTE D'ACTIONS ==========
+.actions-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  padding: 2rem;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+
+  > h3 {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #ecf0f1;
+  }
+}
+
+.action-section {
+  margin-bottom: 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    color: #7f8c8d;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 1rem 0;
+  }
+
+  &.danger-zone {
+    background: #fff5f5;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #fee;
+
+    h4 {
+      color: #e74c3c;
+    }
+  }
+}
+
+.status-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .btn-status {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f8f9fa;
+    }
+
+    &:not(:disabled):hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    &.status-disponible:not(:disabled) {
+      border-color: #27ae60;
+      color: #27ae60;
+      &:hover { background: #d4edda; }
+    }
+
+    &.status-reserve:not(:disabled) {
+      border-color: #f39c12;
+      color: #f39c12;
+      &:hover { background: #fff3cd; }
+    }
+
+    &.status-maintenance:not(:disabled) {
+      border-color: #e74c3c;
+      color: #e74c3c;
+      &:hover { background: #f8d7da; }
+    }
+
+    &.status-hors-service:not(:disabled) {
+      border-color: #95a5a6;
+      color: #95a5a6;
+      &:hover { background: #ecf0f1; }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// ========== BADGES DE STATUT ==========
+.status-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.status-disponible {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  &.status-reserve {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  &.status-livraison {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  &.status-utilisation {
+    background: #cce5ff;
+    color: #004085;
+  }
+
+  &.status-retour {
+    background: #e2e3e5;
+    color: #383d41;
+  }
+
+  &.status-maintenance {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  &.status-hors-service {
+    background: #f5c6cb;
+    color: #721c24;
+  }
+
+  &.status-perdu {
+    background: #343a40;
+    color: white;
+  }
+}
+
+// ========== BOUTONS ==========
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+  }
+
+  &.btn-secondary {
+    background: #ecf0f1;
+    color: #2c3e50;
+
+    &:hover:not(:disabled) {
+      background: #d5d8dc;
+    }
+  }
+
+  &.btn-danger {
+    background: #e74c3c;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+  }
+
+  &.btn-block {
+    width: 100%;
+  }
+}
+
+// ========== ALERTES ==========
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+
+  &.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+}
+
+// ========== LOADING ==========
+.loading {
+  text-align: center;
+  padding: 3rem;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 1rem;
+    border: 4px solid #ecf0f1;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: #7f8c8d;
+    margin: 0;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 1024px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .instance-detail-container {
+    padding: 1rem;
+  }
+
+  .header {
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .card-header {
+    padding: 1.5rem;
+
+    .header-info {
+      flex-direction: column;
+      align-items: flex-start;
+
+      h2 {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

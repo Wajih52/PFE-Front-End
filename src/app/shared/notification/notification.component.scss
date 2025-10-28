@@ -1,0 +1,168 @@
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.notification-container {
+  transform: translateY(-100px) scale(0.8);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  &.notification-visible {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  &.notification-closing {
+    transform: translateY(-100px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  border: 2px solid;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 500px;
+  position: relative;
+  backdrop-filter: blur(10px);
+  animation: pulse 0.6s ease-in-out;
+
+  // Variantes de couleur
+  &.notification-success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+    border-color: #b1dfbb;
+  }
+
+  &.notification-error {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+    border-color: #f1b0b7;
+  }
+
+  &.notification-warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+    border-color: #ffdf7e;
+  }
+
+  &.notification-info {
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    color: #0c5460;
+    border-color: #abdde5;
+  }
+}
+
+.notification-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  animation: bounce 1s ease-in-out;
+}
+
+.notification-message {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4;
+  flex: 1;
+  text-align: center;
+}
+
+.notification-close {
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+  }
+}
+
+// Animations CSS
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .notification-content {
+    margin: 1rem;
+    padding: 1rem 1.5rem;
+    min-width: auto;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .notification-message {
+    font-size: 1rem;
+  }
+
+  .notification-icon {
+    font-size: 1.5rem;
+  }
+
+  .notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}

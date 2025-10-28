@@ -1,0 +1,197 @@
+<!-- src/app/features/admin/pages/instance-detail/instance-detail.component.html -->
+
+<app-menu-navigation></app-menu-navigation>
+
+<div class="instance-detail-container">
+  <!-- En-tête -->
+  <div class="header">
+    <div class="header-content">
+      <h1>🔖 Détails de l'instance</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="goBack()">
+          ← Retour
+        </button>
+        <button *ngIf="instance" class="btn btn-primary" (click)="goToEdit()">
+          ✏️ Modifier
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <!-- Contenu principal -->
+  <div *ngIf="!isLoading && instance" class="detail-grid">
+    <!-- Carte principale -->
+    <div class="main-card">
+      <div class="card-header">
+        <div class="header-info">
+          <h2>{{ instance.numeroSerie }}</h2>
+          <span class="status-badge" [ngClass]="getStatutClass(instance.statut)">
+            {{ StatutInstanceLabels[instance.statut] }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Informations principales -->
+        <section class="info-section">
+          <h3>📦 Informations générales</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Numéro de série</span>
+              <span class="value">
+                <code>{{ instance.numeroSerie }}</code>
+              </span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">Statut</span>
+              <span class="value">
+                <span class="status-badge" [ngClass]="getStatutClass(instance.statut)">
+                  {{ StatutInstanceLabels[instance.statut] }}
+                </span>
+              </span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">Date d'ajout</span>
+              <span class="value">{{ formatDate(instance.dateAcquisition) }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="instance.dateModification">
+              <span class="label">Dernière modification</span>
+              <span class="value">{{ formatDateTime(instance.dateModification) }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="instance.ajoutPar">
+              <span class="label">Ajouté par</span>
+              <span class="value">{{ instance.ajoutPar }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="instance.modifiePar">
+              <span class="label">Modifié par</span>
+              <span class="value">{{ instance.modifiePar }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Produit parent -->
+        <section class="info-section">
+          <h3>🏷️ Produit parent</h3>
+          <div class="product-card" (click)="goToProduct()">
+            <div class="product-info">
+              <h4>{{ instance.nomProduit }}</h4>
+              <p class="category">{{ instance.categorieProduit }}</p>
+            </div>
+            <button class="btn-link">Voir le produit →</button>
+          </div>
+        </section>
+
+        <!-- Commentaires -->
+        <section class="info-section" *ngIf="instance.observation">
+          <h3>💬 Commentaire</h3>
+          <div class="comment-box">
+            {{ instance.observation }}
+          </div>
+        </section>
+
+        <!-- Informations de maintenance -->
+        <section class="info-section" *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE">
+          <h3>🔧 Maintenance en cours</h3>
+          <div class="maintenance-card">
+            <div class="info-grid">
+              <div class="info-item" *ngIf="instance.dateDebutMaintenance">
+                <span class="label">Date de début</span>
+                <span class="value">{{ formatDate(instance.dateDebutMaintenance) }}</span>
+              </div>
+              <div class="info-item" *ngIf="instance.dateFinPrevueMaintenance">
+                <span class="label">Date de fin prévue</span>
+                <span class="value">{{ formatDate(instance.dateFinPrevueMaintenance) }}</span>
+              </div>
+            </div>
+            <div class="info-item" *ngIf="instance.motifMaintenance">
+              <span class="label">Motif</span>
+              <div class="maintenance-motif">{{ instance.motifMaintenance }}</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Informations de réservation -->
+        <section class="info-section" *ngIf="instance.idLigneReservation">
+          <h3>📅 Réservation en cours</h3>
+          <div class="reservation-card">
+            <div class="info-grid">
+              <div class="info-item" *ngIf="instance.numeroReservation">
+                <span class="label">Numéro de réservation</span>
+                <span class="value">
+                  <code>{{ instance.numeroReservation }}</code>
+                </span>
+              </div>
+              <div class="info-item" *ngIf="instance.clientReservation">
+                <span class="label">Client</span>
+                <span class="value">{{ instance.clientReservation }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Carte d'actions -->
+    <div class="actions-card">
+      <h3>⚙️ Actions</h3>
+
+      <!-- Changement de statut -->
+      <div class="action-section">
+        <h4>Changer le statut</h4>
+        <div class="status-buttons">
+          <button
+            *ngFor="let statut of [
+              StatutInstance.DISPONIBLE,
+              StatutInstance.RESERVE,
+              StatutInstance.EN_MAINTENANCE,
+              StatutInstance.HORS_SERVICE
+            ]"
+            [disabled]="statut === instance.statut"
+            (click)="changerStatut(statut)"
+            class="btn btn-status"
+            [ngClass]="getStatutClass(statut)"
+          >
+            {{ StatutInstanceLabels[statut] }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions principales -->
+      <div class="action-section">
+        <h4>Actions principales</h4>
+        <div class="action-buttons">
+          <button class="btn btn-primary btn-block" (click)="goToEdit()">
+            ✏️ Modifier l'instance
+          </button>
+          <button class="btn btn-secondary btn-block" (click)="goToProduct()">
+            🏷️ Voir le produit
+          </button>
+        </div>
+      </div>
+
+      <!-- Zone danger -->
+      <div class="action-section danger-zone">
+        <h4>⚠️ Zone de danger</h4>
+        <button class="btn btn-danger btn-block" (click)="deleteInstance()">
+          🗑️ Supprimer l'instance
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

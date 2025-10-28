@@ -235,10 +235,14 @@ export class ProduitsListComponent implements OnInit {
   /**
    * Naviguer vers la gestion des instances
    */
-  goToInstances(id: number): void {
-    this.router.navigate(['/admin/produits', id, 'instances']);
+  goToInstances(produit: ProduitResponse): void {
+    this.router.navigate(['/admin/instances'], {
+      queryParams: {
+        idProduit: produit.idProduit,
+        nomProduit: produit.nomProduit
+      }
+    });
   }
-
   /**
    * Naviguer vers l'historique des mouvements
    */

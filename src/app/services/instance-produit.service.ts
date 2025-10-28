@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import {
   InstanceProduitRequest,
   InstanceProduitResponse,
-  MaintenanceRequest,
   StatutInstance
 } from '../core/models';
 
@@ -14,7 +13,6 @@ import {
  * Service de gestion des instances de produits
  * Communique avec le InstanceProduitController Spring Boot
  *
- * Sprint 3 : Gestion des produits et du stock
  * Concerne uniquement les produits AVEC_REFERENCE
  */
 @Injectable({
@@ -113,6 +111,16 @@ export class InstanceProduitService {
     return this.http.get<InstanceProduitResponse[]>(`${this.API_URL}/statut/${statut}`);
   }
 
+
+  /**
+   * Filtrer par statut
+   * GET /api/instances/statut/{statut}
+   * @requires ROLE: ADMIN, EMPLOYE
+   */
+  getInstances(): Observable<InstanceProduitResponse[]> {
+    return this.http.get<InstanceProduitResponse[]>(`${this.API_URL}/all`);
+  }
+
   /**
    * Instances d'une ligne de réservation
    * GET /api/instances/ligne-reservation/{idLigneReservation}
@@ -141,8 +149,9 @@ export class InstanceProduitService {
    * POST /api/instances/{id}/maintenance
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  envoyerEnMaintenance(id: number, maintenanceDto: MaintenanceRequest): Observable<InstanceProduitResponse> {
-    return this.http.post<InstanceProduitResponse>(`${this.API_URL}/${id}/maintenance`, maintenanceDto);
+  envoyerEnMaintenance(id: number, motif: string): Observable<InstanceProduitResponse> {
+    const params = new HttpParams().set('motif',motif)
+    return this.http.post<InstanceProduitResponse>(`${this.API_URL}/${id}/maintenance`, null,{params});
   }
 
   /**
@@ -150,8 +159,9 @@ export class InstanceProduitService {
    * POST /api/instances/{id}/retour-maintenance
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  retournerDeMaintenance(id: number): Observable<InstanceProduitResponse> {
-    return this.http.post<InstanceProduitResponse>(`${this.API_URL}/${id}/retour-maintenance`, null);
+  retournerDeMaintenance(id: number,dateProchainMaintenance:any): Observable<InstanceProduitResponse> {
+    const params = new HttpParams().set('dateProchainMaintenance', dateProchainMaintenance);
+    return this.http.post<InstanceProduitResponse>(`${this.API_URL}/${id}/maintenance/retour`, null,{params});
   }
 
   /**
