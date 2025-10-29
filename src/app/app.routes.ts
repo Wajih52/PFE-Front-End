@@ -9,6 +9,7 @@ import {ProduitFormComponent} from './features/admin/pages/produit-form/produit-
 import {InstancesListComponent} from './features/admin/pages/instances-list/instances-list.component';
 import {InstanceFormComponent} from './features/admin/pages/instance-form/instance-form.component';
 import {InstanceDetailComponent} from './features/admin/pages/instance-detail/instance-detail.component';
+import {HistoriqueMouvementComponent} from './features/admin/pages/historique-mouvement/historique-mouvement.component';
 
 export const routes: Routes = [
 
@@ -101,20 +102,25 @@ export const routes: Routes = [
       {
         path: 'produits',
         component: ProduitsListComponent,
-        data: { roles: ['ADMIN', 'EMPLOYE'] }
+        data: { roles: ['ADMIN', 'MANAGER'] }
       },
       // Création d'un produit
       {
         path: 'produits/create',
         component: ProduitFormComponent,
-        data: { roles: ['ADMIN', 'EMPLOYE'] }
+        data: { roles: ['ADMIN', 'MANAGER'] }
       },
       // Modification d'un produit
       {
         path: 'produits/edit/:id',
         component: ProduitFormComponent,
-        data: { roles: ['ADMIN', 'EMPLOYE'] }
-      },
+        data: { roles: ['ADMIN', 'MANAGER'] }
+      },{
+        path: 'produits/:id/historique',
+        component: HistoriqueMouvementComponent,
+        data: { roles: ['ADMIN', 'MANAGER'] }
+      }
+      ,
       // Routes de gestion des instances
       {
         path: 'instances',

@@ -225,7 +225,7 @@
 
             <!-- Bouton maintenance -->
             <button
-              *ngIf="instance.statut === StatutInstance.DISPONIBLE"
+              *ngIf="instance.statut === StatutInstance.DISPONIBLE||instance.statut=== StatutInstance.HORS_SERVICE"
               class="btn btn-sm btn-warning"
               (click)="openMaintenanceModal(instance)"
               title="Envoyer en maintenance"

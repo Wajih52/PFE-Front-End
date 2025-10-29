@@ -182,8 +182,8 @@
       </div>
 
       <!-- Maintenance requise -->
-      <div class="form-group">
-        <label class="checkbox-label">
+      <div class="form-group" *ngIf="produitForm.get('typeProduit')?.value === TypeProduit.EN_QUANTITE">
+        <label class="checkbox-label" >
           <input
             type="checkbox"
             formControlName="maintenanceRequise"
@@ -191,9 +191,6 @@
           <span>Ce produit nécessite une maintenance régulière</span>
 
         </label>
-        <div class="help-text">
-          ℹ️géré automatiquement pour les produits de réference
-        </div>
       </div>
     </div>
 

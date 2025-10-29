@@ -13,7 +13,7 @@ export interface MouvementStockResponse {
   quantiteAvant: number;
   quantiteApres: number;
   motif?: string;
-  username?: string;
+  effectuePar?: string;
 
   // Informations du produit
   idProduit: number;
@@ -23,4 +23,8 @@ export interface MouvementStockResponse {
   // Informations instance (si mouvement sur instance)
   idInstance?: number;
   numeroSerie?: string;
+  codeInstance?: string;
+
+  // Informations réservation
+  idReservation?: number;
 }

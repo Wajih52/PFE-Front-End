@@ -1,0 +1,231 @@
+<app-menu-navigation></app-menu-navigation>
+
+<div class="historique-container">
+  <!-- En-tête -->
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">
+      <span>←</span> Retour
+    </button>
+    <div class="header-content">
+      <h1>📊 Historique des mouvements</h1>
+      <div class="produit-info" *ngIf="produit">
+        <span class="code">{{ produit.codeProduit }}</span>
+        <span class="nom">{{ produit.nomProduit }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-content">
+        <div class="stat-label">Total mouvements</div>
+        <div class="stat-value">{{ stats.totalMouvements }}</div>
+      </div>
+    </div>
+    <div class="stat-card entree">
+      <div class="stat-icon">⬆️</div>
+      <div class="stat-content">
+        <div class="stat-label">Entrées</div>
+        <div class="stat-value">{{ stats.totalEntrees }}</div>
+      </div>
+    </div>
+    <div class="stat-card sortie">
+      <div class="stat-icon">⬇️</div>
+      <div class="stat-content">
+        <div class="stat-label">Sorties</div>
+        <div class="stat-value">{{ stats.totalSorties }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⏱️</div>
+      <div class="stat-content">
+        <div class="stat-label">Dernier mouvement</div>
+        <div class="stat-value-small" *ngIf="stats.dernierMouvement">
+          {{ formatDate(stats.dernierMouvement) }}
+        </div>
+        <div class="stat-value-small" *ngIf="!stats.dernierMouvement">
+          Aucun
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <h3>🔍 Filtres</h3>
+    <div class="filters-grid">
+      <div class="filter-item full-width">
+        <label>Recherche</label>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          placeholder="Motif, numéro de série, utilisateur..."
+        />
+      </div>
+
+      <div class="filter-item">
+        <label>Type de mouvement</label>
+        <select [(ngModel)]="filterType" (ngModelChange)="applyFilters()">
+          <option value="">Tous les types</option>
+          <option *ngFor="let type of typesList" [value]="type">
+            {{ getMouvementIcon(type) }} {{ TypeMouvementLabels[type] }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <label>Date de début</label>
+        <input
+          type="date"
+          [(ngModel)]="filterDateDebut"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="filter-item">
+        <label>Date de fin</label>
+        <input
+          type="date"
+          [(ngModel)]="filterDateFin"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="filter-item">
+        <label>Utilisateur</label>
+        <input
+          type="text"
+          [(ngModel)]="filterUtilisateur"
+          (ngModelChange)="applyFilters()"
+          placeholder="Nom d'utilisateur"
+        />
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-reset" (click)="resetFilters()">
+        🔄 Réinitialiser
+      </button>
+      <button class="btn-export" (click)="exportToCSV()">
+        📥 Exporter CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <!-- Loader -->
+  <div class="loader" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement de l'historique...</p>
+  </div>
+
+  <!-- Liste des mouvements -->
+  <div class="mouvements-section" *ngIf="!isLoading">
+    <div class="section-header">
+      <h3>📋 Mouvements ({{ filteredMouvements.length }})</h3>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredMouvements.length === 0">
+      <div class="empty-icon">📭</div>
+      <p>Aucun mouvement trouvé</p>
+      <button class="btn-reset" (click)="resetFilters()">Réinitialiser les filtres</button>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" *ngIf="filteredMouvements.length > 0">
+      <div
+        *ngFor="let mouvement of paginatedMouvements"
+        class="timeline-item"
+        [ngClass]="getMouvementClass(mouvement.typeMouvement)"
+      >
+        <div class="timeline-marker">
+          <span class="marker-icon">{{ getMouvementIcon(mouvement.typeMouvement) }}</span>
+        </div>
+
+        <div class="timeline-content">
+          <div class="content-header">
+            <div class="header-left">
+              <span class="type-badge">
+                {{ TypeMouvementLabels[mouvement.typeMouvement] }}
+              </span>
+              <span class="quantite">
+                <strong>Quantité:</strong> {{ mouvement.quantite }}
+              </span>
+            </div>
+            <div class="header-right">
+              <span class="date">{{ formatDate(mouvement.dateMouvement) }}</span>
+            </div>
+          </div>
+
+          <div class="content-details">
+            <div class="detail-row">
+              <span class="label">Stock:</span>
+              <span class="value">
+                {{ mouvement.quantiteAvant }}
+                <span class="arrow">→</span>
+                <strong>{{ mouvement.quantiteApres }}</strong>
+              </span>
+            </div>
+
+            <div class="detail-row" *ngIf="mouvement.motif">
+              <span class="label">Motif:</span>
+              <span class="value">{{ mouvement.motif }}</span>
+            </div>
+
+            <div class="detail-row" *ngIf="mouvement.effectuePar">
+              <span class="label">Par:</span>
+              <span class="value">👤 {{ mouvement.effectuePar }}</span>
+            </div>
+
+            <div class="detail-row" *ngIf="mouvement.numeroSerie">
+              <span class="label">Instance:</span>
+              <span class="value instance">🏷️ {{ mouvement.numeroSerie }}</span>
+            </div>
+
+            <div class="detail-row" *ngIf="mouvement.idReservation">
+              <span class="label">Réservation:</span>
+              <span class="value">#{{ mouvement.idReservation }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        class="page-btn"
+        [disabled]="currentPage === 1"
+        (click)="goToPage(currentPage - 1)"
+      >
+        ← Précédent
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          class="page-number"
+          [class.active]="currentPage === i + 1"
+          (click)="goToPage(i + 1)"
+        >
+          {{ i + 1 }}
+        </button>
+      </div>
+
+      <button
+        class="page-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="goToPage(currentPage + 1)"
+      >
+        Suivant →
+      </button>
+    </div>
+  </div>
+</div>

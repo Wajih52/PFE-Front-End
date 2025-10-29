@@ -193,6 +193,14 @@ export class ProduitService {
   // ============ HISTORIQUE DES MOUVEMENTS ============
 
   /**
+   * Obtenir l'historique complet des mouvements d'un produit
+   * GET /api/produits/{id}/historique
+   */
+  getHistoriqueMouvements(id: number): Observable<MouvementStockResponse[]> {
+    return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/historique`);
+  }
+
+  /**
    * Obtenir l'historique des mouvements d'un produit
    * GET /api/produits/{id}/mouvements
    * @requires ROLE: ADMIN, EMPLOYE
