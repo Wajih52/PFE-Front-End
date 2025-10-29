@@ -85,18 +85,6 @@
           </div>
         </section>
 
-        <!-- Produit parent -->
-        <section class="info-section">
-          <h3>🏷️ Produit parent</h3>
-          <div class="product-card" (click)="goToProduct()">
-            <div class="product-info">
-              <h4>{{ instance.nomProduit }}</h4>
-              <p class="category">{{ instance.categorieProduit }}</p>
-            </div>
-            <button class="btn-link">Voir le produit →</button>
-          </div>
-        </section>
-
         <!-- Commentaires -->
         <section class="info-section" *ngIf="instance.observation">
           <h3>💬 Commentaire</h3>
@@ -106,22 +94,24 @@
         </section>
 
         <!-- Informations de maintenance -->
-        <section class="info-section" *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE">
-          <h3>🔧 Maintenance en cours</h3>
+        <section class="info-section" *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE
+        ||instance.joursAvantMaintenance<5">
+          <h3>🔧 Informations Maintenance</h3>
           <div class="maintenance-card">
             <div class="info-grid">
-              <div class="info-item" *ngIf="instance.dateDebutMaintenance">
-                <span class="label">Date de début</span>
-                <span class="value">{{ formatDate(instance.dateDebutMaintenance) }}</span>
+              <div class="info-item" *ngIf="instance.dateDerniereMaintenance">
+                <span class="label">Date de Dernier Maintenance</span>
+                <span class="value">{{ formatDate(instance.dateDerniereMaintenance) }}</span>
               </div>
-              <div class="info-item" *ngIf="instance.dateFinPrevueMaintenance">
-                <span class="label">Date de fin prévue</span>
-                <span class="value">{{ formatDate(instance.dateFinPrevueMaintenance) }}</span>
+              <div class="info-item" *ngIf="instance.joursAvantMaintenance&&instance.statut===StatutInstance.DISPONIBLE">
+                <span class="label">Nombre de jours Restant pour la Prochaine Maintenance</span>
+                <span class="value">{{ (instance.joursAvantMaintenance) }}</span>
               </div>
             </div>
-            <div class="info-item" *ngIf="instance.motifMaintenance">
-              <span class="label">Motif</span>
-              <div class="maintenance-motif">{{ instance.motifMaintenance }}</div>
+            <br>
+            <div class="info-item" *ngIf="instance.motif&&instance.statut === StatutInstance.EN_MAINTENANCE">
+              <span class="label">Motif De la Derniére Maintenance</span>
+              <div class="maintenance-motif">{{ instance.motif }}</div>
             </div>
           </div>
         </section>
@@ -158,9 +148,9 @@
           <button
             *ngFor="let statut of [
               StatutInstance.DISPONIBLE,
-              StatutInstance.RESERVE,
-              StatutInstance.EN_MAINTENANCE,
+              StatutInstance.PERDU,
               StatutInstance.HORS_SERVICE
+
             ]"
             [disabled]="statut === instance.statut"
             (click)="changerStatut(statut)"
@@ -187,7 +177,7 @@
 
       <!-- Zone danger -->
       <div class="action-section danger-zone">
-        <h4>⚠️ Zone de danger</h4>
+        <h4>⚠️ Zone Critique</h4>
         <button class="btn btn-danger btn-block" (click)="deleteInstance()">
           🗑️ Supprimer l'instance
         </button>

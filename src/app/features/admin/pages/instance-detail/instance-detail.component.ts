@@ -100,7 +100,7 @@ export class InstanceDetailComponent implements OnInit {
    */
   goToProduct(): void {
     if (this.instance) {
-      this.router.navigate(['/admin/produits', this.instance.idProduit]);
+      this.router.navigate(['/admin/produits']);
     }
   }
 
@@ -129,7 +129,7 @@ export class InstanceDetailComponent implements OnInit {
           },
           error: (error) => {
             console.error('Erreur:', error);
-            this.notificationService.error('Erreur lors de la modification du statut');
+            this.notificationService.error(error.error?.message||'Erreur lors de la modification du statut');
           }
         });
       }
@@ -176,7 +176,8 @@ export class InstanceDetailComponent implements OnInit {
       [StatutInstance.EN_RETOUR]: 'status-retour',
       [StatutInstance.EN_MAINTENANCE]: 'status-maintenance',
       [StatutInstance.HORS_SERVICE]: 'status-hors-service',
-      [StatutInstance.PERDU]: 'status-perdu'
+      [StatutInstance.PERDU]: 'status-perdu',
+      [StatutInstance.EN_UTILISATION]:'status-utilisation'
     };
     return classes[statut] || '';
   }

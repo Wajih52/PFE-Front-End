@@ -120,7 +120,7 @@
           class="form-control"
           [class.error]="hasError('statut', 'required')"
         >
-          <option *ngFor="let statut of statutsList" [value]="statut">
+          <option *ngFor="let statut of statutsFiltres" [value]="statut">
             {{ StatutInstanceLabels[statut] }}
           </option>
         </select>
@@ -165,7 +165,7 @@
         <label for="batchProduit" class="required">Produit *</label>
         <select
           id="batchProduit"
-          [(ngModel)]="instanceForm.value.idProduit"
+          [(ngModel)]="batchIdProduit"
           (ngModelChange)="instanceForm.patchValue({ idProduit: $event }); onProduitChange()"
           class="form-control"
         >

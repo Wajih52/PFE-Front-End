@@ -27,6 +27,17 @@ export enum TypeProduit {
 }
 
 /**
+ * etatd des instances des produits
+ */
+export enum EtatPhysique {
+  NEUF='NEUF',               // État neuf
+  BON_ETAT='BON_ETAT',           // Bon état général
+  ETAT_MOYEN='ETAT_MOYEN',         // Quelques traces d'usure
+  USAGE='USAGE',              // Usé mais fonctionnel
+  ENDOMMAGE='ENDOMMAGE'       // Endommagé, nécessite réparation
+}
+
+/**
  * Statut d'une instance de produit
  */
 export enum StatutInstance {
@@ -36,7 +47,8 @@ export enum StatutInstance {
   EN_RETOUR = 'EN_RETOUR',
   EN_MAINTENANCE = 'EN_MAINTENANCE',
   HORS_SERVICE = 'HORS_SERVICE',
-  PERDU = 'PERDU'
+  PERDU = 'PERDU',
+  EN_UTILISATION = 'EN_UTILISATION'
 }
 
 /**
@@ -70,6 +82,13 @@ export const CategorieLabels: Record<Categorie, string> = {
   [Categorie.MATERIEL_RESTAURATION]: 'Materiel Restauration',
 };
 
+export const EtatPhysiqueLabels: Record<EtatPhysique, string> = {
+  [EtatPhysique.NEUF] : 'Neuf',
+  [EtatPhysique.BON_ETAT] : 'Bon Etat',
+  [EtatPhysique.ETAT_MOYEN] :'Etat Moyen',
+  [EtatPhysique.USAGE]: 'Usage',
+  [EtatPhysique.ENDOMMAGE]:'Endommagé'
+}
 export const TypeProduitLabels: Record<TypeProduit, string> = {
   [TypeProduit.AVEC_REFERENCE]: 'Avec Référence',
   [TypeProduit.EN_QUANTITE]: 'En Quantité'
@@ -78,11 +97,12 @@ export const TypeProduitLabels: Record<TypeProduit, string> = {
 export const StatutInstanceLabels: Record<StatutInstance, string> = {
   [StatutInstance.DISPONIBLE]: 'Disponible',
   [StatutInstance.RESERVE]: 'Réservé',
-  [StatutInstance.EN_LIVRAISON]: 'En livraison',
-  [StatutInstance.EN_RETOUR]: 'En retour',
-  [StatutInstance.EN_MAINTENANCE]: 'En maintenance',
-  [StatutInstance.HORS_SERVICE]: 'Hors service',
-  [StatutInstance.PERDU]: 'Perdu'
+  [StatutInstance.EN_LIVRAISON]: 'En Livraison',
+  [StatutInstance.EN_RETOUR]: 'En Retour',
+  [StatutInstance.EN_MAINTENANCE]: 'En Maintenance',
+  [StatutInstance.HORS_SERVICE]: 'Hors Service',
+  [StatutInstance.PERDU]: 'Perdu',
+  [StatutInstance.EN_UTILISATION]:'En Utilisation'
 };
 
 export const TypeMouvementLabels: Record<TypeMouvement, string> = {

@@ -178,7 +178,6 @@
         <td>
           <strong>{{ instance.nomProduit }}</strong>
           <br>
-          <small class="text-muted">{{ instance.categorieProduit }}</small>
         </td>
         <td>
             <span class="status-badge" [ngClass]="getStatutClass(instance.statut)">
@@ -199,8 +198,8 @@
         <td>
           <div *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE" class="maintenance-info">
             <span class="maintenance-badge">🔧 En maintenance</span>
-            <small *ngIf="instance.dateFinPrevueMaintenance">
-              Jusqu'au {{ instance.dateFinPrevueMaintenance | date:'dd/MM/yyyy' }}
+            <small *ngIf="instance.dateDerniereMaintenance">
+              Sortie Le : {{ instance.dateDerniereMaintenance | date:'dd/MM/yyyy' }}
             </small>
           </div>
           <span *ngIf="instance.statut !== StatutInstance.EN_MAINTENANCE" class="text-muted">-</span>

@@ -466,7 +466,8 @@ async  retourDeMaintenance(): Promise<void> {
       [StatutInstance.EN_RETOUR]: 'status-retour',
       [StatutInstance.EN_MAINTENANCE]: 'status-maintenance',
       [StatutInstance.HORS_SERVICE]: 'status-hors-service',
-      [StatutInstance.PERDU]: 'status-perdu'
+      [StatutInstance.PERDU]: 'status-perdu',
+      [StatutInstance.EN_UTILISATION]:'status-utilisation'
     };
     return classes[statut] || '';
   }

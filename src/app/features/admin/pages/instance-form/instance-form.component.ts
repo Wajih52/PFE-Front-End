@@ -56,13 +56,21 @@ export class InstanceFormComponent implements OnInit {
   StatutInstance = StatutInstance;
   StatutInstanceLabels = StatutInstanceLabels;
   statutsList = Object.values(StatutInstance);
+  // Liste filtrée
+  statutsFiltres = [
+    StatutInstance.DISPONIBLE,
+    StatutInstance.HORS_SERVICE,
+    StatutInstance.PERDU
+  ];
 
   // Options de création en lot
+  batchIdProduit: number | null = null;
   showBatchCreation = false;
   batchQuantity = 1;
   batchPrefix = 'Ce Champ est géneré automatiquement';
 
   ngOnInit(): void {
+
     this.initForm();
     this.loadProduitsAvecReference();
     this.checkEditMode();
@@ -83,6 +91,8 @@ export class InstanceFormComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['idProduit']) {
         this.instanceForm.patchValue({ idProduit: +params['idProduit'] });
+        this.batchIdProduit = +params['idProduit']
+        console.log(this.batchIdProduit);
         this.onProduitChange();
       }
     });
@@ -96,6 +106,7 @@ export class InstanceFormComponent implements OnInit {
       next: (produits) => {
         // Filtrer uniquement les produits avec référence
         this.produitsAvecReference = produits.filter(p => p.typeProduit === 'avecReference');
+        this.onProduitChange();
       },
       error: (error) => {
         console.error('Erreur lors du chargement des produits:', error);
@@ -150,8 +161,10 @@ export class InstanceFormComponent implements OnInit {
     const idProduit = this.instanceForm.get('idProduit')?.value;
     if (idProduit) {
       this.selectedProduit = this.produitsAvecReference.find(p => p.idProduit === +idProduit) || null;
+      this.batchIdProduit= +idProduit ;
     } else {
       this.selectedProduit = null;
+      this.batchIdProduit = null ;
     }
   }
 

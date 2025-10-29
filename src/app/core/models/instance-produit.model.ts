@@ -1,6 +1,6 @@
 // src/app/core/models/instance-produit.model.ts
 
-import { StatutInstance } from './produit.enums';
+import {EtatPhysique, StatutInstance} from './produit.enums';
 
 /**
  * Requête de création/modification d'instance (InstanceProduitRequestDto.java)
@@ -19,25 +19,39 @@ export interface InstanceProduitResponse {
   idInstance: number;
   numeroSerie: string;
   statut: StatutInstance;
+  etatPhysique:EtatPhysique;
+
+  // Informations du produit parent
+  idProduit: number;
+  nomProduit: string;
+  codeProduit: string;
+  // Informations de réservation (si réservé)
+  idLigneReservation?: number;
+  numeroReservation?: string;
+  clientReservation?: string;
   observation?: string;
   dateAcquisition: string;
   dateModification?: string;
   ajoutPar?: string;
   modifiePar?: string;
 
-  // Informations du produit parent
-  idProduit: number;
-  nomProduit: string;
-  categorieProduit: string;
 
   // Informations de maintenance (si en maintenance)
-  dateDebutMaintenance?: string;
-  dateFinPrevueMaintenance?: string;
-  motifMaintenance?: string;
+  motif?: string;
 
-  // Informations de réservation (si réservé)
-  idLigneReservation?: number;
-  numeroReservation?: string;
-  clientReservation?: string;
+  // Informations de la ligne de réservation (si réservée)
+
+ idReservation:number;
+ clientNom:string;
+ clientPrenom:string;
+
+  dateDerniereMaintenance:string
+  dateProchaineMaintenance:string;
+
+  // Indicateurs
+  disponible:string;
+   maintenanceRequise:string;
+  joursAvantMaintenance:number; // Nombre de jours avant la prochaine maintenance
+
 }
 
