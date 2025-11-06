@@ -37,7 +37,7 @@
 
 .btn-primary {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #605639 0%, #d5c727 100%);
+  background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -256,7 +256,8 @@
   font-size: 14px;
 
   thead {
-    background: linear-gradient(135deg, #605639 0%, #a2994b 100%);
+    background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
+    border-bottom: 2px solid #000000;
     color: white;
 
     th {

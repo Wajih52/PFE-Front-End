@@ -27,7 +27,7 @@
     gap: 0.5rem;
 
     .product-filter-badge {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
       color: white;
       padding: 0.25rem 0.75rem;
       border-radius: 20px;
@@ -92,6 +92,7 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     .stat-value, .stat-label { color: white; }
+
   }
 
   &.stat-disponible {
@@ -218,7 +219,8 @@
   border-collapse: collapse;
 
   thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
+    border-bottom: 2px solid #000000;
     color: white;
 
     th {
@@ -616,7 +618,7 @@
   }
 
   &.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
     color: white;
 
     &:hover:not(:disabled) {

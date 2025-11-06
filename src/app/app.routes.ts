@@ -3,14 +3,13 @@
 import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './core/guards/auth.guard';
 import {authResolver} from './core/resolvers/auth.resolver';
-import {RolesManagementComponent} from './features/admin/pages/roles-management/roles-management.component';
 import {ProduitsListComponent} from './features/admin/pages/produits-list/produits-list.component';
 import {ProduitFormComponent} from './features/admin/pages/produit-form/produit-form.component';
 import {InstancesListComponent} from './features/admin/pages/instances-list/instances-list.component';
 import {InstanceFormComponent} from './features/admin/pages/instance-form/instance-form.component';
 import {InstanceDetailComponent} from './features/admin/pages/instance-detail/instance-detail.component';
 import {HistoriqueMouvementComponent} from './features/admin/pages/historique-mouvement/historique-mouvement.component';
-import {HomeComponent} from './features/pages/home/home.component';
+
 
 export const routes: Routes = [
 
@@ -79,10 +78,11 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/access-denied/access-denied.component')
       .then(m => m.AccessDeniedComponent)
   },
-  {
+ /* {
     path: 'home',
-    component: HomeComponent
-  },
+    loadComponent: () => import('./features/pages/home/home.component')
+      .then(m => m.HomeComponent)
+  },*/
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard(['ADMIN'])],
@@ -149,98 +149,8 @@ export const routes: Routes = [
   // on charge une landing page qui vérifie l'auth et redirige intelligemment
   {
     path: '**',
-    loadComponent: () => import('./features/pages/home/home.component')
-      .then(m => m.HomeComponent)
+    loadComponent: () => import('./features/pages/landing/landing.component')
+      .then(m => m.LandingComponent)
   },
 
-
-  /*,
-      {
-        path: 'activation',
-        loadComponent: () => import('./features/auth/pages/activation/activation.component')
-          .then(m => m.ActivationComponent)
-      }
-    ]
-  },
-
-  // ==================== ROUTES PROTÉGÉES ====================
-
-  // Dashboard - Accessible à tous les utilisateurs connectés
-  {
-    path: 'dashboard',
-    canActivate: [authGuard], // ✅ Vérifie token + expiration
-    loadComponent: () => import('./features/pages/dashboard/dashboard.component')
-      .then(m => m.DashboardComponent)
-  },
-
-  // Profil utilisateur - Accessible à tous
-  {
-    path: 'profile',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/pages/profile/profile.component')
-      .then(m => m.ProfileComponent)
-  },
-
-  // ==================== ROUTES CLIENT ====================
-  {
-    path: 'client',
-    canActivate: [authGuard, roleGuard(['CLIENT'])], // ✅ Vérifie token + rôle CLIENT
-    children: [
-      {
-        path: 'reservations',
-        loadComponent: () => import('./features/client/pages/reservations/reservations.component')
-          .then(m => m.ReservationsComponent)
-      },
-      {
-        path: 'catalogue',
-        loadComponent: () => import('./features/client/pages/catalogue/catalogue.component')
-          .then(m => m.CatalogueComponent)
-      }
-    ]
-  },
-
-  // ==================== ROUTES ADMIN ====================
-  {
-    path: 'admin',
-    canActivate: [authGuard, roleGuard(['ADMIN'])], // ✅ Vérifie token + rôle ADMIN
-    children: [
-      {
-        path: 'users',
-        loadComponent: () => import('./features/admin/pages/users/users.component')
-          .then(m => m.UsersComponent)
-      },
-      {
-        path: 'statistics',
-        loadComponent: () => import('./features/admin/pages/statistics/statistics.component')
-          .then(m => m.StatisticsComponent)
-      }
-    ]
-  },
-
-  // ==================== ROUTES EMPLOYÉ ====================
-  {
-    path: 'employee',
-    canActivate: [authGuard, roleGuard(['EMPLOYE'])], // ✅ Vérifie token + rôle EMPLOYE
-    children: [
-      {
-        path: 'tasks',
-        loadComponent: () => import('./features/employee/pages/tasks/tasks.component')
-          .then(m => m.TasksComponent)
-      }
-    ]
-  },
-
-  // ==================== PAGES D'ERREUR ====================
-  {
-    path: 'access-denied',
-    loadComponent: () => import('./features/pages/access-denied/access-denied.component')
-      .then(m => m.AccessDeniedComponent)
-  },
-
-  // 404 - Page non trouvée
-  {
-    path: '**',
-    loadComponent: () => import('./features/pages/not-found/not-found.component')
-      .then(m => m.NotFoundComponent)
-  }*/
 ];

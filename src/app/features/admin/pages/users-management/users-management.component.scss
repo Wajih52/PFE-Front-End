@@ -37,7 +37,7 @@
 
 .btn-primary {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #605639 0%, #d5c727 100%);
+  background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -272,7 +272,7 @@
   font-size: 14px;
 
   thead {
-    background: linear-gradient(135deg, #605639 0%, #a2994b 100%);
+    background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
     color: white;
 
     th {
@@ -514,13 +514,13 @@
     transition: all 0.3s;
 
     &:hover {
-      border-color: #667eea;
-      color: #667eea;
+      border-color: #c8a882;
+      color: #000000;
     }
 
     &.active {
-      background: #667eea;
-      border-color: #667eea;
+      background: #c8a882;
+      border-color: #c8a882;
       color: white;
     }
   }
@@ -599,7 +599,7 @@
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #554e41 0%, #eacb66 100%);
+  background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
   padding: 40px 30px;
   display: flex;
   align-items: center;
@@ -846,7 +846,7 @@
 
 /* ✅ Header sticky */
 .modal-header-add {
-  background: linear-gradient(135deg, #554e41 0%, #eacb66 100%);
+  background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
   padding: 25px 30px;
   color: white;
   text-align: center;
@@ -968,7 +968,7 @@
 
     .btn-upload {
       padding: 10px 20px;
-      background: linear-gradient(135deg, #605639, #554e41);
+      background: linear-gradient(135deg, #000000, #000000);
       color: white;
       border: none;
       border-radius: 8px;

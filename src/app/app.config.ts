@@ -21,7 +21,6 @@ export const appConfig: ApplicationConfig = {
     // Hydratation côté client (SSR)
     provideClientHydration(withEventReplay()),
 
-
     // Configuration HTTP avec intercepteurs
     provideHttpClient(
       withFetch(),  // activer l'api fetch (requis pour SSR )
@@ -30,8 +29,6 @@ export const appConfig: ApplicationConfig = {
         errorInterceptor     // Gère les erreurs HTTP (401, 403, 500...)
       ])
     ),
-
-    provideAnimations()
 
   ]
 };
