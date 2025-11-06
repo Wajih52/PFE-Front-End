@@ -4,17 +4,19 @@ import {TokenMonitorService} from './core/services/token-monitor.service';
 import {StorageService} from './core/services/storage.service';
 import {ConfirmationModalComponent} from './shared/confirmation-modal/confirmation-modal.component';
 import {NotificationWrapperComponent} from './shared/notification-wrapper/notification-wrapper.component';
+import {NavbarComponent} from './shared/navbar/navbar.component';
+import {FooterComponent} from './shared/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent],
+  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent, NavbarComponent,FooterComponent],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit,OnDestroy{
 
-  title = 'Plateforme d\'une Agence Evenementielle';
+  title = 'elegant-hive';
 
   private tokenMonitor = inject(TokenMonitorService);
   private storage = inject(StorageService);

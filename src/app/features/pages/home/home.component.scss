@@ -1,0 +1,731 @@
+// src/app/features/pages/home/home.component.scss
+
+// ✅ Import du module color pour les fonctions modernes
+@use 'sass:color';
+
+// ========== VARIABLES ==========
+$primary-color: #C8A882; // Beige/Doré
+$dark-color: #1A1A1A;
+$light-bg: #F5F5F5;
+$white: #FFFFFF;
+$text-dark: #333333;
+$text-light: #666666;
+$border-radius: 12px;
+$transition: all 0.3s ease;
+
+// ========== MIXINS ==========
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin section-padding {
+  padding: 80px 0;
+
+  @media (max-width: 768px) {
+    padding: 50px 0;
+  }
+}
+
+// ========== GLOBAL ==========
+.home-container {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+// ========== ANIMATIONS ==========
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ========== HERO SECTION ==========
+.hero-section {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-carousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-images {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+
+  &.active {
+    opacity: 1;
+  }
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      135deg,
+      rgba(26, 26, 26, 0.8) 0%,
+      rgba(200, 168, 130, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: $white;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeInUp 1s ease;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 40px;
+  opacity: 0.95;
+  animation: fadeInUp 1s ease 0.3s both;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 1s ease 0.6s both;
+}
+
+// Carousel controls
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: $white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  @include flex-center;
+  cursor: pointer;
+  transition: $transition;
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    background: rgba(200, 168, 130, 0.8);
+    border-color: $primary-color;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &.prev {
+    left: 30px;
+  }
+
+  &.next {
+    right: 30px;
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+
+    &.prev {
+      left: 15px;
+    }
+
+    &.next {
+      right: 15px;
+    }
+  }
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: $transition;
+
+  &.active {
+    background: $primary-color;
+    width: 30px;
+    border-radius: 6px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  @include flex-center;
+  flex-direction: column;
+  color: $white;
+  cursor: pointer;
+  animation: float 3s ease-in-out infinite;
+
+  span {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+// ========== BUTTONS ==========
+.btn {
+  padding: 15px 35px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.btn-primary {
+  background: $primary-color;
+  color: $dark-color;
+
+  &:hover {
+    background: color.adjust($primary-color, $lightness: -10%);
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  color: $white;
+  border: 2px solid $white;
+
+  &:hover {
+    background: $white;
+    color: $dark-color;
+  }
+}
+
+.btn-primary-outline {
+  background: transparent;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+
+  &:hover {
+    background: $primary-color;
+    color: $white;
+  }
+}
+
+.btn-dark {
+  background: $dark-color;
+  color: $white;
+
+  &:hover {
+    background: color.adjust($dark-color, $lightness: 10%);
+  }
+}
+
+.btn-light {
+  background: $white;
+  color: $dark-color;
+
+  &:hover {
+    background: $light-bg;
+  }
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: $primary-color;
+  font-weight: 600;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    gap: 10px;
+    color: color.adjust($primary-color, $lightness: -15%);
+  }
+}
+
+// ========== STATS SECTION ==========
+.stats-section {
+  @include section-padding;
+  background: $primary-color;
+  color: $dark-color;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  text-align: center;
+}
+
+.stat-card {
+  animation: fadeInUp 0.8s ease both;
+}
+
+.stat-value {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.stat-label {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+// ========== SERVICES SECTION ==========
+.services-section {
+  @include section-padding;
+  background: $white;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin-bottom: 15px;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: $text-light;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.service-card {
+  background: $white;
+  border-radius: $border-radius;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: $transition;
+  animation: fadeInUp 0.6s ease both;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+
+    .service-image {
+      transform: scale(1.1);
+    }
+
+    .service-overlay {
+      background: rgba(200, 168, 130, 0.9);
+    }
+  }
+}
+
+.service-image {
+  position: relative;
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  transition: $transition;
+}
+
+.service-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26, 26, 26, 0.4);
+  @include flex-center;
+  transition: $transition;
+}
+
+.service-icon {
+  font-size: 4rem;
+}
+
+.service-content {
+  padding: 25px;
+}
+
+.service-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 10px;
+}
+
+.service-description {
+  color: $text-light;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.section-cta {
+  text-align: center;
+}
+
+// ========== WHY US SECTION ==========
+.why-us-section {
+  @include section-padding;
+  background: $light-bg;
+}
+
+.why-us-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.features-list {
+  margin: 30px 0;
+}
+
+.feature-item {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+
+  i {
+    width: 30px;
+    height: 30px;
+    background: $primary-color;
+    color: $white;
+    border-radius: 50%;
+    @include flex-center;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+  }
+
+  h4 {
+    font-size: 1.2rem;
+    color: $text-dark;
+    margin-bottom: 5px;
+  }
+
+  p {
+    color: $text-light;
+    line-height: 1.6;
+  }
+}
+
+.why-us-image {
+  img {
+    width: 100%;
+    border-radius: $border-radius;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ========== TESTIMONIALS SECTION ==========
+.testimonials-section {
+  @include section-padding;
+  background: $white;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.testimonial-card {
+  background: $white;
+  padding: 30px;
+  border-radius: $border-radius;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: $transition;
+  animation: fadeInUp 0.6s ease both;
+
+  &:hover {
+    border-color: $primary-color;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 15px;
+  color: $primary-color;
+  font-size: 1.2rem;
+}
+
+.testimonial-text {
+  color: $text-dark;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.author-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-name {
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 3px;
+}
+
+.author-desc {
+  font-size: 0.9rem;
+  color: $text-light;
+}
+
+// ========== CTA SECTION ==========
+.cta-section {
+  @include section-padding;
+  background: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -15%) 100%);
+  color: $dark-color;
+}
+
+.cta-content {
+  text-align: center;
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  line-height: 1.4;
+
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+  }
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+// ========== NEWSLETTER SECTION ==========
+.newsletter-section {
+  @include section-padding;
+  background: $dark-color;
+  color: $white;
+}
+
+.newsletter-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+
+  h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 30px;
+    opacity: 0.9;
+  }
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 15px;
+  max-width: 500px;
+  margin: 0 auto;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: $border-radius;
+  background: rgba(255, 255, 255, 0.1);
+  color: $white;
+  font-size: 1rem;
+  transition: $transition;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+// ========== ICONS (à remplacer par votre bibliothèque d'icônes) ==========
+.icon-arrow-right::before { content: '→'; }
+.icon-chevron-left::before { content: '‹'; }
+.icon-chevron-right::before { content: '›'; }
+.icon-chevron-down::before { content: '⌄'; }
+.icon-check::before { content: '✓'; }
+.icon-star-filled::before { content: '★'; }
+.icon-star-outline::before { content: '☆'; }

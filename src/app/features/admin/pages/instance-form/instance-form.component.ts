@@ -105,7 +105,7 @@ export class InstanceFormComponent implements OnInit {
     this.produitService.getAllProduits().subscribe({
       next: (produits) => {
         // Filtrer uniquement les produits avec référence
-        this.produitsAvecReference = produits.filter(p => p.typeProduit === 'avecReference');
+        this.produitsAvecReference = produits.filter(p => p.typeProduit === 'AVEC_REFERENCE');
         this.onProduitChange();
       },
       error: (error) => {

@@ -10,6 +10,7 @@ import {InstancesListComponent} from './features/admin/pages/instances-list/inst
 import {InstanceFormComponent} from './features/admin/pages/instance-form/instance-form.component';
 import {InstanceDetailComponent} from './features/admin/pages/instance-detail/instance-detail.component';
 import {HistoriqueMouvementComponent} from './features/admin/pages/historique-mouvement/historique-mouvement.component';
+import {HomeComponent} from './features/pages/home/home.component';
 
 export const routes: Routes = [
 
@@ -79,6 +80,10 @@ export const routes: Routes = [
       .then(m => m.AccessDeniedComponent)
   },
   {
+    path: 'home',
+    component: HomeComponent
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, roleGuard(['ADMIN'])],
     resolve: { auth: authResolver },// ✅ Vérifie token + rôle ADMIN
@@ -144,8 +149,8 @@ export const routes: Routes = [
   // on charge une landing page qui vérifie l'auth et redirige intelligemment
   {
     path: '**',
-    loadComponent: () => import('./features/pages/landing/landing.component')
-      .then(m => m.LandingComponent)
+    loadComponent: () => import('./features/pages/home/home.component')
+      .then(m => m.HomeComponent)
   },
 
 

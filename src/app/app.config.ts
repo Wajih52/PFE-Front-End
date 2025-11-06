@@ -8,6 +8,7 @@ import {provideHttpClient, withFetch, withInterceptors} from '@angular/common/ht
 import { routes } from './app.routes';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import {provideAnimations} from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +29,9 @@ export const appConfig: ApplicationConfig = {
         jwtInterceptor,      // Ajoute automatiquement le token JWT
         errorInterceptor     // Gère les erreurs HTTP (401, 403, 500...)
       ])
-    )
+    ),
+
+    provideAnimations()
+
   ]
 };

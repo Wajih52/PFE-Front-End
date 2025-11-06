@@ -22,8 +22,8 @@ export enum Categorie {
  * Types de produits (avec ou sans référence)
  */
 export enum TypeProduit {
-  AVEC_REFERENCE = 'avecReference',    // Ex: projecteur, caméra (numéro de série)
-  EN_QUANTITE = 'enQuantite'     // Ex: chaise, assiette (quantité globale)
+  AVEC_REFERENCE = 'AVEC_REFERENCE',    // Ex: projecteur, caméra (numéro de série)
+  EN_QUANTITE = 'EN_QUANTITE'     // Ex: chaise, assiette (quantité globale)
 }
 
 /**

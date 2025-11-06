@@ -1,0 +1,244 @@
+<!-- src/app/features/pages/home/home.component.html -->
+
+<div class="home-container">
+
+  <!-- ========== HERO SECTION avec Carousel ========== -->
+  <section class="hero-section">
+    <!-- Carousel d'images en arrière-plan -->
+    <div class="hero-carousel">
+      <div class="carousel-images">
+        <div
+          *ngFor="let image of heroImages; let i = index"
+          class="carousel-image"
+          [class.active]="i === currentHeroIndex"
+          [style.background-image]="'url(' + image + ')'">
+        </div>
+      </div>
+
+      <!-- Overlay sombre pour la lisibilité -->
+      <div class="hero-overlay"></div>
+
+      <!-- Contenu hero -->
+      <div class="hero-content" @fadeIn>
+        <h1 class="hero-title">
+          Faites de votre Fête<br>
+          un Événement Unique !
+        </h1>
+        <p class="hero-subtitle">
+          Planifiez, exécutez et célébrez en toute sérénité avec une gestion optimisée
+        </p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" (click)="navigateToBooking()">
+            <span>Réserver Maintenant</span>
+            <i class="icon-arrow-right"></i>
+          </button>
+          <button class="btn btn-secondary" (click)="scrollToSection('services')">
+            <span>Découvrir nos Services</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contrôles du carousel -->
+      <button class="carousel-control prev" (click)="previousHeroImage()">
+        <i class="icon-chevron-left"></i>
+      </button>
+      <button class="carousel-control next" (click)="nextHeroImage()">
+        <i class="icon-chevron-right"></i>
+      </button>
+
+      <!-- Indicateurs -->
+      <div class="carousel-indicators">
+        <button
+          *ngFor="let image of heroImages; let i = index"
+          class="indicator"
+          [class.active]="i === currentHeroIndex"
+          (click)="goToHeroImage(i)">
+        </button>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator" (click)="scrollToSection('stats')">
+      <span>Découvrir</span>
+      <i class="icon-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- ========== STATISTIQUES ========== -->
+  <section id="stats" class="stats-section animate-on-scroll">
+    <div class="container">
+      <div class="stats-grid">
+        <div
+          *ngFor="let stat of stats; let i = index"
+          class="stat-card"
+          [style.animation-delay]="i * 0.1 + 's'">
+          <h3 class="stat-value">{{ stat.value }}</h3>
+          <p class="stat-label">{{ stat.label }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION SERVICES ========== -->
+  <section id="services" class="services-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <h2 class="section-title">Nos Services</h2>
+        <p class="section-subtitle">
+          Une gamme complète de matériel pour tous vos événements
+        </p>
+      </div>
+
+      <div class="services-grid">
+        <div
+          *ngFor="let service of services; let i = index"
+          class="service-card animate-on-scroll"
+          [style.animation-delay]="i * 0.1 + 's'">
+          <div class="service-image" [style.background-image]="'url(' + service.image + ')'">
+            <div class="service-overlay">
+              <span class="service-icon">{{ service.icon }}</span>
+            </div>
+          </div>
+          <div class="service-content">
+            <h3 class="service-title">{{ service.title }}</h3>
+            <p class="service-description">{{ service.description }}</p>
+            <button class="btn-link" (click)="navigateToServices()">
+              En savoir plus
+              <i class="icon-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-cta animate-on-scroll">
+        <button class="btn btn-primary-outline" (click)="navigateToServices()">
+          Voir tous nos services
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION POURQUOI NOUS CHOISIR ========== -->
+  <section class="why-us-section">
+    <div class="container">
+      <div class="why-us-content">
+        <div class="why-us-text animate-on-scroll" @slideIn>
+          <h2 class="section-title">Pourquoi Elegant Hive ?</h2>
+          <div class="features-list">
+            <div class="feature-item">
+              <i class="icon-check"></i>
+              <div>
+                <h4>Matériel de Qualité Premium</h4>
+                <p>Équipements récents, régulièrement entretenus et certifiés</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <i class="icon-check"></i>
+              <div>
+                <h4>Service Client Réactif</h4>
+                <p>Une équipe dédiée disponible 7j/7 pour vous accompagner</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <i class="icon-check"></i>
+              <div>
+                <h4>Livraison et Installation</h4>
+                <p>Nous gérons la logistique de A à Z pour votre tranquillité</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <i class="icon-check"></i>
+              <div>
+                <h4>Prix Transparents</h4>
+                <p>Devis détaillés sans frais cachés, tarifs compétitifs</p>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" (click)="navigateToBooking()">
+            Commencer maintenant
+          </button>
+        </div>
+        <div class="why-us-image animate-on-scroll">
+          <img src="assets/images/why-us.jpg" alt="Pourquoi nous choisir">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION TÉMOIGNAGES ========== -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <h2 class="section-title">FeedBack Client</h2>
+        <p class="section-subtitle">
+          Ce que nos clients disent de nous
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div
+          *ngFor="let testimonial of testimonials; let i = index"
+          class="testimonial-card animate-on-scroll"
+          [style.animation-delay]="i * 0.15 + 's'">
+
+          <div class="testimonial-stars">
+            <i
+              *ngFor="let filled of getStarsArray(testimonial.rating)"
+              [class]="filled ? 'icon-star-filled' : 'icon-star-outline'">
+            </i>
+          </div>
+
+          <p class="testimonial-text">"{{ testimonial.text }}"</p>
+
+          <div class="testimonial-author">
+            <img [src]="testimonial.avatar" [alt]="testimonial.name" class="author-avatar">
+            <div class="author-info">
+              <p class="author-name">{{ testimonial.name }}</p>
+              <p class="author-desc">Client Satisfait</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION CTA (Call to Action) ========== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content animate-on-scroll">
+        <h2 class="cta-title">
+          Devis gratuit ou commande immédiate,<br>
+          à vous de choisir !
+        </h2>
+        <div class="cta-buttons">
+          <button class="btn btn-dark" (click)="navigateToBooking()">
+            Demander un Devis
+          </button>
+          <button class="btn btn-light" (click)="navigateToBooking()">
+            Passer une Commande
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION NEWSLETTER ========== -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content animate-on-scroll">
+        <h3>Restez informé de nos offres</h3>
+        <p>Inscrivez-vous à notre newsletter et recevez nos promotions exclusives</p>
+        <form class="newsletter-form" (submit)="$event.preventDefault()">
+          <input
+            type="email"
+            placeholder="Votre adresse email"
+            class="newsletter-input">
+          <button type="submit" class="btn btn-primary">
+            S'inscrire
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</div>

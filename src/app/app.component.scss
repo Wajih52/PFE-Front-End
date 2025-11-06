@@ -1,0 +1,8 @@
+.main-content {
+  min-height: 100vh;
+  padding-top: 80px; // Hauteur de la navbar
+
+  @media (max-width: 768px) {
+    padding-top: 65px;
+  }
+}

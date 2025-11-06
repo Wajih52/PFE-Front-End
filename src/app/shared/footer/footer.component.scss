@@ -1,0 +1,287 @@
+// src/app/shared/components/footer/footer.component.scss
+
+// ✅ Import du module color pour les fonctions modernes
+@use 'sass:color';
+
+// ========== VARIABLES ==========
+$primary-color: #C8A882;
+$dark-color: #1A1A1A;
+$white: #FFFFFF;
+$text-light: #CCCCCC;
+$border-color: rgba(255, 255, 255, 0.1);
+$transition: all 0.3s ease;
+
+// ========== FOOTER ==========
+.footer {
+  background: $dark-color;
+  color: $white;
+  margin-top: auto;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+// ========== FOOTER MAIN ==========
+.footer-main {
+  padding: 60px 0 40px;
+  border-bottom: 1px solid $border-color;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 50px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+}
+
+// Colonne À propos
+.about-col {
+  @media (max-width: 992px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.footer-logo {
+  margin-bottom: 15px;
+
+  img {
+    height: 60px;
+    width: auto;
+  }
+}
+
+.footer-brand {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $primary-color;
+  margin-bottom: 15px;
+  font-family: 'Georgia', serif;
+}
+
+.footer-description {
+  color: $text-light;
+  line-height: 1.8;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+// Réseaux sociaux
+.social-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  font-size: 1.5rem;
+  transition: $transition;
+  text-decoration: none;
+
+  &:hover {
+    background: $primary-color;
+    transform: translateY(-3px);
+  }
+}
+
+// Titres de colonnes
+.footer-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $primary-color;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background: $primary-color;
+  }
+}
+
+// Liens du footer
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-link {
+  display: inline-block;
+  color: $text-light;
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 8px 0;
+  transition: $transition;
+  position: relative;
+
+  &::before {
+    content: '›';
+    margin-right: 8px;
+    color: $primary-color;
+    font-weight: 700;
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: $transition;
+  }
+
+  &:hover {
+    color: $white;
+    padding-left: 10px;
+
+    &::before {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+// Contact
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-item {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  color: $text-light;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.contact-icon {
+  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(200, 168, 130, 0.2);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.contact-info {
+  flex: 1;
+
+  p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+
+    &:first-child {
+      color: $white;
+      font-weight: 500;
+    }
+  }
+}
+
+// ========== FOOTER BOTTOM ==========
+.footer-bottom {
+  padding: 25px 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.footer-bottom-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.copyright {
+  color: $text-light;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+// Liens légaux
+.legal-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.legal-link {
+  color: $text-light;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: $transition;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.separator {
+  color: $text-light;
+  font-size: 0.8rem;
+}
+
+// Bouton retour en haut
+.back-to-top {
+  width: 45px;
+  height: 45px;
+  background: $primary-color;
+  border: none;
+  border-radius: 8px;
+  color: $dark-color;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: color.adjust($primary-color, $lightness: 10%);
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    margin: 0 auto;
+  }
+}
