@@ -5,10 +5,11 @@ import {StorageService} from './core/services/storage.service';
 import {ConfirmationModalComponent} from './shared/confirmation-modal/confirmation-modal.component';
 import {NotificationWrapperComponent} from './shared/notification-wrapper/notification-wrapper.component';
 import {FooterComponent} from './shared/footer/footer.component';
+import {NavbarComponent} from './shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent,FooterComponent],
+  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent, FooterComponent, NavbarComponent],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.scss'

@@ -121,6 +121,17 @@ export class StorageService {
   }
 
   /**
+   * Obtenir le nom complet de l'utilisateur connecté
+   */
+  getUserName(): string | null {
+    const user = this.getUser();
+    if (user) {
+      return `${user.prenom} ${user.nom}`;
+    }
+    return null;
+  }
+
+  /**
    * Supprimer les informations de l'utilisateur
    */
   removeUser(): void {

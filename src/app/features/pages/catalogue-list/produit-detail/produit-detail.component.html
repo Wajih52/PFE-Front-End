@@ -1,0 +1,207 @@
+<!-- src/app/features/catalogue/produit-detail.component.html -->
+
+<div class="produit-detail-container" *ngIf="!loading(); else loadingTemplate">
+  <div class="detail-content" *ngIf="produit() as prod">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/catalogue">
+        <i class="fas fa-arrow-left"></i> Retour au catalogue
+      </a>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="detail-grid">
+
+      <!-- COLONNE GAUCHE : IMAGE -->
+      <div class="image-section">
+        <div class="main-image">
+          <img
+            [src]="prod.imageProduit || 'assets/images/placeholder-product.jpg'"
+            [alt]="prod.nomProduit"
+          />
+        </div>
+
+        <!-- Badge disponibilité -->
+        <div class="disponibilite-badge" [class.indisponible]="!prod.quantiteDisponible">
+          <i [class]="prod.quantiteDisponible ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+          {{ prod.quantiteDisponible ? 'Disponible' : 'Indisponible' }}
+        </div>
+      </div>
+
+      <!-- COLONNE DROITE : INFORMATIONS -->
+      <div class="info-section">
+
+        <!-- En-tête -->
+        <div class="product-header">
+          <span class="categorie-badge">{{ formatCategorie(prod.categorieProduit) }}</span>
+          <h1 class="product-title">{{ prod.nomProduit }}</h1>
+
+          <div class="prix-principal">
+            <span class="montant">{{ prod.prixUnitaire | number:'1.2-2' }}</span>
+            <span class="unite">TND / jour</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="description" *ngIf="prod.descriptionProduit">
+          <h3>Description</h3>
+          <p>{{ prod.descriptionProduit }}</p>
+        </div>
+
+        <!-- Stock info -->
+        <div class="stock-info">
+          <div class="info-item">
+            <i class="fas fa-box"></i>
+            <span *ngIf="prod.typeProduit === 'EN_QUANTITE'">
+              <strong>{{ prod.quantiteDisponible }}</strong> unités en stock
+            </span>
+            <span *ngIf="prod.typeProduit === 'AVEC_REFERENCE'">
+              <strong>{{ prod.nombreInstancesDisponibles }}</strong> exemplaires disponibles
+            </span>
+          </div>
+        </div>
+
+        <!-- FORMULAIRE DE RÉSERVATION -->
+        <div class="reservation-form">
+          <h3>Réserver ce produit</h3>
+
+          <!-- Dates -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>
+                <i class="fas fa-calendar-alt"></i> Date de début
+              </label>
+              <input
+                type="date"
+                class="form-input"
+                [min]="dateDebutMin()"
+                [value]="dateDebut()"
+                (change)="dateDebut.set($any($event.target).value)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>
+                <i class="fas fa-calendar-check"></i> Date de fin
+              </label>
+              <input
+                type="date"
+                class="form-input"
+                [min]="dateFinMin()"
+                [value]="dateFin()"
+                (change)="dateFin.set($any($event.target).value)"
+              />
+            </div>
+          </div>
+
+          <!-- Quantité -->
+          <div class="form-group">
+            <label>
+              <i class="fas fa-sort-numeric-up"></i> Quantité
+            </label>
+            <div class="quantite-selector">
+              <button
+                class="btn-qty"
+                (click)="modifierQuantite(-1)"
+                [disabled]="quantite() <= 1"
+              >
+                <i class="fas fa-minus"></i>
+              </button>
+              <input
+                type="number"
+                class="qty-input"
+                [value]="quantite()"
+                (input)="quantite.set(+$any($event.target).value)"
+                min="1"
+              />
+              <button class="btn-qty" (click)="modifierQuantite(1)">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Résultat vérification -->
+          <div class="verification-result" *ngIf="disponibilite() as dispo">
+            <div class="alert" [class.alert-success]="dispo.disponible" [class.alert-warning]="!dispo.disponible">
+              <i [class]="dispo.disponible ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle'"></i>
+              <div class="alert-content">
+                <strong *ngIf="dispo.disponible">Disponible !</strong>
+                <strong *ngIf="!dispo.disponible">Non disponible</strong>
+                <p *ngIf="dispo.disponible">
+                  {{ dispo.quantiteDisponible }} unités disponibles pour cette période
+                </p>
+                <p *ngIf="!dispo.disponible">{{ dispo.message }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sous-total -->
+          <div class="sous-total" *ngIf="dateDebut() && dateFin()">
+            <div class="calcul-detail">
+              <span>{{ quantite() }} × {{ prod.prixUnitaire | number:'1.2-2' }} TND × {{ calculerNombreJours(dateDebut(), dateFin()) }} jours</span>
+            </div>
+            <div class="total">
+              <span>Sous-total:</span>
+              <strong>{{ sousTotal() | number:'1.2-2' }} TND</strong>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="actions">
+            <button
+              class="btn-verifier"
+              (click)="verifierDisponibilite()"
+              [disabled]="!dateDebut() || !dateFin() || verificationLoading()"
+            >
+              <i class="fas fa-search" *ngIf="!verificationLoading()"></i>
+              <i class="fas fa-spinner fa-spin" *ngIf="verificationLoading()"></i>
+              {{ verificationLoading() ? 'Vérification...' : 'Vérifier la disponibilité' }}
+            </button>
+
+            <button
+              class="btn-ajouter-panier"
+              (click)="ajouterAuPanier()"
+              [disabled]="!peutAjouterPanier()"
+            >
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+          </div>
+
+          <button class="btn-voir-panier" (click)="allerAuPanier()">
+            <i class="fas fa-eye"></i>
+            Voir mon panier
+          </button>
+        </div>
+
+        <!-- Informations supplémentaires -->
+        <div class="extra-info">
+          <div class="info-card">
+            <i class="fas fa-truck"></i>
+            <div>
+              <strong>Livraison disponible</strong>
+              <p>Nous livrons votre matériel à votre événement</p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-headset"></i>
+            <div>
+              <strong>Support client</strong>
+              <p>Notre équipe est à votre disposition</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading template -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement du produit...</p>
+  </div>
+</ng-template>

@@ -1,0 +1,162 @@
+<!-- src/app/features/catalogue/catalogue-list.component.html -->
+
+<div class="catalogue-container">
+  <!-- Header -->
+  <div class="catalogue-header">
+    <h1>Notre Catalogue</h1>
+    <p class="subtitle">Découvrez notre sélection de matériel pour vos événements</p>
+
+    <!-- Badge panier -->
+    <a routerLink="/panier" class="panier-badge" *ngIf="totalPanier() > 0">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge">{{ totalPanier() }}</span>
+    </a>
+  </div>
+
+  <div class="catalogue-content">
+    <!-- SIDEBAR FILTRES -->
+    <aside class="filtres-sidebar">
+      <div class="filtres-header">
+        <h3>Filtres</h3>
+        <button class="btn-reset" (click)="reinitialiserFiltres()">
+          <i class="fas fa-redo"></i> Réinitialiser
+        </button>
+      </div>
+
+      <!-- Recherche -->
+      <div class="filtre-group">
+        <label>
+          <i class="fas fa-search"></i> Recherche
+        </label>
+        <input
+          type="text"
+          class="form-input"
+          placeholder="Nom du produit..."
+          [value]="filtres().recherche"
+          (input)="updateRecherche($any($event.target).value)"
+        />
+      </div>
+
+      <!-- Catégorie -->
+      <div class="filtre-group">
+        <label>
+          <i class="fas fa-tags"></i> Catégorie
+        </label>
+        <select
+          class="form-select"
+          [value]="filtres().categorie"
+          (change)="updateCategorie($any($event.target).value)"
+        >
+          <option value="">Toutes les catégories</option>
+          <option *ngFor="let cat of categories" [value]="cat">
+            {{ formatCategorie(cat) }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Type de produit -->
+      <div class="filtre-group">
+        <label>
+          <i class="fas fa-box"></i> Type de produit
+        </label>
+        <select
+          class="form-select"
+          [value]="filtres().typeProduit"
+          (change)="updateTypeProduit($any($event.target).value)"
+        >
+          <option value="">Tous les types</option>
+          <option *ngFor="let type of typesProduits" [value]="type">
+            {{ formatTypeProduit(type) }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Prix -->
+      <div class="filtre-group">
+        <label>
+          <i class="fas fa-coins"></i> Prix par jour
+        </label>
+        <div class="prix-range">
+          <div class="prix-inputs">
+            <input
+              type="number"
+              class="form-input-small"
+              placeholder="Min"
+              [value]="filtres().prixMin"
+              (input)="updatePrixMin(+$any($event.target).value)"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              class="form-input-small"
+              placeholder="Max"
+              [value]="filtres().prixMax"
+              (input)="updatePrixMax(+$any($event.target).value)"
+            />
+            <span>TND</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disponibilité -->
+      <div class="filtre-group">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="filtres().disponibleUniquement"
+            (change)="toggleDisponibilite()"
+          />
+          <span>Disponible uniquement</span>
+        </label>
+      </div>
+    </aside>
+
+    <!-- GRILLE DE PRODUITS -->
+    <main class="produits-main">
+      <!-- Barre de tri -->
+      <div class="tri-bar">
+        <div class="resultats-info">
+          <strong>{{ produitsFiltres().length }}</strong> produits trouvés
+        </div>
+
+        <div class="tri-options">
+          <label>Trier par:</label>
+          <select
+            class="form-select-small"
+            [value]="triActuel()"
+            (change)="changerTri($any($event.target).value)"
+          >
+            <option value="nom">Nom (A-Z)</option>
+            <option value="prix-asc">Prix croissant</option>
+            <option value="prix-desc">Prix décroissant</option>
+            <option value="populaire">Plus populaires</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading()" class="loading-container">
+        <div class="spinner"></div>
+        <p>Chargement des produits...</p>
+      </div>
+
+      <!-- Grille de produits -->
+      <div *ngIf="!loading()" class="produits-grid">
+        <app-produit-card
+          *ngFor="let produit of produitsFiltres()"
+          [produit]="produit"
+        ></app-produit-card>
+      </div>
+
+      <!-- Aucun résultat -->
+      <div *ngIf="!loading() && produitsFiltres().length === 0" class="no-results">
+        <i class="fas fa-search fa-3x"></i>
+        <h3>Aucun produit trouvé</h3>
+        <p>Essayez de modifier vos critères de recherche</p>
+        <button class="btn-primary" (click)="reinitialiserFiltres()">
+          Réinitialiser les filtres
+        </button>
+      </div>
+    </main>
+  </div>
+</div>

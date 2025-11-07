@@ -44,7 +44,7 @@ import { StorageService } from '../../../core/services/storage.service';
       align-items: center;
       justify-content: space-between;
       height: 100vh;
-      background: linear-gradient(135deg, #605639 0%, #a2994b 100%);
+      background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
       color: white;
       padding: 2rem;
     }

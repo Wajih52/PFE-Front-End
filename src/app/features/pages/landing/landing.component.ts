@@ -155,7 +155,6 @@ export class LandingComponent implements OnInit {
   loadingMessage = 'Vérification de votre session...';
 
   ngOnInit(): void {
-     console.log('🚀 Landing Component chargé');
 
       // ⏱️ Petit délai pour éviter le flash (optionnel, ajustable)
       setTimeout(() => {
@@ -164,7 +163,7 @@ export class LandingComponent implements OnInit {
     }
 
     private checkAuthAndRedirect(): void {
-      console.log('🔍 Vérification de l\'authentification...');
+
 
       // Récupérer le token (getToken vérifie déjà l'expiration)
       const token = this.storage.getToken();
@@ -177,8 +176,6 @@ export class LandingComponent implements OnInit {
         this.router.navigate(['/home']);
 
       } else {
-        // ❌ Pas de token ou token expiré
-     //   console.log('❌ Pas de token valide, redirection vers login');
         this.loadingMessage = 'Redirection vers la connexion...';
 
         this.router.navigate(['/auth/login']);

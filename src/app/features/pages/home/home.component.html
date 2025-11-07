@@ -1,0 +1,240 @@
+<!-- src/app/features/pages/home/home.component.html -->
+
+<!-- ========== NAVBAR ========== -->
+<div>
+  <app-navbar></app-navbar>
+</div>
+<!-- ========== HERO SECTION ========== -->
+<section id="hero" class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="container">
+      <div class="hero-text">
+        <h1 class="hero-title animate-fade-up">
+          Faites de votre Fête un
+          <span class="highlight">événement unique !</span>
+        </h1>
+        <p class="hero-description animate-fade-up-delay">
+          Planifiez, exécutez et célébrez en toute sérénité avec une gestion optimisée.
+          Depuis 2008, nous transformons vos rêves en réalité.
+        </p>
+        <div class="hero-actions animate-fade-up-delay-2">
+          <button class="btn-hero-primary" (click)="goToCatalogue()">
+            Découvrir le Catalogue
+          </button>
+          <button class="btn-hero-secondary" (click)="scrollToSection('services')">
+            Nos Services
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats animate-fade-up-delay-3">
+          <div class="stat-item">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Années d'expérience</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Événements réussis</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Satisfaction client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SERVICES SECTION ========== -->
+<section id="services" class="services-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Nos Services</h2>
+      <p class="section-description">
+        Des solutions complètes pour tous vos événements
+      </p>
+    </div>
+
+    <div class="services-grid">
+      @for (service of services; track service.title) {
+        <div class="service-card">
+          <div class="service-icon">{{ service.icon }}</div>
+          <h3 class="service-title">{{ service.title }}</h3>
+          <p class="service-description">{{ service.description }}</p>
+          <button class="btn-service-link">En savoir plus →</button>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ========== FEATURED PRODUCTS SECTION ========== -->
+<section id="products" class="products-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Produits en Vedette</h2>
+      <p class="section-description">
+        Découvrez notre sélection de produits populaires pour vos événements
+      </p>
+    </div>
+
+    <div class="products-grid">
+      @for (product of featuredProducts; track product.id) {
+        <div class="product-card">
+          <div class="product-image">
+            <img
+              [src]="product.image"
+              [alt]="product.name"
+              (error)="onImageError($event)"
+            >
+            <div class="product-overlay">
+              <button class="btn-view-product">Voir détails</button>
+            </div>
+          </div>
+          <div class="product-info">
+            <span class="product-category">{{ product.category }}</span>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <div class="product-footer">
+              <span class="product-price">{{ product.price }}</span>
+              <button class="btn-add-cart">
+                <span>Ajouter</span>
+                <span class="icon">+</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="section-footer">
+      <button class="btn-view-all" (click)="goToCatalogue()">
+        Voir tout le catalogue →
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ABOUT SECTION ========== -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image">
+        <img src="assets/images/about-elegant-hive.jpg" alt="À propos d'Elegant Hive">
+      </div>
+      <div class="about-content">
+        <h2 class="about-title">À propos d'Elegant Hive</h2>
+        <p class="about-text">
+          Depuis 2008, notre agence événementielle met son expertise et sa passion au
+          service de vos moments les plus précieux. Spécialistes dans l'organisation de
+          mariages, anniversaires et fiançailles, nous vous accompagnons avec
+          professionnalisme et créativité pour faire de chaque occasion une réussite
+          inoubliable.
+        </p>
+        <p class="about-text">
+          Grâce à notre savoir-faire et notre souci du détail, nous transformons
+          vos idées en réalité, en veillant à ce que chaque événement soit unique et à
+          votre image. Faites-nous confiance pour créer des souvenirs exceptionnels !
+        </p>
+        <div class="about-features">
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span class="feature-text">Équipe professionnelle</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span class="feature-text">Matériel de qualité</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span class="feature-text">Service personnalisé</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CTA SECTION ========== -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2 class="cta-title">Prêt à créer votre événement de rêve ?</h2>
+      <p class="cta-description">
+        Demandez un devis gratuit ou passez une commande dès maintenant
+      </p>
+      <div class="cta-buttons">
+        <button class="btn-cta-primary">Demander un Devis</button>
+        <button class="btn-cta-secondary" (click)="goToCatalogue()">
+          Passer une Commande
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CONTACT SECTION ========== -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Contactez-nous</h2>
+      <p class="section-description">
+        Nous sommes à votre écoute pour répondre à toutes vos questions
+      </p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-details">
+            <h4>Adresse</h4>
+            <p>123 Avenue de l'Événement, Tunis, Tunisie</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div class="contact-details">
+            <h4>Téléphone</h4>
+            <p>+216 XX XXX XXX</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-details">
+            <h4>Email</h4>
+            <p>contact&#64;elegant-hive.tn</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">⏰</div>
+          <div class="contact-details">
+            <h4>Horaires</h4>
+            <p>Lun - Sam: 9h00 - 18h00</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <form>
+          <div class="form-group">
+            <input type="text" placeholder="Votre nom" class="form-input">
+          </div>
+          <div class="form-group">
+            <input type="email" placeholder="Votre email" class="form-input">
+          </div>
+          <div class="form-group">
+            <input type="tel" placeholder="Votre téléphone" class="form-input">
+          </div>
+          <div class="form-group">
+            <textarea placeholder="Votre message" class="form-textarea" rows="5"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Envoyer le message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

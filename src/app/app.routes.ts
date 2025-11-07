@@ -12,8 +12,12 @@ import {HistoriqueMouvementComponent} from './features/admin/pages/historique-mo
 
 
 export const routes: Routes = [
-
-
+//Des routes Publique
+  {
+    path: 'catalogue',
+    loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
+      .then(m => m.CatalogueListComponent)
+  },
   // Routes d'authentification (non protégées)
   {
     path: 'auth',
@@ -78,11 +82,11 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/access-denied/access-denied.component')
       .then(m => m.AccessDeniedComponent)
   },
- /* {
+ {
     path: 'home',
     loadComponent: () => import('./features/pages/home/home.component')
       .then(m => m.HomeComponent)
-  },*/
+  },
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard(['ADMIN'])],

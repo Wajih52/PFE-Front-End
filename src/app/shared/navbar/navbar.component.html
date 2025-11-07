@@ -1,0 +1,46 @@
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-content">
+      <!-- Logo -->
+      <div class="navbar-logo">
+        <img src="assets/images/logo-elegant-hive.png" alt="Elegant Hive" class="logo-img">
+        <span routerLink="/home" class="logo-text">Elegant Hive</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="navbar-links">
+        <a (click)="scrollToSection('hero')" class="nav-link">Accueil</a>
+        <a (click)="scrollToSection('services')" class="nav-link">Nos Services</a>
+        <a (click)="goToCatalogue()" class="nav-link" >Catalogue</a>
+        <a (click)="scrollToSection('about')" class="nav-link">À propos</a>
+        <a (click)="scrollToSection('contact')" class="nav-link">Contact</a>
+      </div>
+
+      <!-- Auth Buttons -->
+      <div class="navbar-actions">
+        @if (isAuthenticated) {
+          <div class="user-menu">
+            <button class="btn-user" (click)="goToProfile()">
+              <span class="user-icon">👤</span>
+              <span class="user-name">{{ userName }}</span>
+            </button>
+            <button class="btn-secondary-outline" (click)="logout()">
+              Déconnexion
+            </button>
+            <a routerLink="/panier" class="panier-link">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="badge" *ngIf="totalPanier() > 0">{{ totalPanier() }}</span>
+            </a>
+          </div>
+        } @else {
+          <button class="btn-secondary-outline" (click)="goToLogin()">
+            Connexion
+          </button>
+          <button class="btn-primary" (click)="goToRegister()">
+            S'inscrire
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</nav>

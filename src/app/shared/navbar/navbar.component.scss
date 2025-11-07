@@ -1,0 +1,150 @@
+@use 'sass:color';
+// ========== VARIABLES ==========
+$primary-gold: #C8A882;
+$dark-black: #1A1A1A;
+$white: #FFFFFF;
+$light-bg: #F8F5F0;
+$text-gray: #666666;
+$border-light: #E5E5E5;
+
+// ========== GLOBAL STYLES ==========
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+// ========== NAVBAR ==========
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: all 0.3s ease;
+
+  .navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+  }
+
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+
+    .logo-img {
+      height: 45px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-gold;
+      font-family: 'Georgia', serif;
+    }
+  }
+
+  .navbar-links {
+    display: flex;
+    gap: 2rem;
+
+    .nav-link {
+      color: $dark-black;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        color: $primary-gold;
+      }
+    }
+  }
+
+  .navbar-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .btn-user {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: $light-bg;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        .user-icon {
+          font-size: 1.2rem;
+        }
+
+        .user-name {
+          font-weight: 600;
+          color: $dark-black;
+        }
+
+        &:hover {
+          background: $primary-gold;
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+// ========== BUTTONS ==========
+.btn-primary {
+  background: $primary-gold;
+  color: $white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background: color.adjust($primary-gold, $lightness: -10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba($primary-gold, 0.3);
+  }
+}
+
+.btn-secondary-outline {
+  background: transparent;
+  color: $dark-black;
+  border: 2px solid $dark-black;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background: $dark-black;
+    color: $white;
+  }
+}
