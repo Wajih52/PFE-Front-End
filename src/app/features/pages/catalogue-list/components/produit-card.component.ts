@@ -43,7 +43,7 @@ import { ProduitResponse } from '../../../../core/models';
           <!-- Info stock -->
           <div class="card-stock">
             <i class="fas fa-box"></i>
-            <span *ngIf="produit.typeProduit === 'EN_QUANTITE'">
+            <span>
               {{ produit.quantiteDisponible }} disponibles
             </span>
           </div>
