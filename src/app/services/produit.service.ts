@@ -203,8 +203,8 @@ export class ProduitService {
    * Retourne uniquement les produits réellement disponibles pendant la période
    */
   getCatalogueDisponibleSurPeriode(
-    dateDebut: string,
-    dateFin: string
+    dateDebut: any,
+    dateFin: any
   ): Observable<ProduitResponse[]> {
     const params = new HttpParams()
       .set('dateDebut', dateDebut)
@@ -227,8 +227,8 @@ export class ProduitService {
     typeProduit?: TypeProduit;
     minPrix?: number;
     maxPrix?: number;
-    dateDebut?: string;
-    dateFin?: string;
+    dateDebut?: any;
+    dateFin?: any;
   }): Observable<ProduitResponse[]> {
     let params = new HttpParams();
 
@@ -251,7 +251,7 @@ export class ProduitService {
       params = params.set('dateFin', filters.dateFin);
     }
 
-    return this.http.get<ProduitResponse[]>(`${this.API_URL}/search-periode`, { params });
+    return this.http.get<ProduitResponse[]>(`${this.API_URL}/recherche-avec-periode`, { params });
   }
 
   // ============================================

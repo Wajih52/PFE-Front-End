@@ -20,7 +20,6 @@ export class NavbarComponent implements OnInit{
   private storage = inject(StorageService);
   private platformId = inject(PLATFORM_ID); // ✅ AJOUTÉ
 
-  totalPanier = this.panierService.totalArticles;
 
   // ✅ MODIFIÉ : Valeurs par défaut pour SSR
   isAuthenticated = false;

@@ -76,7 +76,7 @@
     <div class="catalogue-content">
 
       <!-- ========== SIDEBAR FILTRES ========== -->
-      <aside class="sidebar-filtres">
+      <aside class="filtres-sidebar">
         <div class="filtre-section">
           <h3>
             <i class="fas fa-filter"></i>
@@ -134,7 +134,8 @@
           <p>
             <strong>{{ produitsFiltres().length }}</strong>
             produit{{ produitsFiltres().length > 1 ? 's' : '' }} disponible{{ produitsFiltres().length > 1 ? 's' : '' }}
-            du <strong>{{ dateDebutLocation }}</strong> au <strong>{{ dateFinLocation }}</strong>
+            <br>
+            Du <strong>{{ dateDebutLocation }}</strong>   au   <strong>{{ dateFinLocation }}</strong>
           </p>
         </div>
 

@@ -27,10 +27,6 @@
             <button class="btn-secondary-outline" (click)="logout()">
               Déconnexion
             </button>
-            <a routerLink="/panier" class="panier-link">
-              <i class="fas fa-shopping-cart"></i>
-              <span class="badge" *ngIf="totalPanier() > 0">{{ totalPanier() }}</span>
-            </a>
           </div>
         } @else {
           <button class="btn-secondary-outline" (click)="goToLogin()">

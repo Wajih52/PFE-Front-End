@@ -126,13 +126,17 @@ export class CatalogueListComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
+    // Conversion des dates en format LocalDate (YYYY-MM-DD)
+    const dateDebut = this.formatToLocalDate(this.dateDebutLocation);
+    const dateFin = this.formatToLocalDate(this.dateFinLocation);
+
     // ✅ Utiliser l'API avec dates
     if (this.categorieSelectionnee()) {
       // Recherche avec catégorie + dates
       this.produitService.searchProduitsAvecPeriode({
         categorie: this.categorieSelectionnee()!,
-        dateDebut: this.dateDebutLocation,
-        dateFin: this.dateFinLocation
+        dateDebut: dateDebut,
+        dateFin: dateFin
       }).subscribe({
         next: (produits) => {
           this.produits.set(produits);
@@ -147,8 +151,8 @@ export class CatalogueListComponent implements OnInit {
     } else {
       // Catalogue complet pour la période
       this.produitService.getCatalogueDisponibleSurPeriode(
-        this.dateDebutLocation,
-        this.dateFinLocation
+        dateDebut,
+        dateFin
       ).subscribe({
         next: (produits) => {
           this.produits.set(produits);
@@ -299,4 +303,14 @@ export class CatalogueListComponent implements OnInit {
   }
 
   protected readonly Date = Date;
+
+  // Méthode utilitaire pour formater en LocalDate
+  private formatToLocalDate(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
 }
