@@ -1,162 +1,220 @@
-<!-- src/app/features/catalogue/catalogue-list.component.html -->
+<!-- src/app/features/pages/catalogue-list/catalogue-list.component.html -->
+<!-- VERSION CORRIGÉE - Avec sélecteur de dates -->
 
 <div class="catalogue-container">
-  <!-- Header -->
+
+  <!-- ========== HEADER ========== -->
   <div class="catalogue-header">
     <h1>Notre Catalogue</h1>
-    <p class="subtitle">Découvrez notre sélection de matériel pour vos événements</p>
+    <p class="subtitle">Découvrez notre sélection de produits disponibles pour vos événements</p>
 
-    <!-- Badge panier -->
-    <a routerLink="/panier" class="panier-badge" *ngIf="totalPanier() > 0">
-      <i class="fas fa-shopping-cart"></i>
-      <span class="badge">{{ totalPanier() }}</span>
-    </a>
-  </div>
-
-  <div class="catalogue-content">
-    <!-- SIDEBAR FILTRES -->
-    <aside class="filtres-sidebar">
-      <div class="filtres-header">
-        <h3>Filtres</h3>
-        <button class="btn-reset" (click)="reinitialiserFiltres()">
-          <i class="fas fa-redo"></i> Réinitialiser
-        </button>
-      </div>
-
-      <!-- Recherche -->
-      <div class="filtre-group">
-        <label>
-          <i class="fas fa-search"></i> Recherche
+    <!-- 🎯 SÉLECTEUR DE DATES CRITIQUES -->
+    <div class="date-selector">
+      <div class="date-input-group">
+        <label for="dateDebut">
+          <i class="fas fa-calendar-alt"></i>
+          Date de début
         </label>
         <input
-          type="text"
-          class="form-input"
-          placeholder="Nom du produit..."
-          [value]="filtres().recherche"
-          (input)="updateRecherche($any($event.target).value)"
+          type="date"
+          id="dateDebut"
+          [(ngModel)]="dateDebutLocation"
+          (change)="onDatesChange()"
+          class="date-input"
+          [min]="minDate"
         />
       </div>
 
-      <!-- Catégorie -->
-      <div class="filtre-group">
-        <label>
-          <i class="fas fa-tags"></i> Catégorie
+      <div class="date-input-group">
+        <label for="dateFin">
+          <i class="fas fa-calendar-check"></i>
+          Date de fin
         </label>
-        <select
-          class="form-select"
-          [value]="filtres().categorie"
-          (change)="updateCategorie($any($event.target).value)"
-        >
-          <option value="">Toutes les catégories</option>
-          <option *ngFor="let cat of categories" [value]="cat">
-            {{ formatCategorie(cat) }}
-          </option>
-        </select>
+        <input
+          type="date"
+          id="dateFin"
+          [(ngModel)]="dateFinLocation"
+          (change)="onDatesChange()"
+          class="date-input"
+          [min]="dateDebutLocation"
+        />
       </div>
 
-      <!-- Type de produit -->
-      <div class="filtre-group">
-        <label>
-          <i class="fas fa-box"></i> Type de produit
-        </label>
-        <select
-          class="form-select"
-          [value]="filtres().typeProduit"
-          (change)="updateTypeProduit($any($event.target).value)"
-        >
-          <option value="">Tous les types</option>
-          <option *ngFor="let type of typesProduits" [value]="type">
-            {{ formatTypeProduit(type) }}
-          </option>
-        </select>
-      </div>
+      <button class="btn-refresh" (click)="chargerCatalogue()" title="Rafraîchir">
+        <i class="fas fa-sync-alt"></i>
+        Rechercher
+      </button>
+    </div>
 
-      <!-- Prix -->
-      <div class="filtre-group">
-        <label>
-          <i class="fas fa-coins"></i> Prix par jour
-        </label>
-        <div class="prix-range">
-          <div class="prix-inputs">
-            <input
-              type="number"
-              class="form-input-small"
-              placeholder="Min"
-              [value]="filtres().prixMin"
-              (input)="updatePrixMin(+$any($event.target).value)"
-            />
-            <span>-</span>
-            <input
-              type="number"
-              class="form-input-small"
-              placeholder="Max"
-              [value]="filtres().prixMax"
-              (input)="updatePrixMax(+$any($event.target).value)"
-            />
-            <span>TND</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Disponibilité -->
-      <div class="filtre-group">
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            [checked]="filtres().disponibleUniquement"
-            (change)="toggleDisponibilite()"
-          />
-          <span>Disponible uniquement</span>
-        </label>
-      </div>
-    </aside>
-
-    <!-- GRILLE DE PRODUITS -->
-    <main class="produits-main">
-      <!-- Barre de tri -->
-      <div class="tri-bar">
-        <div class="resultats-info">
-          <strong>{{ produitsFiltres().length }}</strong> produits trouvés
-        </div>
-
-        <div class="tri-options">
-          <label>Trier par:</label>
-          <select
-            class="form-select-small"
-            [value]="triActuel()"
-            (change)="changerTri($any($event.target).value)"
-          >
-            <option value="nom">Nom (A-Z)</option>
-            <option value="prix-asc">Prix croissant</option>
-            <option value="prix-desc">Prix décroissant</option>
-            <option value="populaire">Plus populaires</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Loading -->
-      <div *ngIf="loading()" class="loading-container">
-        <div class="spinner"></div>
-        <p>Chargement des produits...</p>
-      </div>
-
-      <!-- Grille de produits -->
-      <div *ngIf="!loading()" class="produits-grid">
-        <app-produit-card
-          *ngFor="let produit of produitsFiltres()"
-          [produit]="produit"
-        ></app-produit-card>
-      </div>
-
-      <!-- Aucun résultat -->
-      <div *ngIf="!loading() && produitsFiltres().length === 0" class="no-results">
-        <i class="fas fa-search fa-3x"></i>
-        <h3>Aucun produit trouvé</h3>
-        <p>Essayez de modifier vos critères de recherche</p>
-        <button class="btn-primary" (click)="reinitialiserFiltres()">
-          Réinitialiser les filtres
-        </button>
-      </div>
-    </main>
+    <!-- Badge Panier -->
+    <a [routerLink]="['/panier']" class="panier-badge">
+      <i class="fas fa-shopping-cart"></i>
+      @if (totalPanier() > 0) {
+        <span class="badge">{{ totalPanier() }}</span>
+      }
+    </a>
   </div>
+
+  <!-- ========== MESSAGE D'ERREUR ========== -->
+  @if (errorMessage()) {
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- ========== LOADING ========== -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement des produits disponibles...</p>
+    </div>
+  }
+
+  <!-- ========== CONTENU PRINCIPAL ========== -->
+  @if (!isLoading()) {
+    <div class="catalogue-content">
+
+      <!-- ========== SIDEBAR FILTRES ========== -->
+      <aside class="sidebar-filtres">
+        <div class="filtre-section">
+          <h3>
+            <i class="fas fa-filter"></i>
+            Filtres
+          </h3>
+
+          <!-- Recherche par nom -->
+          <div class="filtre-group">
+            <label for="recherche">Rechercher un produit</label>
+            <input
+              type="text"
+              id="recherche"
+              placeholder="Nom du produit..."
+              [(ngModel)]="rechercheNom"
+              class="search-input"
+            />
+          </div>
+
+          <!-- Catégories -->
+          <div class="filtre-group">
+            <label>Catégories</label>
+            <div class="categorie-list">
+              <button
+                class="categorie-btn"
+                [class.active]="categorieSelectionnee() === null"
+                (click)="reinitialiserFiltres()"
+              >
+                <i class="fas fa-th"></i>
+                Toutes
+              </button>
+
+              @for (categorie of categories; track categorie) {
+                <button
+                  class="categorie-btn"
+                  [class.active]="categorieSelectionnee() === categorie"
+                  (click)="filtrerParCategorie(categorie)"
+                >
+                  {{ getCategorieLabel(categorie) }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Bouton réinitialiser -->
+          <button class="btn-reset" (click)="reinitialiserFiltres()">
+            <i class="fas fa-redo"></i>
+            Réinitialiser les filtres
+          </button>
+        </div>
+      </aside>
+
+      <!-- ========== GRILLE DE PRODUITS ========== -->
+      <main class="produits-grid-container">
+        <div class="resultats-header">
+          <p>
+            <strong>{{ produitsFiltres().length }}</strong>
+            produit{{ produitsFiltres().length > 1 ? 's' : '' }} disponible{{ produitsFiltres().length > 1 ? 's' : '' }}
+            du <strong>{{ dateDebutLocation }}</strong> au <strong>{{ dateFinLocation }}</strong>
+          </p>
+        </div>
+
+        <!-- Aucun produit trouvé -->
+        @if (produitsFiltres().length === 0) {
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>Aucun produit disponible</h3>
+            <p>Essayez de modifier vos dates ou vos filtres de recherche.</p>
+          </div>
+        }
+
+        <!-- Grille de produits -->
+        @if (produitsFiltres().length > 0) {
+          <div class="produits-grid">
+            @for (produit of produitsFiltres(); track produit.idProduit) {
+              <div class="product-card">
+                <!-- Image -->
+                <div class="product-image" (click)="voirDetails(produit.idProduit)">
+                  <img
+                    [src]="getImageUrl(produit)"
+                    [alt]="produit.nomProduit"
+                    (error)="onImageError($event)"
+                  />
+
+                  <!-- Badge stock -->
+                  <div class="stock-badge" [class.low-stock]="produit.quantiteDisponible <= produit.seuilCritique">
+                    <i class="fas fa-box"></i>
+                    {{ produit.quantiteDisponible }} disponible{{ produit.quantiteDisponible > 1 ? 's' : '' }}
+                  </div>
+                </div>
+
+                <!-- Infos produit -->
+                <div class="product-info">
+                  <span class="product-category">
+                    {{ getCategorieLabel(produit.categorieProduit) }}
+                  </span>
+
+                  <h3 class="product-name" (click)="voirDetails(produit.idProduit)">
+                    {{ produit.nomProduit }}
+                  </h3>
+
+                  @if (produit.descriptionProduit) {
+                    <p class="product-description">
+                      {{ produit.descriptionProduit.substring(0, 80) }}
+                      {{ produit.descriptionProduit.length > 80 ? '...' : '' }}
+                    </p>
+                  }
+
+                  <div class="product-footer">
+                    <div class="product-price">
+                      {{ produit.prixUnitaire.toFixed(2) }} TND
+                      <span class="price-unit">/ jour</span>
+                    </div>
+
+                    <div class="product-actions">
+                      <button
+                        class="btn-view"
+                        (click)="voirDetails(produit.idProduit)"
+                        title="Voir les détails"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </button>
+
+                      <button
+                        class="btn-add-cart"
+                        (click)="ajouterAuPanier(produit)"
+                        [disabled]="produit.quantiteDisponible === 0"
+                        title="Ajouter au panier"
+                      >
+                        <i class="fas fa-cart-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </main>
+    </div>
+  }
 </div>

@@ -1,6 +1,6 @@
-// navbar.component.ts
-import {Component, inject, OnInit} from '@angular/core';
-import { CommonModule } from '@angular/common';
+// navbar.component.ts - VERSION CORRIGÉE SSR
+import {Component, inject, OnInit, PLATFORM_ID, afterNextRender} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import { PanierService } from '../../services/panier.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -9,7 +9,7 @@ import {StorageService} from '../../core/services/storage.service';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
@@ -18,14 +18,31 @@ export class NavbarComponent implements OnInit{
   private authService = inject(AuthService);
   private router = inject(Router);
   private storage = inject(StorageService);
+  private platformId = inject(PLATFORM_ID); // ✅ AJOUTÉ
+
   totalPanier = this.panierService.totalArticles;
 
+  // ✅ MODIFIÉ : Valeurs par défaut pour SSR
   isAuthenticated = false;
   userName: string | null = null;
 
+  constructor() {
+    // ✅ AJOUTÉ : Vérifier l'authentification UNIQUEMENT côté client après le rendu
+    if (isPlatformBrowser(this.platformId)) {
+      afterNextRender(() => {
+        this.checkAuthentication();
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    // ✅ SUPPRIMÉ : Ne plus appeler checkAuthentication ici
+    // Car cela crée une différence entre serveur et client
+  }
 
   /**
    * Vérifie si l'utilisateur est connecté
+   * ⚠️ À appeler UNIQUEMENT côté client
    */
   private checkAuthentication(): void {
     const token = this.storage.getToken();
@@ -36,13 +53,8 @@ export class NavbarComponent implements OnInit{
     }
   }
 
-
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
-  }
-
-  ngOnInit(): void {
-    this.checkAuthentication();
   }
 
   /**
@@ -87,10 +99,12 @@ export class NavbarComponent implements OnInit{
    * Scroll vers une section spécifique
    */
   scrollToSection(sectionId: string): void {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // ✅ SÉCURISÉ : Vérifier que nous sommes côté client
+    if (isPlatformBrowser(this.platformId)) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   }
-
 }

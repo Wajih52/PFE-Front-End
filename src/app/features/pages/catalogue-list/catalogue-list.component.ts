@@ -1,163 +1,302 @@
-// src/app/features/catalogue/catalogue-list.component.ts
+// src/app/features/pages/catalogue-list/catalogue-list.component.ts
+// VERSION CORRIGÉE - Utilise les APIs avec dates
 
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { ProduitService } from '../../../services/produit.service';
-import { PanierService } from '../../../services/panier.service';
-import { ProduitResponse, Categorie, TypeProduit } from '../../../core/models';
-import { ToastrService } from 'ngx-toastr';
-import { ProduitCardComponent } from './components/produit-card.component';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
+import {ProduitService} from '../../../services/produit.service';
+import {PanierService} from '../../../services/panier.service';
+import {Categorie, ProduitResponse} from '../../../core/models';
 
 @Component({
   selector: 'app-catalogue-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ProduitCardComponent],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './catalogue-list.component.html',
   styleUrls: ['./catalogue-list.component.scss']
 })
 export class CatalogueListComponent implements OnInit {
   private produitService = inject(ProduitService);
   private panierService = inject(PanierService);
-  private toastr = inject(ToastrService);
+  private router = inject(Router);
 
-  // Signals
+  // ============================================
+  // 🎯 DATES DE LOCATION (CRITIQUES)
+  // ============================================
+
+  // ✅ Dates par défaut : Demain et après-demain
+  dateDebutLocation: string = '';
+  dateFinLocation: string = '';
+  minDate: string;
+
+
+  // ============================================
+  // État du catalogue
+  // ============================================
+
   produits = signal<ProduitResponse[]>([]);
-  loading = signal<boolean>(true);
+  isLoading = signal<boolean>(true);
+  errorMessage = signal<string>('');
 
   // Filtres
-  filtres = signal({
-    recherche: '',
-    categorie: '' as Categorie | '',
-    typeProduit: '' as TypeProduit | '',
-    prixMin: 0,
-    prixMax: 1000,
-    disponibleUniquement: false
-  });
+  categorieSelectionnee = signal<Categorie | null>(null);
+  rechercheNom = signal<string>('');
 
-  // Tri
-  triActuel = signal<'nom' | 'prix-asc' | 'prix-desc' | 'populaire'>('nom');
-
-  // Computed: produits filtrés
+  // Computed pour filtrer les produits côté client (en plus du filtrage serveur)
   produitsFiltres = computed(() => {
-    let resultat = this.produits();
-    const f = this.filtres();
+    let liste = this.produits();
 
-    // Filtre par recherche
-    if (f.recherche) {
-      const search = f.recherche.toLowerCase();
-      resultat = resultat.filter(p =>
-        p.nomProduit.toLowerCase().includes(search) ||
-        p.descriptionProduit?.toLowerCase().includes(search)
+    // Filtrer par nom si recherche active
+    if (this.rechercheNom()) {
+      const recherche = this.rechercheNom().toLowerCase();
+      liste = liste.filter(p =>
+        p.nomProduit.toLowerCase().includes(recherche) ||
+        (p.descriptionProduit && p.descriptionProduit.toLowerCase().includes(recherche))
       );
     }
 
-    // Filtre par catégorie
-    if (f.categorie) {
-      resultat = resultat.filter(p => p.categorieProduit === f.categorie);
-    }
-
-    // Filtre par type
-    if (f.typeProduit) {
-      resultat = resultat.filter(p => p.typeProduit === f.typeProduit);
-    }
-
-    // Filtre par prix
-    resultat = resultat.filter(p =>
-      p.prixUnitaire >= f.prixMin && p.prixUnitaire <= f.prixMax
-    );
-
-    // Filtre disponibilité
-    if (f.disponibleUniquement) {
-      resultat = resultat.filter(p => p.quantiteDisponible && p.quantiteDisponible > 0);
-    }
-
-    // Tri
-    const tri = this.triActuel();
-    if (tri === 'nom') {
-      resultat.sort((a, b) => a.nomProduit.localeCompare(b.nomProduit));
-    } else if (tri === 'prix-asc') {
-      resultat.sort((a, b) => a.prixUnitaire - b.prixUnitaire);
-    } else if (tri === 'prix-desc') {
-      resultat.sort((a, b) => b.prixUnitaire - a.prixUnitaire);
-    }
-
-    return resultat;
+    return liste;
   });
 
-  // Énumérations pour les selects
-  categories = Object.values(Categorie);
-  typesProduits = Object.values(TypeProduit);
+  // Catégories disponibles
+  categories: Categorie[] = [
+  Categorie.LUMIERE,
+  Categorie.MOBILIER,
+    Categorie.DECORATION,
+   Categorie.ACCESSOIRES,
+    Categorie.STRUCTURE,
+ Categorie.SONORISATION,
+   Categorie.MATERIEL_RESTAURATION
+  ];
 
-  // Badge panier
   totalPanier = this.panierService.totalArticles;
 
-  ngOnInit(): void {
-    this.chargerProduits();
+  // Date minimale pour le sélecteur (aujourd'hui)
+  dateMin = computed(() => this.formatDateForInput(new Date()));
+
+
+  constructor() {
+    this.minDate = this.formatDateForInput(new Date());
   }
 
-  chargerProduits(): void {
-    this.loading.set(true);
-    this.produitService.getAllProduits().subscribe({
-      next: (produits) => {
-        this.produits.set(produits);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        console.error('Erreur chargement produits:', error);
-        this.toastr.error('Impossible de charger les produits', 'Erreur');
-        this.loading.set(false);
+  ngOnInit(): void {
+    this.initialiserDatesParDefaut();
+    this.chargerCatalogue();
+  }
+
+  /**
+   * Initialiser les dates par défaut
+   * Demain et après-demain
+   */
+  private initialiserDatesParDefaut(): void {
+    const demain = new Date();
+    demain.setDate(demain.getDate() + 1);
+    this.dateDebutLocation = this.formatDateForInput(demain);
+
+    const apresDemain = new Date();
+    apresDemain.setDate(apresDemain.getDate() + 2);
+    this.dateFinLocation = this.formatDateForInput(apresDemain);
+  }
+
+  /**
+   * Formater une date pour input[type="date"]
+   */
+  protected formatDateForInput(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  /**
+   * ✅ Charger le catalogue disponible pour la période sélectionnée
+   */
+  chargerCatalogue(): void {
+    // Validation des dates
+    if (!this.dateDebutLocation || !this.dateFinLocation) {
+      this.errorMessage.set('Veuillez sélectionner des dates de location valides');
+      this.isLoading.set(false);
+      return;
+    }
+
+    if (new Date(this.dateDebutLocation) > new Date(this.dateFinLocation)) {
+      this.errorMessage.set('La date de début doit être antérieure à la date de fin');
+      this.isLoading.set(false);
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    // ✅ Utiliser l'API avec dates
+    if (this.categorieSelectionnee()) {
+      // Recherche avec catégorie + dates
+      this.produitService.searchProduitsAvecPeriode({
+        categorie: this.categorieSelectionnee()!,
+        dateDebut: this.dateDebutLocation,
+        dateFin: this.dateFinLocation
+      }).subscribe({
+        next: (produits) => {
+          this.produits.set(produits);
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('❌ Erreur chargement catalogue:', error);
+          this.errorMessage.set('Impossible de charger le catalogue');
+          this.isLoading.set(false);
+        }
+      });
+    } else {
+      // Catalogue complet pour la période
+      this.produitService.getCatalogueDisponibleSurPeriode(
+        this.dateDebutLocation,
+        this.dateFinLocation
+      ).subscribe({
+        next: (produits) => {
+          this.produits.set(produits);
+          this.isLoading.set(false);
+          console.log(`✅ ${produits.length} produits disponibles du ${this.dateDebutLocation} au ${this.dateFinLocation}`);
+        },
+        error: (error) => {
+          console.error('❌ Erreur chargement catalogue:', error);
+          this.errorMessage.set('Impossible de charger le catalogue');
+          this.isLoading.set(false);
+        }
+      });
+    }
+  }
+
+  /**
+   * ✅ Recharger le catalogue quand les dates changent
+   */
+  onDatesChange(): void {
+    console.log(`📅 Dates modifiées: ${this.dateDebutLocation} → ${this.dateFinLocation}`);
+    this.chargerCatalogue();
+  }
+
+  /**
+   * Filtrer par catégorie
+   */
+  filtrerParCategorie(categorie: Categorie): void {
+    this.categorieSelectionnee.set(categorie);
+    this.chargerCatalogue();
+  }
+
+  /**
+   * Réinitialiser les filtres
+   */
+  reinitialiserFiltres(): void {
+    this.categorieSelectionnee.set(null);
+    this.rechercheNom.set('');
+    this.chargerCatalogue();
+  }
+
+  /**
+   * Voir les détails d'un produit
+   */
+  voirDetails(idProduit: number): void {
+    // Passer les dates dans les query params
+    this.router.navigate(['/catalogue/produit', idProduit], {
+      queryParams: {
+        dateDebut: this.dateDebutLocation,
+        dateFin: this.dateFinLocation
       }
     });
   }
 
-  // Gestion des filtres
-  updateRecherche(value: string): void {
-    this.filtres.update(f => ({ ...f, recherche: value }));
-  }
+  /**
+   * ✅ Ajouter au panier avec les dates sélectionnées
+   */
+  ajouterAuPanier(produit: ProduitResponse): void {
+    // Validation des dates
+    if (!this.dateDebutLocation || !this.dateFinLocation) {
+      alert('⚠️ Veuillez sélectionner des dates de location');
+      return;
+    }
 
-  updateCategorie(value: string): void {
-    this.filtres.update(f => ({ ...f, categorie: value as Categorie | '' }));
-  }
+    // Vérifier la disponibilité avant d'ajouter
+    this.produitService.verifierDisponibiliteSurPeriode(
+      produit.idProduit,
+      1, // quantité par défaut
+      this.dateDebutLocation,
+      this.dateFinLocation
+    ).subscribe({
+      next: (disponibilite) => {
+        if (disponibilite.disponible) {
+          // Ajouter au panier
+          this.panierService.ajouterProduit({
+            idProduit: produit.idProduit,
+            nomProduit: produit.nomProduit,
+            quantite: 1,
+            prixUnitaire: produit.prixUnitaire,
+            dateDebut: this.dateDebutLocation,
+            dateFin: this.dateFinLocation,
+            imageProduit: produit.imageProduit || ''
+          });
 
-  updateTypeProduit(value: string): void {
-    this.filtres.update(f => ({ ...f, typeProduit: value as TypeProduit | '' }));
-  }
-
-  updatePrixMin(value: number): void {
-    this.filtres.update(f => ({ ...f, prixMin: value }));
-  }
-
-  updatePrixMax(value: number): void {
-    this.filtres.update(f => ({ ...f, prixMax: value }));
-  }
-
-  toggleDisponibilite(): void {
-    this.filtres.update(f => ({ ...f, disponibleUniquement: !f.disponibleUniquement }));
-  }
-
-  reinitialiserFiltres(): void {
-    this.filtres.set({
-      recherche: '',
-      categorie: '',
-      typeProduit: '',
-      prixMin: 0,
-      prixMax: 1000,
-      disponibleUniquement: false
+          console.log(`✅ ${produit.nomProduit} ajouté au panier`);
+        } else {
+          alert(`❌ ${disponibilite.message}`);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Erreur vérification disponibilité:', error);
+        alert('Impossible de vérifier la disponibilité du produit');
+      }
     });
   }
 
-  changerTri(tri: 'nom' | 'prix-asc' | 'prix-desc' | 'populaire'): void {
-    this.triActuel.set(tri);
+  /**
+   * Obtenir l'URL de l'image du produit
+   */
+  getImageUrl(produit: ProduitResponse): string {
+    if (produit.imageProduit) {
+      // Si l'image est un chemin relatif, ajouter le base URL du serveur
+      if (produit.imageProduit.startsWith('/') || produit.imageProduit.startsWith('uploads/')) {
+        return `http://localhost:8080${produit.imageProduit.startsWith('/') ? '' : '/'}${produit.imageProduit}`;
+      }
+      // Si c'est déjà une URL complète, la retourner telle quelle
+      return produit.imageProduit;
+    }
+    // Image placeholder si pas d'image
+    return 'https://via.placeholder.com/300x250/C8A882/FFFFFF?text=' + encodeURIComponent(produit.nomProduit);
   }
 
-  // Formatage
-  formatCategorie(cat: string): string {
-    return cat.replace(/_/g, ' ');
+  /**
+   * Gestion des erreurs d'image
+   */
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'https://via.placeholder.com/300x250/CCCCCC/FFFFFF?text=Image+Non+Disponible';
   }
 
-  formatTypeProduit(type: string): string {
-    return type === 'EN_QUANTITE' ? 'Par Quantité' : 'Avec Référence';
+  /**
+   * Obtenir le label de la catégorie
+   */
+  getCategorieLabel(categorie: Categorie): string {
+    const labels: Record<Categorie, string> = {
+      [Categorie.LUMIERE]: 'Lumière',
+      [Categorie.MOBILIER]: 'Mobilier',
+      [Categorie.DECORATION]: 'Décoration',
+      [Categorie.ACCESSOIRES]: 'Accessoires',
+      [Categorie.STRUCTURE]: 'Structure',
+      [Categorie.SONORISATION]: 'Sonorisation',
+      [Categorie.MATERIEL_RESTAURATION]: 'Matériel de restauration'
+    };
+
+    // Vérification que la catégorie existe dans les labels
+    if (categorie in labels) {
+      return labels[categorie];
+    }
+
+    // Fallback : convertir la valeur enum en string lisible
+    return categorie.toLowerCase().replace(/_/g, ' ');
   }
+
+  /**
+   * Navigation vers le panier
+   */
+  allerAuPanier(): void {
+    this.router.navigate(['/panier']);
+  }
+
+  protected readonly Date = Date;
 }

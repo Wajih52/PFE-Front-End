@@ -216,20 +216,32 @@ export class HistoriqueMouvementComponent implements OnInit {
 
   getMouvementIcon(type: TypeMouvement): string {
     const icons: Record<TypeMouvement, string> = {
-      [TypeMouvement.AJOUT_STOCK]: '📦',
-      [TypeMouvement.RETRAIT_STOCK]: '📤',
-      [TypeMouvement.AJOUT_INSTANCE]: '🆕',
-      [TypeMouvement.SUPPRESSION_INSTANCE]: '🗑️',
-      [TypeMouvement.MAINTENANCE]: '🔧',
-      [TypeMouvement.RETOUR_MAINTENANCE]: '✅',
-      [TypeMouvement.PRODUIT_ENDOMMAGE]: '⚠️',
-      [TypeMouvement.RESERVATION]: '📅',
-      [TypeMouvement.ANNULATION_RESERVATION]: '❌',
-      [TypeMouvement.LIVRAISON]: '🚚',
-      [TypeMouvement.RETOUR]: '↩️',
-      [TypeMouvement.CORRECTION_STOCK]: '🔄'
+      [TypeMouvement.CREATION]: '✨',        // Création produit
+      [TypeMouvement.AJOUT_STOCK]: '📦',     // Ajout stock
+      [TypeMouvement.ENTREE_STOCK]: '📥',    // Entrée stock
+      [TypeMouvement.RETRAIT_STOCK]: '📤',   // Retrait stock
+      [TypeMouvement.CORRECTION_STOCK]: '🔄', // Correction stock
+
+      [TypeMouvement.AJOUT_INSTANCE]: '🆕',  // Ajout instance
+      [TypeMouvement.SUPPRESSION_INSTANCE]: '🗑️', // Suppression instance
+
+      [TypeMouvement.RESERVATION]: '📅',     // Réservation
+      [TypeMouvement.SORTIE_RESERVATION]: '🚀', // Sortie réservation
+      [TypeMouvement.RETOUR_RESERVATION]: '📥', // Retour réservation
+      [TypeMouvement.ANNULATION_RESERVATION]: '❌', // Annulation réservation
+
+      [TypeMouvement.MAINTENANCE]: '🔧',     // Maintenance
+      [TypeMouvement.RETOUR_MAINTENANCE]: '✅', // Retour maintenance
+
+      [TypeMouvement.LIVRAISON]: '🚚',       // Livraison
+      [TypeMouvement.RETOUR]: '↩️',          // Retour
+
+      [TypeMouvement.PRODUIT_ENDOMMAGE]: '⚠️', // Produit endommagé
+
+      [TypeMouvement.REACTIVATION]: '🔓',    // Réactivation
+      [TypeMouvement.DESACTIVATION]: '🔒'    // Désactivation
     };
-    return icons[type] || '📋';
+    return icons[type] || '📋'; // Icône par défaut
   }
 
   formatDate(date: string | Date): string {

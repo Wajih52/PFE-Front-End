@@ -1,22 +1,39 @@
-// src/app/core/services/produit.service.ts
+// src/app/services/produit.service.ts - VERSION COMPLÈTE AVEC APIs DU BACKEND
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
-  ProduitRequest,
-  ProduitResponse,
-  StockStatistiques,
-  MouvementStockResponse,
   Categorie,
-  TypeMouvement
+  MouvementStockResponse,
+  ProduitRequest,
+  ProduitResponse, StockStatistiques,
+  TypeMouvement,
+  TypeProduit
 } from '../core/models';
+
+// ==================== INTERFACES ===================
+
+
+
+/**
+ * Response de disponibilité sur une période
+ */
+export interface DisponibilitePeriodeResponse {
+  idProduit: number;
+  quantiteDemandee: number;
+  dateDebut: string;
+  dateFin: string;
+  disponible: boolean;
+  quantiteDisponible?: number;
+  message: string;
+}
+
+// ==================== SERVICE ====================
 
 /**
  * Service de gestion des produits
- * Communique avec le ProduitController Spring Boot
- *
- * Sprint 3 : Gestion des produits et du stock
+ * ✅ VERSION COMPLÈTE avec toutes les APIs du ProduitController
  */
 @Injectable({
   providedIn: 'root'
@@ -25,24 +42,26 @@ export class ProduitService {
   private http = inject(HttpClient);
   private readonly API_URL = 'http://localhost:8080/api/produits';
 
-  // ============ GESTION DES PRODUITS ============
+  // ============================================
+  // GESTION DES PRODUITS (CRUD)
+  // ============================================
 
   /**
    * Créer un nouveau produit
    * POST /api/produits
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  creerProduit(produitDto: ProduitRequest): Observable<ProduitResponse> {
-    return this.http.post<ProduitResponse>(this.API_URL, produitDto);
+  creerProduit(produit: ProduitRequest): Observable<ProduitResponse> {
+    return this.http.post<ProduitResponse>(this.API_URL, produit);
   }
 
   /**
-   * Modifier un produit existant
+   * Modifier un produit
    * PUT /api/produits/{id}
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  modifierProduit(id: number, produitDto: ProduitRequest): Observable<ProduitResponse> {
-    return this.http.put<ProduitResponse>(`${this.API_URL}/${id}`, produitDto);
+  modifierProduit(id: number, produit: ProduitRequest): Observable<ProduitResponse> {
+    return this.http.put<ProduitResponse>(`${this.API_URL}/${id}`, produit);
   }
 
   /**
@@ -52,31 +71,7 @@ export class ProduitService {
    */
   supprimerProduit(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`);
-
   }
-
-  /**
-   * Supprimer (De la base de données) un produit
-   * DELETE /api/produits/{id}
-   * @requires ROLE: ADMIN
-   */
-  supprimerProduitDeBase(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}/base`);
-
-  }
-
-  /**
-   * Activer/Désactiver un produit
-   * PATCH /api/produits/{id}/activer
-   * @requires ROLE: ADMIN
-   */
-  toggleActifProduit(id: number, actif: boolean): Observable<ProduitResponse> {
-    return this.http.patch<ProduitResponse>(`${this.API_URL}/${id}/activer`, null, {
-      params: { actif: actif.toString() }
-    });
-  }
-
-  // ============ CONSULTATION ============
 
   /**
    * Obtenir un produit par ID
@@ -87,16 +82,22 @@ export class ProduitService {
   }
 
   /**
-   * Obtenir tous les produits
+   * Obtenir tous les produits (sans filtre de dates)
    * GET /api/produits
+   * ⚠️ NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
    */
   getAllProduits(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(this.API_URL);
   }
 
+  // ============================================
+  // RECHERCHE ET FILTRAGE (SANS PÉRIODE)
+  // ============================================
+
   /**
-   * Obtenir les produits disponibles (quantité > 0)
+   * Obtenir les produits disponibles (stock global > 0)
    * GET /api/produits/disponibles
+   * ⚠️ NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
    */
   getProduitsDisponibles(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/disponibles`);
@@ -145,12 +146,117 @@ export class ProduitService {
   /**
    * Filtrer par type de produit
    * GET /api/produits/type/{type}
+   * ⚠️ INUTILE POUR LE CLIENT - uniquement usage interne admin
    */
-  getProduitsByType(type: string): Observable<ProduitResponse[]> {
+  getProduitsByType(type: TypeProduit): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/type/${type}`);
   }
 
-  // ============ GESTION DU STOCK (SANS_REFERENCE) ============
+  // ============================================
+  // ✅ DISPONIBILITÉ AVEC PÉRIODE (APIs CRITIQUES)
+  // ============================================
+
+  /**
+   * ✅ Calculer la quantité disponible pour une période donnée
+   * GET /api/produits/{id}/quantite-disponible?dateDebut={date}&dateFin={date}
+   *
+   * Retourne la quantité réellement disponible en tenant compte des réservations
+   */
+  calculerQuantiteDisponibleSurPeriode(
+    id: number,
+    dateDebut: string,
+    dateFin: string
+  ): Observable<number> {
+    const params = new HttpParams()
+      .set('dateDebut', dateDebut)
+      .set('dateFin', dateFin);
+    return this.http.get<number>(`${this.API_URL}/${id}/quantite-disponible`, { params });
+  }
+
+  /**
+   * ✅ Vérifier la disponibilité d'un produit pour une période
+   * GET /api/produits/{id}/disponibilite-periode?quantite={qte}&dateDebut={date}&dateFin={date}
+   *
+   * Vérifie si une quantité spécifique est disponible
+   */
+  verifierDisponibiliteSurPeriode(
+    id: number,
+    quantite: number,
+    dateDebut: string,
+    dateFin: string
+  ): Observable<DisponibilitePeriodeResponse> {
+    const params = new HttpParams()
+      .set('quantite', quantite.toString())
+      .set('dateDebut', dateDebut)
+      .set('dateFin', dateFin);
+    return this.http.get<DisponibilitePeriodeResponse>(
+      `${this.API_URL}/${id}/disponibilite-periode`,
+      { params }
+    );
+  }
+
+  /**
+   * ✅ Obtenir le catalogue disponible sur une période
+   * GET /api/produits/catalogue-disponible?dateDebut={date}&dateFin={date}
+   *
+   * 🎯 API PRINCIPALE POUR LE CATALOGUE CLIENT
+   * Retourne uniquement les produits réellement disponibles pendant la période
+   */
+  getCatalogueDisponibleSurPeriode(
+    dateDebut: string,
+    dateFin: string
+  ): Observable<ProduitResponse[]> {
+    const params = new HttpParams()
+      .set('dateDebut', dateDebut)
+      .set('dateFin', dateFin);
+    return this.http.get<ProduitResponse[]>(
+      `${this.API_URL}/catalogue-disponible`,
+      { params }
+    );
+  }
+
+  /**
+   * ✅ Recherche multicritères avec période
+   * GET /api/produits/search-periode
+   *
+   * Permet de filtrer les produits disponibles selon plusieurs critères
+   * ET une période de disponibilité
+   */
+  searchProduitsAvecPeriode(filters: {
+    categorie?: Categorie;
+    typeProduit?: TypeProduit;
+    minPrix?: number;
+    maxPrix?: number;
+    dateDebut?: string;
+    dateFin?: string;
+  }): Observable<ProduitResponse[]> {
+    let params = new HttpParams();
+
+    if (filters.categorie) {
+      params = params.set('categorie', filters.categorie);
+    }
+    if (filters.typeProduit) {
+      params = params.set('typeProduit', filters.typeProduit);
+    }
+    if (filters.minPrix !== undefined) {
+      params = params.set('minPrix', filters.minPrix.toString());
+    }
+    if (filters.maxPrix !== undefined) {
+      params = params.set('maxPrix', filters.maxPrix.toString());
+    }
+    if (filters.dateDebut) {
+      params = params.set('dateDebut', filters.dateDebut);
+    }
+    if (filters.dateFin) {
+      params = params.set('dateFin', filters.dateFin);
+    }
+
+    return this.http.get<ProduitResponse[]>(`${this.API_URL}/search-periode`, { params });
+  }
+
+  // ============================================
+  // GESTION DU STOCK (SANS_REFERENCE)
+  // ============================================
 
   /**
    * Ajouter du stock à un produit SANS_REFERENCE
@@ -178,59 +284,49 @@ export class ProduitService {
     return this.http.post<ProduitResponse>(`${this.API_URL}/${id}/retrait-stock`, null, { params });
   }
 
-  /**
-   * Corriger le stock d'un produit SANS_REFERENCE
-   * PATCH /api/produits/{id}/correction-stock?nouvelleQuantite={quantite}&motif={motif}
-   * @requires ROLE: ADMIN
-   */
-  corrigerStock(id: number, nouvelleQuantite: number, motif: string): Observable<ProduitResponse> {
-    const params = new HttpParams()
-      .set('nouvelleQuantite', nouvelleQuantite.toString())
-      .set('motif', motif);
-    return this.http.patch<ProduitResponse>(`${this.API_URL}/${id}/correction-stock`, null, { params });
-  }
-
-  // ============ HISTORIQUE DES MOUVEMENTS ============
+  // ============================================
+  // HISTORIQUE DES MOUVEMENTS
+  // ============================================
 
   /**
-   * Obtenir l'historique complet des mouvements d'un produit
-   * GET /api/produits/{id}/historique
-   */
-  getHistoriqueMouvements(id: number): Observable<MouvementStockResponse[]> {
-    return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/historique`);
-  }
-
-  /**
-   * Obtenir l'historique des mouvements d'un produit
+   * Obtenir l'historique des mouvements de stock d'un produit
    * GET /api/produits/{id}/mouvements
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  getMouvementsProduit(id: number): Observable<MouvementStockResponse[]> {
+  getHistoriqueMouvements(id: number): Observable<MouvementStockResponse[]> {
     return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/mouvements`);
   }
 
   /**
-   * Filtrer les mouvements par type
-   * GET /api/produits/{id}/mouvements/type/{type}
+   * Obtenir l'historique des mouvements par type
+   * GET /api/produits/{id}/mouvements/type?typeMouvement={type}
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  getMouvementsByType(id: number, type: TypeMouvement): Observable<MouvementStockResponse[]> {
-    return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/mouvements/type/${type}`);
+  getHistoriqueMouvementsByType(
+    id: number,
+    typeMouvement: 'ENTREE' | 'SORTIE' | 'RETOUR' | 'PERTE' | 'CASSE'
+  ): Observable<MouvementStockResponse[]> {
+    return this.http.get<MouvementStockResponse[]>(
+      `${this.API_URL}/${id}/mouvements/type`,
+      { params: { typeMouvement } }
+    );
   }
 
   /**
-   * Filtrer les mouvements par période
-   * GET /api/produits/{id}/mouvements/periode?debut={debut}&fin={fin}
+   * Obtenir l'historique des mouvements sur une période
+   * GET /api/produits/{id}/mouvements/periode?debut={date}&fin={date}
    * @requires ROLE: ADMIN, EMPLOYE
    */
-  getMouvementsByPeriode(id: number, debut: string, fin: string): Observable<MouvementStockResponse[]> {
+  getHistoriqueMouvementsPeriode(id: number, debut: string, fin: string): Observable<MouvementStockResponse[]> {
     const params = new HttpParams()
       .set('debut', debut)
       .set('fin', fin);
     return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/mouvements/periode`, { params });
   }
 
-  // ============ STATISTIQUES ============
+  // ============================================
+  // STATISTIQUES
+  // ============================================
 
   /**
    * Obtenir les statistiques globales du stock
@@ -239,22 +335,5 @@ export class ProduitService {
    */
   getStatistiquesStock(): Observable<StockStatistiques> {
     return this.http.get<StockStatistiques>(`${this.API_URL}/statistiques`);
-  }
-
-  /**
-   * Vérifier la disponibilité d'un produit pour une période
-   * GET /api/produits/{id}/disponibilite?dateDebut={debut}&dateFin={fin}&quantite={quantite}
-   */
-  verifierDisponibilite(
-    id: number,
-    dateDebut: string,
-    dateFin: string,
-    quantite: number
-  ): Observable<boolean> {
-    const params = new HttpParams()
-      .set('dateDebut', dateDebut)
-      .set('dateFin', dateFin)
-      .set('quantite', quantite.toString());
-    return this.http.get<boolean>(`${this.API_URL}/${id}/disponibilite`, { params });
   }
 }

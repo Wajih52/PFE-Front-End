@@ -5,6 +5,9 @@
  * Correspondant aux enums Java du backend
  */
 
+
+
+
 /**
  * Catégories de produits
  */
@@ -66,7 +69,14 @@ export enum TypeMouvement {
   ANNULATION_RESERVATION = 'ANNULATION_RESERVATION',
   LIVRAISON = 'LIVRAISON',
   RETOUR = 'RETOUR',
-  CORRECTION_STOCK = 'CORRECTION_STOCK'
+  CORRECTION_STOCK = 'CORRECTION_STOCK',
+  CREATION = 'CREATION',
+  REACTIVATION = 'REACTIVATION',
+  ENTREE_STOCK ='ENTREE_STOCK',
+  RETOUR_RESERVATION = 'RETOUR_RESERVATION',
+  DESACTIVATION = 'DESACTIVATION',
+  SORTIE_RESERVATION='SORTIE_RESERVATION',
+
 }
 
 /**
@@ -117,5 +127,11 @@ export const TypeMouvementLabels: Record<TypeMouvement, string> = {
   [TypeMouvement.ANNULATION_RESERVATION]: 'Annulation de réservation',
   [TypeMouvement.LIVRAISON]: 'Livraison',
   [TypeMouvement.RETOUR]: 'Retour',
-  [TypeMouvement.CORRECTION_STOCK]: 'Correction de stock'
+  [TypeMouvement.CORRECTION_STOCK]: 'Correction de stock',
+  [TypeMouvement.CREATION] : 'Creation',
+  [TypeMouvement.REACTIVATION] : 'Réactivation',
+  [TypeMouvement.ENTREE_STOCK] :'Entrée Stock',
+  [TypeMouvement.RETOUR_RESERVATION] : 'Retour Reservation',
+  [TypeMouvement.DESACTIVATION] : 'Désactivation',
+  [TypeMouvement.SORTIE_RESERVATION] :'Sorite Reservation ',
 };

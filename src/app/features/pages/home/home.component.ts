@@ -1,7 +1,7 @@
 // src/app/features/pages/home/home.component.ts
 
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component, OnInit, inject, PLATFORM_ID, afterNextRender} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../../../core/services/storage.service';
 import { PanierService } from '../../../services/panier.service';
@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
   private router = inject(Router);
   private storage = inject(StorageService);
   private panierService = inject(PanierService);
+  private platformId = inject(PLATFORM_ID); // ✅ AJOUTÉ
 
   totalPanier = this.panierService.totalArticles;
 
@@ -93,8 +94,16 @@ export class HomeComponent implements OnInit {
     }
   ];
 
+  constructor() {
+    // ✅ AJOUTÉ : Vérifier l'authentification UNIQUEMENT côté client après le rendu
+    if (isPlatformBrowser(this.platformId)) {
+      afterNextRender(() => {
+        this.checkAuthentication();
+      });
+    }
+  }
   ngOnInit(): void {
-    this.checkAuthentication();
+
   }
 
   /**

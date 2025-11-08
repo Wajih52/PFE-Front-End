@@ -55,9 +55,19 @@ export interface ProduitResponse {
  * Statistiques de stock (StockStatistiquesDto.java)
  */
 export interface StockStatistiques {
+  // === CHAMPS PRINCIPAUX ===
   totalEntrees: number;
   totalSorties: number;
-  quantiteActuelle: number;
+  quantiteDisponible: number;
   nombreMouvements: number;
-  dateDernierMouvement?: string;      // Date (ISO format)
+  dateDernierMouvement: Date;
+
+  // === CHAMPS CALCULÉS (renvoyés par le backend) ===
+  soldeNet: number;
+  tauxRotation: number;
+  tauxUtilisation: number;
+  resume: string;
+  niveauActivite: string;
+  coherent: boolean;
+  messageAlerte: string | null;
 }

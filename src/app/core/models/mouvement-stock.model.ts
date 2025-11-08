@@ -7,24 +7,22 @@ import { TypeMouvement } from './produit.enums';
  */
 export interface MouvementStockResponse {
   idMouvement: number;
-  dateMouvement: string;        // ISO 8601
   typeMouvement: TypeMouvement;
   quantite: number;
   quantiteAvant: number;
   quantiteApres: number;
-  motif?: string;
-  effectuePar?: string;
+  dateMouvement: Date;
+  motif: string;
+  effectuePar: string;
+  idReservation?: number;
 
-  // Informations du produit
   idProduit: number;
   nomProduit: string;
   codeProduit: string;
 
-  // Informations instance (si mouvement sur instance)
+  // === Informations de l'instance (si applicable) ===
   idInstance?: number;
   numeroSerie?: string;
   codeInstance?: string;
 
-  // Informations réservation
-  idReservation?: number;
 }
