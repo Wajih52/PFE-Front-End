@@ -72,7 +72,7 @@ export class PanierService {
       // Mettre à jour la quantité
       lignes[indexExistant].quantite += ligne.quantite;
       lignes[indexExistant].sousTotal = lignes[indexExistant].quantite * ligne.prixUnitaire * nbJours;
-      this.toastr.success('Quantité mise à jour dans le panier', '✅ Panier');
+     // this.toastr.success('Quantité mise à jour dans le panier', '✅ Panier');
     } else {
       // Ajouter nouvelle ligne
       lignes.push({
@@ -80,7 +80,7 @@ export class PanierService {
         sousTotal,
         nbJours ,
         observations: ''});
-      this.toastr.success('Produit ajouté au panier', '✅ Panier');
+    //  this.toastr.success('Produit ajouté au panier', '✅ Panier');
     }
 
     this.updatePanier(lignes);
