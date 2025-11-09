@@ -8,6 +8,7 @@ import {Router, RouterLink} from '@angular/router';
 import {ProduitService} from '../../../services/produit.service';
 import {PanierService} from '../../../services/panier.service';
 import {Categorie, ProduitResponse} from '../../../core/models';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-catalogue-list',
@@ -20,6 +21,7 @@ export class CatalogueListComponent implements OnInit {
   private produitService = inject(ProduitService);
   private panierService = inject(PanierService);
   private router = inject(Router);
+  private toastr = inject(ToastrService);
 
   // ============================================
   // 🎯 DATES DE LOCATION (CRITIQUES)
@@ -54,7 +56,37 @@ export class CatalogueListComponent implements OnInit {
   disponibilites = signal<Map<number, number>>(new Map());
 
   // Computed pour filtrer les produits côté client (en plus du filtrage serveur)
-  produitsFiltres = signal<ProduitResponse[]>([]);
+  // ✅1: Computed pour filtrer les produits
+  produitsFiltres = computed(() => {
+    let liste = this.produits();
+
+    // Filtre par nom
+    if (this.rechercheNom()) {
+      const recherche = this.rechercheNom().toLowerCase();
+      liste = liste.filter(p =>
+        p.nomProduit.toLowerCase().includes(recherche) ||
+        (p.descriptionProduit && p.descriptionProduit.toLowerCase().includes(recherche))
+      );
+    }
+
+    // Filtre par catégorie
+    if (this.categorieSelectionnee()) {
+      liste = liste.filter(p => p.categorieProduit === this.categorieSelectionnee());
+    }
+
+    // Filtre par prix minimum
+    if (this.prixMin() !== null) {
+      liste = liste.filter(p => p.prixUnitaire >= this.prixMin()!);
+    }
+
+    // Filtre par prix maximum
+    if (this.prixMax() !== null) {
+      liste = liste.filter(p => p.prixUnitaire <= this.prixMax()!);
+    }
+
+    // Appliquer le tri
+    return this.trierListe(liste);
+  });
 
 
   // Catégories disponibles
@@ -107,42 +139,6 @@ export class CatalogueListComponent implements OnInit {
 
 
   /**
-   * ⭐ Appliquer tous les filtres (nom, catégorie, prix)
-   */
-  appliquerFiltres(): void {
-    let liste = this.produits();
-
-    // Filtre par nom
-    if (this.rechercheNom()) {
-      const recherche = this.rechercheNom().toLowerCase();
-      liste = liste.filter(p =>
-        p.nomProduit.toLowerCase().includes(recherche) ||
-        (p.descriptionProduit && p.descriptionProduit.toLowerCase().includes(recherche))
-      );
-    }
-
-    // Filtre par catégorie
-    if (this.categorieSelectionnee()) {
-      liste = liste.filter(p => p.categorieProduit === this.categorieSelectionnee());
-    }
-
-    // ⭐ Filtre par prix minimum
-    if (this.prixMin() !== null) {
-      liste = liste.filter(p => p.prixUnitaire >= this.prixMin()!);
-    }
-
-    // ⭐ Filtre par prix maximum
-    if (this.prixMax() !== null) {
-      liste = liste.filter(p => p.prixUnitaire <= this.prixMax()!);
-    }
-
-    // Appliquer le tri
-    liste = this.trierListe(liste);
-
-    this.produitsFiltres.set(liste);
-  }
-
-  /**
    * ⭐ Trier la liste selon le tri sélectionné
    */
   private trierListe(liste: ProduitResponse[]): ProduitResponse[] {
@@ -171,6 +167,17 @@ export class CatalogueListComponent implements OnInit {
   }
 
   /**
+   * ✅ Sélectionner une catégorie
+   */
+  selectionnerCategorie(categorie: Categorie | null): void {
+    this.categorieSelectionnee.set(categorie);
+    // Si catégorie spécifique, recharger avec filtrage serveur
+    if (categorie !== null) {
+      this.chargerCatalogue();
+    }
+  }
+
+  /**
    * Réinitialiser tous les filtres
    */
   reinitialiserFiltres(): void {
@@ -179,7 +186,8 @@ export class CatalogueListComponent implements OnInit {
     this.prixMin.set(null);
     this.prixMax.set(null);
     this.triSelectionne.set('');
-    this.appliquerFiltres();
+    this.chargerCatalogue();
+
   }
   /**
    * ✅ Charger le catalogue disponible pour la période sélectionnée
@@ -215,7 +223,6 @@ export class CatalogueListComponent implements OnInit {
       }).subscribe({
         next: (produits) => {
           this.produits.set(produits);
-          this.appliquerFiltres();
 
           // ⭐ Calculer disponibilités pour chaque produit
           produits.forEach(produit => {
@@ -278,7 +285,15 @@ export class CatalogueListComponent implements OnInit {
   ajouterAuPanier(produit: ProduitResponse): void {
     // Validation des dates
     if (!this.dateDebutLocation || !this.dateFinLocation) {
-      alert('⚠️ Veuillez sélectionner des dates de location');
+      this.toastr.warning('⚠️ Veuillez sélectionner des dates de location');
+      return;
+    }
+
+    // ✅ Récupérer la quantité disponible RÉELLE
+    const quantiteDisponible = this.getQuantiteDisponible(produit.idProduit);
+
+    if (quantiteDisponible === null || quantiteDisponible === 0) {
+      this.toastr.error('Ce produit n\'est pas disponible pour la période sélectionnée', '❌ Indisponible');
       return;
     }
 
@@ -303,8 +318,9 @@ export class CatalogueListComponent implements OnInit {
           });
 
           console.log(`✅ ${produit.nomProduit} ajouté au panier`);
+          this.toastr.success(`${produit.nomProduit} ajouté au panier`, '✅ Succès');
         } else {
-          alert(`❌ ${disponibilite.message}`);
+          this.toastr.error(disponibilite.message || 'Produit indisponible', '❌ Stock insuffisant');
         }
       },
       error: (error) => {

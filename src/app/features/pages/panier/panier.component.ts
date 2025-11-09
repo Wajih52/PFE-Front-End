@@ -1,17 +1,16 @@
 // src/app/features/pages/panier/panier.component.ts
-// 🛒 COMPOSANT PANIER COMPLET - Gestion du panier d'achat
+// ✅ VERSION CORRIGÉE - Problèmes 6-10 résolus
 
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { PanierService } from '../../../services/panier.service';
 import { ReservationService } from '../../../services/reservation.service';
 import { ProduitService } from '../../../services/produit.service';
 import { LignePanier } from '../../../core/models/panier.model';
 import { DevisRequestDto } from '../../../core/models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
-import {NotificationService} from '../../../services/notification.service';
 
 @Component({
   selector: 'app-panier',
@@ -26,15 +25,11 @@ export class PanierComponent implements OnInit {
   private produitService = inject(ProduitService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
-  private notificationService = inject(NotificationService);
 
-  // ============================================
   // STATE SIGNALS
-  // ============================================
-
-  // Panier state (computed depuis le service)
   lignes = this.panierService.lignes;
   totalArticles = this.panierService.totalArticles;
+  nombreProduits=this.panierService.nombreProduits;
   montantTotal = this.panierService.montantTotal;
   estVide = this.panierService.estVide;
 
@@ -48,30 +43,114 @@ export class PanierComponent implements OnInit {
   // Mode de validation
   modeValidation = signal<'devis' | 'direct'>('devis');
 
-  // Disponibilité temps réel (optionnel)
-  disponibilites = signal<Map<number, boolean>>(new Map());
-
-  // ============================================
-  // LIFECYCLE
-  // ============================================
+  // ✅ FIX #7: Disponibilité PAR LIGNE (pas par produit global)
+  // La clé est construite comme: "idProduit-dateDebut-dateFin"
+  disponibilitesParLigne = signal<Map<string, { disponible: boolean; quantiteMax: number }>>(new Map());
 
   ngOnInit(): void {
-    // Charger les observations sauvegardées
     const savedObservations = this.panierService.getObservations();
     if (savedObservations) {
       this.observations.set(savedObservations);
     }
 
-    // Vérifier les disponibilités (optionnel, au chargement)
-    this.verifierDisponibilites();
+    // ✅ FIX #10: Vérifier automatiquement à l'init (pas de bouton nécessaire)
+    this.verifierDisponibilitesAutomatique();
   }
 
-  // ============================================
-  // GESTION DU PANIER
-  // ============================================
+  /**
+   * ✅ FIX #10: Vérification automatique sans bouton
+   */
+  private verifierDisponibilitesAutomatique(): void {
+    const lignes = this.lignes();
+    if (lignes.length === 0) return;
+
+    lignes.forEach(ligne => {
+      this.verifierDisponibiliteLigne(ligne);
+    });
+  }
 
   /**
-   * Modifier la quantité d'une ligne
+   * ✅ FIX #7: Vérifier la disponibilité d'UNE ligne spécifique
+   */
+  private verifierDisponibiliteLigne(ligne: LignePanier): void {
+    this.produitService.verifierDisponibiliteSurPeriode(
+      ligne.idProduit,
+      ligne.quantite,
+      ligne.dateDebut,
+      ligne.dateFin
+    ).subscribe({
+      next: (disponibilite) => {
+        const cle = this.getCleUnique(ligne);
+        const dispos = new Map(this.disponibilitesParLigne());
+        dispos.set(cle, {
+          disponible: disponibilite.disponible,
+          quantiteMax: disponibilite.quantiteDisponible ?? 0
+        });
+        this.disponibilitesParLigne.set(dispos);
+      },
+      error: (error) => {
+        console.error('Erreur vérification disponibilité ligne:', error);
+      }
+    });
+  }
+
+  /**
+   * ✅ Générer une clé unique pour chaque ligne
+   */
+  protected getCleUnique(ligne: LignePanier): string {
+    return `${ligne.idProduit}-${ligne.dateDebut}-${ligne.dateFin}`;
+  }
+
+  /**
+   * ✅ FIX #7: Obtenir la disponibilité d'une ligne spécifique
+   */
+  getDisponibiliteLigne(ligne: LignePanier): { disponible: boolean; quantiteMax: number } | undefined {
+    const cle = this.getCleUnique(ligne);
+    return this.disponibilitesParLigne().get(cle);
+  }
+
+  /**
+   * ✅ FIX #7 & #8: Vérifier si une ligne est disponible
+   */
+  isLigneDisponible(ligne: LignePanier): boolean {
+    const dispo = this.getDisponibiliteLigne(ligne);
+    return dispo ? dispo.disponible : true; // Optimiste par défaut
+  }
+
+  /**
+   * ✅ FIX #8 & #9: Incrémenter la quantité avec validation
+   */
+  incrementerQuantite(ligne: LignePanier): void {
+    const dispo = this.getDisponibiliteLigne(ligne);
+
+    // ✅ FIX #9: Vérifier si on peut incrémenter
+    if (dispo && ligne.quantite >= dispo.quantiteMax) {
+      this.toastr.warning(
+        `Maximum ${dispo.quantiteMax} disponible(s) pour cette période`,
+        '⚠️ Stock limité'
+      );
+      return;
+    }
+
+    const nouvelleQuantite = ligne.quantite + 1;
+    this.modifierQuantite(ligne, nouvelleQuantite);
+  }
+
+  /**
+   * ✅ FIX #8: Décrémenter la quantité
+   */
+  decrementerQuantite(ligne: LignePanier): void {
+    if (ligne.quantite <= 1) {
+      this.toastr.warning('La quantité minimale est 1', '⚠️ Quantité minimale');
+      return;
+    }
+
+    const nouvelleQuantite = ligne.quantite - 1;
+    this.modifierQuantite(ligne, nouvelleQuantite);
+  }
+
+  /**
+   * ✅ FIX #8: Modifier la quantité avec vérification temps réel
    */
   modifierQuantite(ligne: LignePanier, nouvelleQuantite: number): void {
     if (nouvelleQuantite < 1) {
@@ -88,15 +167,25 @@ export class PanierComponent implements OnInit {
     ).subscribe({
       next: (disponibilite) => {
         if (disponibilite.disponible) {
+          // Mettre à jour le panier
           this.panierService.modifierQuantite(
             ligne.idProduit,
             ligne.dateDebut,
             ligne.dateFin,
             nouvelleQuantite
           );
+
+          // Mettre à jour la disponibilité
+          const cle = this.getCleUnique(ligne);
+          const dispos = new Map(this.disponibilitesParLigne());
+          dispos.set(cle, {
+            disponible: true,
+            quantiteMax: disponibilite.quantiteDisponible ?? 0
+          });
+          this.disponibilitesParLigne.set(dispos);
+
           this.toastr.success('Quantité mise à jour', '✅ Panier');
         } else {
-          //this.notificationService.success(disponibilite.message || 'Quantité non disponible');
           this.toastr.error(
             disponibilite.message || 'Quantité non disponible',
             '❌ Stock insuffisant'
@@ -111,6 +200,14 @@ export class PanierComponent implements OnInit {
   }
 
   /**
+   * ✅ FIX #9: Vérifier si le bouton + doit être désactivé
+   */
+  estQuantiteMaximale(ligne: LignePanier): boolean {
+    const dispo = this.getDisponibiliteLigne(ligne);
+    return dispo ? ligne.quantite >= dispo.quantiteMax : false;
+  }
+
+  /**
    * Retirer une ligne du panier
    */
   retirerLigne(ligne: LignePanier): void {
@@ -120,6 +217,12 @@ export class PanierComponent implements OnInit {
         ligne.dateDebut,
         ligne.dateFin
       );
+
+      // Retirer de la map de disponibilité
+      const cle = this.getCleUnique(ligne);
+      const dispos = new Map(this.disponibilitesParLigne());
+      dispos.delete(cle);
+      this.disponibilitesParLigne.set(dispos);
     }
   }
 
@@ -130,6 +233,7 @@ export class PanierComponent implements OnInit {
     if (confirm('Voulez-vous vraiment vider le panier ?')) {
       this.panierService.viderPanier();
       this.observations.set('');
+      this.disponibilitesParLigne.set(new Map());
     }
   }
 
@@ -153,66 +257,8 @@ export class PanierComponent implements OnInit {
     this.toastr.info('Observations enregistrées', 'ℹ️ Panier');
   }
 
-  // ============================================
-  // VÉRIFICATION DISPONIBILITÉ
-  // ============================================
-
   /**
-   * Vérifier les disponibilités de tous les produits du panier
-   */
-  verifierDisponibilites(): void {
-    const lignes = this.lignes();
-
-    if (lignes.length === 0) {
-      return;
-    }
-
-    this.isCheckingAvailability.set(true);
-
-    // Créer un tableau de vérifications
-    const verifications = lignes.map(ligne => ({
-      idProduit: ligne.idProduit,
-      quantite: ligne.quantite,
-      dateDebut: ligne.dateDebut,
-      dateFin: ligne.dateFin
-    }));
-
-    // Appeler l'API de vérification multiple (si disponible)
-    // Sinon, vérifier une par une
-    lignes.forEach(ligne => {
-      this.produitService.verifierDisponibiliteSurPeriode(
-        ligne.idProduit,
-        ligne.quantite,
-        ligne.dateDebut,
-        ligne.dateFin
-      ).subscribe({
-        next: (disponibilite) => {
-          const dispos = new Map(this.disponibilites());
-          dispos.set(ligne.idProduit, disponibilite.disponible);
-          this.disponibilites.set(dispos);
-        },
-        error: (error) => {
-          console.error('Erreur vérification disponibilité:', error);
-        }
-      });
-    });
-
-    this.isCheckingAvailability.set(false);
-  }
-
-  /**
-   * Vérifier si une ligne est disponible
-   */
-  isLigneDisponible(idProduit: number): boolean {
-    return this.disponibilites().get(idProduit) !== false;
-  }
-
-  // ============================================
-  // VALIDATION DU PANIER
-  // ============================================
-
-  /**
-   * Valider le panier et créer un devis
+   * ✅ Valider le panier et créer un devis
    */
   demanderDevis(): void {
     if (this.estVide()) {
@@ -220,162 +266,49 @@ export class PanierComponent implements OnInit {
       return;
     }
 
-    // Vérifier que toutes les lignes sont disponibles
-    const toutesDisponibles = Array.from(this.lignes()).every(
-      ligne => this.isLigneDisponible(ligne.idProduit)
-    );
+    // ✅ Vérifier que toutes les lignes sont disponibles
+    const lignes = this.lignes();
+    const toutesDisponibles = lignes.every(ligne => this.isLigneDisponible(ligne));
 
     if (!toutesDisponibles) {
       this.toastr.error(
-        'Certains produits ne sont plus disponibles. Veuillez mettre à jour votre panier.',
-        '❌ Disponibilité'
+        'Certains produits ne sont plus disponibles. Veuillez retirer les lignes indisponibles.',
+        '❌ Produits indisponibles'
       );
       return;
     }
 
     this.isValidating.set(true);
 
-    // Préparer la requête de devis
     const devisRequest: DevisRequestDto = {
-      lignesReservation: this.lignes().map(ligne => ({
+      lignesReservation: lignes.map(ligne => ({
         idProduit: ligne.idProduit,
         quantite: ligne.quantite,
         prixUnitaire: ligne.prixUnitaire,
         dateDebut: ligne.dateDebut,
         dateFin: ligne.dateFin,
-        observations: ligne.observations
+        observationsClient: ligne.observations
       })),
-      observationsClient: this.observations() || undefined,
-      validationAutomatique: false // false = demande de devis
-    };
-
-    // Appeler le backend
-    this.reservationService.creerDevis(devisRequest).subscribe({
-      next: (devis) => {
-        this.toastr.success(
-          'Votre demande de devis a été envoyée avec succès !',
-          '✅ Devis créé'
-        );
-
-        // Vider le panier
-        this.panierService.viderPanier();
-        this.observations.set('');
-
-        // Rediriger vers "Mes Commandes"
-        setTimeout(() => {
-          this.router.navigate(['/client/mes-commandes']);
-        }, 2000);
-      },
-      error: (error) => {
-        console.error('Erreur création devis:', error);
-        this.toastr.error(
-          error.error?.message || 'Impossible de créer le devis',
-          '❌ Erreur'
-        );
-        this.isValidating.set(false);
-      }
-    });
-  }
-
-  /**
-   * Commander directement (sans validation admin)
-   */
-  commanderDirectement(): void {
-    if (this.estVide()) {
-      this.toastr.warning('Votre panier est vide', '⚠️ Panier vide');
-      return;
-    }
-
-    if (!confirm('Confirmer la commande immédiate ? (Pas de validation admin)')) {
-      return;
-    }
-
-    this.isValidating.set(true);
-
-    // Préparer la requête avec validation automatique
-    const devisRequest: DevisRequestDto = {
-      lignesReservation: this.lignes().map(ligne => ({
-        idProduit: ligne.idProduit,
-        quantite: ligne.quantite,
-        prixUnitaire: ligne.prixUnitaire,
-        dateDebut: ligne.dateDebut,
-        dateFin: ligne.dateFin
-      })),
-      observationsClient: this.observations() || undefined,
-      validationAutomatique: true // true = commande directe
+      observationsClient: this.observations(),
+      validationAutomatique: false
     };
 
     this.reservationService.creerDevis(devisRequest).subscribe({
       next: (reservation) => {
-        this.toastr.success(
-          'Votre commande a été confirmée avec succès !',
-          '✅ Commande validée'
-        );
-
-        // Vider le panier
+        this.toastr.success('Votre demande de devis a été envoyée', '✅ Devis créé');
         this.panierService.viderPanier();
-        this.observations.set('');
-
-        // Rediriger vers "Mes Commandes"
-        setTimeout(() => {
-          this.router.navigate(['/client/mes-commandes']);
-        }, 2000);
+        this.router.navigate(['/mes-commandes']);
       },
       error: (error) => {
-        console.error('Erreur création commande:', error);
-        this.toastr.error(
-          error.error?.message || 'Impossible de créer la commande',
-          '❌ Erreur'
-        );
+        console.error('Erreur création devis:', error);
+        this.toastr.error('Impossible de créer le devis', '❌ Erreur');
         this.isValidating.set(false);
       }
     });
   }
 
-  // ============================================
-  // HELPERS
-  // ============================================
-
   /**
-   * Obtenir l'URL de l'image d'un produit
-   */
-  getImageUrl(imagePath?: string): string {
-    if (!imagePath) {
-      return 'assets/images/placeholder-product.jpg';
-    }
-
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
-
-    // Images du serveur backend
-    return `http://localhost:8080${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
-  }
-
-  /**
-   * Calculer le nombre de jours
-   */
-  calculerNbJours(dateDebut: string, dateFin: string): number {
-    const debut = new Date(dateDebut);
-    const fin = new Date(dateFin);
-    return Math.ceil((fin.getTime() - debut.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  }
-
-  /**
-   * Formater une date
-   */
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
-
-  /**
-   * Retour au catalogue
+   * Continuer les achats
    */
   continuerAchats(): void {
     this.router.navigate(['/catalogue']);

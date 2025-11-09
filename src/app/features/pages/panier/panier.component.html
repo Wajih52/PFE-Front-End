@@ -1,5 +1,5 @@
 <!-- src/app/features/pages/panier/panier.component.html -->
-<!-- 🛒 TEMPLATE DU PANIER - Design moderne e-commerce -->
+<!-- ✅ VERSION CORRIGÉE - Problèmes 6-10 résolus -->
 
 <div class="panier-container">
 
@@ -59,38 +59,20 @@
       <!-- Colonne gauche : Liste des produits -->
       <div class="panier-liste">
 
-        <!-- Bouton vérifier disponibilités -->
-        <div class="verification-bar">
-          <button
-            class="btn-verification"
-            (click)="verifierDisponibilites()"
-            [disabled]="isCheckingAvailability()"
-          >
-            @if (isCheckingAvailability()) {
-              <i class="fas fa-spinner fa-spin"></i>
-              Vérification en cours...
-            } @else {
-              <i class="fas fa-sync-alt"></i>
-              Vérifier les disponibilités
-            }
-          </button>
-        </div>
-
-        <!-- Liste des lignes -->
+        <!-- ✅ FIX #10: Pas de bouton de vérification, validation automatique -->
         <div class="lignes-container">
-          @for (ligne of lignes(); track ligne.idProduit + ligne.dateDebut) {
-            <div class="ligne-panier" [class.indisponible]="!isLigneDisponible(ligne.idProduit)">
+          @for (ligne of lignes(); track getCleUnique(ligne)) {
+            <div class="ligne-panier" [class.indisponible]="!isLigneDisponible(ligne)">
 
               <!-- Image produit -->
               <div class="ligne-image">
                 <img
-                  [src]="getImageUrl(ligne.imageProduit)"
+                  [src]="ligne.imageProduit || 'https://via.placeholder.com/100x100/C8A882/FFFFFF?text=Produit'"
                   [alt]="ligne.nomProduit"
-                  (error)="$any($event.target).src='assets/images/placeholder-product.jpg'"
                 />
 
-                <!-- Badge disponibilité -->
-                @if (!isLigneDisponible(ligne.idProduit)) {
+                <!-- ✅ Badge indisponible si nécessaire -->
+                @if (!isLigneDisponible(ligne)) {
                   <div class="badge-indisponible">
                     <i class="fas fa-exclamation-triangle"></i>
                     Indisponible
@@ -98,216 +80,174 @@
                 }
               </div>
 
-              <!-- Infos produit -->
+              <!-- Informations produit -->
               <div class="ligne-info">
                 <h3 class="produit-nom">{{ ligne.nomProduit }}</h3>
 
-                <div class="produit-details">
-                  <span class="detail-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    {{ formatDate(ligne.dateDebut) }}
-                  </span>
-                  <span class="detail-separator">→</span>
-                  <span class="detail-item">
-                    <i class="fas fa-calendar-check"></i>
-                    {{ formatDate(ligne.dateFin) }}
-                  </span>
-                  <span class="detail-badge">
-                    {{ ligne.nbJours }} jour(s)
-                  </span>
+                <div class="ligne-details">
+                  <div class="detail-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ ligne.dateDebut }} → {{ ligne.dateFin }}</span>
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ ligne.nbJours }} jour{{ ligne.nbJours > 1 ? 's' : '' }}</span>
+                  </div>
+
+                  <div class="detail-item">
+                    <i class="fas fa-tag"></i>
+                    <span>{{ ligne.prixUnitaire | number:'1.2-2' }} TND / jour</span>
+                  </div>
                 </div>
 
-                <div class="produit-prix">
-                  <span class="prix-unitaire">
-                    {{ ligne.prixUnitaire | number:'1.2-2' }} TND / jour
-                  </span>
-                  @if (ligne.categorie) {
-                    <span class="categorie-badge">{{ ligne.categorie }}</span>
+                <!-- ✅ Message d'alerte pour stock limité -->
+                @if (getDisponibiliteLigne(ligne); as dispo) {
+                  @if (dispo.disponible && dispo.quantiteMax <= 5 && dispo.quantiteMax > 0) {
+                    <div class="alerte-stock">
+                      <i class="fas fa-exclamation-circle"></i>
+                      Plus que {{ dispo.quantiteMax }} disponible(s) pour cette période
+                    </div>
                   }
+                  @if (!dispo.disponible) {
+                    <div class="alerte-indisponible">
+                      <i class="fas fa-times-circle"></i>
+                      Ce produit n'est plus disponible pour cette période
+                    </div>
+                  }
+                }
+
+                <!-- Contrôle de quantité -->
+                <div class="quantite-control">
+                  <label>Quantité :</label>
+
+                  <div class="quantite-buttons">
+                    <!-- ✅ FIX #8: Bouton décrémenter fonctionnel -->
+                    <button
+                      class="btn-quantite"
+                      (click)="decrementerQuantite(ligne)"
+                      [disabled]="ligne.quantite <= 1"
+                      title="Diminuer la quantité"
+                    >
+                      <i class="fas fa-minus"></i>
+                    </button>
+
+                    <span class="quantite-valeur">{{ ligne.quantite }}</span>
+
+                    <!-- ✅ FIX #8 & #9: Bouton incrémenter fonctionnel et désactivé à la limite -->
+                    <button
+                      class="btn-quantite"
+                      (click)="incrementerQuantite(ligne)"
+                      [disabled]="estQuantiteMaximale(ligne)"
+                      [title]="estQuantiteMaximale(ligne) ? 'Quantité maximale atteinte' : 'Augmenter la quantité'"
+                    >
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+
+                  <!-- Prix de la ligne -->
+                  <div class="ligne-prix">
+                    <span class="sous-total-label">Sous-total :</span>
+                    <span class="sous-total-montant">
+                      {{ ligne.sousTotal | number:'1.2-2' }} TND
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- Quantité -->
-              <div class="ligne-quantite">
-                <label>Quantité</label>
-                <div class="quantite-controls">
-                  <button
-                    class="btn-qty"
-                    (click)="modifierQuantite(ligne, ligne.quantite - 1)"
-                    [disabled]="ligne.quantite <= 1 || isValidating()"
-                  >
-                    <i class="fas fa-minus"></i>
-                  </button>
-
-                  <input
-                    type="number"
-                    class="qty-input"
-                    [(ngModel)]="ligne.quantite"
-                    (change)="modifierQuantite(ligne, ligne.quantite)"
-                    [disabled]="isValidating()"
-                    min="1"
-                  />
-
-                  <button
-                    class="btn-qty"
-                    (click)="modifierQuantite(ligne, ligne.quantite + 1)"
-                    [disabled]="isValidating()"
-                  >
-                    <i class="fas fa-plus"></i>
-                  </button>
+                <!-- Observations (optionnel) -->
+                <div class="ligne-observations">
+                  <label for="obs-{{ ligne.idProduit }}">
+                    <i class="fas fa-comment"></i>
+                    Observations (optionnel)
+                  </label>
+                  <textarea
+                    [id]="'obs-' + ligne.idProduit"
+                    [(ngModel)]="ligne.observations"
+                    (ngModelChange)="modifierObservationsLigne(ligne, $event)"
+                    placeholder="Ajoutez des précisions..."
+                    rows="2"
+                    class="observations-input"
+                  ></textarea>
                 </div>
-              </div>
 
-
-
-              <!-- Sous-total -->
-              <div class="ligne-total">
-                <span class="total-label">Sous-total</span>
-                <span class="total-montant">
-                  {{ ligne.sousTotal | number:'1.2-2' }} TND
-                </span>
-                <span class="total-detail">
-                  ({{ ligne.quantite }} × {{ ligne.prixUnitaire }} × {{ ligne.nbJours }} jour(s))
-                </span>
-              </div>
-
-              <!-- Bouton supprimer -->
-              <div class="ligne-actions">
+                <!-- Bouton supprimer -->
                 <button
-                  class="btn-delete"
+                  class="btn-supprimer-ligne"
                   (click)="retirerLigne(ligne)"
-                  [disabled]="isValidating()"
                   title="Retirer du panier"
                 >
                   <i class="fas fa-trash-alt"></i>
+                  Retirer
                 </button>
               </div>
-              <!--Observations par ligne -->
-
-              <div class="ligne-observations">
-                <label [for]="'obs-' + ligne.idProduit">
-                  <i class="fas fa-sticky-note"></i>
-                  Note pour ce produit
-                </label>
-                <textarea
-                  [id]="'obs-' + ligne.idProduit"
-                  [(ngModel)]="ligne.observations"
-                  (blur)="modifierObservationsLigne(ligne, ligne.observations || '')"
-                  placeholder="Ex: Préférence couleur, horaire livraison..."
-                  rows="2"
-                  [disabled]="isValidating()"
-                  class="obs-input"
-                ></textarea>
-                <small class="obs-help">
-                  Précisions spécifiques à ce produit
-                </small>
-              </div>
             </div>
-
           }
         </div>
-
       </div>
 
-      <!-- Colonne droite : Récapitulatif -->
-      <div class="panier-recap">
-        <div class="recap-card">
-          <h2>Récapitulatif</h2>
+      <!-- Colonne droite : Résumé et validation -->
+      <div class="panier-resume">
+        <div class="resume-card">
+          <h2>
+            <i class="fas fa-calculator"></i>
+            Résumé de la commande
+          </h2>
 
-          <!-- Statistiques -->
-          <div class="recap-stats">
-            <div class="stat-item">
-              <span class="stat-label">Articles</span>
-              <span class="stat-value">{{ totalArticles() }}</span>
+          <div class="resume-details">
+            <div class="resume-ligne">
+              <span>Nombre d'articles :</span>
+              <strong>{{ totalArticles() }}</strong>
             </div>
 
-            <div class="stat-item">
-              <span class="stat-label">Produits différents</span>
-              <span class="stat-value">{{ lignes().length }}</span>
+            <div class="resume-ligne">
+              <span>Nombre de produits :</span>
+              <strong>{{ nombreProduits() }}</strong>
+            </div>
+
+            <div class="resume-separateur"></div>
+
+            <div class="resume-total">
+              <span>Montant total :</span>
+              <strong class="montant-total">{{ montantTotal() | number:'1.2-2' }} TND</strong>
             </div>
           </div>
 
-          <!-- Montant total -->
-          <div class="recap-total">
-            <span class="total-label">Total estimé</span>
-            <span class="total-montant">{{ montantTotal() | number:'1.2-2' }} TND</span>
-          </div>
-
-          <div class="recap-note">
-            <i class="fas fa-info-circle"></i>
-            Le montant final sera confirmé après validation de votre devis
-          </div>
-
-          <!-- Zone observations -->
-          <div class="recap-observations">
+          <!-- Observations générales -->
+          <div class="observations-generales">
             <label for="observations">
               <i class="fas fa-comment-dots"></i>
-              Observations (optionnel)
+              Observations pour l'agence (optionnel)
             </label>
             <textarea
               id="observations"
               [(ngModel)]="observations"
-              (blur)="sauvegarderObservations()"
-              placeholder="Ajoutez des précisions sur votre commande..."
+              (ngModelChange)="sauvegarderObservations()"
+              placeholder="Ajoutez des informations supplémentaires..."
               rows="4"
-              [disabled]="isValidating()"
+              class="observations-textarea"
             ></textarea>
-            <small class="help-text">
-              Ex: horaires de livraison, adresse précise, demandes spéciales...
-            </small>
           </div>
 
-          <!-- Boutons validation -->
-          <div class="recap-actions">
+          <!-- Actions de validation -->
+          <div class="actions-validation">
             <button
-              class="btn-primary btn-large"
+              class="btn-valider"
               (click)="demanderDevis()"
               [disabled]="isValidating() || estVide()"
             >
               @if (isValidating()) {
                 <i class="fas fa-spinner fa-spin"></i>
-                Traitement en cours...
+                Création en cours...
               } @else {
                 <i class="fas fa-file-invoice"></i>
                 Demander un devis
               }
             </button>
 
-            <div class="separator-or">
-              <span>ou</span>
-            </div>
-
-            <button
-              class="btn-secondary btn-large"
-              (click)="commanderDirectement()"
-              [disabled]="isValidating() || estVide()"
-            >
-              @if (isValidating()) {
-                <i class="fas fa-spinner fa-spin"></i>
-                Traitement en cours...
-              } @else {
-                <i class="fas fa-check-circle"></i>
-                Commander directement
-              }
-            </button>
-          </div>
-
-          <!-- Infos workflow -->
-          <div class="recap-workflow">
-            <h3>
-              <i class="fas fa-lightbulb"></i>
-              À savoir
-            </h3>
-            <ul>
-              <li>
-                <strong>Demander un devis :</strong>
-                Notre équipe reviendra vers vous avec une offre personnalisée
-              </li>
-              <li>
-                <strong>Commander directement :</strong>
-                Validation immédiate aux prix affichés (sans négociation)
-              </li>
-            </ul>
+            <p class="info-validation">
+              <i class="fas fa-info-circle"></i>
+              Un administrateur validera votre demande de devis
+            </p>
           </div>
         </div>
       </div>

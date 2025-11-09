@@ -1,5 +1,5 @@
 <!-- src/app/features/pages/catalogue-list/catalogue-list.component.html -->
-<!-- VERSION CORRIGÉE - Avec sélecteur de dates -->
+<!-- ✅ VERSION CORRIGÉE - Tous les problèmes UI résolus -->
 
 <div class="catalogue-container">
 
@@ -91,21 +91,18 @@
               id="recherche"
               placeholder="Nom du produit..."
               [(ngModel)]="rechercheNom"
-              (input)="appliquerFiltres()"
               class="search-input"
             />
           </div>
 
-
-          <!-- Catégories -->
+          <!-- ✅ FIX #2: Catégories avec sélection fonctionnelle -->
           <div class="filtre-group">
             <label>Catégories</label>
             <div class="categorie-list">
               <button
                 class="categorie-btn"
                 [class.active]="categorieSelectionnee() === null"
-                (click)="reinitialiserFiltres()"
-                (change)="appliquerFiltres()"
+                (click)="selectionnerCategorie(null)"
               >
                 <i class="fas fa-th"></i>
                 Toutes
@@ -115,13 +112,15 @@
                 <button
                   class="categorie-btn"
                   [class.active]="categorieSelectionnee() === categorie"
-                  (click)="appliquerFiltres()"
+                  (click)="selectionnerCategorie(categorie)"
                 >
                   {{ getCategorieLabel(categorie) }}
                 </button>
               }
             </div>
           </div>
+
+          <!-- Filtre prix -->
           <div class="filtre-group">
             <label>
               <i class="fas fa-tag"></i>
@@ -135,7 +134,6 @@
                   type="number"
                   id="prixMin"
                   [(ngModel)]="prixMin"
-                  (input)="appliquerFiltres()"
                   placeholder="0"
                   min="0"
                   class="prix-input"
@@ -150,7 +148,6 @@
                   type="number"
                   id="prixMax"
                   [(ngModel)]="prixMax"
-                  (input)="appliquerFiltres()"
                   placeholder="1000"
                   min="0"
                   class="prix-input"
@@ -159,25 +156,6 @@
             </div>
           </div>
 
-          <!-- ⭐ NOUVEAU: Tri -->
-          <div class="filtre-group">
-            <label for="tri">
-              <i class="fas fa-sort"></i>
-              Trier par
-            </label>
-            <select
-              id="tri"
-              [(ngModel)]="triSelectionne"
-              (change)="appliquerFiltres()"
-              class="select-input"
-            >
-              <option value="">Aucun tri</option>
-              <option value="prix-asc">Prix croissant (↑)</option>
-              <option value="prix-desc">Prix décroissant (↓)</option>
-              <option value="nom-asc">Nom A→Z</option>
-              <option value="nom-desc">Nom Z→A</option>
-            </select>
-          </div>
           <!-- Bouton réinitialiser -->
           <button class="btn-reset" (click)="reinitialiserFiltres()">
             <i class="fas fa-redo"></i>
@@ -188,13 +166,36 @@
 
       <!-- ========== GRILLE DE PRODUITS ========== -->
       <main class="produits-grid-container">
+
+        <!-- ✅ FIX #5: Header avec tri à droite -->
         <div class="resultats-header">
-          <p>
-            <strong>{{ produitsFiltres().length }}</strong>
-            produit{{ produitsFiltres().length > 1 ? 's' : '' }} disponible{{ produitsFiltres().length > 1 ? 's' : '' }}
-            <br>
-            Du <strong>{{ dateDebutLocation }}</strong> au <strong>{{ dateFinLocation }}</strong>
-          </p>
+          <div class="resultats-info">
+            <p>
+              <strong>{{ produitsFiltres().length }}</strong>
+              produit{{ produitsFiltres().length > 1 ? 's' : '' }} disponible{{ produitsFiltres().length > 1 ? 's' : '' }}
+              <br>
+              Du <strong>{{ dateDebutLocation }}</strong> au <strong>{{ dateFinLocation }}</strong>
+            </p>
+          </div>
+
+          <!-- ✅ FIX #3 & #5: Tri stylisé et positionné à droite -->
+          <div class="tri-container">
+            <label for="tri">
+              <i class="fas fa-sort"></i>
+              Trier par
+            </label>
+            <select
+              id="tri"
+              [(ngModel)]="triSelectionne"
+              class="select-tri"
+            >
+              <option value="">Par défaut</option>
+              <option value="prix-asc">Prix croissant ↑</option>
+              <option value="prix-desc">Prix décroissant ↓</option>
+              <option value="nom-asc">Nom A→Z</option>
+              <option value="nom-desc">Nom Z→A</option>
+            </select>
+          </div>
         </div>
 
         <!-- Aucun produit trouvé -->
@@ -211,6 +212,7 @@
           <div class="produits-grid">
             @for (produit of produitsFiltres(); track produit.idProduit) {
               <div class="product-card">
+
                 <!-- Image -->
                 <div class="product-image" (click)="voirDetails(produit.idProduit)">
                   <img
@@ -219,62 +221,51 @@
                     (error)="onImageError($event)"
                   />
 
-                  <!-- ⭐  Badge disponibilité dynamique -->
-                  <div class="disponibilite-badge">
-                    @if (getQuantiteDisponible(produit.idProduit) !== null) {
-                      @if (getQuantiteDisponible(produit.idProduit) === 0) {
-                        <!-- Rupture de stock -->
-                        <span class="badge-rupture">
+                  <!-- ✅ FIX #4: Badge de quantité visible et fonctionnel -->
+                  @if (getQuantiteDisponible(produit.idProduit) !== null) {
+                    @if (getQuantiteDisponible(produit.idProduit) === 0) {
+                      <div class="badge-disponibilite indisponible">
                         <i class="fas fa-times-circle"></i>
-                         Indisponible
-                        </span>
-                      } @else if (getQuantiteDisponible(produit.idProduit)! < 10) {
-                        <!-- Stock limité -->
-                        <span class="badge-limite">
-            <i class="fas fa-exclamation-triangle"></i>
-                          {{ getQuantiteDisponible(produit.idProduit) }} restant(s)
-          </span>
-                      } @else {
-                        <!-- Stock OK -->
-                        <span class="badge-disponible">
-            <i class="fas fa-check-circle"></i>
-                          {{ getQuantiteDisponible(produit.idProduit) }} disponible(s)
-          </span>
-                      }
+                        Indisponible
+                      </div>
+                    } @else if (getQuantiteDisponible(produit.idProduit)! <= 5) {
+                      <div class="badge-disponibilite stock-faible">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ getQuantiteDisponible(produit.idProduit) }} restant(s)
+                      </div>
                     } @else {
-                      <!-- Chargement ou pas de dates -->
-                      <span class="badge-neutre">
-                    <i class="fas fa-info-circle"></i>
-                        {{ produit.quantiteDisponible }} en stock
-                     </span>
+                      <div class="badge-disponibilite disponible">
+                        <i class="fas fa-check-circle"></i>
+                        {{ getQuantiteDisponible(produit.idProduit) }} disponible(s)
+                      </div>
                     }
+                  }
+
+                  <!-- Badge catégorie -->
+                  <div class="badge-categorie">
+                    {{ getCategorieLabel(produit.categorieProduit) }}
                   </div>
                 </div>
 
-                <!-- Infos produit -->
-                <div class="product-info">
-                  <span class="product-category">
-                    {{ getCategorieLabel(produit.categorieProduit) }}
-                  </span>
-
+                <!-- Contenu -->
+                <div class="product-content">
                   <h3 class="product-name" (click)="voirDetails(produit.idProduit)">
                     {{ produit.nomProduit }}
                   </h3>
 
-                  @if (produit.descriptionProduit) {
-                    <p class="product-description">
-                      {{ produit.descriptionProduit.substring(0, 80) }}
-                      {{ produit.descriptionProduit.length > 80 ? '...' : '' }}
-                    </p>
-                  }
+                  <p class="product-description">
+                    {{ produit.descriptionProduit || 'Aucune description disponible' }}
+                  </p>
 
+                  <!-- Footer avec prix et actions -->
                   <div class="product-footer">
                     <div class="product-price">
-                      {{ produit.prixUnitaire.toFixed(2) }} TND
+                      <span class="price-amount">{{ produit.prixUnitaire | number:'1.2-2' }} TND</span>
                       <span class="price-unit">/ jour</span>
                     </div>
 
                     <div class="product-actions">
+                      <!-- Bouton voir détails -->
                       <button
                         class="btn-view"
                         (click)="voirDetails(produit.idProduit)"
@@ -283,13 +274,14 @@
                         <i class="fas fa-eye"></i>
                       </button>
 
+                      <!-- ✅ FIX #6: Bouton ajouter désactivé si indisponible -->
                       <button
                         class="btn-add-cart"
                         (click)="ajouterAuPanier(produit)"
-                        [disabled]="produit.quantiteDisponible === 0"
-                        title="Ajouter au panier"
+                        [disabled]="getQuantiteDisponible(produit.idProduit) === 0"
+                        [title]="getQuantiteDisponible(produit.idProduit) === 0 ? 'Produit indisponible' : 'Ajouter au panier'"
                       >
-                        <i class="fas fa-cart-plus"></i>
+                        <i class="fas fa-shopping-cart"></i>
                       </button>
                     </div>
                   </div>
