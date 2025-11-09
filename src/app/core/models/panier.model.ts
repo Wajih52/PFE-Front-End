@@ -1,7 +1,5 @@
 // src/app/core/models/panier.model.ts
 
-//import { LocalDate } from './reservation.model';
-
 /**
  * Ligne dans le panier (avant création du devis)
  */
@@ -17,6 +15,7 @@ export interface LignePanier {
   sousTotal: number; // Calculé: quantite × prixUnitaire × nbJours
   nbJours: number;   // Calculé: dateFin - dateDebut + 1
   disponible?: boolean; // Vérification temps réel
+  observations?: string;
 }
 
 /**
@@ -25,6 +24,7 @@ export interface LignePanier {
 export interface PanierState {
   lignes: LignePanier[];
   totalArticles: number;
+  nombreProduits: number;
   montantTotal: number;
   observationsClient?: string;
 }

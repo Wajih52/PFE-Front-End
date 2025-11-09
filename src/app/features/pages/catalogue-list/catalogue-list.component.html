@@ -49,8 +49,8 @@
     <!-- Badge Panier -->
     <a [routerLink]="['/panier']" class="panier-badge">
       <i class="fas fa-shopping-cart"></i>
-      @if (totalPanier() > 0) {
-        <span class="badge">{{ totalPanier() }}</span>
+      @if (nombreProduits() > 0) {
+        <span class="badge">{{ nombreProduits() }}</span>
       }
     </a>
   </div>
@@ -91,9 +91,11 @@
               id="recherche"
               placeholder="Nom du produit..."
               [(ngModel)]="rechercheNom"
+              (input)="appliquerFiltres()"
               class="search-input"
             />
           </div>
+
 
           <!-- Catégories -->
           <div class="filtre-group">
@@ -103,6 +105,7 @@
                 class="categorie-btn"
                 [class.active]="categorieSelectionnee() === null"
                 (click)="reinitialiserFiltres()"
+                (change)="appliquerFiltres()"
               >
                 <i class="fas fa-th"></i>
                 Toutes
@@ -112,14 +115,69 @@
                 <button
                   class="categorie-btn"
                   [class.active]="categorieSelectionnee() === categorie"
-                  (click)="filtrerParCategorie(categorie)"
+                  (click)="appliquerFiltres()"
                 >
                   {{ getCategorieLabel(categorie) }}
                 </button>
               }
             </div>
           </div>
+          <div class="filtre-group">
+            <label>
+              <i class="fas fa-tag"></i>
+              Prix (TND)
+            </label>
 
+            <div class="prix-range">
+              <div class="prix-input-group">
+                <label for="prixMin" class="small-label">Min</label>
+                <input
+                  type="number"
+                  id="prixMin"
+                  [(ngModel)]="prixMin"
+                  (input)="appliquerFiltres()"
+                  placeholder="0"
+                  min="0"
+                  class="prix-input"
+                />
+              </div>
+
+              <span class="prix-separator">—</span>
+
+              <div class="prix-input-group">
+                <label for="prixMax" class="small-label">Max</label>
+                <input
+                  type="number"
+                  id="prixMax"
+                  [(ngModel)]="prixMax"
+                  (input)="appliquerFiltres()"
+                  placeholder="1000"
+                  min="0"
+                  class="prix-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- ⭐ NOUVEAU: Tri -->
+          <div class="filtre-group">
+            <label for="tri">
+              <i class="fas fa-sort"></i>
+              Trier par
+            </label>
+            <select
+              id="tri"
+              [(ngModel)]="triSelectionne"
+              (change)="appliquerFiltres()"
+              class="select-input"
+            >
+              <option value="">Aucun tri</option>
+              <option value="prix-asc">Prix croissant (↑)</option>
+              <option value="prix-desc">Prix décroissant (↓)</option>
+              <option value="nom-asc">Nom A→Z</option>
+              <option value="nom-desc">Nom Z→A</option>
+            </select>
+          </div>
           <!-- Bouton réinitialiser -->
           <button class="btn-reset" (click)="reinitialiserFiltres()">
             <i class="fas fa-redo"></i>
@@ -135,7 +193,7 @@
             <strong>{{ produitsFiltres().length }}</strong>
             produit{{ produitsFiltres().length > 1 ? 's' : '' }} disponible{{ produitsFiltres().length > 1 ? 's' : '' }}
             <br>
-            Du <strong>{{ dateDebutLocation }}</strong>   au   <strong>{{ dateFinLocation }}</strong>
+            Du <strong>{{ dateDebutLocation }}</strong> au <strong>{{ dateFinLocation }}</strong>
           </p>
         </div>
 
@@ -161,10 +219,35 @@
                     (error)="onImageError($event)"
                   />
 
-                  <!-- Badge stock -->
-                  <div class="stock-badge" [class.low-stock]="produit.quantiteDisponible <= produit.seuilCritique">
-                    <i class="fas fa-box"></i>
-                    {{ produit.quantiteDisponible }} disponible{{ produit.quantiteDisponible > 1 ? 's' : '' }}
+                  <!-- ⭐  Badge disponibilité dynamique -->
+                  <div class="disponibilite-badge">
+                    @if (getQuantiteDisponible(produit.idProduit) !== null) {
+                      @if (getQuantiteDisponible(produit.idProduit) === 0) {
+                        <!-- Rupture de stock -->
+                        <span class="badge-rupture">
+                        <i class="fas fa-times-circle"></i>
+                         Indisponible
+                        </span>
+                      } @else if (getQuantiteDisponible(produit.idProduit)! < 10) {
+                        <!-- Stock limité -->
+                        <span class="badge-limite">
+            <i class="fas fa-exclamation-triangle"></i>
+                          {{ getQuantiteDisponible(produit.idProduit) }} restant(s)
+          </span>
+                      } @else {
+                        <!-- Stock OK -->
+                        <span class="badge-disponible">
+            <i class="fas fa-check-circle"></i>
+                          {{ getQuantiteDisponible(produit.idProduit) }} disponible(s)
+          </span>
+                      }
+                    } @else {
+                      <!-- Chargement ou pas de dates -->
+                      <span class="badge-neutre">
+                    <i class="fas fa-info-circle"></i>
+                        {{ produit.quantiteDisponible }} en stock
+                     </span>
+                    }
                   </div>
                 </div>
 

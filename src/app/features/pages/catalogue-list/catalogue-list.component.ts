@@ -43,34 +43,34 @@ export class CatalogueListComponent implements OnInit {
   categorieSelectionnee = signal<Categorie | null>(null);
   rechercheNom = signal<string>('');
 
+  // Filtre prix
+  prixMin = signal<number | null>(null);
+  prixMax = signal<number | null>(null);
+
+  // Tri
+  triSelectionne = signal<string>('');
+
+  //  Map pour stocker les disponibilités par produit
+  disponibilites = signal<Map<number, number>>(new Map());
+
   // Computed pour filtrer les produits côté client (en plus du filtrage serveur)
-  produitsFiltres = computed(() => {
-    let liste = this.produits();
+  produitsFiltres = signal<ProduitResponse[]>([]);
 
-    // Filtrer par nom si recherche active
-    if (this.rechercheNom()) {
-      const recherche = this.rechercheNom().toLowerCase();
-      liste = liste.filter(p =>
-        p.nomProduit.toLowerCase().includes(recherche) ||
-        (p.descriptionProduit && p.descriptionProduit.toLowerCase().includes(recherche))
-      );
-    }
-
-    return liste;
-  });
 
   // Catégories disponibles
   categories: Categorie[] = [
-  Categorie.LUMIERE,
-  Categorie.MOBILIER,
+    Categorie.LUMIERE,
+    Categorie.MOBILIER,
     Categorie.DECORATION,
-   Categorie.ACCESSOIRES,
+    Categorie.ACCESSOIRES,
     Categorie.STRUCTURE,
- Categorie.SONORISATION,
-   Categorie.MATERIEL_RESTAURATION
+    Categorie.SONORISATION,
+    Categorie.MATERIEL_RESTAURATION
   ];
 
   totalPanier = this.panierService.totalArticles;
+
+  nombreProduits = this.panierService.nombreProduits;
 
   // Date minimale pour le sélecteur (aujourd'hui)
   dateMin = computed(() => this.formatDateForInput(new Date()));
@@ -87,16 +87,15 @@ export class CatalogueListComponent implements OnInit {
 
   /**
    * Initialiser les dates par défaut
-   * Demain et après-demain
+   * aujourdhui  et demain
    */
   private initialiserDatesParDefaut(): void {
-    const demain = new Date();
-    demain.setDate(demain.getDate() + 1);
-    this.dateDebutLocation = this.formatDateForInput(demain);
+    const aujourdhui = new Date();
+    this.dateDebutLocation = this.formatDateForInput(aujourdhui);
 
-    const apresDemain = new Date();
-    apresDemain.setDate(apresDemain.getDate() + 2);
-    this.dateFinLocation = this.formatDateForInput(apresDemain);
+    const Demain = new Date();
+    Demain.setDate(Demain.getDate() + 1);
+    this.dateFinLocation = this.formatDateForInput(Demain);
   }
 
   /**
@@ -106,6 +105,82 @@ export class CatalogueListComponent implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
+
+  /**
+   * ⭐ Appliquer tous les filtres (nom, catégorie, prix)
+   */
+  appliquerFiltres(): void {
+    let liste = this.produits();
+
+    // Filtre par nom
+    if (this.rechercheNom()) {
+      const recherche = this.rechercheNom().toLowerCase();
+      liste = liste.filter(p =>
+        p.nomProduit.toLowerCase().includes(recherche) ||
+        (p.descriptionProduit && p.descriptionProduit.toLowerCase().includes(recherche))
+      );
+    }
+
+    // Filtre par catégorie
+    if (this.categorieSelectionnee()) {
+      liste = liste.filter(p => p.categorieProduit === this.categorieSelectionnee());
+    }
+
+    // ⭐ Filtre par prix minimum
+    if (this.prixMin() !== null) {
+      liste = liste.filter(p => p.prixUnitaire >= this.prixMin()!);
+    }
+
+    // ⭐ Filtre par prix maximum
+    if (this.prixMax() !== null) {
+      liste = liste.filter(p => p.prixUnitaire <= this.prixMax()!);
+    }
+
+    // Appliquer le tri
+    liste = this.trierListe(liste);
+
+    this.produitsFiltres.set(liste);
+  }
+
+  /**
+   * ⭐ Trier la liste selon le tri sélectionné
+   */
+  private trierListe(liste: ProduitResponse[]): ProduitResponse[] {
+    const tri = this.triSelectionne();
+
+    if (!tri) return liste;
+
+    const copie = [...liste];
+
+    switch (tri) {
+      case 'prix-asc':
+        return copie.sort((a, b) => a.prixUnitaire - b.prixUnitaire);
+
+      case 'prix-desc':
+        return copie.sort((a, b) => b.prixUnitaire - a.prixUnitaire);
+
+      case 'nom-asc':
+        return copie.sort((a, b) => a.nomProduit.localeCompare(b.nomProduit));
+
+      case 'nom-desc':
+        return copie.sort((a, b) => b.nomProduit.localeCompare(a.nomProduit));
+
+      default:
+        return copie;
+    }
+  }
+
+  /**
+   * Réinitialiser tous les filtres
+   */
+  reinitialiserFiltres(): void {
+    this.rechercheNom.set('');
+    this.categorieSelectionnee.set(null);
+    this.prixMin.set(null);
+    this.prixMax.set(null);
+    this.triSelectionne.set('');
+    this.appliquerFiltres();
+  }
   /**
    * ✅ Charger le catalogue disponible pour la période sélectionnée
    */
@@ -140,6 +215,12 @@ export class CatalogueListComponent implements OnInit {
       }).subscribe({
         next: (produits) => {
           this.produits.set(produits);
+          this.appliquerFiltres();
+
+          // ⭐ Calculer disponibilités pour chaque produit
+          produits.forEach(produit => {
+            this.calculerDisponibilite(produit);
+          });
           this.isLoading.set(false);
         },
         error: (error) => {
@@ -173,24 +254,9 @@ export class CatalogueListComponent implements OnInit {
    */
   onDatesChange(): void {
     console.log(`📅 Dates modifiées: ${this.dateDebutLocation} → ${this.dateFinLocation}`);
-    this.chargerCatalogue();
-  }
-
-  /**
-   * Filtrer par catégorie
-   */
-  filtrerParCategorie(categorie: Categorie): void {
-    this.categorieSelectionnee.set(categorie);
-    this.chargerCatalogue();
-  }
-
-  /**
-   * Réinitialiser les filtres
-   */
-  reinitialiserFiltres(): void {
-    this.categorieSelectionnee.set(null);
-    this.rechercheNom.set('');
-    this.chargerCatalogue();
+      if (this.dateDebutLocation && this.dateFinLocation) {
+      this.chargerCatalogue(); // Recharge tout + recalcule disponibilités
+      }
   }
 
   /**
@@ -313,4 +379,38 @@ export class CatalogueListComponent implements OnInit {
 
     return `${year}-${month}-${day}`;
   }
+
+
+
+  /**
+   * ⭐  Calculer la disponibilité d'un produit sur la période
+   */
+  calculerDisponibilite(produit: ProduitResponse): void {
+    if (!this.dateDebutLocation || !this.dateFinLocation) {
+      return;
+    }
+
+    this.produitService.calculerQuantiteDisponibleSurPeriode(
+      produit.idProduit,
+      this.dateDebutLocation,
+      this.dateFinLocation
+    ).subscribe({
+      next: (quantite) => {
+        const dispos = new Map(this.disponibilites());
+        dispos.set(produit.idProduit, quantite);
+        this.disponibilites.set(dispos);
+      },
+      error: (error) => {
+        console.error('Erreur calcul disponibilité:', error);
+      }
+    });
+  }
+
+  /**
+   * ⭐  Obtenir la quantité disponible d'un produit
+   */
+  getQuantiteDisponible(idProduit: number): number | null {
+    return this.disponibilites().get(idProduit) ?? null;
+  }
+
 }

@@ -1,0 +1,316 @@
+<!-- src/app/features/pages/panier/panier.component.html -->
+<!-- 🛒 TEMPLATE DU PANIER - Design moderne e-commerce -->
+
+<div class="panier-container">
+
+  <!-- ========== HEADER ========== -->
+  <div class="panier-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-shopping-cart"></i>
+        Mon Panier
+      </h1>
+      <p class="subtitle">
+        {{ totalArticles() }} article(s) · {{ montantTotal() | number:'1.2-2' }} TND
+      </p>
+    </div>
+
+    <!-- Actions globales -->
+    <div class="header-actions">
+      <button
+        class="btn-secondary"
+        (click)="continuerAchats()"
+        [disabled]="isValidating()"
+      >
+        <i class="fas fa-arrow-left"></i>
+        Continuer mes achats
+      </button>
+
+      <button
+        class="btn-danger"
+        (click)="viderPanier()"
+        [disabled]="estVide() || isValidating()"
+      >
+        <i class="fas fa-trash"></i>
+        Vider le panier
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== PANIER VIDE ========== -->
+  @if (estVide()) {
+    <div class="panier-vide">
+      <div class="empty-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <h2>Votre panier est vide</h2>
+      <p>Découvrez notre catalogue et ajoutez des produits pour votre événement</p>
+      <button class="btn-primary" (click)="continuerAchats()">
+        <i class="fas fa-store"></i>
+        Explorer le catalogue
+      </button>
+    </div>
+  }
+
+  <!-- ========== CONTENU DU PANIER ========== -->
+  @if (!estVide()) {
+    <div class="panier-content">
+
+      <!-- Colonne gauche : Liste des produits -->
+      <div class="panier-liste">
+
+        <!-- Bouton vérifier disponibilités -->
+        <div class="verification-bar">
+          <button
+            class="btn-verification"
+            (click)="verifierDisponibilites()"
+            [disabled]="isCheckingAvailability()"
+          >
+            @if (isCheckingAvailability()) {
+              <i class="fas fa-spinner fa-spin"></i>
+              Vérification en cours...
+            } @else {
+              <i class="fas fa-sync-alt"></i>
+              Vérifier les disponibilités
+            }
+          </button>
+        </div>
+
+        <!-- Liste des lignes -->
+        <div class="lignes-container">
+          @for (ligne of lignes(); track ligne.idProduit + ligne.dateDebut) {
+            <div class="ligne-panier" [class.indisponible]="!isLigneDisponible(ligne.idProduit)">
+
+              <!-- Image produit -->
+              <div class="ligne-image">
+                <img
+                  [src]="getImageUrl(ligne.imageProduit)"
+                  [alt]="ligne.nomProduit"
+                  (error)="$any($event.target).src='assets/images/placeholder-product.jpg'"
+                />
+
+                <!-- Badge disponibilité -->
+                @if (!isLigneDisponible(ligne.idProduit)) {
+                  <div class="badge-indisponible">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Indisponible
+                  </div>
+                }
+              </div>
+
+              <!-- Infos produit -->
+              <div class="ligne-info">
+                <h3 class="produit-nom">{{ ligne.nomProduit }}</h3>
+
+                <div class="produit-details">
+                  <span class="detail-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    {{ formatDate(ligne.dateDebut) }}
+                  </span>
+                  <span class="detail-separator">→</span>
+                  <span class="detail-item">
+                    <i class="fas fa-calendar-check"></i>
+                    {{ formatDate(ligne.dateFin) }}
+                  </span>
+                  <span class="detail-badge">
+                    {{ ligne.nbJours }} jour(s)
+                  </span>
+                </div>
+
+                <div class="produit-prix">
+                  <span class="prix-unitaire">
+                    {{ ligne.prixUnitaire | number:'1.2-2' }} TND / jour
+                  </span>
+                  @if (ligne.categorie) {
+                    <span class="categorie-badge">{{ ligne.categorie }}</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Quantité -->
+              <div class="ligne-quantite">
+                <label>Quantité</label>
+                <div class="quantite-controls">
+                  <button
+                    class="btn-qty"
+                    (click)="modifierQuantite(ligne, ligne.quantite - 1)"
+                    [disabled]="ligne.quantite <= 1 || isValidating()"
+                  >
+                    <i class="fas fa-minus"></i>
+                  </button>
+
+                  <input
+                    type="number"
+                    class="qty-input"
+                    [(ngModel)]="ligne.quantite"
+                    (change)="modifierQuantite(ligne, ligne.quantite)"
+                    [disabled]="isValidating()"
+                    min="1"
+                  />
+
+                  <button
+                    class="btn-qty"
+                    (click)="modifierQuantite(ligne, ligne.quantite + 1)"
+                    [disabled]="isValidating()"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+
+
+              <!-- Sous-total -->
+              <div class="ligne-total">
+                <span class="total-label">Sous-total</span>
+                <span class="total-montant">
+                  {{ ligne.sousTotal | number:'1.2-2' }} TND
+                </span>
+                <span class="total-detail">
+                  ({{ ligne.quantite }} × {{ ligne.prixUnitaire }} × {{ ligne.nbJours }} jour(s))
+                </span>
+              </div>
+
+              <!-- Bouton supprimer -->
+              <div class="ligne-actions">
+                <button
+                  class="btn-delete"
+                  (click)="retirerLigne(ligne)"
+                  [disabled]="isValidating()"
+                  title="Retirer du panier"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+              <!--Observations par ligne -->
+
+              <div class="ligne-observations">
+                <label [for]="'obs-' + ligne.idProduit">
+                  <i class="fas fa-sticky-note"></i>
+                  Note pour ce produit
+                </label>
+                <textarea
+                  [id]="'obs-' + ligne.idProduit"
+                  [(ngModel)]="ligne.observations"
+                  (blur)="modifierObservationsLigne(ligne, ligne.observations || '')"
+                  placeholder="Ex: Préférence couleur, horaire livraison..."
+                  rows="2"
+                  [disabled]="isValidating()"
+                  class="obs-input"
+                ></textarea>
+                <small class="obs-help">
+                  Précisions spécifiques à ce produit
+                </small>
+              </div>
+            </div>
+
+          }
+        </div>
+
+      </div>
+
+      <!-- Colonne droite : Récapitulatif -->
+      <div class="panier-recap">
+        <div class="recap-card">
+          <h2>Récapitulatif</h2>
+
+          <!-- Statistiques -->
+          <div class="recap-stats">
+            <div class="stat-item">
+              <span class="stat-label">Articles</span>
+              <span class="stat-value">{{ totalArticles() }}</span>
+            </div>
+
+            <div class="stat-item">
+              <span class="stat-label">Produits différents</span>
+              <span class="stat-value">{{ lignes().length }}</span>
+            </div>
+          </div>
+
+          <!-- Montant total -->
+          <div class="recap-total">
+            <span class="total-label">Total estimé</span>
+            <span class="total-montant">{{ montantTotal() | number:'1.2-2' }} TND</span>
+          </div>
+
+          <div class="recap-note">
+            <i class="fas fa-info-circle"></i>
+            Le montant final sera confirmé après validation de votre devis
+          </div>
+
+          <!-- Zone observations -->
+          <div class="recap-observations">
+            <label for="observations">
+              <i class="fas fa-comment-dots"></i>
+              Observations (optionnel)
+            </label>
+            <textarea
+              id="observations"
+              [(ngModel)]="observations"
+              (blur)="sauvegarderObservations()"
+              placeholder="Ajoutez des précisions sur votre commande..."
+              rows="4"
+              [disabled]="isValidating()"
+            ></textarea>
+            <small class="help-text">
+              Ex: horaires de livraison, adresse précise, demandes spéciales...
+            </small>
+          </div>
+
+          <!-- Boutons validation -->
+          <div class="recap-actions">
+            <button
+              class="btn-primary btn-large"
+              (click)="demanderDevis()"
+              [disabled]="isValidating() || estVide()"
+            >
+              @if (isValidating()) {
+                <i class="fas fa-spinner fa-spin"></i>
+                Traitement en cours...
+              } @else {
+                <i class="fas fa-file-invoice"></i>
+                Demander un devis
+              }
+            </button>
+
+            <div class="separator-or">
+              <span>ou</span>
+            </div>
+
+            <button
+              class="btn-secondary btn-large"
+              (click)="commanderDirectement()"
+              [disabled]="isValidating() || estVide()"
+            >
+              @if (isValidating()) {
+                <i class="fas fa-spinner fa-spin"></i>
+                Traitement en cours...
+              } @else {
+                <i class="fas fa-check-circle"></i>
+                Commander directement
+              }
+            </button>
+          </div>
+
+          <!-- Infos workflow -->
+          <div class="recap-workflow">
+            <h3>
+              <i class="fas fa-lightbulb"></i>
+              À savoir
+            </h3>
+            <ul>
+              <li>
+                <strong>Demander un devis :</strong>
+                Notre équipe reviendra vers vous avec une offre personnalisée
+              </li>
+              <li>
+                <strong>Commander directement :</strong>
+                Validation immédiate aux prix affichés (sans négociation)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

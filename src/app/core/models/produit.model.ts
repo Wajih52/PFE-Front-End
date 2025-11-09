@@ -71,3 +71,13 @@ export interface StockStatistiques {
   coherent: boolean;
   messageAlerte: string | null;
 }
+
+export interface verifieDispo {
+  quantiteDemandee: number,
+  quantiteDisponible: number,
+  idProduit: number,
+  dateDebut: string,
+  dateFin: string,
+  message: string,
+  disponible: boolean
+}

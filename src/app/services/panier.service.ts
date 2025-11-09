@@ -24,12 +24,14 @@ export class PanierService {
   private panierState = signal<PanierState>({
     lignes: [],
     totalArticles: 0,
+    nombreProduits: 0,
     montantTotal: 0
   });
 
   // Computed signals
   lignes = computed(() => this.panierState().lignes);
   totalArticles = computed(() => this.panierState().totalArticles);
+  nombreProduits = computed(() => this.panierState().nombreProduits);
   montantTotal = computed(() => this.panierState().montantTotal);
   estVide = computed(() => this.panierState().lignes.length === 0);
 
@@ -73,7 +75,11 @@ export class PanierService {
       this.toastr.success('Quantité mise à jour dans le panier', '✅ Panier');
     } else {
       // Ajouter nouvelle ligne
-      lignes.push({ ...ligne, sousTotal, nbJours });
+      lignes.push({
+        ...ligne,
+        sousTotal,
+        nbJours ,
+        observations: ''});
       this.toastr.success('Produit ajouté au panier', '✅ Panier');
     }
 
@@ -102,6 +108,22 @@ export class PanierService {
 
     this.updatePanier(lignes);
   }
+  /**
+   * Modifier les observations d'une ligne spécifique
+   */
+  modifierObservationsLigne(idProduit: number, dateDebut: string, dateFin: string, observations: string): void {
+    const lignes = [...this.panierState().lignes];
+    const index = lignes.findIndex(l =>
+      l.idProduit === idProduit &&
+      l.dateDebut === dateDebut &&
+      l.dateFin === dateFin
+    );
+
+    if (index !== -1) {
+      lignes[index].observations = observations;
+      this.updatePanier(lignes);
+    }
+  }
 
   /**
    * Supprimer une ligne du panier
@@ -114,6 +136,8 @@ export class PanierService {
     this.updatePanier(lignes);
     this.toastr.info('Produit retiré du panier', 'ℹ️ Panier');
   }
+
+
 
   /**
    * Vider complètement le panier
@@ -155,11 +179,13 @@ export class PanierService {
    */
   private updatePanier(lignes: LignePanier[]): void {
     const totalArticles = lignes.reduce((sum, l) => sum + l.quantite, 0);
+    const nombreProduits = lignes.length;
     const montantTotal = lignes.reduce((sum, l) => sum + l.sousTotal, 0);
 
     this.panierState.set({
       lignes,
       totalArticles,
+      nombreProduits,
       montantTotal,
       observationsClient: this.panierState().observationsClient
     });
@@ -191,6 +217,7 @@ export class PanierService {
       return {
         lignes: [],
         totalArticles: 0,
+        nombreProduits: 0,
         montantTotal: 0
       };
     }
@@ -207,6 +234,7 @@ export class PanierService {
     return {
       lignes: [],
       totalArticles: 0,
+      nombreProduits: 0,
       montantTotal: 0
     };
   }

@@ -18,6 +18,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
       .then(m => m.CatalogueListComponent)
   },
+  {
+    path: 'panier',
+    loadComponent: () => import('./features/pages/panier/panier.component')
+      .then(m => m.PanierComponent),
+    canActivate: [authGuard] // Optionnel: protéger la route
+  },
   // Routes d'authentification (non protégées)
   {
     path: 'auth',
