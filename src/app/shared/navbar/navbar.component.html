@@ -18,7 +18,8 @@
 
       <!-- Auth Buttons -->
       <div class="navbar-actions">
-        @if (isAuthenticated) {
+        <!-- ✅ Utiliser async pipe pour la réactivité automatique -->
+        <ng-container *ngIf="isAuthenticated$ | async; else notAuthenticated">
           <div class="user-menu">
             <button class="btn-user" (click)="goToProfile()">
               <span class="user-icon">👤</span>
@@ -28,14 +29,16 @@
               Déconnexion
             </button>
           </div>
-        } @else {
+        </ng-container>
+        <!-- Template pour utilisateur non connecté -->
+        <ng-template #notAuthenticated>
           <button class="btn-secondary-outline" (click)="goToLogin()">
             Connexion
           </button>
           <button class="btn-primary" (click)="goToRegister()">
             S'inscrire
           </button>
-        }
+        </ng-template>
       </div>
     </div>
   </div>

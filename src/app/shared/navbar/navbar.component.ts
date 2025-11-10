@@ -1,100 +1,120 @@
-// navbar.component.ts - VERSION CORRIGÉE SSR
-import {Component, inject, OnInit, PLATFORM_ID, afterNextRender, signal} from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import { PanierService } from '../../services/panier.service';
+// src/app/shared/navbar/navbar.component.ts
+
+import {Component, OnInit, OnDestroy, inject, PLATFORM_ID} from '@angular/core';
+import {CommonModule, isPlatformBrowser} from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import {StorageService} from '../../core/services/storage.service';
+import { PanierService } from '../../services/panier.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
+  private panierService = inject(PanierService);
   private router = inject(Router);
-  private storage = inject(StorageService);
   private platformId = inject(PLATFORM_ID);
 
-  // ✅ UTILISER des signals pour la réactivité
-  isAuthenticated = signal<boolean>(false);
-  currentUser = signal<any>(null);
+  // ✅ Observable pour la réactivité automatique
+  isAuthenticated$ = this.authService.isAuthenticated$;
+  currentUser$ = this.authService.currentUser$;
 
+userName : string | null = null;
 
-
-  // ✅ MODIFIÉ : Valeurs par défaut pour SSR
-  userName: string | null = null;
-
-  constructor() {
-    // ✅ AJOUTÉ : Vérifier l'authentification UNIQUEMENT côté client après le rendu
-    if (isPlatformBrowser(this.platformId)) {
-      afterNextRender(() => {
-
-      });
-    }
-  }
+  private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    // ✅ CORRECTION: S'abonner aux changements d'authentification
-    this.authService.isAuthenticated$.subscribe(isAuth => {
-      this.isAuthenticated.set(isAuth);
-    });
-
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser.set(user);
+    // ✅ S'abonner aux changements d'authentification pour logger
+    this.isAuthenticated$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(isAuth => {
+      this.userName = this.authService.getCurrentUser()?.pseudo ?? null ;
     });
   }
 
-
-
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
-   * Navigation vers la page de connexion
-   */
-  goToLogin(): void {
-    this.router.navigate(['/auth/login']);
-  }
-
-  /**
-   * Navigation vers la page d'inscription
-   */
-  goToRegister(): void {
-    this.router.navigate(['/auth/register']);
-  }
-
-  /**
-   * Navigation vers le catalogue
-   */
-  goToCatalogue(): void {
-    this.router.navigate(['/catalogue']);
-  }
-
-  /**
-   * Navigation vers le profil utilisateur
+   * Naviguer vers le profil
    */
   goToProfile(): void {
     this.router.navigate(['/profile']);
+
   }
+
+  /**
+   * Naviguer vers le dashboard (admin/employé)
+   */
+  goToDashboard(): void {
+    this.router.navigate(['/admin/dashboard']);
+
+  }
+
+  /**
+   * Naviguer vers le panier
+   */
+  goToCart(): void {
+    this.router.navigate(['/panier']);
+  }
+
+  /**
+   * Naviguer vers la connexion
+   */
+  goToLogin(): void {
+    this.router.navigate(['/auth/login']);
+
+  }
+
+  /**
+   * Naviguer vers l'inscription
+   */
+  goToRegister(): void {
+    this.router.navigate(['/auth/register']);
+
+  }
+
+  /**
+   * Naviguer vers le catalogue
+   */
+  goToCatalogue(): void {
+    this.router.navigate(['/catalogue']);
+
+  }
+
+  /**
+   * Naviguer vers l'accueil
+   */
+  goToHome(): void {
+    this.router.navigate(['/home']);
+
+  }
+
 
   /**
    * Déconnexion
    */
   logout(): void {
-    this.authService.logout();
-
-    this.userName = null;
-    this.router.navigate(['/auth/login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('✅ Déconnexion réussie depuis navbar');
+        this.router.navigate(['/auth/login'], {
+          queryParams: { logout: 'true' }
+        });
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de la déconnexion:', error);
+      }
+    });
   }
 
-  /**
-   * Scroll vers une section spécifique
-   */
   scrollToSection(sectionId: string): void {
     // ✅ SÉCURISÉ : Vérifier que nous sommes côté client
     if (isPlatformBrowser(this.platformId)) {
