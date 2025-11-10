@@ -77,12 +77,16 @@ export class AuthService {
         // Stocker le token
         this.storage.saveToken(response.token);
 
-        // ✅ CORRECTION: Émettre les nouveaux états
+        // ✅ Émettre seulement isAuthenticated (pas currentUser encore)
         this.isAuthenticatedSubject.next(true);
-        this.currentUserSubject.next(this.storage.getUser());
 
-        // ✅ TOUJOURS charger le profil (on a besoin de l'ID utilisateur)
+        // ✅ Charger le profil utilisateur
         return this.loadCurrentUser().pipe(
+          tap((user)=>{
+            // ✅ APRÈS avoir chargé l'utilisateur, émettre le currentUser
+            this.currentUserSubject.next(user);
+            console.log('✅ CurrentUser émis:', user);
+          }),
           map((user) => {
             // ✅ Ajouter requirePasswordChange au user
             return { ...user, requirePasswordChange: response.requirePasswordChange };

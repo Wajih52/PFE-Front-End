@@ -30,10 +30,10 @@ userName : string | null = null;
 
   ngOnInit(): void {
     // ✅ S'abonner aux changements d'authentification pour logger
-    this.isAuthenticated$.pipe(
+    this.currentUser$.pipe(
       takeUntil(this.destroy$)
-    ).subscribe(isAuth => {
-      this.userName = this.authService.getCurrentUser()?.pseudo ?? null ;
+    ).subscribe(user => {
+      this.userName = user ? `${user.prenom} ${user.nom}` : 'Utilisateur';
     });
   }
 
