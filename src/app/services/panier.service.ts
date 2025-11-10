@@ -238,4 +238,20 @@ export class PanierService {
       montantTotal: 0
     };
   }
+
+  /**
+   * ✅ FIX #5: Obtenir la quantité d'un produit déjà dans le panier pour une période donnée
+   */
+  getQuantiteProduitDansPanier(idProduit: number, dateDebut: string, dateFin: string): number {
+    const lignes = this.panierState().lignes;
+
+    // Trouver la ligne correspondante
+    const ligne = lignes.find(l =>
+      l.idProduit === idProduit &&
+      l.dateDebut === dateDebut &&
+      l.dateFin === dateFin
+    );
+
+    return ligne ? ligne.quantite : 0;
+  }
 }

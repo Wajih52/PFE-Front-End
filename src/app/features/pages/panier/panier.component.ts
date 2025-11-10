@@ -146,7 +146,15 @@ export class PanierComponent implements OnInit {
     }
 
     const nouvelleQuantite = ligne.quantite - 1;
-    this.modifierQuantite(ligne, nouvelleQuantite);
+
+    // ✅ Mettre à jour directement le panier (pas besoin de vérifier la dispo pour décrémenter)
+    this.panierService.modifierQuantite(
+      ligne.idProduit,
+      ligne.dateDebut,
+      ligne.dateFin,
+      nouvelleQuantite
+    );
+    //this.modifierQuantite(ligne, nouvelleQuantite);
   }
 
   /**
@@ -312,5 +320,29 @@ export class PanierComponent implements OnInit {
    */
   continuerAchats(): void {
     this.router.navigate(['/catalogue']);
+  }
+
+  /**
+   * ✅ FIX #3: Obtenir l'URL complète de l'image du produit
+   */
+  getImageUrl(ligne: LignePanier): string {
+    if (ligne.imageProduit) {
+      // Si l'image est un chemin relatif, ajouter le base URL du serveur
+      if (ligne.imageProduit.startsWith('/') || ligne.imageProduit.startsWith('uploads/')) {
+        return `http://localhost:8080${ligne.imageProduit.startsWith('/') ? '' : '/'}${ligne.imageProduit}`;
+      }
+      // Si c'est déjà une URL complète, la retourner telle quelle
+      return ligne.imageProduit;
+    }
+    // Image placeholder si pas d'image
+    return `https://via.placeholder.com/120x120/C8A882/FFFFFF?text=${encodeURIComponent(ligne.nomProduit)}`;
+  }
+
+  /**
+   * ✅ FIX #3: Gestion des erreurs d'image
+   */
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'https://via.placeholder.com/120x120/CCCCCC/FFFFFF?text=Image+Non+Disponible';
   }
 }

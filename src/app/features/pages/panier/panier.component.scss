@@ -96,7 +96,7 @@ $transition: all 0.3s ease;
       border: 2px solid $border-color;
 
       &:hover:not(:disabled) {
-        background: darken($background-light, 5%);
+        background: color.adjust($background-light, $lightness: -5%);
         border-color: $primary-color;
       }
     }
@@ -106,7 +106,7 @@ $transition: all 0.3s ease;
       color: white;
 
       &:hover:not(:disabled) {
-        background: darken($danger-color, 10%);
+        background: color.adjust($danger-color, $lightness: -10%);
       }
     }
   }
@@ -171,7 +171,7 @@ $transition: all 0.3s ease;
     gap: 0.75rem;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.adjust($primary-color, $lightness: -10%);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
@@ -318,7 +318,7 @@ $transition: all 0.3s ease;
 
   // Alertes
   .alerte-stock {
-    background: lighten($warning-color, 40%);
+    background: color.adjust($warning-color, $lightness: 40%);
     border-left: 4px solid $warning-color;
     padding: 0.75rem 1rem;
     border-radius: 6px;
@@ -326,7 +326,7 @@ $transition: all 0.3s ease;
     align-items: center;
     gap: 0.75rem;
     font-size: 0.9rem;
-    color: darken($warning-color, 30%);
+    color: color.adjust($warning-color, $lightness: 30%);
     font-weight: 600;
 
     i {
@@ -336,7 +336,7 @@ $transition: all 0.3s ease;
   }
 
   .alerte-indisponible {
-    background: lighten($danger-color, 40%);
+    background: color.adjust($danger-color, $lightness: 40%);
     border-left: 4px solid $danger-color;
     padding: 0.75rem 1rem;
     border-radius: 6px;
@@ -344,7 +344,7 @@ $transition: all 0.3s ease;
     align-items: center;
     gap: 0.75rem;
     font-size: 0.9rem;
-    color: darken($danger-color, 30%);
+    color: color.adjust($danger-color, $lightness: 30%);
     font-weight: 600;
 
     i {
@@ -476,7 +476,7 @@ $transition: all 0.3s ease;
       }
 
       &::placeholder {
-        color: lighten($text-gray, 20%);
+        color: color.adjust($text-gray, $lightness: 20%);
       }
     }
   }
@@ -564,7 +564,7 @@ $transition: all 0.3s ease;
       justify-content: space-between;
       align-items: center;
       padding: 1rem;
-      background: lighten($primary-color, 45%);
+      background: color.adjust($primary-color, $lightness: 45%);
       border-radius: 8px;
       font-size: 1.1rem;
 
@@ -614,7 +614,7 @@ $transition: all 0.3s ease;
       }
 
       &::placeholder {
-        color: lighten($text-gray, 20%);
+        color: color.adjust($text-gray, $lightness: 20%);
       }
     }
   }
@@ -642,7 +642,7 @@ $transition: all 0.3s ease;
       }
 
       &:hover:not(:disabled) {
-        background: darken($primary-color, 10%);
+        background: color.adjust($primary-color, $lightness: 10%);
         transform: translateY(-2px);
         box-shadow: 0 4px 16px rgba($primary-color, 0.3);
       }
@@ -659,10 +659,10 @@ $transition: all 0.3s ease;
       align-items: start;
       gap: 0.75rem;
       padding: 1rem;
-      background: lighten($info-color, 45%);
+      background: color.adjust($info-color, $lightness: 45%);
       border-radius: 8px;
       font-size: 0.9rem;
-      color: darken($info-color, 20%);
+      color: color.adjust($info-color, $lightness: 20%);
       line-height: 1.5;
 
       i {

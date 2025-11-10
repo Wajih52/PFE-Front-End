@@ -244,6 +244,11 @@ export class CatalogueListComponent implements OnInit {
       ).subscribe({
         next: (produits) => {
           this.produits.set(produits);
+
+          produits.forEach(produit => {
+            this.calculerDisponibilite(produit);
+          });
+
           this.isLoading.set(false);
           console.log(`✅ ${produits.length} produits disponibles du ${this.dateDebutLocation} au ${this.dateFinLocation}`);
         },
@@ -264,6 +269,16 @@ export class CatalogueListComponent implements OnInit {
       if (this.dateDebutLocation && this.dateFinLocation) {
       this.chargerCatalogue(); // Recharge tout + recalcule disponibilités
       }
+  }
+
+  /**
+   * ✅ FIX #1: Vérifier si la date de début est supérieure à la date de fin
+   */
+  isDateDebutSuperieureDateFin(): boolean {
+    if (!this.dateDebutLocation || !this.dateFinLocation) {
+      return false; // Ne pas bloquer si les dates ne sont pas renseignées
+    }
+    return new Date(this.dateDebutLocation) > new Date(this.dateFinLocation);
   }
 
   /**
@@ -293,10 +308,25 @@ export class CatalogueListComponent implements OnInit {
     const quantiteDisponible = this.getQuantiteDisponible(produit.idProduit);
 
     if (quantiteDisponible === null || quantiteDisponible === 0) {
-      this.toastr.error('Ce produit n\'est pas disponible pour la période sélectionnée', '❌ Indisponible');
+      this.toastr.error('Ce produit n\'est pas disponible pour la période sélectionnée', ' Indisponible');
       return;
     }
 
+    // ✅ FIX #5: Vérifier la quantité déjà dans le panier
+    const quantiteDansPanier = this.panierService.getQuantiteProduitDansPanier(
+      produit.idProduit,
+      this.dateDebutLocation,
+      this.dateFinLocation
+    );
+
+    // ✅ Vérifier si on peut encore ajouter
+    if (quantiteDansPanier >= quantiteDisponible) {
+      this.toastr.error(
+        `Maximum atteint : ${quantiteDisponible} disponible(s), ${quantiteDansPanier} déjà dans le panier`,
+        '❌ Stock insuffisant'
+      );
+      return;
+    }
     // Vérifier la disponibilité avant d'ajouter
     this.produitService.verifierDisponibiliteSurPeriode(
       produit.idProduit,
@@ -318,9 +348,9 @@ export class CatalogueListComponent implements OnInit {
           });
 
           console.log(`✅ ${produit.nomProduit} ajouté au panier`);
-          this.toastr.success(`${produit.nomProduit} ajouté au panier`, '✅ Succès');
+          this.toastr.success(`${produit.nomProduit} ajouté au panier`, ' Succès');
         } else {
-          this.toastr.error(disponibilite.message || 'Produit indisponible', '❌ Stock insuffisant');
+          this.toastr.error(disponibilite.message || 'Produit indisponible', ' Stock insuffisant');
         }
       },
       error: (error) => {
@@ -427,6 +457,25 @@ export class CatalogueListComponent implements OnInit {
    */
   getQuantiteDisponible(idProduit: number): number | null {
     return this.disponibilites().get(idProduit) ?? null;
+  }
+
+  /**
+   * ✅ FIX #5: Vérifier si on peut encore ajouter ce produit au panier
+   */
+  peutAjouterAuPanier(produit: ProduitResponse): boolean {
+    const quantiteDisponible = this.getQuantiteDisponible(produit.idProduit);
+
+    if (quantiteDisponible === null || quantiteDisponible === 0) {
+      return false;
+    }
+
+    const quantiteDansPanier = this.panierService.getQuantiteProduitDansPanier(
+      produit.idProduit,
+      this.dateDebutLocation,
+      this.dateFinLocation
+    );
+
+    return quantiteDansPanier < quantiteDisponible;
   }
 
 }

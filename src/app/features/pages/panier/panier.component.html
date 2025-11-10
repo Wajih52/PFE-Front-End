@@ -64,11 +64,12 @@
           @for (ligne of lignes(); track getCleUnique(ligne)) {
             <div class="ligne-panier" [class.indisponible]="!isLigneDisponible(ligne)">
 
-              <!-- Image produit -->
+              <!-- ✅ NOUVEAU CODE - Utiliser la méthode getImageUrl() -->
               <div class="ligne-image">
                 <img
-                  [src]="ligne.imageProduit || 'https://via.placeholder.com/100x100/C8A882/FFFFFF?text=Produit'"
+                  [src]="getImageUrl(ligne)"
                   [alt]="ligne.nomProduit"
+                  (error)="onImageError($event)"
                 />
 
                 <!-- ✅ Badge indisponible si nécessaire -->

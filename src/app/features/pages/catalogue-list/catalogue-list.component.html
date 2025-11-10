@@ -40,7 +40,12 @@
         />
       </div>
 
-      <button class="btn-refresh" (click)="chargerCatalogue()" title="Rafraîchir">
+      <button
+        class="btn-refresh"
+        (click)="chargerCatalogue()"
+        title="Rafraîchir"
+        [disabled]="!dateDebutLocation || !dateFinLocation || isDateDebutSuperieureDateFin()"
+      >
         <i class="fas fa-sync-alt"></i>
         Rechercher
       </button>
@@ -278,8 +283,8 @@
                       <button
                         class="btn-add-cart"
                         (click)="ajouterAuPanier(produit)"
-                        [disabled]="getQuantiteDisponible(produit.idProduit) === 0"
-                        [title]="getQuantiteDisponible(produit.idProduit) === 0 ? 'Produit indisponible' : 'Ajouter au panier'"
+                        [disabled]="!peutAjouterAuPanier(produit)"
+                        [title]="!peutAjouterAuPanier(produit) ? 'Produit indisponible' : 'Ajouter au panier'"
                       >
                         <i class="fas fa-shopping-cart"></i>
                       </button>

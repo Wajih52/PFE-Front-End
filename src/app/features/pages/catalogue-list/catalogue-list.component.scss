@@ -85,10 +85,15 @@ $transition: all 0.3s ease;
       font-size: 1rem;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: color.adjust($primary-color, $lightness: -10%);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(200, 168, 130, 0.3);
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: color.adjust($primary-color, $lightness: 20%)
     }
   }
 }
