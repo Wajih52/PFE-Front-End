@@ -34,6 +34,11 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.storage.isLoggedIn());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  // BehaviorSubject pour l'utilisateur actuel
+  private currentUserSubject = new BehaviorSubject<any>(this.storage.getUser());
+  public currentUser$ = this.currentUserSubject.asObservable();
+
+
   // ==================== INSCRIPTION ====================
 
   /**
@@ -72,6 +77,10 @@ export class AuthService {
         // Stocker le token
         this.storage.saveToken(response.token);
 
+        // ✅ CORRECTION: Émettre les nouveaux états
+        this.isAuthenticatedSubject.next(true);
+        this.currentUserSubject.next(this.storage.getUser());
+
         // ✅ TOUJOURS charger le profil (on a besoin de l'ID utilisateur)
         return this.loadCurrentUser().pipe(
           map((user) => {
@@ -102,6 +111,7 @@ export class AuthService {
 
           // Mettre à jour l'état de connexion
           this.isAuthenticatedSubject.next(false);
+          this.currentUserSubject.next(null);
         })
       );
   }

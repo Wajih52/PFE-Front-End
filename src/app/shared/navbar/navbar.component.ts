@@ -1,5 +1,5 @@
 // navbar.component.ts - VERSION CORRIGÉE SSR
-import {Component, inject, OnInit, PLATFORM_ID, afterNextRender} from '@angular/core';
+import {Component, inject, OnInit, PLATFORM_ID, afterNextRender, signal} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import { PanierService } from '../../services/panier.service';
@@ -14,43 +14,41 @@ import {StorageService} from '../../core/services/storage.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit{
-  private panierService = inject(PanierService);
   private authService = inject(AuthService);
   private router = inject(Router);
   private storage = inject(StorageService);
-  private platformId = inject(PLATFORM_ID); // ✅ AJOUTÉ
+  private platformId = inject(PLATFORM_ID);
+
+  // ✅ UTILISER des signals pour la réactivité
+  isAuthenticated = signal<boolean>(false);
+  currentUser = signal<any>(null);
+
 
 
   // ✅ MODIFIÉ : Valeurs par défaut pour SSR
-  isAuthenticated = false;
   userName: string | null = null;
 
   constructor() {
     // ✅ AJOUTÉ : Vérifier l'authentification UNIQUEMENT côté client après le rendu
     if (isPlatformBrowser(this.platformId)) {
       afterNextRender(() => {
-        this.checkAuthentication();
+
       });
     }
   }
 
   ngOnInit(): void {
-    // ✅ SUPPRIMÉ : Ne plus appeler checkAuthentication ici
-    // Car cela crée une différence entre serveur et client
+    // ✅ CORRECTION: S'abonner aux changements d'authentification
+    this.authService.isAuthenticated$.subscribe(isAuth => {
+      this.isAuthenticated.set(isAuth);
+    });
+
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser.set(user);
+    });
   }
 
-  /**
-   * Vérifie si l'utilisateur est connecté
-   * ⚠️ À appeler UNIQUEMENT côté client
-   */
-  private checkAuthentication(): void {
-    const token = this.storage.getToken();
-    this.isAuthenticated = !!token;
 
-    if (this.isAuthenticated) {
-      this.userName = this.storage.getUserName();
-    }
-  }
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
@@ -88,8 +86,8 @@ export class NavbarComponent implements OnInit{
    * Déconnexion
    */
   logout(): void {
-    this.storage.clear();
-    this.isAuthenticated = false;
+    this.authService.logout();
+
     this.userName = null;
     this.router.navigate(['/auth/login']);
   }
