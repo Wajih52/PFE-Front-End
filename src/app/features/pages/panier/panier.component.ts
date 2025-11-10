@@ -11,6 +11,7 @@ import { ProduitService } from '../../../services/produit.service';
 import { LignePanier } from '../../../core/models/panier.model';
 import { DevisRequestDto } from '../../../core/models/reservation.model';
 import { ToastrService } from 'ngx-toastr';
+import {ConfirmationService} from '../../../core/services/confirmation.service';
 
 @Component({
   selector: 'app-panier',
@@ -25,6 +26,7 @@ export class PanierComponent implements OnInit {
   private produitService = inject(ProduitService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
+  private confirmationService = inject(ConfirmationService);
 
   // STATE SIGNALS
   lignes = this.panierService.lignes;
@@ -33,8 +35,9 @@ export class PanierComponent implements OnInit {
   montantTotal = this.panierService.montantTotal;
   estVide = this.panierService.estVide;
 
-  // Loading states
-  isValidating = signal<boolean>(false);
+  //loading states
+  isCreatingDevis = signal<boolean>(false);     // Pour "Demander devis"
+  isCreatingCommande = signal<boolean>(false);   // Pour "Commander directement"
   isCheckingAvailability = signal<boolean>(false);
 
   // Observations client
@@ -106,7 +109,16 @@ export class PanierComponent implements OnInit {
    */
   getDisponibiliteLigne(ligne: LignePanier): { disponible: boolean; quantiteMax: number } | undefined {
     const cle = this.getCleUnique(ligne);
-    return this.disponibilitesParLigne().get(cle);
+    const dispo = this.disponibilitesParLigne().get(cle);
+
+    // ✅ DEBUG: Ajouter un console.log pour vérifier
+    console.log(`📊 Disponibilité pour ${ligne.nomProduit}:`, {
+      cle,
+      quantiteActuelle: ligne.quantite,
+      dispo
+    });
+
+    return dispo;
   }
 
   /**
@@ -127,7 +139,7 @@ export class PanierComponent implements OnInit {
     if (dispo && ligne.quantite >= dispo.quantiteMax) {
       this.toastr.warning(
         `Maximum ${dispo.quantiteMax} disponible(s) pour cette période`,
-        '⚠️ Stock limité'
+        ' Stock limité'
       );
       return;
     }
@@ -141,7 +153,7 @@ export class PanierComponent implements OnInit {
    */
   decrementerQuantite(ligne: LignePanier): void {
     if (ligne.quantite <= 1) {
-      this.toastr.warning('La quantité minimale est 1', '⚠️ Quantité minimale');
+      this.toastr.warning('La quantité minimale est 1', ' Quantité minimale');
       return;
     }
 
@@ -155,6 +167,64 @@ export class PanierComponent implements OnInit {
       nouvelleQuantite
     );
     //this.modifierQuantite(ligne, nouvelleQuantite);
+  }
+
+  /**
+   * méthode utile pouur linput quantité souhaité dans le panier
+   */
+// 1️⃣ Obtenir le max
+  getQuantiteMax(ligne: LignePanier): number {
+    const dispo = this.getDisponibiliteLigne(ligne);
+    return dispo ? dispo.quantiteMax : 1;
+  }
+
+// 2️⃣ Saisie en temps réel (avec validation)
+  onQuantiteInputChange(ligne: LignePanier, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let nouvelleQuantite = parseInt(input.value, 10);
+
+    if (isNaN(nouvelleQuantite) || nouvelleQuantite < 1) {
+      nouvelleQuantite = 1;
+      input.value = '1';
+    }
+
+    const quantiteMax = this.getQuantiteMax(ligne);
+    if (nouvelleQuantite > quantiteMax) {
+      nouvelleQuantite = quantiteMax;
+      input.value = quantiteMax.toString();
+      this.toastr.info(
+        `Quantité ajustée au maximum disponible (${quantiteMax})`,
+        '📊 Stock limité'
+      );
+    }
+
+    // ✅ CORRECTION: Mettre à jour via le service panier pour recalculer le prix
+    this.panierService.modifierQuantite(
+      ligne.idProduit,
+      ligne.dateDebut,
+      ligne.dateFin,
+      nouvelleQuantite
+    );
+  }
+
+// 3️⃣ Validation finale (au blur)
+  validerQuantite(ligne: LignePanier, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let nouvelleQuantite = parseInt(input.value, 10);
+
+    if (isNaN(nouvelleQuantite) || nouvelleQuantite < 1) {
+      nouvelleQuantite = 1;
+    }
+
+    const quantiteMax = this.getQuantiteMax(ligne);
+    if (nouvelleQuantite > quantiteMax) {
+      nouvelleQuantite = quantiteMax;
+    }
+
+    if (nouvelleQuantite !== ligne.quantite) {
+      input.value = nouvelleQuantite.toString();
+      this.modifierQuantite(ligne, nouvelleQuantite);
+    }
   }
 
   /**
@@ -212,14 +282,25 @@ export class PanierComponent implements OnInit {
    */
   estQuantiteMaximale(ligne: LignePanier): boolean {
     const dispo = this.getDisponibiliteLigne(ligne);
-    return dispo ? ligne.quantite >= dispo.quantiteMax : false;
+
+    if(!dispo){
+      return true ;
+    }
+    return ligne.quantite >= dispo.quantiteMax ;
   }
 
   /**
    * Retirer une ligne du panier
    */
-  retirerLigne(ligne: LignePanier): void {
-    if (confirm(`Retirer "${ligne.nomProduit}" du panier ?`)) {
+ async retirerLigne(ligne: LignePanier): Promise<void> {
+
+    const confirmed = await this.confirmationService.confirm({
+      title: `Retirer "${ligne.nomProduit}" du panier ?`,
+      message: '',
+      confirmText: 'Retirer',
+      type: 'danger'
+    });
+    if (confirmed) {
       this.panierService.supprimerLigne(
         ligne.idProduit,
         ligne.dateDebut,
@@ -237,8 +318,15 @@ export class PanierComponent implements OnInit {
   /**
    * Vider complètement le panier
    */
-  viderPanier(): void {
-    if (confirm('Voulez-vous vraiment vider le panier ?')) {
+  async viderPanier(): Promise <void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Voulez-vous vraiment vider le Panier ?',
+      message: '',
+      confirmText: 'Vider',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       this.panierService.viderPanier();
       this.observations.set('');
       this.disponibilitesParLigne.set(new Map());
@@ -286,7 +374,7 @@ export class PanierComponent implements OnInit {
       return;
     }
 
-    this.isValidating.set(true);
+    this.isCreatingDevis.set(true);
 
     const devisRequest: DevisRequestDto = {
       lignesReservation: lignes.map(ligne => ({
@@ -310,10 +398,61 @@ export class PanierComponent implements OnInit {
       error: (error) => {
         console.error('Erreur création devis:', error);
         this.toastr.error('Impossible de créer le devis', '❌ Erreur');
-        this.isValidating.set(false);
+        this.isCreatingDevis.set(false);
       }
     });
   }
+
+  /**
+   * ✅ Valider le panier et commander directement
+   */
+  commanderDirectement(): void {
+    if (this.estVide()) {
+      this.toastr.warning('Votre panier est vide', '⚠️ Panier vide');
+      return;
+    }
+
+    // ✅ Vérifier que toutes les lignes sont disponibles
+    const lignes = this.lignes();
+    const toutesDisponibles = lignes.every(ligne => this.isLigneDisponible(ligne));
+
+    if (!toutesDisponibles) {
+      this.toastr.error(
+        'Certains produits ne sont plus disponibles. Veuillez retirer les lignes indisponibles.',
+        '❌ Produits indisponibles'
+      );
+      return;
+    }
+
+    this.isCreatingCommande.set(true);
+
+    const devisRequest: DevisRequestDto = {
+      lignesReservation: lignes.map(ligne => ({
+        idProduit: ligne.idProduit,
+        quantite: ligne.quantite,
+        prixUnitaire: ligne.prixUnitaire,
+        dateDebut: ligne.dateDebut,
+        dateFin: ligne.dateFin,
+        observationsClient: ligne.observations
+      })),
+      observationsClient: this.observations(),
+      validationAutomatique: true
+    };
+
+    this.reservationService.creerDevis(devisRequest).subscribe({
+      next: (reservation) => {
+        this.toastr.success('Votre commande a été Crée', ' Commande créé');
+        this.panierService.viderPanier();
+        this.router.navigate(['/mes-commandes']);
+      },
+      error: (error) => {
+        console.error('Erreur création Commande:', error);
+        this.toastr.error('Impossible de créer la Commande', ' Erreur');
+        this.isCreatingCommande.set(false);
+      }
+    });
+  }
+
 
   /**
    * Continuer les achats

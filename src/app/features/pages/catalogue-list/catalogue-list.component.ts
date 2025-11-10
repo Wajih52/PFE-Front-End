@@ -172,9 +172,9 @@ export class CatalogueListComponent implements OnInit {
   selectionnerCategorie(categorie: Categorie | null): void {
     this.categorieSelectionnee.set(categorie);
     // Si catégorie spécifique, recharger avec filtrage serveur
-    if (categorie !== null) {
+
       this.chargerCatalogue();
-    }
+
   }
 
   /**
@@ -196,12 +196,14 @@ export class CatalogueListComponent implements OnInit {
     // Validation des dates
     if (!this.dateDebutLocation || !this.dateFinLocation) {
       this.errorMessage.set('Veuillez sélectionner des dates de location valides');
+      this.produits.set([]);
       this.isLoading.set(false);
       return;
     }
 
     if (new Date(this.dateDebutLocation) > new Date(this.dateFinLocation)) {
       this.errorMessage.set('La date de début doit être antérieure à la date de fin');
+      this.produits.set([])
       this.isLoading.set(false);
       return;
     }
@@ -323,7 +325,7 @@ export class CatalogueListComponent implements OnInit {
     if (quantiteDansPanier >= quantiteDisponible) {
       this.toastr.error(
         `Maximum atteint : ${quantiteDisponible} disponible(s), ${quantiteDansPanier} déjà dans le panier`,
-        '❌ Stock insuffisant'
+        ' Stock insuffisant'
       );
       return;
     }
@@ -355,7 +357,7 @@ export class CatalogueListComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Erreur vérification disponibilité:', error);
-        alert('Impossible de vérifier la disponibilité du produit');
+        this.toastr.error('Impossible de vérifier la disponibilité du produit');
       }
     });
   }

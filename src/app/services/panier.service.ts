@@ -72,7 +72,6 @@ export class PanierService {
       // Mettre à jour la quantité
       lignes[indexExistant].quantite += ligne.quantite;
       lignes[indexExistant].sousTotal = lignes[indexExistant].quantite * ligne.prixUnitaire * nbJours;
-     // this.toastr.success('Quantité mise à jour dans le panier', '✅ Panier');
     } else {
       // Ajouter nouvelle ligne
       lignes.push({
@@ -80,7 +79,6 @@ export class PanierService {
         sousTotal,
         nbJours ,
         observations: ''});
-    //  this.toastr.success('Produit ajouté au panier', '✅ Panier');
     }
 
     this.updatePanier(lignes);
@@ -91,7 +89,7 @@ export class PanierService {
    */
   modifierQuantite(idProduit: number, dateDebut: string, dateFin: string, nouvelleQuantite: number): void {
     if (nouvelleQuantite < 1) {
-      this.toastr.warning('La quantité doit être au moins 1', '⚠️ Attention');
+      this.toastr.warning('La quantité doit être au moins 1', 'Attention');
       return;
     }
 
@@ -134,7 +132,7 @@ export class PanierService {
     );
 
     this.updatePanier(lignes);
-    this.toastr.info('Produit retiré du panier', 'ℹ️ Panier');
+    this.toastr.info('Produit retiré du panier', 'Panier');
   }
 
 
@@ -144,7 +142,7 @@ export class PanierService {
    */
   viderPanier(): void {
     this.updatePanier([]);
-    this.toastr.info('Panier vidé', 'ℹ️ Panier');
+    this.toastr.info('Panier vidé', 'Panier');
   }
 
   /**

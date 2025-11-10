@@ -20,7 +20,7 @@
       <button
         class="btn-secondary"
         (click)="continuerAchats()"
-        [disabled]="isValidating()"
+        [disabled]="isCreatingCommande()||isCreatingDevis()"
       >
         <i class="fas fa-arrow-left"></i>
         Continuer mes achats
@@ -29,7 +29,7 @@
       <button
         class="btn-danger"
         (click)="viderPanier()"
-        [disabled]="estVide() || isValidating()"
+        [disabled]="estVide() || isCreatingCommande()||isCreatingDevis()"
       >
         <i class="fas fa-trash"></i>
         Vider le panier
@@ -133,7 +133,17 @@
                       <i class="fas fa-minus"></i>
                     </button>
 
-                    <span class="quantite-valeur">{{ ligne.quantite }}</span>
+                    <!-- ✅ Remplacer le <span> par ceci -->
+                    <input
+                      type="number"
+                      class="quantite-input"
+                      [value]="ligne.quantite"
+                      (input)="onQuantiteInputChange(ligne, $event)"
+                      (blur)="validerQuantite(ligne, $event)"
+                      [min]="1"
+                      [max]="getQuantiteMax(ligne)"
+                      title="Saisir la quantité"
+                    />
 
                     <!-- ✅ FIX #8 & #9: Bouton incrémenter fonctionnel et désactivé à la limite -->
                     <button
@@ -231,14 +241,30 @@
 
           <!-- Actions de validation -->
           <div class="actions-validation">
+            <!-- ✅ NOUVEAU BOUTON: Commander directement (noir) -->
+            <button
+              class="btn-commander-direct"
+              (click)="commanderDirectement()"
+              [disabled]="estVide() || isCreatingCommande()"
+              title="Commander sans validation admin"
+            >
+              @if (isCreatingDevis()) {
+                <i class="fas fa-spinner fa-spin"></i>
+                Création en cours...
+              } @else {
+                <i class="fas fa-tag"></i>
+               Passer Une Commande
+              }
+            </button>
+
             <button
               class="btn-valider"
               (click)="demanderDevis()"
-              [disabled]="isValidating() || estVide()"
+              [disabled]="isCreatingDevis() || estVide()"
             >
-              @if (isValidating()) {
+              @if (isCreatingDevis()) {
                 <i class="fas fa-spinner fa-spin"></i>
-                Création en cours...
+                Envoi en cours...
               } @else {
                 <i class="fas fa-file-invoice"></i>
                 Demander un devis

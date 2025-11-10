@@ -22,12 +22,12 @@ $transition: all 0.3s ease;
 .panier-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 120px 20px 40px 20px; // ✅ 120px en haut pour la navbar
   min-height: 100vh;
   background: $background-light;
 
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding-top: 100px; // ✅ Ajustement mobile
   }
 }
 
@@ -96,7 +96,8 @@ $transition: all 0.3s ease;
       border: 2px solid $border-color;
 
       &:hover:not(:disabled) {
-        background: color.adjust($background-light, $lightness: -5%);
+        color: $border-color;
+        background: color.adjust($dark-color, $lightness: -5%);
         border-color: $primary-color;
       }
     }
@@ -238,7 +239,29 @@ $transition: all 0.3s ease;
     gap: 1rem;
   }
 }
+.quantite-input {
+  min-width: 60px;
+  max-width: 80px;
+  height: 36px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: $dark-color;
+  border: none;
+  background: transparent;
 
+  &:focus {
+    background: color.adjust($primary-color, $lightness: 48%);
+    border-radius: 6px;
+  }
+
+  // Masquer les flèches
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 // ==================== IMAGE PRODUIT ====================
 .ligne-image {
   position: relative;
@@ -620,6 +643,41 @@ $transition: all 0.3s ease;
   }
 
   .actions-validation {
+    .btn-commander-direct {
+      width: 100%;
+      padding: 1.25rem;
+      background: $dark-color; // Noir au lieu de doré
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem; // ✅ Espace entre les deux boutons
+
+      i {
+        font-size: 1.2rem;
+      }
+
+      &:hover:not(:disabled) {
+        background: color.adjust($dark-color, $lightness: 15%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba($dark-color, 0.4);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+
     .btn-valider {
       width: 100%;
       padding: 1.25rem;
@@ -670,6 +728,12 @@ $transition: all 0.3s ease;
         margin-top: 0.1rem;
         font-size: 1rem;
       }
+
+      strong {
+        display: inline;
+        color: color.adjust($info-color, $lightness: -30%);
+      }
+
     }
   }
 }
