@@ -5,7 +5,12 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   DatePeriodeDto,
-  DevisModificationDto, ModifierDatesReservationDto,
+  DecalerToutesLignesRequestDto,
+  DevisModificationDto,
+  ModificationDatesResponseDto,
+  ModifierDatesReservationDto,
+  ModifierUneLigneRequestDto,
+  ReservationSearchDto,
   StatutReservation,
   ValidationDevisDto,
   VerificationModificationDatesDto
@@ -22,8 +27,9 @@ export class ReservationService {
   private http = inject(HttpClient);
   private readonly API_URL = 'http://localhost:8080/api/reservations';
 
-  // ============ VÉRIFICATION DISPONIBILITÉ ============
-
+  // ============================================
+  //  VÉRIFICATION DISPONIBILITÉ
+  // ============================================
   /**
    * Vérifier la disponibilité d'un produit pour une période
    * POST /api/reservations/disponibilite/verifier
@@ -46,7 +52,9 @@ export class ReservationService {
     );
   }
 
-  // ============ GESTION DES DEVIS ============
+  // ============================================
+  // PARTIE 2: GESTION DES DEVIS (CLIENT)
+  // ============================================
 
   /**
    * Créer un devis (client)
@@ -61,14 +69,30 @@ export class ReservationService {
   }
 
   /**
-   * Valider un devis (client accepte ou refuse)
+   *  Le CLIENT valide ou refuse le devis
    * POST /api/reservations/devis/{id}/valider
    * @requires ROLE: CLIENT
+   * ✅ IMPORTANT: Utilise ValidationDevisDto avec "accepter" (pas "accepte")
+   */
+  validerDevisParClient(idReservation: number, validationDto: ValidationDevisDto): Observable<ReservationResponseDto> {
+    // ✅ On set l'ID dans le DTO comme le fait le controller
+    validationDto.idReservation = idReservation;
+
+    return this.http.post<ReservationResponseDto>(
+      `${this.API_URL}/devis/${idReservation}/valider`,
+      validationDto
+    );
+  }
+  // ============================================
+  // PARTIE 3: GESTION DES DEVIS (ADMIN)
+  // ============================================
+  /**
+   * Modifier un devis (ADMIN) - prix, quantités, remise
+   * PUT /api/reservations/devis/{id}/modifier
+   * @requires ROLE: ADMIN, MANAGER
    */
   modifierDevisParAdmin(idReservation: number, modificationDto: DevisModificationDto): Observable<ReservationResponseDto> {
-    // ✅ On set l'ID dans le DTO comme le fait le controller
     modificationDto.idReservation = idReservation;
-
     return this.http.put<ReservationResponseDto>(
       `${this.API_URL}/devis/${idReservation}/modifier`,
       modificationDto
@@ -88,22 +112,27 @@ export class ReservationService {
     );
   }
 
-  /**
-   *  Le CLIENT valide ou refuse le devis
-   * POST /api/reservations/devis/{id}/valider
-   * @requires ROLE: CLIENT
-   * ✅ IMPORTANT: Utilise ValidationDevisDto avec "accepter" (pas "accepte")
-   */
-  validerDevisParClient(idReservation: number, validationDto: ValidationDevisDto): Observable<ReservationResponseDto> {
-    // ✅ On set l'ID dans le DTO comme le fait le controller
-    validationDto.idReservation = idReservation;
 
-    return this.http.post<ReservationResponseDto>(
-      `${this.API_URL}/devis/${idReservation}/valider`,
-      validationDto
-    );
+  // ============================================
+  // PARTIE 4: CONSULTATION DES RÉSERVATIONS
+  // ============================================
+
+  /**
+   * Récupérer une réservation par ID
+   * GET /api/reservations/{id}
+   */
+  getReservationById(id: number): Observable<ReservationResponseDto> {
+    return this.http.get<ReservationResponseDto>(`${this.API_URL}/${id}`);
   }
-  // ============ CONSULTATION ============
+
+
+  /**
+   * Récupérer une réservation par référence
+   * GET /api/reservations/reference/{reference}
+   */
+  getReservationByReference(reference: string): Observable<ReservationResponseDto> {
+    return this.http.get<ReservationResponseDto>(`${this.API_URL}/reference/${reference}`);
+  }
 
   /**
    * Récupérer mes réservations (client connecté)
@@ -123,25 +152,12 @@ export class ReservationService {
     return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/mes-devis-en-attente`);
   }
 
-  /**
-   * Récupérer une réservation par ID
-   * GET /api/reservations/{id}
-   */
-  getReservationById(id: number): Observable<ReservationResponseDto> {
-    return this.http.get<ReservationResponseDto>(`${this.API_URL}/${id}`);
-  }
 
-  /**
-   * Récupérer une réservation par référence
-   * GET /api/reservations/reference/{reference}
-   */
-  getReservationByReference(reference: string): Observable<ReservationResponseDto> {
-    return this.http.get<ReservationResponseDto>(`${this.API_URL}/reference/${reference}`);
-  }
-  // ============ GESTION ADMIN ============
 
   /**
    * Toutes les réservations (ADMIN)
+   * GET /api/reservations
+   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
    */
   getAllReservations(): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(`${this.API_URL}`);
@@ -149,6 +165,8 @@ export class ReservationService {
 
   /**
    * Tous les devis en attente (ADMIN)
+   * GET /api/reservations/devis-en-attente
+   * @requires ROLE: ADMIN, MANAGER
    */
   getAllDevisEnAttente(): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/devis-en-attente`);
@@ -156,16 +174,71 @@ export class ReservationService {
 
   /**
    * Filtrer par statut (ADMIN)
+   * GET /api/reservations/statut/{statut}
    */
   getReservationsByStatut(statut: StatutReservation): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/statut/${statut}`);
   }
 
 
+
+  // ============================================
+  // PARTIE 5: RECHERCHE AVANCÉE (ADMIN)
+  // ============================================
   /**
-   * 📅 Vérifier si des nouvelles dates sont disponibles pour une réservation
+   * Recherche multicritères
+   * POST /api/reservations/recherche
+   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
+   */
+  searchReservations(searchDto: ReservationSearchDto): Observable<ReservationResponseDto[]> {
+    return this.http.post<ReservationResponseDto[]>(
+      `${this.API_URL}/recherche`,
+      searchDto
+    );
+  }
+
+  /**
+   * Réservations dans une période
+   * GET /api/reservations/periode?dateDebut=YYYY-MM-DD&dateFin=YYYY-MM-DD
+   */
+  getReservationsByPeriode(dateDebut: string, dateFin: string): Observable<ReservationResponseDto[]> {
+    const params = new HttpParams()
+      .set('dateDebut', dateDebut)
+      .set('dateFin', dateFin);
+    return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/periode`, { params });
+  }
+
+  /**
+   * Réservations à venir
+   * GET /api/reservations/a-venir
+   */
+  getReservationsAVenir(): Observable<ReservationResponseDto[]> {
+    return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/a-venir`);
+  }
+
+  /**
+   * Réservations en cours
+   * GET /api/reservations/en-cours
+   */
+  getReservationsEnCours(): Observable<ReservationResponseDto[]> {
+    return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/en-cours`);
+  }
+
+  /**
+   * Réservations passées
+   * GET /api/reservations/passees
+   */
+  getReservationsPassees(): Observable<ReservationResponseDto[]> {
+    return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/passees`);
+  }
+
+  // ============================================
+  // PARTIE 6: MODIFICATION DES DATES
+  // ============================================
+
+  /**
+   * Vérifier si des nouvelles dates sont disponibles (AVANT modification)
    * POST /api/reservations/{idReservation}/verifier-nouvelles-dates
-   * @requires ROLE: CLIENT, ADMIN, EMPLOYE
    */
   verifierNouvellesDates(idReservation: number, nouvellesDates: DatePeriodeDto): Observable<VerificationModificationDatesDto> {
     return this.http.post<VerificationModificationDatesDto>(
@@ -173,6 +246,38 @@ export class ReservationService {
       nouvellesDates
     );
   }
+
+  /**
+   * 🎯 FONCTIONNALITÉ 1: Modifier UNE ligne spécifique
+   * PUT /api/reservations/{idRes}/ligne/{idLigne}
+   * Cas d'usage: Client veut garder les chaises 2 jours de plus
+   */
+  modifierUneLigne(
+    idReservation: number,
+    idLigne: number,
+    request: ModifierUneLigneRequestDto
+  ): Observable<ModificationDatesResponseDto> {
+    return this.http.put<ModificationDatesResponseDto>(
+      `${this.API_URL}/${idReservation}/ligne/${idLigne}`,
+      request
+    );
+  }
+
+  /**
+   * 🎯 FONCTIONNALITÉ 2: Décaler TOUTES les lignes
+   * PUT /api/reservations/{idRes}/decaler-tout
+   * Cas d'usage: Événement reporté d'une semaine
+   */
+  decalerToutesLesLignes(
+    idReservation: number,
+    request: DecalerToutesLignesRequestDto
+  ): Observable<ModificationDatesResponseDto> {
+    return this.http.put<ModificationDatesResponseDto>(
+      `${this.API_URL}/${idReservation}/decaler-tout`,
+      request
+    );
+  }
+
   /**
    * 📅 Modifier les dates d'une réservation
    * PUT /api/reservations/{idReservation}/modifier-dates
@@ -186,15 +291,26 @@ export class ReservationService {
       modificationDto
     );
   }
-
+// ============================================
+  // PARTIE 7: ANNULATION
   // ============================================
-  // PARTIE 6: ALERTES ET NOTIFICATIONS (ADMIN)
-  // ============================================
-
   /**
-   * 🔔 Réservations qui commencent bientôt
+   * Annuler une réservation (CLIENT)
+   * DELETE /api/reservations/{id}/annuler
+   */
+  annulerReservationParClient(idReservation: number, motif?: string): Observable<{ message: string }> {
+    const params = motif ? new HttpParams().set('motif', motif) : new HttpParams();
+    return this.http.delete<{ message: string }>(
+      `${this.API_URL}/${idReservation}/annuler`,
+      { params }
+    );
+  }
+  // ============================================
+  // PARTIE 8: ALERTES (ADMIN)
+  // ============================================
+  /**
+   * Réservations qui commencent bientôt
    * GET /api/reservations/alertes/commencant-dans/{nbreJours}
-   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
    */
   getReservationsCommencantDans(nbreJours: number): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(
@@ -203,9 +319,8 @@ export class ReservationService {
   }
 
   /**
-   * 🔔 Réservations qui se terminent bientôt
+   * Réservations qui se terminent bientôt
    * GET /api/reservations/alertes/finissant-dans/{nbreJours}
-   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
    */
   getReservationsFinissantDans(nbreJours: number): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(
@@ -214,9 +329,8 @@ export class ReservationService {
   }
 
   /**
-   * 🔔 Devis expirés (pour relance client)
+   * Devis expirés
    * GET /api/reservations/alertes/devis-expires/{nbreJours}
-   * @requires ROLE: ADMIN, MANAGER
    */
   getDevisExpires(nbreJours: number): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(
@@ -225,26 +339,25 @@ export class ReservationService {
   }
 
   /**
-   * 🔔 Devis expirés aujourd'hui
-   * GET /api/reservations/alertes/devis-expires-ajourdhui
-   * @requires ROLE: ADMIN, MANAGER
+   * Devis expirés aujourd'hui
+   * GET /api/reservations/alertes/devis-expires-aujourdhui
    */
   getDevisExpiresToday(): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(
-      `${this.API_URL}/alertes/devis-expires-ajourdhui`
+      `${this.API_URL}/alertes/devis-expires-aujourdhui`
     );
   }
 
   /**
-   * 💰 Réservations avec paiement incomplet
+   * Réservations avec paiement incomplet
    * GET /api/reservations/alertes/paiements-incomplets
-   * @requires ROLE: ADMIN, MANAGER
    */
   getReservationsAvecPaiementIncomplet(): Observable<ReservationResponseDto[]> {
     return this.http.get<ReservationResponseDto[]>(
       `${this.API_URL}/alertes/paiements-incomplets`
     );
   }
+
 
   // ============================================
   // MÉTHODES UTILITAIRES
@@ -295,6 +408,33 @@ export class ReservationService {
     return reservation.paiementComplet || reservation.montantRestant <= 0;
   }
 
+  /**
+   * Obtenir le badge de statut avec couleur
+   */
+  getStatutBadgeClass(statut: StatutReservation): string {
+    const badges: Record<StatutReservation, string> = {
+      'EN_ATTENTE': 'badge-warning',
+      'CONFIRME': 'badge-success',
+      'ANNULE': 'badge-danger',
+      'EN_COURS': 'badge-info',
+      'TERMINE': 'badge-secondary'
+    };
+    return badges[statut] || 'badge-default';
+  }
+
+  /**
+   * Obtenir le label français du statut
+   */
+  getStatutLabel(statut: StatutReservation): string {
+    const labels: Record<StatutReservation, string> = {
+      'EN_ATTENTE': 'En attente',
+      'CONFIRME': 'Confirmée',
+      'ANNULE': 'Annulée',
+      'EN_COURS': 'En cours',
+      'TERMINE': 'Terminée'
+    };
+    return labels[statut] || statut;
+  }
 }
 
 // ============ DTOs ============

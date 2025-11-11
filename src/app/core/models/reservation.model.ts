@@ -53,18 +53,92 @@ export interface LigneModificationDto {
   nouvelleQuantite?: number;
 }
 
+/**
+* DTO pour recherche avancée de réservations
+*/
+export interface ReservationSearchDto {
+  idUtilisateur?: number;
+  statut?: StatutReservation;
+  dateDebutMin?: string; // Format: YYYY-MM-DD
+  dateDebutMax?: string;
+  referenceReservation?: string;
+  nomClient?: string;
+  emailClient?: string;
+  montantMin?: number;
+  montantMax?: number;
+}
+
+/**
+ * DTO pour valider une période de dates
+ * Correspond à: DatePeriodeDto.java
+ */
+export interface DatePeriodeDto {
+  dateDebut: string; // Format: YYYY-MM-DD
+  dateFin: string;
+}
+
+// ============================================
+// DTOs DE MODIFICATION DE DATES
+// ============================================
+/**
+ * Modifier une seule ligne de réservation
+ */
+export interface ModifierUneLigneRequestDto {
+  nouvelleDateDebut: string; // Format: YYYY-MM-DD
+  nouvelleDateFin: string;
+  motif?: string;
+}
+
+/**
+ * Décaler toutes les lignes d'une réservation
+ */
+export interface DecalerToutesLignesRequestDto {
+  nombreJours: number; // +7 pour avancer, -7 pour reculer
+  motif: string; // Obligatoire
+}
+
+/**
+ * Réponse de modification de dates
+ */
+export interface ModificationDatesResponseDto {
+  reservation: ReservationResponseDto;
+  ancienneDateDebut: string;
+  ancienneDateFin: string;
+  ancienMontantTotal: number;
+  nouveauMontantTotal: number;
+  detailsModifications: DetailLigneModifiee[];
+  message: string;
+}
+export interface DetailLigneModifiee {
+  idLigne: number;
+  nomProduit: string;
+  ancienneDateDebut: string;
+  ancienneDateFin: string;
+  nouvelleDateDebut: string;
+  nouvelleDateFin: string;
+  ancienMontant: number;
+  nouveauMontant: number;
+}
 export interface ModifierDatesReservationDto {
   idReservation: number;
   nouvelleDateDebut: string; // Format: YYYY-MM-DD
   nouvelleDateFin: string;
   motifModification?: string;
 }
-// ============ DTOs DE RÉPONSE ============
+
+
+// ============================================
+// DTOs DE RÉPONSE
+// ============================================
 
 export interface DisponibiliteResponseDto {
+  idProduit: number;
+  nomProduit: string;
   disponible: boolean;
+  quantiteDemandee: number;
   quantiteDisponible: number;
   message?: string;
+  instancesDisponibles?: string[]; // Pour produits avec référence
 }
 
 export interface ReservationResponseDto {
@@ -147,24 +221,6 @@ export interface LigneReservationResponseDto {
 
 }
 
-/**
- * DTO de réponse pour la vérification de disponibilité
- * Correspond à: DisponibiliteResponseDto.java
- */
-export interface DisponibiliteResponseDto {
-  idProduit: number;
-  nomProduit: string;
-  disponible: boolean;
-  quantiteDemandee: number;
-  quantiteDisponible: number;
-  message?: string;
-  instancesDisponibles?: string[]; // Pour produits avec référence
-}
-
-/**
- * DTO de réponse pour la vérification de modification de dates
- * Correspond à: VerificationModificationDatesDto.java
- */
 export interface VerificationModificationDatesDto {
   possible: boolean;
   message: string;
@@ -183,33 +239,20 @@ export interface DetailDisponibiliteProduitDto {
 }
 
 /**
- * DTO pour valider une période de dates
- * Correspond à: DatePeriodeDto.java
+ * DTO de réponse pour la vérification de disponibilité
+ * Correspond à: DisponibiliteResponseDto.java
  */
-export interface DatePeriodeDto {
-  dateDebut: string; // Format: YYYY-MM-DD
-  dateFin: string;
-}
-//----------------------modification Date ----------------------
-// ============ DTOs DE MODIFICATION ============
-
-/**
- * Modifier une seule ligne de réservation
- */
-export interface ModifierUneLigneRequestDto {
-  nouvelleDateDebut: string; // Format: YYYY-MM-DD
-  nouvelleDateFin: string;
-  motif?: string;
+export interface DisponibiliteResponseDto {
+  idProduit: number;
+  nomProduit: string;
+  disponible: boolean;
+  quantiteDemandee: number;
+  quantiteDisponible: number;
+  message?: string;
+  instancesDisponibles?: string[]; // Pour produits avec référence
 }
 
-/**
- * Décaler toutes les lignes d'une réservation
- */
-export interface DecalerToutesLignesRequestDto {
-  nombreJours: number; // +7 pour avancer, -7 pour reculer
-  motif: string; // Obligatoire
-}
-
+//-------------------------------------------------------
 /**
  * Modifier plusieurs lignes spécifiques
  */
@@ -223,32 +266,6 @@ export interface ModificationLigneDto {
   nouvelleDateFin: string;
   motif?: string;
 }
-
-/**
- * Réponse de modification
- */
-export interface ModificationDatesResponseDto {
-  reservation: ReservationResponseDto; // Import depuis reservation.model.ts
-  ancienneDateDebut: string;
-  ancienneDateFin: string;
-  ancienMontantTotal: number;
-  nouveauMontantTotal: number;
-  detailsModifications: DetailLigneModifiee[];
-  message: string;
-}
-
-export interface DetailLigneModifiee {
-  idLigne: number;
-  nomProduit: string;
-  ancienneDateDebut: string;
-  ancienneDateFin: string;
-  nouvelleDateDebut: string;
-  nouvelleDateFin: string;
-  ancienMontant: number;
-  nouveauMontant: number;
-}
-
-
 
 
 // ============================================
@@ -279,3 +296,35 @@ export enum ModePaiement {
   D17 = 'D17',
   VIREMENT = 'VIREMENT'
 }
+
+// ============================================
+// LABELS ET HELPERS
+// ============================================
+
+export const StatutReservationLabels: Record<StatutReservation, string> = {
+  'EN_ATTENTE': 'En attente',
+  'CONFIRME': 'Confirmée',
+  'ANNULE': 'Annulée',
+  'EN_COURS': 'En cours',
+  'TERMINE': 'Terminée'
+};
+
+export const StatutLivraisonLabels: Record<StatutLivraison, string> = {
+  'EN_ATTENTE': 'En attente',
+  'EN_COURS': 'En cours',
+  'LIVREE': 'Livrée',
+  'RETOURNEE': 'Retournée',
+  'ANNULEE': 'Annulée'
+};
+
+export const ModePaiementLabels: Record<ModePaiement, string> = {
+  [ModePaiement.ESPECES]: 'Espèces',
+  [ModePaiement.D17]: 'D17',
+  [ModePaiement.VIREMENT]: 'Virement bancaire'
+};
+
+
+
+
+
+
