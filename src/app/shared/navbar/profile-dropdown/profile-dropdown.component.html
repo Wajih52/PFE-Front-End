@@ -1,0 +1,81 @@
+<!-- src/app/shared/navbar/profile-dropdown/profile-dropdown.component.html -->
+
+<div class="profile-dropdown-container">
+  <!-- Bouton déclencheur -->
+  <button
+    class="profile-trigger-btn"
+    (click)="toggleDropdown()"
+    (mouseenter)="openDropdown()"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="true">
+
+    <!-- Avatar ou initiales -->
+    <div class="user-avatar">
+      <img *ngIf="userImage" [src]="userImage" [alt]="userName" class="avatar-img">
+      <span *ngIf="!userImage" class="avatar-initials">{{ getUserInitials() }}</span>
+    </div>
+
+    <!-- Nom utilisateur -->
+    <span class="user-name">{{ userName }}</span>
+
+    <!-- Icône dropdown -->
+    <span class="dropdown-icon" [class.open]="isOpen">▼</span>
+  </button>
+
+  <!-- Menu dropdown -->
+  <div
+    class="dropdown-menu"
+    [class.open]="isOpen"
+    (mouseleave)="closeDropdown()"
+    role="menu"
+    [attr.aria-hidden]="!isOpen">
+
+    <!-- En-tête du dropdown avec infos utilisateur -->
+    <div class="dropdown-header">
+      <div class="header-avatar">
+        <img *ngIf="userImage" [src]="userImage" [alt]="userName" class="header-avatar-img">
+        <span *ngIf="!userImage" class="header-avatar-initials">{{ getUserInitials() }}</span>
+      </div>
+      <div class="header-info">
+        <div class="header-name">{{ userName }}</div>
+        <div class="header-email">{{ userEmail }}</div>
+      </div>
+    </div>
+
+    <!-- Séparateur -->
+    <div class="dropdown-divider"></div>
+
+    <!-- Items du menu -->
+    <div class="dropdown-items">
+      <div *ngFor="let item of dropdownItems" [class]="getItemClasses(item)">
+        <!-- Séparateur -->
+        <div *ngIf="item.label === '---'" class="dropdown-divider"></div>
+
+        <!-- Item normal -->
+        <a *ngIf="item.label !== '---'"
+           class="dropdown-link"
+           [routerLink]="item.route || null"
+           [class.disabled]="item.disabled"
+           (click)="onItemClick(item)"
+           role="menuitem">
+
+          <!-- Icône -->
+          <span class="item-icon" *ngIf="item.icon">{{ item.icon }}</span>
+
+          <!-- Label -->
+          <span class="item-label">{{ item.label }}</span>
+
+          <!-- Badge -->
+          <span *ngIf="item.badge"
+                class="item-badge"
+                [class.badge-info]="item.badge.type === 'info'"
+                [class.badge-success]="item.badge.type === 'success'"
+                [class.badge-warning]="item.badge.type === 'warning'"
+                [class.badge-danger]="item.badge.type === 'danger'">
+            {{ item.badge.value }}
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -44,16 +44,6 @@
         <span *ngFor="let role of user?.roles" class="role-badge">{{ role }}</span>
       </div>
     </div>
-    <div>
-      <button
-        class="btn-logout"
-        (click)="logout()"
-        [disabled]="isLoggingOut"
-      >
-        <span *ngIf="!isLoggingOut">🚪 Se déconnecter</span>
-        <span *ngIf="isLoggingOut">Déconnexion...</span>
-      </button>
-    </div>
   </div>
 
   <!-- Messages -->
@@ -140,7 +130,7 @@
       </div>
       <div class="form-group">
         <label>Genre</label>
-        <select formControlName="genre" [disabled]="!isEditingProfile">
+        <select formControlName="genre"   [disabled]="!isEditingProfile">
           <option value="">Non spécifié</option>
           <option value="Homme">Homme</option>
           <option value="Femme">Femme</option>

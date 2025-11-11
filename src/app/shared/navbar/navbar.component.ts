@@ -6,11 +6,12 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { PanierService } from '../../services/panier.service';
 import { Subject, takeUntil } from 'rxjs';
+import {ProfileDropdownComponent} from './profile-dropdown/profile-dropdown.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,ProfileDropdownComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
@@ -45,10 +46,10 @@ userName : string | null = null;
   /**
    * Naviguer vers le profil
    */
-  goToProfile(): void {
+  /*goToProfile(): void {
     this.router.navigate(['/profile']);
 
-  }
+  }*/
 
   /**
    * Naviguer vers le dashboard (admin/employé)
@@ -101,7 +102,7 @@ userName : string | null = null;
   /**
    * Déconnexion
    */
-  logout(): void {
+ /* logout(): void {
     this.authService.logout().subscribe({
       next: () => {
         console.log('✅ Déconnexion réussie depuis navbar');
@@ -113,7 +114,7 @@ userName : string | null = null;
         console.error('❌ Erreur lors de la déconnexion:', error);
       }
     });
-  }
+  }*/
 
   scrollToSection(sectionId: string): void {
     // ✅ SÉCURISÉ : Vérifier que nous sommes côté client

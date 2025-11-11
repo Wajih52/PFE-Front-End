@@ -21,13 +21,7 @@
         <!-- ✅ Utiliser async pipe pour la réactivité automatique -->
         <ng-container *ngIf="isAuthenticated$ | async; else notAuthenticated">
           <div class="user-menu">
-            <button class="btn-user" (click)="goToProfile()">
-              <span class="user-icon">👤</span>
-              <span class="user-name">{{ userName }}</span>
-            </button>
-            <button class="btn-secondary-outline" (click)="logout()">
-              Déconnexion
-            </button>
+            <app-profile-dropdown></app-profile-dropdown>
           </div>
         </ng-container>
         <!-- Template pour utilisateur non connecté -->

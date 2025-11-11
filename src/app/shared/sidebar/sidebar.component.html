@@ -1,0 +1,61 @@
+<!-- src/app/shared/sidebar/sidebar.component.html -->
+
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- Header de la sidebar -->
+  <div class="sidebar-header">
+    <!-- Bouton pour collapse/expand -->
+    <button class="toggle-btn" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+      <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <!-- Boucle sur les sections de menu -->
+    <div *ngFor="let section of menuSections" class="menu-section">
+      <!-- Titre de la section -->
+      <div class="section-title" *ngIf="section.title && !isCollapsed">
+        <span class="section-icon" *ngIf="section.icon">{{ section.icon }}</span>
+        <span class="section-text">{{ section.title }}</span>
+      </div>
+
+      <!-- Items de la section -->
+      <ul class="menu-items">
+        <li *ngFor="let item of section.items" [class]="getItemClasses(item)">
+          <!-- Item séparateur -->
+          <div *ngIf="item.label === '---'" class="separator"></div>
+
+          <!-- Item normal -->
+          <a *ngIf="item.label !== '---'"
+             class="menu-link"
+             [routerLink]="item.route || null"
+             [class.disabled]="item.disabled"
+             (click)="onMenuItemClick(item)">
+
+            <!-- Icône -->
+            <span class="menu-icon" *ngIf="item.icon">{{ item.icon }}</span>
+
+            <!-- Label -->
+            <span class="menu-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+
+            <!-- Badge -->
+            <span *ngIf="item.badge && !isCollapsed"
+                  class="menu-badge"
+                  [class.badge-info]="item.badge.type === 'info'"
+                  [class.badge-success]="item.badge.type === 'success'"
+                  [class.badge-warning]="item.badge.type === 'warning'"
+                  [class.badge-danger]="item.badge.type === 'danger'">
+              {{ item.badge.value }}
+            </span>
+          </a>
+
+          <!-- Tooltip pour mode collapsed -->
+          <div *ngIf="isCollapsed" class="tooltip">{{ item.label }}</div>
+        </li>
+      </ul>
+
+      <!-- Séparateur visuel entre sections -->
+      <div *ngIf="section.separator" class="section-separator"></div>
+    </div>
+  </nav>
+</aside>
