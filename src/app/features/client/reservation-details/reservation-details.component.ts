@@ -280,6 +280,9 @@ export class ReservationDetailsComponent implements OnInit {
       minute: '2-digit'
     });
   }
+  calculerJours(dateDebut: string, dateFin: string): number {
+    return this.reservationService.calculateDaysBetween(dateDebut, dateFin);
+  }
 
   getStatutBadgeClass(statut: string): string {
     return this.reservationService.getStatutBadgeClass(statut as any);

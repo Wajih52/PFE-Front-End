@@ -243,18 +243,23 @@
 
                   <div class="dates-produit">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>Du {{ formatDate(ligne.dateDebut) }} au {{ formatDate(ligne.dateFin) }}</span>
+                    <span>Du {{ formatDate(ligne.dateDebut) }} au {{ formatDate(ligne.dateFin) }}
+                    ({{ calculerJours(ligne.dateDebut, ligne.dateFin) }} jours)
+                    </span>
                   </div>
 
                   @if (ligne.numerosSeries && ligne.numerosSeries.length > 0) {
                     <div class="series-numbers">
                       <i class="fas fa-barcode"></i>
-                      <span>N° de série: {{ ligne.numerosSeries.join(', ') }}</span>
+                      <div class="series-content">
+                      <span class="series-label">N° de série:</span>
+                      <span class="series-list">{{ ligne.numerosSeries.join('\n') }}</span>
+                      </div>
                     </div>
                   }
 
                   <div class="produit-montant">
-                    Sous-total: <strong>{{ ligne.sousTotal | number:'1.2-2' }} DT</strong>
+                    Sous-total: <strong>{{ (ligne.sousTotal * calculerJours(ligne.dateDebut, ligne.dateFin)| number:'1.2-2')  }} DT</strong>
                   </div>
 
                   @if (peutModifier()) {

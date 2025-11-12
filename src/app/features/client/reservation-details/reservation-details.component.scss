@@ -545,13 +545,27 @@
       .dates-produit,
       .series-numbers {
         display: flex;
-        align-items: center;
+        align-items: flex-start;  /* Changé de center à flex-start */
         gap: 0.5rem;
         font-size: 0.875rem;
         color: #4a5568;
-
+        margin-top: 0.5rem;
         i {
           color: #c2a27c;
+          margin-top: 0.125rem; /* Aligne l'icône avec le premier élément */
+        }
+        .series-content {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .series-label {
+          font-weight: 500;
+        }
+
+        .series-list {
+          white-space: pre-line; /* Respecte les sauts de ligne */
+          line-height: 1.4;
         }
       }
 
