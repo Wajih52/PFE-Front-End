@@ -1,0 +1,322 @@
+<!-- src/app/features/admin/devis-validation/devis-validation.component.html -->
+<div class="devis-validation-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <i class="fas fa-clipboard-check"></i>
+      Validation des Devis
+    </h1>
+    <p class="subtitle">Validez et modifiez les devis en attente. Les clients seront notifiés par email.</p>
+  </div>
+
+  <!-- Messages -->
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement des devis en attente...</p>
+    </div>
+  }
+
+  <!-- Liste des devis -->
+  @if (!isLoading() && devis().length > 0) {
+    <div class="devis-grid">
+      @for (d of devis(); track d.idReservation) {
+        <div class="devis-card" [class.urgent]="estUrgent(d.dateCreation)">
+          <!-- Badge urgent -->
+          @if (estUrgent(d.dateCreation)) {
+            <div class="urgent-badge">
+              <i class="fas fa-exclamation-triangle"></i>
+              Expire dans {{ joursRestants(d.dateCreation) }} jour(s)
+            </div>
+          }
+
+          <!-- Header -->
+          <div class="card-header">
+            <div>
+              <h3>{{ d.referenceReservation }}</h3>
+              <p class="date-creation">
+                <i class="fas fa-clock"></i>
+                Créé le {{ formatDateTime(d.dateCreation) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Client -->
+          <div class="card-body">
+            <div class="client-info">
+              <i class="fas fa-user"></i>
+              <div>
+                <p class="client-nom">{{ d.prenomClient }} {{ d.nomClient }}</p>
+                <p class="client-contact">{{ d.emailClient }} • {{ d.telephoneClient }}</p>
+              </div>
+            </div>
+
+            <!-- Event dates -->
+            <div class="event-dates">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Du {{ formatDate(d.dateDebut) }} au {{ formatDate(d.dateFin) }} ({{ d.joursLocation }} jours)</span>
+            </div>
+
+            <!-- Produits -->
+            <div class="produits-summary">
+              <i class="fas fa-box"></i>
+              <span>{{ d.nombreProduits }} produit(s) réservé(s)</span>
+            </div>
+
+            <!-- Montant -->
+            <div class="montant-section">
+              <div class="montant-row">
+                <span>Montant</span>
+                <span class="montant-value">{{ d.montantTotal | number:'1.2-2' }} DT</span>
+              </div>
+            </div>
+
+            <!-- Observations client -->
+            @if (d.observationsClient) {
+              <div class="observations-client">
+                <i class="fas fa-comment"></i>
+                <p>{{ d.observationsClient }}</p>
+              </div>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="card-footer">
+            <button class="btn btn-details" (click)="voirDetails(d.idReservation)">
+              <i class="fas fa-eye"></i>
+              Détails
+            </button>
+            <button class="btn btn-primary" (click)="ouvrirModalModification(d)">
+              <i class="fas fa-edit"></i>
+              Modifier & Valider
+            </button>
+            <button class="btn btn-danger" (click)="annulerDevis(d)">
+              <i class="fas fa-times"></i>
+              Annuler
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- État vide -->
+  @if (!isLoading() && devis().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-clipboard-check"></i>
+      <h3>Aucun devis en attente</h3>
+      <p>Tous les devis ont été traités ! 🎉</p>
+    </div>
+  }
+</div>
+
+<!-- Modal de modification et validation -->
+@if (showModifModal() && devisEnCours()) {
+  <div class="modal-overlay" (click)="fermerModal()">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-edit"></i>
+          Modifier & Valider : {{ devisEnCours()!.referenceReservation }}
+        </h2>
+        <button class="btn-close" (click)="fermerModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Info client -->
+        <div class="section">
+          <h3>
+            <i class="fas fa-user"></i>
+            Client
+          </h3>
+          <p>{{ devisEnCours()!.prenomClient }} {{ devisEnCours()!.nomClient }} - {{ devisEnCours()!.emailClient }}</p>
+        </div>
+
+        <!-- Produits avec modification -->
+        <div class="section">
+          <h3>
+            <i class="fas fa-box"></i>
+            Produits
+          </h3>
+          <div class="produits-table">
+            <table>
+              <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Prix unitaire</th>
+                <th>Quantité</th>
+                <th>Jours</th>
+                <th>Sous-total</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (ligne of devisEnCours()!.lignesReservation; track ligne.idLigneReservation) {
+                  <tr>
+                    <td>
+                      <strong>{{ ligne.nomProduit }}</strong>
+                      <br>
+                      <small>{{ formatDate(ligne.dateDebut) }} → {{ formatDate(ligne.dateFin) }}</small>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        step="0.01"
+                        [value]="ligne.prixUnitaire"
+                        (input)="modifierLigne(ligne.idLigneReservation, 'prix', +$any($event.target).value)"
+                        class="input-small"
+                      /> DT
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        [value]="ligne.quantite"
+                        (input)="modifierLigne(ligne.idLigneReservation, 'quantite', +$any($event.target).value)"
+                        class="input-small"
+                      />
+                    </td>
+                    <td>{{ calculerJours(ligne.dateDebut, ligne.dateFin) }}</td>
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        [value]="ligne.prixUnitaire * ligne.quantite * calculerJours(ligne.dateDebut, ligne.dateFin) | number:'1.2-2'"
+                        class="input-small"
+                      />
+                      DT</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Remise -->
+        <div class="section">
+          <h3>
+            <i class="fas fa-tag"></i>
+            Remise
+          </h3>
+
+          <!-- Boutons rapides -->
+          <div class="remise-rapide">
+            <label>Remise rapide :</label>
+            <div class="btn-group">
+              @for (remise of remisesRapides; track remise) {
+                <button
+                  class="btn-remise"
+                  [class.active]="remisePourcentage() === remise"
+                  (click)="appliquerRemiseRapide(remise)"
+                >
+                  {{ remise }}%
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Remise personnalisée -->
+          <div class="remise-custom">
+            <div class="form-group">
+              <label>Remise en % :</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                [(ngModel)]="remisePourcentage"
+                (input)="remiseMontant.set(null)"
+                placeholder="0"
+                class="form-input"
+              />
+            </div>
+            <div class="separator">OU</div>
+            <div class="form-group">
+              <label>Remise fixe (DT) :</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                [(ngModel)]="remiseMontant"
+                (input)="remisePourcentage.set(null)"
+                placeholder="0.00"
+                class="form-input"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Commentaire admin -->
+        <div class="section">
+          <h3>
+            <i class="fas fa-comment"></i>
+            Commentaire pour le client (optionnel)
+          </h3>
+          <textarea
+            [(ngModel)]="commentaireAdmin"
+            rows="3"
+            placeholder="Ex: Remise spéciale pour ce mariage, merci de votre confiance..."
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <!-- Récapitulatif -->
+        <div class="section recap">
+          <h3>Récapitulatif</h3>
+          <div class="recap-content">
+            <div class="recap-row">
+              <span>Montant original</span>
+              <span>{{ devisEnCours()!.montantOriginal | number:'1.2-2' }} DT</span>
+            </div>
+            @if (remisePourcentage() || remiseMontant()) {
+              <div class="recap-row remise">
+                <span>Remise</span>
+                <span>
+                  @if (remisePourcentage()) {
+                    -{{ remisePourcentage() }}%
+                  }
+                  @if (remiseMontant()) {
+                    -{{ remiseMontant() | number:'1.2-2' }} DT
+                  }
+                </span>
+              </div>
+            }
+            <div class="recap-row total">
+              <span>Montant final</span>
+              <span class="total-value">{{ calculerMontantTotal() | number:'1.2-2' }} DT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Le client recevra un email de notification pour consulter et valider/refuser ce devis.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModal()">Annuler</button>
+        <button class="btn btn-success" (click)="validerDevis()">
+          <i class="fas fa-check"></i>
+          Valider et notifier le client
+        </button>
+      </div>
+    </div>
+  </div>
+}

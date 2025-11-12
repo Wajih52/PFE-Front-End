@@ -40,14 +40,14 @@ export class SidebarMenuService {
             id: 'orders',
             label: 'Mes Commandes',
             icon: '📦',
-            route: '/mes-commandes',
+            route: 'client/mes-commandes',
             order: 2
           },
           {
             id: 'quotes',
             label: 'Mes Devis',
             icon: '📄',
-            route: '/mes-devis',
+            route: 'client/mes-devis',
             order: 3
           },
           {
@@ -61,7 +61,7 @@ export class SidebarMenuService {
             id: 'cart',
             label: 'Mon Panier',
             icon: '🛒',
-            route: '/panier',
+            route: 'client/panier',
             order: 5
           }
         ]
@@ -269,7 +269,7 @@ export class SidebarMenuService {
             id: 'devis-admin',
             label: 'Validation Devis',
             icon: '✅',
-            route: '/admin/devis',
+            route: '/admin/devis-validation',
             order: 7
           },
           {

@@ -248,7 +248,7 @@
               [disabled]="estVide() || isCreatingCommande()"
               title="Commander sans validation admin"
             >
-              @if (isCreatingDevis()) {
+              @if (isCreatingCommande()) {
                 <i class="fas fa-spinner fa-spin"></i>
                 Création en cours...
               } @else {

@@ -1,0 +1,209 @@
+<!-- src/app/features/client/mes-commandes/mes-commandes.component.html -->
+<div class="mes-commandes-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <i class="fas fa-shopping-cart"></i>
+      Mes Commandes
+    </h1>
+    <p class="subtitle">Consultez et gérez vos réservations confirmées</p>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <i class="fas fa-clipboard-list"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.total }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <i class="fas fa-check-circle"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.confirmees }}</span>
+        <span class="stat-label">Confirmées</span>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <i class="fas fa-hourglass-half"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.enCours }}</span>
+        <span class="stat-label">En cours</span>
+      </div>
+    </div>
+    <div class="stat-card secondary">
+      <i class="fas fa-flag-checkered"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.terminees }}</span>
+        <span class="stat-label">Terminées</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filtres-section">
+    <div class="filtre-group">
+      <label for="statut">Statut</label>
+      <select
+        id="statut"
+        [(ngModel)]="filtreStatut"
+        class="form-select"
+      >
+        <option value="TOUS">Tous les statuts</option>
+        <option value="CONFIRME">Confirmées</option>
+        <option value="EN_COURS">En cours</option>
+        <option value="TERMINE">Terminées</option>
+        <option value="ANNULE">Annulées</option>
+      </select>
+    </div>
+
+    <div class="filtre-group">
+      <label for="recherche">Rechercher</label>
+      <input
+        type="text"
+        id="recherche"
+        [(ngModel)]="rechercheRef"
+        placeholder="Référence (ex: RES-2025-001)"
+        class="form-input"
+      />
+    </div>
+  </div>
+
+  <!-- Messages -->
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement de vos commandes...</p>
+    </div>
+  }
+
+  <!-- Liste des réservations -->
+  @if (!isLoading() && reservationsFiltrees.length > 0) {
+    <div class="reservations-grid">
+      @for (reservation of reservationsFiltrees; track reservation.idReservation) {
+        <div class="reservation-card">
+          <!-- Header de la carte -->
+          <div class="card-header">
+            <div>
+              <h3>{{ reservation.referenceReservation }}</h3>
+              <p class="date-range">
+                <i class="fas fa-calendar-alt"></i>
+                Du {{ formatDate(reservation.dateDebut) }} au {{ formatDate(reservation.dateFin) }}
+              </p>
+            </div>
+            <span
+              class="badge"
+              [ngClass]="getStatutBadgeClass(reservation.statutReservation)"
+            >
+              {{ statutLabels[reservation.statutReservation] }}
+            </span>
+          </div>
+
+          <!-- Corps de la carte -->
+          <div class="card-body">
+            <div class="info-row">
+              <span class="label">
+                <i class="fas fa-box"></i>
+                Produits
+              </span>
+              <span class="value">{{ reservation.nombreProduits }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">
+                <i class="fas fa-clock"></i>
+                Durée
+              </span>
+              <span class="value">{{ reservation.joursLocation }} jours</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">
+                <i class="fas fa-money-bill-wave"></i>
+                Montant
+              </span>
+              <span class="value highlight">{{ reservation.montantTotal | number:'1.2-2' }} DT</span>
+            </div>
+
+            @if (reservation.remisePourcentage || reservation.remiseMontant) {
+              <div class="info-row">
+                <span class="label">
+                  <i class="fas fa-tag"></i>
+                  Remise
+                </span>
+                <span class="value remise">
+                  @if (reservation.remisePourcentage) {
+                    {{ reservation.remisePourcentage }}%
+                  }
+                  @if (reservation.remiseMontant) {
+                    {{ reservation.remiseMontant | number:'1.2-2' }} DT
+                  }
+                </span>
+              </div>
+            }
+
+            @if (!reservation.paiementComplet) {
+              <div class="info-row alert-payment">
+                <span class="label">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Reste à payer
+                </span>
+                <span class="value">{{ reservation.montantRestant | number:'1.2-2' }} DT</span>
+              </div>
+            }
+
+            @if (reservation.commentaireAdmin) {
+              <div class="commentaire-admin">
+                <i class="fas fa-comment"></i>
+                <p>{{ reservation.commentaireAdmin }}</p>
+              </div>
+            }
+          </div>
+
+          <!-- Footer de la carte -->
+          <div class="card-footer">
+            <button
+              class="btn btn-primary"
+              (click)="voirDetails(reservation.idReservation)"
+            >
+              <i class="fas fa-eye"></i>
+              Voir détails
+            </button>
+
+            @if (peutModifier(reservation)) {
+              <button
+                class="btn btn-secondary"
+                (click)="voirDetails(reservation.idReservation)"
+              >
+                <i class="fas fa-edit"></i>
+                Modifier dates
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Message si aucune réservation -->
+  @if (!isLoading() && reservationsFiltrees.length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-shopping-cart"></i>
+      <h3>Aucune commande trouvée</h3>
+      <p>Vous n'avez pas encore de réservations confirmées.</p>
+      <a routerLink="/client/catalogue" class="btn btn-primary">
+        <i class="fas fa-search"></i>
+        Explorer le catalogue
+      </a>
+    </div>
+  }
+</div>

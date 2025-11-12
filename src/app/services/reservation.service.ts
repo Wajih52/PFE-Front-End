@@ -9,7 +9,7 @@ import {
   DevisModificationDto,
   ModificationDatesResponseDto,
   ModifierDatesReservationDto,
-  ModifierUneLigneRequestDto,
+  ModifierUneLigneRequestDto, ReservationResponseDto,
   ReservationSearchDto,
   StatutReservation,
   ValidationDevisDto,
@@ -378,13 +378,21 @@ export class ReservationService {
   }
 
   /**
-   * Calculer le nombre de jours entre deux dates
+   * Calculer le nombre de jours entre deux dates (inclusives)
    */
   calculateDaysBetween(dateDebut: string | Date, dateFin: string | Date): number {
     const start = typeof dateDebut === 'string' ? new Date(dateDebut) : dateDebut;
     const end = typeof dateFin === 'string' ? new Date(dateFin) : dateFin;
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Normaliser les dates à minuit pour éviter les problèmes d'heures
+    const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    // Ajouter 1 pour inclure à la fois le jour de début et de fin
+    return diffDays + 1;
   }
 
   /**
@@ -466,33 +474,7 @@ export interface LigneReservationRequestDto {
   observations?: string;
 }
 
-export interface ReservationResponseDto {
-  idReservation: number;
-  referenceReservation: string;
-  idUtilisateur: number;
-  nomClient: string;
-  prenomClient: string;
-  emailClient: string;
-  telephoneClient: number;
-  dateDebut: string;
-  dateFin: string;
-  dateCreation: string;
-  statutReservation: 'EN_ATTENTE' | 'CONFIRME' | 'ANNULE' | 'EN_COURS' | 'TERMINE';
-  statutLivraisonRes?: string;
-  montantOriginal: number;
-  remisePourcentage?: number;
-  remiseMontant?: number;
-  montantTotal: number;
-  montantPaye?: number;
-  montantRestant: number;
-  lignesReservation: LigneReservationResponseDto[];
-  observationsClient?: string;
-  commentaireAdmin?: string;
-  estDevis: boolean;
-  paiementComplet: boolean;
-  nombreProduits: number;
-  joursLocation: number;
-}
+
 
 export interface LigneReservationResponseDto {
   idLigneReservation: number;

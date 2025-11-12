@@ -52,7 +52,7 @@
     </div>
 
     <!-- Badge Panier -->
-    <a [routerLink]="['/panier']" class="panier-badge">
+    <a routerLink="/client/panier" class="panier-badge">
       <i class="fas fa-shopping-cart"></i>
       @if (nombreProduits() > 0) {
         <span class="badge">{{ nombreProduits() }}</span>

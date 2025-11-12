@@ -1,0 +1,327 @@
+<!-- src/app/features/admin/reservations-admin/reservations-admin.component.html -->
+<div class="reservations-admin-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>
+        <i class="fas fa-list"></i>
+        Toutes les Réservations
+      </h1>
+      <p class="subtitle">Gérez et consultez toutes les réservations avec filtres avancés</p>
+    </div>
+    <button class="btn btn-export" (click)="exporterCSV()" [disabled]="reservationsFiltrees().length === 0">
+      <i class="fas fa-download"></i>
+      Exporter CSV
+    </button>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <i class="fas fa-clipboard-list"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.total }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <i class="fas fa-clock"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.enAttente }}</span>
+        <span class="stat-label">En attente</span>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <i class="fas fa-check-circle"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.confirmees }}</span>
+        <span class="stat-label">Confirmées</span>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <i class="fas fa-hourglass-half"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.enCours }}</span>
+        <span class="stat-label">En cours</span>
+      </div>
+    </div>
+    <div class="stat-card secondary">
+      <i class="fas fa-flag-checkered"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.terminees }}</span>
+        <span class="stat-label">Terminées</span>
+      </div>
+    </div>
+    <div class="stat-card primary">
+      <i class="fas fa-dollar-sign"></i>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.chiffreAffaires | number:'1.0-0' }} DT </span>
+        <span class="stat-label">Chiffre d'affaire Total </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Filtres avancés -->
+  <div class="filtres-container">
+    <div class="filtres-header">
+      <h2>
+        <i class="fas fa-filter"></i>
+        Filtres de recherche
+      </h2>
+      <button class="btn-reset" (click)="reinitialiserFiltres()">
+        <i class="fas fa-redo"></i>
+        Réinitialiser
+      </button>
+    </div>
+
+    <div class="filtres-grid">
+      <!-- Statut -->
+      <div class="filtre-group">
+        <label for="statut">Statut</label>
+        <select
+          id="statut"
+          [(ngModel)]="filtreStatut"
+          (change)="appliquerFiltres()"
+          class="form-select"
+        >
+          @for (statut of statuts; track statut) {
+            <option [value]="statut">{{ getStatutLabel(statut) }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Référence -->
+      <div class="filtre-group">
+        <label for="reference">Référence</label>
+        <input
+          type="text"
+          id="reference"
+          [(ngModel)]="rechercheReference"
+          (input)="appliquerFiltres()"
+          placeholder="RES-2025-001"
+          class="form-input"
+        />
+      </div>
+
+      <!-- Nom client -->
+      <div class="filtre-group">
+        <label for="nom">Nom client</label>
+        <input
+          type="text"
+          id="nom"
+          [(ngModel)]="rechercheNom"
+          (input)="appliquerFiltres()"
+          placeholder="Nom ou prénom"
+          class="form-input"
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="filtre-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="rechercheEmail"
+          (input)="appliquerFiltres()"
+          placeholder="email@example.com"
+          class="form-input"
+        />
+      </div>
+
+      <!-- Date début -->
+      <div class="filtre-group">
+        <label for="dateDebut">Date début (après)</label>
+        <input
+          type="date"
+          id="dateDebut"
+          [(ngModel)]="filtreDateDebut"
+          (change)="appliquerFiltres()"
+          class="form-input"
+        />
+      </div>
+
+      <!-- Date fin -->
+      <div class="filtre-group">
+        <label for="dateFin">Date fin (avant)</label>
+        <input
+          type="date"
+          id="dateFin"
+          [(ngModel)]="filtreDateFin"
+          (change)="appliquerFiltres()"
+          class="form-input"
+        />
+      </div>
+
+      <!-- Montant min -->
+      <div class="filtre-group">
+        <label for="montantMin">Montant min (DT)</label>
+        <input
+          type="number"
+          id="montantMin"
+          [(ngModel)]="filtreMontantMin"
+          (input)="appliquerFiltres()"
+          placeholder="0"
+          class="form-input"
+        />
+      </div>
+
+      <!-- Montant max -->
+      <div class="filtre-group">
+        <label for="montantMax">Montant max (DT)</label>
+        <input
+          type="number"
+          id="montantMax"
+          [(ngModel)]="filtreMontantMax"
+          (input)="appliquerFiltres()"
+          placeholder="10000"
+          class="form-input"
+        />
+      </div>
+    </div>
+
+    <div class="filtres-footer">
+      <span class="resultats-count">
+        <i class="fas fa-search"></i>
+        {{ reservationsFiltrees().length }} résultat(s) trouvé(s)
+      </span>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement des réservations...</p>
+    </div>
+  }
+
+  <!-- Tableau des réservations -->
+  @if (!isLoading() && reservationsFiltrees().length > 0) {
+    <div class="table-container">
+      <table class="reservations-table">
+        <thead>
+        <tr>
+          <th (click)="changerTri('reference')" class="sortable">
+            Référence
+            @if (triColonne() === 'reference') {
+              <i class="fas" [class.fa-sort-up]="triOrdre() === 'asc'" [class.fa-sort-down]="triOrdre() === 'desc'"></i>
+            } @else {
+              <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th (click)="changerTri('client')" class="sortable">
+            Client
+            @if (triColonne() === 'client') {
+              <i class="fas" [class.fa-sort-up]="triOrdre() === 'asc'" [class.fa-sort-down]="triOrdre() === 'desc'"></i>
+            } @else {
+              <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th (click)="changerTri('dateDebut')" class="sortable">
+            Date événement
+            @if (triColonne() === 'dateDebut') {
+              <i class="fas" [class.fa-sort-up]="triOrdre() === 'asc'" [class.fa-sort-down]="triOrdre() === 'desc'"></i>
+            } @else {
+              <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th>Statut</th>
+          <th (click)="changerTri('montant')" class="sortable">
+            Montant
+            @if (triColonne() === 'montant') {
+              <i class="fas" [class.fa-sort-up]="triOrdre() === 'asc'" [class.fa-sort-down]="triOrdre() === 'desc'"></i>
+            } @else {
+              <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th (click)="changerTri('dateCreation')" class="sortable">
+            Créée le
+            @if (triColonne() === 'dateCreation') {
+              <i class="fas" [class.fa-sort-up]="triOrdre() === 'asc'" [class.fa-sort-down]="triOrdre() === 'desc'"></i>
+            } @else {
+              <i class="fas fa-sort"></i>
+            }
+          </th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (reservation of reservationsFiltrees(); track reservation.idReservation) {
+            <tr>
+              <td>
+                <strong>{{ reservation.referenceReservation }}</strong>
+                @if (reservation.estDevis) {
+                  <span class="badge-devis">Devis</span>
+                }
+              </td>
+              <td>
+                <div class="client-cell">
+                  <strong>{{ reservation.prenomClient }} {{ reservation.nomClient }}</strong>
+                  <small>{{ reservation.emailClient }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="dates-cell">
+                  <span>{{ formatDate(reservation.dateDebut) }}</span>
+                  <i class="fas fa-arrow-right"></i>
+                  <span>{{ formatDate(reservation.dateFin) }}</span>
+                  <small>({{ reservation.joursLocation }} jours)</small>
+                </div>
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  [ngClass]="getStatutBadgeClass(reservation.statutReservation)"
+                >
+                  {{ statutLabels[reservation.statutReservation] }}
+                </span>
+              </td>
+              <td>
+                <div class="montant-cell">
+                  <strong>{{ reservation.montantTotal | number:'1.2-2' }} DT</strong>
+                  @if (!reservation.paiementComplet) {
+                    <small class="impaye">Impayé: {{ reservation.montantRestant | number:'1.2-2' }} DT</small>
+                  }
+                </div>
+              </td>
+              <td>
+                <small>{{ formatDateTime(reservation.dateCreation) }}</small>
+              </td>
+              <td>
+                <button
+                  class="btn-action"
+                  (click)="voirDetails(reservation.idReservation)"
+                  title="Voir détails"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- État vide -->
+  @if (!isLoading() && reservationsFiltrees().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-search"></i>
+      <h3>Aucune réservation trouvée</h3>
+      <p>Essayez de modifier vos critères de recherche.</p>
+      <button class="btn btn-primary" (click)="reinitialiserFiltres()">
+        <i class="fas fa-redo"></i>
+        Réinitialiser les filtres
+      </button>
+    </div>
+  }
+</div>

@@ -86,7 +86,7 @@ userName : string | null = null;
    * Naviguer vers le catalogue
    */
   goToCatalogue(): void {
-    this.router.navigate(['/catalogue']);
+    this.router.navigate(['client/catalogue']);
 
   }
 

@@ -10,6 +10,11 @@ import {InstanceFormComponent} from './features/admin/pages/instance-form/instan
 import {InstanceDetailComponent} from './features/admin/pages/instance-detail/instance-detail.component';
 import {HistoriqueMouvementComponent} from './features/admin/pages/historique-mouvement/historique-mouvement.component';
 import {LayoutWithSidebarComponent} from './shared/layout-with-sidbar/layout-with-sidbar.component';
+import {ReservationDetailsComponent} from './features/client/reservation-details/reservation-details.component';
+import {MesDevisComponent} from './features/client/mes-devis/mes-devis.component';
+import {MesCommandesComponent} from './features/client/mes-commandes/mes-commandes.component';
+import {DevisValidationComponent} from './features/admin/pages/devis-validation/devis-validation.component';
+import {ReservationsAdminComponent} from './features/admin/pages/reservations-admin/reservations-admin.component';
 
 
 export const routes: Routes = [
@@ -132,19 +137,61 @@ export const routes: Routes = [
           {
             path: 'instances/:id',
             component: InstanceDetailComponent,
+          },
+          {
+            path: 'devis-validation',
+            component: DevisValidationComponent,
+            canActivate: [authGuard],
+            data: { roles: ['ADMIN', 'MANAGER'] }
+          },
+          {
+            path: 'reservations',
+            component: ReservationsAdminComponent,
+            canActivate: [authGuard],
+            data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
+          },
+          {
+            path: 'reservation-details/:id',
+            component: ReservationDetailsComponent,
+            canActivate: [authGuard],
+            data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
           }
         ]
       },
+      {
+        path: 'client',
+        children: [
+
+          {
+            path: 'mes-commandes',
+            component: MesCommandesComponent,
+            canActivate: [authGuard],
+            data: { role: 'CLIENT' }
+          },
+          {
+            path: 'mes-devis',
+            component: MesDevisComponent,
+            canActivate: [authGuard],
+            data: { role: 'CLIENT' }
+          },
+          {
+            path: 'reservation-details/:id',
+            component: ReservationDetailsComponent,
+            canActivate: [authGuard],
+            data: { role: 'CLIENT' }
+          }
+        ]
+      }
     ]
   },
   {
-    path: 'catalogue',
+    path: 'client/catalogue',
     loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
       .then(m => m.CatalogueListComponent),
     canActivate: [authGuard ,roleGuard(['CLIENT'])]
   },
   {
-    path: 'panier',
+    path: 'client/panier',
     loadComponent: () => import('./features/pages/panier/panier.component')
       .then(m => m.PanierComponent),
     canActivate: [authGuard ,roleGuard(['CLIENT'])]

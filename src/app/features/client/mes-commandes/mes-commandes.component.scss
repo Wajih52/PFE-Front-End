@@ -1,0 +1,451 @@
+// src/app/features/client/mes-commandes/mes-commandes.component.scss
+
+.mes-commandes-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  // ============ HEADER ============
+  .page-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      color: #1a202c;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+
+      i {
+        color: #c4a37d;
+      }
+    }
+
+    .subtitle {
+      color: #718096;
+      font-size: 1rem;
+    }
+  }
+
+  // ============ STATISTIQUES ============
+  .stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    i {
+      font-size: 2rem;
+      color: #c5a47e;
+    }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #1a202c;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: #718096;
+      }
+    }
+
+    &.success i {
+      color: #48bb78;
+    }
+
+    &.info i {
+      color: #4299e1;
+    }
+
+    &.secondary i {
+      color: #718096;
+    }
+  }
+
+  // ============ FILTRES ============
+  .filtres-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .filtre-group {
+    flex: 1;
+    min-width: 200px;
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-select,
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: #c9a363;
+        box-shadow: 0 0 0 3px rgba(201, 163, 99, 0.1);
+      }
+    }
+  }
+
+  // ============ MESSAGES ============
+  .alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+
+    &.alert-error {
+      background-color: #fed7d7;
+      color: #c53030;
+      border: 1px solid #fc8181;
+    }
+  }
+
+  // ============ LOADER ============
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+
+    .loader {
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #c9a363;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      margin-top: 1rem;
+      color: #718096;
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  // ============ GRILLE DE RÉSERVATIONS ============
+  .reservations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .reservation-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #c7a781 0%, #c5a47d 100%);
+      color: white;
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      h3 {
+        font-size: 1.125rem;
+        font-weight: bold;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .date-range {
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0.95;
+        margin: 0;
+
+        i {
+          font-size: 0.75rem;
+        }
+      }
+
+      .badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.badge-success {
+          background-color: #48bb78;
+          color: white;
+        }
+
+        &.badge-warning {
+          background-color: #ed8936;
+          color: white;
+        }
+
+        &.badge-info {
+          background-color: #4299e1;
+          color: white;
+        }
+
+        &.badge-danger {
+          background-color: #f56565;
+          color: white;
+        }
+
+        &.badge-secondary {
+          background-color: #718096;
+          color: white;
+        }
+      }
+    }
+
+    .card-body {
+      padding: 1.25rem;
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f7fafc;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #718096;
+          font-size: 0.9rem;
+
+          i {
+            color: #c9a363;
+            width: 16px;
+          }
+        }
+
+        .value {
+          font-weight: 600;
+          color: #2d3748;
+
+          &.highlight {
+            color: #c9a363;
+            font-size: 1.125rem;
+          }
+
+          &.remise {
+            color: #48bb78;
+          }
+        }
+
+        &.alert-payment {
+          background-color: #fff5f5;
+          margin: 0.5rem -1.25rem 0;
+          padding: 0.75rem 1.25rem;
+          border: none;
+
+          .label {
+            color: #c53030;
+          }
+
+          .value {
+            color: #e53e3e;
+            font-weight: bold;
+          }
+        }
+      }
+
+      .commentaire-admin {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        background-color: #f7fafc;
+        border-left: 3px solid #c9a363;
+        border-radius: 4px;
+
+        i {
+          color: #c9a363;
+          margin-right: 0.5rem;
+        }
+
+        p {
+          margin: 0;
+          color: #4a5568;
+          font-size: 0.875rem;
+          font-style: italic;
+        }
+      }
+    }
+
+    .card-footer {
+      padding: 1rem 1.25rem;
+      background-color: #f7fafc;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+
+      .btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 0.625rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+
+        i {
+          font-size: 0.875rem;
+        }
+
+        &.btn-primary {
+          background-color: #c5a47e;
+          color: white;
+
+          &:hover {
+            background-color: #b8935a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(201, 163, 99, 0.3);
+          }
+        }
+
+        &.btn-secondary {
+          background-color: #edf2f7;
+          color: #2d3748;
+
+          &:hover {
+            background-color: #e2e8f0;
+          }
+        }
+      }
+    }
+  }
+
+  // ============ ÉTAT VIDE ============
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    i {
+      font-size: 4rem;
+      color: #cbd5e0;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #718096;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #c7a781;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #b8935a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(201, 163, 99, 0.3);
+      }
+    }
+  }
+}
+
+// ============ RESPONSIVE ============
+@media (max-width: 768px) {
+  .mes-commandes-container {
+    padding: 1rem;
+
+    .stats-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reservations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .filtres-section {
+      flex-direction: column;
+    }
+  }
+}

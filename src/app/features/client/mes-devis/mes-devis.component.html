@@ -1,0 +1,291 @@
+<!-- src/app/features/client/mes-devis/mes-devis.component.html -->
+<div class="mes-devis-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <i class="fas fa-file-invoice"></i>
+      Mes Devis
+    </h1>
+    <p class="subtitle">Consultez vos devis en attente de validation et acceptez-les pour confirmer vos réservations</p>
+  </div>
+
+  <!-- Messages -->
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement de vos devis...</p>
+    </div>
+  }
+
+  <!-- Liste des devis -->
+  @if (!isLoading() && devis().length > 0) {
+    <div class="devis-grid">
+      @for (d of devis(); track d.idReservation) {
+        <div class="devis-card">
+          <!-- Header -->
+          <div class="card-header">
+            <div>
+              <h3>{{ d.referenceReservation }}</h3>
+              <p class="date-creation">
+                <i class="fas fa-clock"></i>
+                Créé le {{ formatDateTime(d.dateCreation) }}
+              </p>
+            </div>
+            @if (estProcheExpiration(d.dateCreation)) {
+              <span class="badge badge-warning">
+                <i class="fas fa-exclamation"></i>
+                Expire dans {{ joursRestants(d.dateCreation) }} jour(s)
+              </span>
+            } @else {
+              <span class="badge badge-info">
+                <i class="fas fa-hourglass-half"></i>
+                En attente
+              </span>
+            }
+          </div>
+
+          <!-- Détails de l'événement -->
+          <div class="card-body">
+            <div class="event-dates">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <p class="label">Dates de l'événement</p>
+                <p class="value">Du {{ formatDate(d.dateDebut) }} au {{ formatDate(d.dateFin) }}</p>
+                <p class="duration">{{ d.joursLocation }} jours</p>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <div class="info-row">
+                <span class="label">
+                  <i class="fas fa-box"></i>
+                  Produits
+                </span>
+                <span class="value">{{ d.nombreProduits }}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">
+                  <i class="fas fa-money-bill-wave"></i>
+                  Montant original
+                </span>
+                <span class="value">{{ d.montantOriginal | number:'1.2-2' }} DT</span>
+              </div>
+
+              @if (d.remisePourcentage || d.remiseMontant) {
+                <div class="info-row remise">
+                  <span class="label">
+                    <i class="fas fa-tag"></i>
+                    Remise appliquée
+                  </span>
+                  <span class="value">
+                    @if (d.remisePourcentage) {
+                      -{{ d.remisePourcentage }}%
+                    }
+                    @if (d.remiseMontant) {
+                      -{{ d.remiseMontant | number:'1.2-2' }} DT
+                    }
+                  </span>
+                </div>
+              }
+
+              <div class="info-row total">
+                <span class="label">
+                  <i class="fas fa-calculator"></i>
+                  Montant total
+                </span>
+                <span class="value highlight">{{ d.montantTotal | number:'1.2-2' }} DT</span>
+              </div>
+            </div>
+
+            @if (d.commentaireAdmin) {
+              <div class="commentaire-admin">
+                <div class="commentaire-header">
+                  <i class="fas fa-comment-dots"></i>
+                  <span>Message de l'agence</span>
+                </div>
+                <p>{{ d.commentaireAdmin }}</p>
+              </div>
+            }
+
+            @if (d.observationsClient) {
+              <div class="observations-client">
+                <p><strong>Vos observations :</strong> {{ d.observationsClient }}</p>
+              </div>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="card-footer">
+            <button
+              class="btn btn-details"
+              (click)="voirDetails(d.idReservation)"
+            >
+              <i class="fas fa-eye"></i>
+              Voir détails
+            </button>
+
+            <button
+              class="btn btn-success"
+              (click)="ouvrirModalAccepter(d)"
+            >
+              <i class="fas fa-check"></i>
+              Accepter
+            </button>
+
+            <button
+              class="btn btn-danger"
+              (click)="ouvrirModalRefuser(d)"
+            >
+              <i class="fas fa-times"></i>
+              Refuser
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- État vide -->
+  @if (!isLoading() && devis().length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-file-invoice"></i>
+      <h3>Aucun devis en attente</h3>
+      <p>Vous n'avez actuellement aucun devis en attente de validation.</p>
+      <a routerLink="/client/catalogue" class="btn btn-primary">
+        <i class="fas fa-search"></i>
+        Explorer le catalogue
+      </a>
+    </div>
+  }
+</div>
+
+<!-- Modal de confirmation d'acceptation -->
+@if (showConfirmModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-check-circle"></i>
+          Confirmer l'acceptation
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="confirmation-message">
+          <i class="fas fa-info-circle"></i>
+          <p>
+            Vous êtes sur le point d'accepter le devis
+            <strong>{{ selectedDevis()?.referenceReservation }}</strong>
+            pour un montant de
+            <strong>{{ selectedDevis()?.montantTotal | number:'1.2-2' }} DT</strong>.
+          </p>
+        </div>
+
+        <div class="details-recap">
+          <h3>Récapitulatif</h3>
+          <ul>
+            <li>
+              <i class="fas fa-calendar"></i>
+              Dates: Du {{ formatDate(selectedDevis()!.dateDebut) }} au {{ formatDate(selectedDevis()!.dateFin) }}
+            </li>
+            <li>
+              <i class="fas fa-box"></i>
+              Produits: {{ selectedDevis()?.nombreProduits }}
+            </li>
+            <li>
+              <i class="fas fa-money-bill-wave"></i>
+              Montant total: {{ selectedDevis()?.montantTotal | number:'1.2-2' }} DT
+            </li>
+          </ul>
+        </div>
+
+        <div class="warning-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>
+            Une fois accepté, ce devis se transformera en réservation confirmée.
+            Vous pourrez ensuite procéder au paiement.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">
+          Annuler
+        </button>
+        <button class="btn btn-success" (click)="accepterDevis()">
+          <i class="fas fa-check"></i>
+          Confirmer l'acceptation
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de refus -->
+@if (showRejectModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-times-circle"></i>
+          Refuser le devis
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p>Vous êtes sur le point de refuser le devis <strong>{{ selectedDevis()?.referenceReservation }}</strong>.</p>
+
+        <div class="form-group">
+          <label for="motifRefus">
+            <i class="fas fa-comment"></i>
+            Motif du refus (obligatoire)
+          </label>
+          <textarea
+            id="motifRefus"
+            [(ngModel)]="motifRefus"
+            rows="4"
+            placeholder="Ex: Tarif trop élevé, dates ne conviennent plus, etc."
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <div class="warning-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Cette action est irréversible. Le devis sera annulé et vous devrez créer un nouveau devis si nécessaire.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">
+          Annuler
+        </button>
+        <button class="btn btn-danger" (click)="refuserDevis()">
+          <i class="fas fa-times"></i>
+          Confirmer le refus
+        </button>
+      </div>
+    </div>
+  </div>
+}

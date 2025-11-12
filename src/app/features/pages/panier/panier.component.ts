@@ -350,7 +350,7 @@ export class PanierComponent implements OnInit {
    */
   sauvegarderObservations(): void {
     this.panierService.setObservations(this.observations());
-    this.toastr.info('Observations enregistrées', 'ℹ️ Panier');
+   // this.toastr.info('Observations enregistrées', 'ℹ️ Panier');
   }
 
   /**
@@ -393,7 +393,7 @@ export class PanierComponent implements OnInit {
       next: (reservation) => {
         this.toastr.success('Votre demande de devis a été envoyée', '✅ Devis créé');
         this.panierService.viderPanier();
-        this.router.navigate(['/mes-commandes']);
+        this.router.navigate(['client/mes-devis']);
       },
       error: (error) => {
         console.error('Erreur création devis:', error);
@@ -443,7 +443,7 @@ export class PanierComponent implements OnInit {
       next: (reservation) => {
         this.toastr.success('Votre commande a été Crée', ' Commande créé');
         this.panierService.viderPanier();
-        this.router.navigate(['/mes-commandes']);
+        this.router.navigate(['client/mes-commandes']);
       },
       error: (error) => {
         console.error('Erreur création Commande:', error);
@@ -458,7 +458,7 @@ export class PanierComponent implements OnInit {
    * Continuer les achats
    */
   continuerAchats(): void {
-    this.router.navigate(['/catalogue']);
+    this.router.navigate(['client/catalogue']);
   }
 
   /**

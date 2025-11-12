@@ -1,0 +1,474 @@
+<!-- src/app/features/client/reservation-details/reservation-details.component.html -->
+<div class="reservation-details-container">
+  <!-- Loader -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement des détails...</p>
+    </div>
+  }
+
+  <!-- Messages -->
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Contenu principal -->
+  @if (!isLoading() && reservation();as res) {
+    <!-- Header -->
+    <div class="details-header">
+      <button class="btn-back" (click)="retourListeCommandes()">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+      </button>
+
+      <div class="header-content">
+        <div>
+          <h1>{{ res.referenceReservation }}</h1>
+          <p class="date-creation">Créée le {{ formatDateTime(res.dateCreation) }}</p>
+        </div>
+        <span
+          class="badge"
+          [ngClass]="getStatutBadgeClass(res.statutReservation)"
+        >
+          {{ statutLabels[res.statutReservation] }}
+        </span>
+      </div>
+    </div>
+
+    <div class="details-content">
+      <!-- Colonne gauche: Informations générales -->
+      <div class="left-column">
+        <!-- Informations client -->
+        <div class="info-card">
+          <h2>
+            <i class="fas fa-user"></i>
+            Informations client
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Nom complet</span>
+              <span class="value">{{ res.prenomClient }} {{ res.nomClient }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Email</span>
+              <span class="value">{{ res.emailClient }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Téléphone</span>
+              <span class="value">{{ res.telephoneClient }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations de l'événement -->
+        <div class="info-card">
+          <h2>
+            <i class="fas fa-calendar-alt"></i>
+            Dates de l'événement
+          </h2>
+          <div class="event-dates">
+            <div class="date-box">
+              <span class="date-label">Début</span>
+              <span class="date-value">{{ formatDate(res.dateDebut) }}</span>
+            </div>
+            <div class="arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <div class="date-box">
+              <span class="date-label">Fin</span>
+              <span class="date-value">{{ formatDate(res.dateFin) }}</span>
+            </div>
+          </div>
+          <div class="duration-badge">
+            <i class="fas fa-clock"></i>
+            {{ res.joursLocation }} jour(s) de location
+          </div>
+        </div>
+
+        <!-- Montants -->
+        <div class="info-card">
+          <h2>
+            <i class="fas fa-calculator"></i>
+            Récapitulatif financier
+          </h2>
+          <div class="montants-grid">
+            <div class="montant-row">
+              <span class="label">Montant original</span>
+              <span class="value">{{ res.montantOriginal | number:'1.2-2' }} DT</span>
+            </div>
+
+            @if (res.remisePourcentage || res.remiseMontant) {
+              <div class="montant-row remise">
+                <span class="label">
+                  <i class="fas fa-tag"></i>
+                  Remise
+                </span>
+                <span class="value">
+                  @if (res.remisePourcentage) {
+                    -{{ res.remisePourcentage }}%
+                  }
+                  @if (res.remiseMontant) {
+                    -{{ res.remiseMontant | number:'1.2-2' }} DT
+                  }
+                </span>
+              </div>
+            }
+
+            <div class="montant-row total">
+              <span class="label">Montant total</span>
+              <span class="value highlight">{{ res.montantTotal | number:'1.2-2' }} DT</span>
+            </div>
+
+            @if (res.montantPaye && res!.montantPaye > 0) {
+              <div class="montant-row">
+                <span class="label">Montant payé</span>
+                <span class="value success">{{ reservation()?.montantPaye | number:'1.2-2' }} DT</span>
+              </div>
+
+              <div class="montant-row">
+                <span class="label">Reste à payer</span>
+                <span class="value" [class.success]="res.paiementComplet" [class.alert]="!res.paiementComplet">
+                  {{ res.montantRestant | number:'1.2-2' }} DT
+                </span>
+              </div>
+            }
+          </div>
+
+          @if (!res.paiementComplet) {
+            <div class="payment-alert">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Paiement incomplet - {{ res.montantRestant | number:'1.2-2' }} DT restant</span>
+            </div>
+          }
+        </div>
+
+        <!-- Commentaires -->
+        @if (res.commentaireAdmin || res.observationsClient) {
+          <div class="info-card">
+            <h2>
+              <i class="fas fa-comment"></i>
+              Observations
+            </h2>
+
+            @if (res.commentaireAdmin) {
+              <div class="commentaire admin">
+                <div class="commentaire-header">
+                  <i class="fas fa-user-tie"></i>
+                  Message de l'agence
+                </div>
+                <p>{{ res.commentaireAdmin }}</p>
+              </div>
+            }
+
+            @if (res.observationsClient) {
+              <div class="commentaire client">
+                <div class="commentaire-header">
+                  <i class="fas fa-user"></i>
+                   observations Client
+                </div>
+                <p>{{ res.observationsClient }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Actions -->
+        <div class="actions-card">
+          @if (peutModifier()) {
+            <button class="btn btn-primary" (click)="ouvrirModalDecalage()">
+              <i class="fas fa-calendar-plus"></i>
+              Décaler toutes les dates
+            </button>
+          }
+
+          @if (peutAnnuler()) {
+            <button class="btn btn-danger" (click)="ouvrirModalAnnuler()">
+              <i class="fas fa-times-circle"></i>
+              Annuler la réservation
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Colonne droite: Liste des produits -->
+      <div class="right-column">
+        <div class="produits-card">
+          <h2>
+            <i class="fas fa-box"></i>
+            Produits réservés ({{ res.nombreProduits }})
+          </h2>
+
+          <div class="produits-list">
+            @for (ligne of res.lignesReservation; track ligne.idLigneReservation) {
+              <div class="produit-item">
+                <!-- Image -->
+                @if (ligne.imageProduit) {
+                  <div class="produit-image">
+                    <img [src]="getImageUrl(ligne)" [alt]="ligne.nomProduit" />
+                  </div>
+                } @else {
+                  <div class="produit-image placeholder">
+                    <i class="fas fa-image"></i>
+                  </div>
+                }
+
+                <!-- Infos -->
+                <div class="produit-info">
+                  <h3>{{ ligne.nomProduit }}</h3>
+                  @if (ligne.codeProduit) {
+                    <p class="code">Ref: {{ ligne.codeProduit }}</p>
+                  }
+
+                  <div class="produit-details">
+                    <div class="detail-item">
+                      <i class="fas fa-boxes"></i>
+                      <span>Quantité: {{ ligne.quantite }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <i class="fas fa-tag"></i>
+                      <span>{{ ligne.prixUnitaire | number:'1.2-2' }} DT/unité</span>
+                    </div>
+                  </div>
+
+                  <div class="dates-produit">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Du {{ formatDate(ligne.dateDebut) }} au {{ formatDate(ligne.dateFin) }}</span>
+                  </div>
+
+                  @if (ligne.numerosSeries && ligne.numerosSeries.length > 0) {
+                    <div class="series-numbers">
+                      <i class="fas fa-barcode"></i>
+                      <span>N° de série: {{ ligne.numerosSeries.join(', ') }}</span>
+                    </div>
+                  }
+
+                  <div class="produit-montant">
+                    Sous-total: <strong>{{ ligne.sousTotal | number:'1.2-2' }} DT</strong>
+                  </div>
+
+                  @if (peutModifier()) {
+                    <button
+                      class="btn-modifier-ligne"
+                      (click)="ouvrirModalModifierLigne(ligne)"
+                    >
+                      <i class="fas fa-edit"></i>
+                      Modifier les dates
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Modal Décalage Global -->
+@if (showDecalageModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-calendar-plus"></i>
+          Décaler toutes les dates
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p>Indiquez le nombre de jours de décalage. Un nombre positif avance les dates, un nombre négatif les recule.</p>
+
+        <div class="form-group">
+          <label for="nombreJours">
+            <i class="fas fa-calendar-day"></i>
+            Nombre de jours
+          </label>
+          <input
+            type="number"
+            id="nombreJours"
+            [(ngModel)]="nombreJoursDecalage"
+            placeholder="Ex: 7 pour avancer d'une semaine, -7 pour reculer"
+            class="form-input"
+          />
+          <small>Exemple: +7 pour reporter d'une semaine, -3 pour avancer de 3 jours</small>
+        </div>
+
+        <div class="form-group">
+          <label for="motifDecalage">
+            <i class="fas fa-comment"></i>
+            Motif (obligatoire)
+          </label>
+          <textarea
+            id="motifDecalage"
+            [(ngModel)]="motifDecalage"
+            rows="3"
+            placeholder="Ex: Météo, changement de planning, etc."
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Le système vérifiera automatiquement la disponibilité pour toutes les nouvelles dates.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">Annuler</button>
+        <button class="btn btn-primary" (click)="decalerToutesLesLignes()">
+          <i class="fas fa-check"></i>
+          Confirmer le décalage
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Modifier une Ligne -->
+@if (showModifierLigneModal() && ligneSelectionnee()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-edit"></i>
+          Modifier {{ ligneSelectionnee()!.nomProduit }}
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="dates-actuelles">
+          <h3>Dates actuelles</h3>
+          <p>Du {{ formatDate(ligneSelectionnee()!.dateDebut) }} au {{ formatDate(ligneSelectionnee()!.dateFin) }}</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nouvelleDateDebut">
+              <i class="fas fa-calendar-day"></i>
+              Nouvelle date de début
+            </label>
+            <input
+              type="date"
+              id="nouvelleDateDebut"
+              [(ngModel)]="nouvelleDateDebut"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="nouvelleDateFin">
+              <i class="fas fa-calendar-day"></i>
+              Nouvelle date de fin
+            </label>
+            <input
+              type="date"
+              id="nouvelleDateFin"
+              [(ngModel)]="nouvelleDateFin"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="motifModifLigne">
+            <i class="fas fa-comment"></i>
+            Motif (optionnel)
+          </label>
+          <textarea
+            id="motifModifLigne"
+            [(ngModel)]="motifModifLigne"
+            rows="2"
+            placeholder="Raison de la modification"
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Le montant sera recalculé automatiquement selon la nouvelle durée.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">Annuler</button>
+        <button class="btn btn-primary" (click)="modifierUneLigne()">
+          <i class="fas fa-check"></i>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Annulation -->
+@if (showAnnulerModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-times-circle"></i>
+          Annuler la réservation
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="warning-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>
+            Vous êtes sur le point d'annuler la réservation
+            <strong>{{ reservation()!.referenceReservation }}</strong>.
+            Cette action est irréversible.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="motifAnnulation">
+            <i class="fas fa-comment"></i>
+            Motif de l'annulation (optionnel)
+          </label>
+          <textarea
+            id="motifAnnulation"
+            [(ngModel)]="motifAnnulation"
+            rows="3"
+            placeholder="Ex: Changement de plans, événement annulé, etc."
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>Le stock sera automatiquement libéré et redevient disponible.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">Non, garder la réservation</button>
+        <button class="btn btn-danger" (click)="annulerReservation()">
+          <i class="fas fa-times"></i>
+          Oui, annuler définitivement
+        </button>
+      </div>
+    </div>
+  </div>
+}
