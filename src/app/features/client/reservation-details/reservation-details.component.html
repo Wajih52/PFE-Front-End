@@ -107,6 +107,12 @@
               <span class="label">Montant original</span>
               <span class="value">{{ res.montantOriginal | number:'1.2-2' }} DT</span>
             </div>
+            <div class="montant-row">
+              <span class="label">Montant Total</span>
+              <span class="value">
+                {{ getPrixIntermediaire(res.montantTotal,res.remisePourcentage,res.remiseMontant) | number:'1.2-2' }} DT
+              </span>
+            </div>
 
             @if (res.remisePourcentage || res.remiseMontant) {
               <div class="montant-row remise">
@@ -126,7 +132,7 @@
             }
 
             <div class="montant-row total">
-              <span class="label">Montant total</span>
+              <span class="label">Montant Final</span>
               <span class="value highlight">{{ res.montantTotal | number:'1.2-2' }} DT</span>
             </div>
 

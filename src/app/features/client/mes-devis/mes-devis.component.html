@@ -86,6 +86,15 @@
                 </span>
                 <span class="value">{{ d.montantOriginal | number:'1.2-2' }} DT</span>
               </div>
+              <div class="info-row">
+                <span class="label">
+                <i class="fas fa-money-bill-wave"></i>
+               Montant Total
+                </span>
+                <span class="value">
+                {{ getPrixIntermediaire(d.montantTotal,d.remisePourcentage,d.remiseMontant) | number:'1.2-2' }} DT
+              </span>
+              </div>
 
               @if (d.remisePourcentage || d.remiseMontant) {
                 <div class="info-row remise">
@@ -107,7 +116,7 @@
               <div class="info-row total">
                 <span class="label">
                   <i class="fas fa-calculator"></i>
-                  Montant total
+                  Montant Final
                 </span>
                 <span class="value highlight">{{ d.montantTotal | number:'1.2-2' }} DT</span>
               </div>

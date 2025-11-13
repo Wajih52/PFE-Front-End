@@ -55,6 +55,20 @@ export class MesDevisComponent implements OnInit {
     });
   }
 
+  getPrixIntermediaire(
+    montantTotal: number,
+    remisePourcentage?: number,
+    remiseMontant?: number
+  ): number {
+    if (remisePourcentage != null && remisePourcentage > 0) {
+      return montantTotal / (1 - remisePourcentage / 100);
+    }
+    if (remiseMontant != null  && remiseMontant > 0) {
+      return montantTotal + remiseMontant;
+    }
+    return montantTotal; // aucune remise
+  }
+
   /**
    * Voir les détails d'un devis
    */

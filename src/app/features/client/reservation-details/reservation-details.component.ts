@@ -75,6 +75,7 @@ export class ReservationDetailsComponent implements OnInit {
       next: (data) => {
         this.reservation.set(data);
         this.isLoading.set(false);
+
       },
       error: (error) => {
         console.error('Erreur lors du chargement de la réservation:', error);
@@ -82,6 +83,21 @@ export class ReservationDetailsComponent implements OnInit {
         this.isLoading.set(false);
       }
     });
+  }
+
+   getPrixIntermediaire(
+    montantTotal: number,
+    remisePourcentage?: number,
+    remiseMontant?: number
+  ): number {
+    if (remisePourcentage != null&& remisePourcentage > 0) {
+      return montantTotal / (1 - remisePourcentage / 100);
+    }
+    if (remiseMontant != null  && remiseMontant > 0) {
+      return montantTotal + remiseMontant;
+
+    }
+    return montantTotal; // aucune remise
   }
 
   // ============================================

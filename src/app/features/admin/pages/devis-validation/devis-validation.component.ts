@@ -36,7 +36,6 @@ export class DevisValidationComponent implements OnInit {
 
   // Formulaire de modification
   lignesModifiees: Map<number, LigneModificationDto> = new Map();
-  montantTotal: number | null | undefined ;
   remisePourcentage = signal<number | null>(null);
   remiseMontant = signal<number | null>(null);
   commentaireAdmin = signal<string>('');
@@ -108,6 +107,25 @@ export class DevisValidationComponent implements OnInit {
     }
   }
 
+  /**
+   * Calculer le montant AVANT remise (pour affichage)
+   */
+  calculerMontantAvantRemise(): number {
+    const devis = this.devisEnCours();
+    if (!devis) return 0;
+
+    let total = 0;
+
+    devis.lignesReservation.forEach(ligne => {
+      const modif = this.lignesModifiees.get(ligne.idLigneReservation);
+      const prix = modif?.nouveauPrixUnitaire ?? ligne.prixUnitaire;
+      const quantite = modif?.nouvelleQuantite ?? ligne.quantite;
+      const jours = this.calculerJours(ligne.dateDebut, ligne.dateFin);
+      total += prix * quantite * jours;
+    });
+
+    return total;
+  }
 
   /**
    * Calculer le montant total avec modifications et Remise si appliqué
@@ -116,23 +134,10 @@ export class DevisValidationComponent implements OnInit {
     const devis = this.devisEnCours();
     if (!devis) return 0;
 
-   let total = devis.montantOriginal;
+   //let total = devis.montantOriginal;
+    let total ;
+   total = this.calculerMontantAvantRemise() ;
 
-    // Appliquer les modifications de lignes
-    devis.lignesReservation.forEach(ligne => {
-      const modif = this.lignesModifiees.get(ligne.idLigneReservation);
-      if (modif) {
-        // Soustraire l'ancien montant
-        total -= ligne.sousTotal;
-
-        // Calculer le nouveau montant
-        const nouveauPrix = modif.nouveauPrixUnitaire || ligne.prixUnitaire;
-        const nouvelleQte = modif.nouvelleQuantite || ligne.quantite;
-        const jours = this.calculerJours(ligne.dateDebut, ligne.dateFin);
-        total += nouveauPrix * nouvelleQte * jours;
-      }
-    });
-  this.montantTotal = total ;
     // Appliquer la remise
     if (this.remisePourcentage()) {
       total = total * (1 - this.remisePourcentage()! / 100);

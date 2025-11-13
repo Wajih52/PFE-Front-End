@@ -277,9 +277,9 @@
               <span>Montant original</span>
               <span>{{ devisEnCours()!.montantOriginal | number:'1.2-2' }} DT</span>
             </div>
-            <div *ngIf="montantTotal" class="recap-row">
-              <span>Montant Total <h6>(aprés modification quantité ou prix unitaire)</h6></span>
-              <span class="total-value">{{ montantTotal | number:'1.2-2' }} DT</span>
+            <div class="recap-row" style="color: #4299e1; font-weight: 600;">
+              <span>Montant Total (après modification quantité ou prix unitaire)</span>
+              <span>{{ calculerMontantAvantRemise() | number:'1.2-2' }} DT</span>
             </div>
             @if (remisePourcentage() || remiseMontant()) {
               <div class="recap-row remise">
