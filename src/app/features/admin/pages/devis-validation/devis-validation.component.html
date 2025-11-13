@@ -193,14 +193,7 @@
                       />
                     </td>
                     <td>{{ calculerJours(ligne.dateDebut, ligne.dateFin) }}</td>
-                    <td>
-                      <input
-                        type="number"
-                        min="1"
-                        [value]="ligne.prixUnitaire * ligne.quantite * calculerJours(ligne.dateDebut, ligne.dateFin) | number:'1.2-2'"
-                        class="input-small"
-                      />
-                      DT</td>
+                    <td> {{calculerSousTotalLigne(ligne)|number:'1.2-2'}}DT</td>
                   </tr>
                 }
               </tbody>
@@ -283,6 +276,10 @@
             <div class="recap-row">
               <span>Montant original</span>
               <span>{{ devisEnCours()!.montantOriginal | number:'1.2-2' }} DT</span>
+            </div>
+            <div *ngIf="montantTotal" class="recap-row">
+              <span>Montant Total <h6>(aprés modification quantité ou prix unitaire)</h6></span>
+              <span class="total-value">{{ montantTotal | number:'1.2-2' }} DT</span>
             </div>
             @if (remisePourcentage() || remiseMontant()) {
               <div class="recap-row remise">

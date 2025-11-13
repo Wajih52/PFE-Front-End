@@ -36,6 +36,7 @@ export class DevisValidationComponent implements OnInit {
 
   // Formulaire de modification
   lignesModifiees: Map<number, LigneModificationDto> = new Map();
+  montantTotal: number | null | undefined ;
   remisePourcentage = signal<number | null>(null);
   remiseMontant = signal<number | null>(null);
   commentaireAdmin = signal<string>('');
@@ -107,8 +108,9 @@ export class DevisValidationComponent implements OnInit {
     }
   }
 
+
   /**
-   * Calculer le montant total avec modifications
+   * Calculer le montant total avec modifications et Remise si appliqué
    */
   calculerMontantTotal(): number {
     const devis = this.devisEnCours();
@@ -130,7 +132,7 @@ export class DevisValidationComponent implements OnInit {
         total += nouveauPrix * nouvelleQte * jours;
       }
     });
-
+  this.montantTotal = total ;
     // Appliquer la remise
     if (this.remisePourcentage()) {
       total = total * (1 - this.remisePourcentage()! / 100);
@@ -140,6 +142,39 @@ export class DevisValidationComponent implements OnInit {
 
     return Math.max(0, total);
   }
+
+  /**
+   * Calculer le sous-total d'une ligne AVEC les modifications
+   * (pour affichage en temps réel dans le tableau)
+   */
+  calculerSousTotalLigne(ligne: any): number {
+    // Vérifier s'il y a des modifications pour cette ligne
+    const modif = this.lignesModifiees.get(ligne.idLigneReservation);
+
+    // Utiliser les valeurs modifiées ou les valeurs originales
+    const prix = modif?.nouveauPrixUnitaire ?? ligne.prixUnitaire;
+    const quantite = modif?.nouvelleQuantite ?? ligne.quantite;
+    const jours = this.calculerJours(ligne.dateDebut, ligne.dateFin);
+
+    return prix * quantite * jours;
+  }
+
+  /**
+   * Obtenir le prix affiché dans l'input (modifié ou original)
+   */
+  getPrixAffiche(ligne: any): number {
+    const modif = this.lignesModifiees.get(ligne.idLigneReservation);
+    return modif?.nouveauPrixUnitaire ?? ligne.prixUnitaire;
+  }
+
+  /**
+   * Obtenir la quantité affichée dans l'input (modifiée ou originale)
+   */
+  getQuantiteAffichee(ligne: any): number {
+    const modif = this.lignesModifiees.get(ligne.idLigneReservation);
+    return modif?.nouvelleQuantite ?? ligne.quantite;
+  }
+
 
   /**
    * Enregistrer les modifications et valider le devis
@@ -160,9 +195,10 @@ export class DevisValidationComponent implements OnInit {
 
     this.reservationService.modifierDevisParAdmin(devis.idReservation, modificationDto).subscribe({
       next: () => {
-        this.successMessage.set(`✅ Devis ${devis.referenceReservation} validé avec succès ! Le client sera notifié.`);
+        this.successMessage.set(` Devis ${devis.referenceReservation} validé avec succès ! Le client sera notifié.`);
         this.showModifModal.set(false);
-        this.chargerDevisEnAttente(); // Recharger la liste
+        this.chargerDevisEnAttente();// Recharger la liste
+
       },
       error: (error) => {
         console.error('Erreur lors de la validation:', error);
