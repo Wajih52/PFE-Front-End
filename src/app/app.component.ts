@@ -9,7 +9,7 @@ import {NavbarComponent} from './shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent, FooterComponent, NavbarComponent],
+  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent, NavbarComponent],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.scss'

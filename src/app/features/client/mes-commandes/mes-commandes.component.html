@@ -164,7 +164,8 @@
             @if (reservation.commentaireAdmin) {
               <div class="commentaire-admin">
                 <i class="fas fa-comment"></i>
-                <p>{{ reservation.commentaireAdmin }}</p>
+                <p>{{ reservation.commentaireAdmin | slice : 0:20  }}
+                  {{reservation.commentaireAdmin.length >20 ? '...' : ''}}</p>
               </div>
             }
           </div>

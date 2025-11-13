@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import {FooterComponent} from '../footer/footer.component';
 
 /**
  * Composant Layout avec Sidebar
@@ -15,7 +16,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 @Component({
   selector: 'app-layout-with-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent],
+  imports: [CommonModule, RouterModule, SidebarComponent, FooterComponent],
   template: `
     <div class="layout-container">
       <!-- Sidebar avec événement de collapse -->
@@ -24,8 +25,10 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
       <!-- Contenu principal -->
       <main class="main-content" [class.sidebar-collapsed]="isSidebarCollapsed">
         <router-outlet></router-outlet>
+
       </main>
     </div>
+    <app-footer></app-footer>
   `,
   styles: [`
     @use 'sass:color';
@@ -43,6 +46,10 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
       background: #F8F9FA;
       transition: margin-left 0.3s ease;
 
+      //Forcer le contenu à prendre toute la hauteur
+      min-height: calc(100vh - 80px); // Hauteur de la page - navbar
+      display: flex;
+      flex-direction: column;
       // Quand la sidebar est collapsed
       &.sidebar-collapsed {
         margin-left: 70px;

@@ -134,4 +134,6 @@ export class MesCommandesComponent implements OnInit {
     return (reservation.statutReservation === 'CONFIRME' || reservation.statutReservation === 'EN_ATTENTE') &&
       new Date(reservation.dateDebut) > new Date();
   }
+
+    protected readonly length = length;
 }
