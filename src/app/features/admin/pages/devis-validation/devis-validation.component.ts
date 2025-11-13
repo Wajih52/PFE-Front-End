@@ -116,7 +116,7 @@ export class DevisValidationComponent implements OnInit {
     const devis = this.devisEnCours();
     if (!devis) return 0;
 
-    let total = devis.montantOriginal;
+   let total = devis.montantOriginal;
 
     // Appliquer les modifications de lignes
     devis.lignesReservation.forEach(ligne => {
