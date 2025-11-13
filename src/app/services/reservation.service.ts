@@ -258,7 +258,7 @@ export class ReservationService {
     request: ModifierUneLigneRequestDto
   ): Observable<ModificationDatesResponseDto> {
     return this.http.put<ModificationDatesResponseDto>(
-      `${this.API_URL}/${idReservation}/ligne/${idLigne}`,
+      `${this.API_URL}/${idReservation}/lignes/${idLigne}/dates`,
       request
     );
   }
@@ -273,7 +273,7 @@ export class ReservationService {
     request: DecalerToutesLignesRequestDto
   ): Observable<ModificationDatesResponseDto> {
     return this.http.put<ModificationDatesResponseDto>(
-      `${this.API_URL}/${idReservation}/decaler-tout`,
+      `${this.API_URL}/${idReservation}/decaler`,
       request
     );
   }

@@ -121,7 +121,7 @@ export class ReservationDetailsComponent implements OnInit {
 
     this.reservationService.decalerToutesLesLignes(reservation.idReservation, request).subscribe({
       next: (response) => {
-        this.successMessage.set(`✅ Dates décalées de ${request.nombreJours} jour(s) avec succès !`);
+        this.successMessage.set(` Dates décalées de ${request.nombreJours} jour(s) avec succès !`);
         this.showDecalageModal.set(false);
         this.afficherRecapitulatif(response);
         // Recharger les données
@@ -175,7 +175,7 @@ export class ReservationDetailsComponent implements OnInit {
       request
     ).subscribe({
       next: (response) => {
-        this.successMessage.set(`✅ Ligne "${ligne.nomProduit}" modifiée avec succès !`);
+        this.successMessage.set(` Ligne "${ligne.nomProduit}" modifiée avec succès !`);
         this.showModifierLigneModal.set(false);
         this.afficherRecapitulatif(response);
         // Recharger les données
@@ -213,7 +213,7 @@ export class ReservationDetailsComponent implements OnInit {
       this.motifAnnulation()
     ).subscribe({
       next: () => {
-        this.successMessage.set('✅ Réservation annulée avec succès.');
+        this.successMessage.set(' Réservation annulée avec succès.');
         this.showAnnulerModal.set(false);
 
         // Rediriger vers mes commandes après 2 secondes

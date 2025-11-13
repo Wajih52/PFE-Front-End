@@ -341,6 +341,13 @@
         margin-bottom: 0;
       }
 
+      .commentaire-text {
+        white-space: pre-line; /* Respecte les retours à ligne dans la chaîne */
+        line-height: 1.5;
+        margin: 0;
+        padding: 0.5rem 0;
+      }
+
       .commentaire-header {
         display: flex;
         align-items: center;
@@ -414,7 +421,7 @@
       }
 
       &.btn-primary {
-        background-color: #c9a363;
+        background-color: #c3a37d;
         color: white;
 
         &:hover {
@@ -732,7 +739,7 @@
       font-size: 0.9rem;
 
       i {
-        color: #c9a363;
+        color: #c5a57f;
       }
     }
 
@@ -840,7 +847,7 @@
     }
 
     &.btn-primary {
-      background-color: #c9a363;
+      background-color: #c6a680;
       color: white;
 
       &:hover {
