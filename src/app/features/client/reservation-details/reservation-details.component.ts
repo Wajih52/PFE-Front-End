@@ -76,6 +76,7 @@ export class ReservationDetailsComponent implements OnInit {
     const idReservation = this.route.snapshot.params['id'];
     if (idReservation) {
       this.chargerReservation(+idReservation);
+      this.chargerProduitsDisponibles();
     }
   }
 
@@ -115,8 +116,30 @@ export class ReservationDetailsComponent implements OnInit {
     return montantTotal; // aucune remise
   }
 
+  /**
+   * Charger la liste des produits pour ajouter une ligne
+   */
+  chargerProduitsDisponibles(): void {
+    this.produitService.getProduitsDisponibles().subscribe({
+      next: (produits) => {
+        this.produitsDisponibles.set(produits);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des produits:', error);
+      }
+    });
+  }
 
+  onDatesChange(): void {
+    const res = this.reservation();
+    const formulaire = this.formulaireLigne();
 
+    if (formulaire.dateDebut > formulaire.dateFin) {
+      this.errorMessage.set('La date de début est supérieur à la date de fin'); // Recharge tout + recalcule disponibilités
+    }else {
+      this.errorMessage.set('')
+    }
+  }
   // ============================================
   // 🆕 GESTION DES LIGNES : AJOUTER
   // ============================================

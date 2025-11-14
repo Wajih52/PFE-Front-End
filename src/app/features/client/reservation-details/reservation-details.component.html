@@ -581,6 +581,7 @@
               type="date"
               id="dateDebutAjout"
               [(ngModel)]="formulaireLigne().dateDebut"
+              (change)="onDatesChange()"
               class="form-input"
               required
             />
@@ -595,6 +596,7 @@
               type="date"
               id="dateFinAjout"
               [(ngModel)]="formulaireLigne().dateFin"
+              (change)="onDatesChange()"
               class="form-input"
               required
             />
