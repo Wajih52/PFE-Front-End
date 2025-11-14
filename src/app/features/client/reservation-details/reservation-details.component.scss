@@ -920,3 +920,351 @@
     }
   }
 }
+
+// ============================================
+// 🆕 STYLES POUR LES NOUVEAUX MODALS
+// À ajouter à reservation-details.component.scss
+// ============================================
+
+// Styles pour les modals larges
+.modal-content.large {
+  max-width: 700px;
+  width: 95%;
+}
+
+// Grille d'informations
+.current-info {
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+
+  h4 {
+    margin: 0 0 1rem 0;
+    color: #2d3748;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 6px;
+
+    .label {
+      font-size: 0.875rem;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .value {
+      font-weight: 600;
+      color: #2d3748;
+    }
+  }
+}
+
+// Info box (pour afficher la durée calculée)
+.info-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 6px;
+  color: #0050b3;
+  font-weight: 600;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+// Ligne info dans modal suppression
+.ligne-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff7e6;
+  border-radius: 6px;
+
+  strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+    font-size: 1rem;
+  }
+
+  .details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #718096;
+
+    span {
+      &:not(:last-child)::after {
+        content: "•";
+        margin-left: 1rem;
+        color: #cbd5e0;
+      }
+    }
+  }
+}
+
+// Champ required
+.required {
+  color: #e53e3e;
+  margin-left: 0.25rem;
+}
+
+// ============================================
+// ACTIONS SUR LES LIGNES DE RÉSERVATION
+// ============================================
+
+.produits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2d3748;
+  }
+
+  .btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+.produit-item {
+  position: relative;
+
+  .actions-ligne {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+
+      .btn-icon {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  .btn-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    i {
+      font-size: 0.875rem;
+    }
+
+    &.btn-edit {
+      background: #e6f7ff;
+      color: #1890ff;
+
+      &:hover {
+        background: #bae7ff;
+        box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+      }
+    }
+
+    &.btn-dates {
+      background: #fff7e6;
+      color: #fa8c16;
+
+      &:hover {
+        background: #ffd666;
+        box-shadow: 0 2px 8px rgba(250, 140, 22, 0.2);
+      }
+    }
+
+    &.btn-delete {
+      background: #fff1f0;
+      color: #f5222d;
+
+      &:hover {
+        background: #ffccc7;
+        box-shadow: 0 2px 8px rgba(245, 34, 45, 0.2);
+      }
+    }
+  }
+}
+
+// ============================================
+// ALERTES
+// ============================================
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  i {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  &.alert-danger {
+    background-color: #fff1f0;
+    border: 1px solid #ffccc7;
+    color: #a8071a;
+
+    i {
+      color: #cf1322;
+    }
+  }
+
+  &.alert-success {
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+    color: #135200;
+
+    i {
+      color: #52c41a;
+    }
+  }
+
+  &.alert-info {
+    background-color: #e6f7ff;
+    border: 1px solid #91d5ff;
+    color: #003a8c;
+
+    i {
+      color: #1890ff;
+    }
+  }
+}
+
+// ============================================
+// AMÉLIORATIONS RESPONSIVE
+// ============================================
+
+@media (max-width: 768px) {
+  .modal-content.large {
+    max-width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .produits-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+
+    .btn-sm {
+      width: 100%;
+    }
+  }
+
+  .current-info {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content {
+  animation: slideIn 0.3s ease-out;
+}
+
+// Animations pour les boutons
+.btn-icon {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+// ============================================
+// UTILITAIRES
+// ============================================
+
+.text-muted {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.text-bold {
+  font-weight: 600;
+}
+
+.text-success {
+  color: #52c41a;
+}
+
+.text-danger {
+  color: #f5222d;
+}
+
+.text-warning {
+  color: #fa8c16;
+}

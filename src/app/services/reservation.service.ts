@@ -475,15 +475,3 @@ export interface LigneReservationRequestDto {
 }
 
 
-
-export interface LigneReservationResponseDto {
-  idLigneReservation: number;
-  idProduit: number;
-  nomProduit: string;
-  quantite: number;
-  prixUnitaire: number;
-  dateDebut: string;
-  dateFin: string;
-  sousTotal: number;
-  typeProduit: 'EN_QUANTITE' | 'AVEC_REFERENCE';
-}

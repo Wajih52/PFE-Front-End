@@ -19,7 +19,7 @@ export interface DevisRequestDto {
 export interface LigneReservationRequestDto {
   idProduit: number;
   quantite: number;
-  prixUnitaire: number; // ⚠️ Ajouté pour correspondre au backend
+ // prixUnitaire: number; // ⚠️ Ajouté pour correspondre au backend
   dateDebut: string; // Format: YYYY-MM-DD
   dateFin: string;
   observations?: string;

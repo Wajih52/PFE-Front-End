@@ -12,9 +12,11 @@ import {
   ModifierUneLigneRequestDto,
   DecalerToutesLignesRequestDto,
   ModificationDatesResponseDto,
-  StatutReservationLabels
+  StatutReservationLabels, LigneReservationRequestDto
 } from '../../../core/models/reservation.model';
 import {ProduitResponse} from '../../../core/models';
+import {LigneReservationService} from '../../../services/ligne-reservation.service';
+import {ProduitService} from '../../../services/produit.service';
 
 @Component({
   selector: 'app-reservation-details',
@@ -25,6 +27,8 @@ import {ProduitResponse} from '../../../core/models';
 })
 export class ReservationDetailsComponent implements OnInit {
   private reservationService = inject(ReservationService);
+  private ligneReservationService = inject(LigneReservationService);
+  private produitService = inject(ProduitService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -39,20 +43,31 @@ export class ReservationDetailsComponent implements OnInit {
   showModifierLigneModal = signal<boolean>(false);
   showAnnulerModal = signal<boolean>(false);
 
+  // 🆕 NOUVEAUX MODALS pour gestion des lignes
+  showAjouterLigneModal = signal<boolean>(false);
+  showEditerLigneModal = signal<boolean>(false);
+  showSupprimerLigneModal = signal<boolean>(false);
+
+
   // Formulaires
   nombreJoursDecalage = signal<number>(0);
   motifDecalage = signal<string>('');
+  motifAnnulation = signal<string>('');
 
   ligneSelectionnee = signal<LigneReservationResponseDto | null>(null);
   nouvelleDateDebut = signal<string>('');
   nouvelleDateFin = signal<string>('');
   motifModifLigne = signal<string>('');
 
-  motifAnnulation = signal<string>('');
-
-  get res() {
-    return this.reservation();
-  }
+  // 🆕 NOUVEAUX FORMULAIRES pour ajouter/éditer une ligne
+  produitsDisponibles = signal<ProduitResponse[]>([]);
+  formulaireLigne = signal<LigneReservationRequestDto>({
+    idProduit: 0,
+    quantite: 1,
+    dateDebut: '',
+    dateFin: '',
+    observations: ''
+  });
 
   // Labels
   readonly statutLabels = StatutReservationLabels;
@@ -99,6 +114,165 @@ export class ReservationDetailsComponent implements OnInit {
     }
     return montantTotal; // aucune remise
   }
+
+
+
+  // ============================================
+  // 🆕 GESTION DES LIGNES : AJOUTER
+  // ============================================
+
+  /**
+   * Ouvrir le modal pour ajouter une ligne
+   */
+  ouvrirModalAjouterLigne(): void {
+    const res = this.reservation();
+    if (!res) return;
+
+    this.formulaireLigne.set({
+      idProduit: 0,
+      quantite: 1,
+      dateDebut: res.dateDebut,
+      dateFin: res.dateFin,
+      observations: ''
+    });
+    this.errorMessage.set('');
+    this.showAjouterLigneModal.set(true);
+  }
+
+  /**
+   * Ajouter une nouvelle ligne à la réservation
+   */
+  ajouterNouvelleLigne(): void {
+    const res = this.reservation();
+    const formulaire = this.formulaireLigne();
+
+    if (!res || !formulaire.idProduit) {
+      this.errorMessage.set('Veuillez sélectionner un produit.');
+      return;
+    }
+
+    if (!formulaire.dateDebut || !formulaire.dateFin) {
+      this.errorMessage.set('Les dates sont obligatoires.');
+      return;
+    }
+
+    if (formulaire.quantite < 1) {
+      this.errorMessage.set('La quantité doit être au moins 1.');
+      return;
+    }
+
+    // Appeler le service
+    this.ligneReservationService.ajouterLigneReservation(
+      res.idReservation,
+      formulaire
+    ).subscribe({
+      next: (ligneCree) => {
+        this.successMessage.set(`✅ Ligne "${ligneCree.nomProduit}" ajoutée avec succès !`);
+        this.showAjouterLigneModal.set(false);
+        // Recharger la réservation pour voir les changements
+        this.chargerReservation(res.idReservation);
+      },
+      error: (error) => {
+        console.error('Erreur lors de l\'ajout:', error);
+        this.errorMessage.set(error.error?.message || 'Impossible d\'ajouter la ligne. Vérifiez la disponibilité.');
+      }
+    });
+  }
+
+  // ============================================
+  // 🆕 GESTION DES LIGNES : ÉDITER
+  // ============================================
+
+  /**
+   * Ouvrir le modal pour éditer une ligne (quantité/dates/observations)
+   */
+  ouvrirModalEditerLigne(ligne: LigneReservationResponseDto): void {
+    this.ligneSelectionnee.set(ligne);
+    this.formulaireLigne.set({
+      idProduit: ligne.idProduit,
+      quantite: ligne.quantite,
+      dateDebut: ligne.dateDebut,
+      dateFin: ligne.dateFin,
+      observations: ligne.observations || ''
+    });
+    this.errorMessage.set('');
+    this.showEditerLigneModal.set(true);
+  }
+
+  /**
+   * Enregistrer les modifications d'une ligne
+   */
+  enregistrerModificationLigne(): void {
+    const ligne = this.ligneSelectionnee();
+    const formulaire = this.formulaireLigne();
+
+    if (!ligne) return;
+
+    if (!formulaire.dateDebut || !formulaire.dateFin) {
+      this.errorMessage.set('Les dates sont obligatoires.');
+      return;
+    }
+
+    if (formulaire.quantite < 1) {
+      this.errorMessage.set('La quantité doit être au moins 1.');
+      return;
+    }
+
+    // Appeler le service
+    this.ligneReservationService.modifierLigne(
+      ligne.idLigneReservation,
+      formulaire
+    ).subscribe({
+      next: (ligneModifiee) => {
+        this.successMessage.set(` Ligne "${ligneModifiee.nomProduit}" modifiée avec succès !`);
+        this.showEditerLigneModal.set(false);
+        // Recharger la réservation
+        const res = this.reservation();
+        if (res) this.chargerReservation(res.idReservation);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la modification:', error);
+        this.errorMessage.set(error.error?.message || 'Impossible de modifier la ligne. Vérifiez la disponibilité.');
+      }
+    });
+  }
+
+  // ============================================
+  // 🆕 GESTION DES LIGNES : SUPPRIMER
+  // ============================================
+
+  /**
+   * Ouvrir le modal de confirmation de suppression
+   */
+  ouvrirModalSupprimerLigne(ligne: LigneReservationResponseDto): void {
+    this.ligneSelectionnee.set(ligne);
+    this.errorMessage.set('');
+    this.showSupprimerLigneModal.set(true);
+  }
+
+  /**
+   * Supprimer une ligne de la réservation
+   */
+  confirmerSuppressionLigne(): void {
+    const ligne = this.ligneSelectionnee();
+    if (!ligne) return;
+
+    this.ligneReservationService.supprimerLigne(ligne.idLigneReservation).subscribe({
+      next: (response) => {
+        this.successMessage.set(`✅ Ligne "${ligne.nomProduit}" supprimée avec succès !`);
+        this.showSupprimerLigneModal.set(false);
+        // Recharger la réservation
+        const res = this.reservation();
+        if (res) this.chargerReservation(res.idReservation);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        this.errorMessage.set(error.error?.message || 'Impossible de supprimer la ligne.');
+        this.showSupprimerLigneModal.set(false);
+      }
+    });
+  }
+
 
   // ============================================
   // DÉCALAGE GLOBAL
@@ -261,6 +435,11 @@ export class ReservationDetailsComponent implements OnInit {
     this.showDecalageModal.set(false);
     this.showModifierLigneModal.set(false);
     this.showAnnulerModal.set(false);
+    this.showAjouterLigneModal.set(false);
+    this.showEditerLigneModal.set(false);
+    this.showSupprimerLigneModal.set(false);
+
+
   }
 
   peutModifier(): boolean {

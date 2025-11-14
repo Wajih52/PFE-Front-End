@@ -104,10 +104,6 @@
           </h2>
           <div class="montants-grid">
             <div class="montant-row">
-              <span class="label">Montant original</span>
-              <span class="value">{{ res.montantOriginal | number:'1.2-2' }} DT</span>
-            </div>
-            <div class="montant-row">
               <span class="label">Montant Total</span>
               <span class="value">
                 {{ getPrixIntermediaire(res.montantTotal,res.remisePourcentage,res.remiseMontant) | number:'1.2-2' }} DT
@@ -214,7 +210,12 @@
             <i class="fas fa-box"></i>
             Produits réservés ({{ res.nombreProduits }})
           </h2>
-
+          @if (peutModifier()) {
+            <button class="btn btn-primary btn-sm" (click)="ouvrirModalAjouterLigne()">
+              <i class="fas fa-plus"></i>
+              Ajouter un produit
+            </button>
+          }
           <div class="produits-list">
             @for (ligne of res.lignesReservation; track ligne.idLigneReservation) {
               <div class="produit-item">
@@ -269,6 +270,14 @@
                   </div>
 
                   @if (peutModifier()) {
+                    <div class="actions-ligne">
+                    <button
+                      class="btn btn-icon btn-edit"
+                      (click)="ouvrirModalEditerLigne(ligne)"
+                      title="Modifier quantité/dates">
+                      <i class="fas fa-edit"></i>
+                      Modifier
+                    </button>
                     <button
                       class="btn-modifier-ligne"
                       (click)="ouvrirModalModifierLigne(ligne)"
@@ -276,7 +285,16 @@
                       <i class="fas fa-edit"></i>
                       Modifier les dates
                     </button>
+                    <button
+                      class="btn btn-icon btn-delete"
+                      (click)="ouvrirModalSupprimerLigne(ligne)"
+                      title="Supprimer">
+                      <i class="fas fa-trash-alt"></i>
+                      Supprimer
+                    </button>
+                    </div>
                   }
+
                 </div>
               </div>
             }
@@ -483,3 +501,338 @@
     </div>
   </div>
 }
+<!-- ============================================ -->
+<!-- 🆕 Modal Ajouter une Ligne -->
+<!-- ============================================ -->
+@if (showAjouterLigneModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-plus-circle"></i>
+          Ajouter un produit
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="produit">
+            <i class="fas fa-box"></i>
+            Produit <span class="required">*</span>
+          </label>
+          <select
+            id="produit"
+            [(ngModel)]="formulaireLigne().idProduit"
+            class="form-input"
+            required
+          >
+            <option [value]="0">-- Sélectionnez un produit --</option>
+            @for (produit of produitsDisponibles(); track produit.idProduit) {
+              <option [value]="produit.idProduit">
+                {{ produit.nomProduit }} - {{ produit.prixUnitaire }} TND/jour
+                  (Stock: {{ produit.quantiteDisponible }})
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="quantiteAjout">
+              <i class="fas fa-hashtag"></i>
+              Quantité <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="quantiteAjout"
+              [(ngModel)]="formulaireLigne().quantite"
+              min="1"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Durée</label>
+            <div class="info-box">
+              <i class="fas fa-calendar-day"></i>
+              {{ calculerJours(formulaireLigne().dateDebut, formulaireLigne().dateFin) }} jours
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateDebutAjout">
+              <i class="fas fa-calendar-day"></i>
+              Date de début <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              id="dateDebutAjout"
+              [(ngModel)]="formulaireLigne().dateDebut"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dateFinAjout">
+              <i class="fas fa-calendar-day"></i>
+              Date de fin <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              id="dateFinAjout"
+              [(ngModel)]="formulaireLigne().dateFin"
+              class="form-input"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="observationsAjout">
+            <i class="fas fa-comment"></i>
+            Observations (optionnel)
+          </label>
+          <textarea
+            id="observationsAjout"
+            [(ngModel)]="formulaireLigne().observations"
+            rows="3"
+            placeholder="Remarques particulières..."
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>
+            Le système vérifiera automatiquement la disponibilité du produit
+            pour les dates sélectionnées avant d'ajouter la ligne.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+          Annuler
+        </button>
+        <button class="btn btn-primary" (click)="ajouterNouvelleLigne()">
+          <i class="fas fa-plus"></i>
+          Ajouter La ligne
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ============================================ -->
+<!-- 🆕 Modal Éditer une Ligne (Quantité/Dates/Obs) -->
+<!-- ============================================ -->
+@if (showEditerLigneModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-edit"></i>
+          Modifier "{{ ligneSelectionnee()?.nomProduit }}"
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <div class="current-info">
+          <h4>📦 Informations actuelles</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Quantité:</span>
+              <span class="value">{{ ligneSelectionnee()?.quantite }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Prix unitaire:</span>
+              <span class="value">{{ ligneSelectionnee()?.prixUnitaire }} TND/jour</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Dates:</span>
+              <span class="value">
+                {{ formatDate(ligneSelectionnee()!.dateDebut) }} au {{ formatDate(ligneSelectionnee()!.dateFin) }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="label">Sous-total:</span>
+              <span class="value">{{ ligneSelectionnee()?.sousTotal }} TND</span>
+            </div>
+          </div>
+        </div>
+
+        <h4>✏️ Nouvelles valeurs</h4>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="quantiteEdit">
+              <i class="fas fa-hashtag"></i>
+              Nouvelle quantité <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="quantiteEdit"
+              [(ngModel)]="formulaireLigne().quantite"
+              min="1"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Nouvelle durée</label>
+            <div class="info-box">
+              <i class="fas fa-calendar-day"></i>
+              {{ calculerJours(formulaireLigne().dateDebut, formulaireLigne().dateFin) }} jours
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateDebutEdit">
+              <i class="fas fa-calendar-day"></i>
+              Nouvelle date de début <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              id="dateDebutEdit"
+              [(ngModel)]="formulaireLigne().dateDebut"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="dateFinEdit">
+              <i class="fas fa-calendar-day"></i>
+              Nouvelle date de fin <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              id="dateFinEdit"
+              [(ngModel)]="formulaireLigne().dateFin"
+              class="form-input"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="observationsEdit">
+            <i class="fas fa-comment"></i>
+            Observations
+          </label>
+          <textarea
+            id="observationsEdit"
+            [(ngModel)]="formulaireLigne().observations"
+            rows="3"
+            placeholder="Remarques particulières..."
+            class="form-textarea"
+          ></textarea>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>
+            Le montant total sera recalculé automatiquement en fonction
+            des nouvelles quantités et dates.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+          Annuler
+        </button>
+        <button class="btn btn-primary" (click)="enregistrerModificationLigne()">
+          <i class="fas fa-save"></i>
+          Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ============================================ -->
+<!-- 🆕 Modal Supprimer une Ligne -->
+<!-- ============================================ -->
+@if (showSupprimerLigneModal()) {
+  <div class="modal-overlay" (click)="fermerModals()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>
+          <i class="fas fa-trash-alt"></i>
+          Supprimer la ligne
+        </h2>
+        <button class="btn-close" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="warning-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>
+            <p>
+              Êtes-vous sûr de vouloir supprimer cette ligne ?
+            </p>
+            <div class="ligne-info">
+              <strong>{{ ligneSelectionnee()?.nomProduit }}</strong>
+              <div class="details">
+                <span>Quantité: {{ ligneSelectionnee()?.quantite }}</span>
+                <span>Sous-total: {{ ligneSelectionnee()?.sousTotal }} TND</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-message">
+          <i class="fas fa-info-circle"></i>
+          <p>
+            Le montant total de la réservation sera automatiquement recalculé
+            après la suppression.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModals()">
+          <i class="fas fa-times"></i>
+          Annuler
+        </button>
+        <button class="btn btn-danger" (click)="confirmerSuppressionLigne()">
+          <i class="fas fa-trash-alt"></i>
+          Confirmer la suppression
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
