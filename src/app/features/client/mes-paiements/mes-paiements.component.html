@@ -1,0 +1,287 @@
+<!-- src/app/features/client/mes-paiements/mes-paiements.component.html -->
+<div class="mes-paiements-container">
+
+  <!-- 📌 HEADER -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1><i class="fas fa-wallet"></i> Mes Paiements</h1>
+      <p class="subtitle">Consultez l'historique de tous vos paiements</p>
+    </div>
+  </div>
+
+  <!-- 📊 STATISTIQUES -->
+  @if (!isLoading() && !errorMessage()) {
+    <div class="stats-grid">
+      <div class="stat-card stat-total">
+        <div class="stat-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Total Payé</h3>
+          <p class="stat-value">{{ formatMontant(montantTotalPaye) }}</p>
+          <span class="stat-label">Paiements validés</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-valides">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Validés</h3>
+          <p class="stat-value">{{ nombrePaiementsValides }}</p>
+          <span class="stat-label">Paiement(s)</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-attente">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3>En Attente</h3>
+          <p class="stat-value">{{ nombrePaiementsEnAttente }}</p>
+          <span class="stat-label">Paiement(s)</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-total-count">
+        <div class="stat-icon">
+          <i class="fas fa-file-invoice-dollar"></i>
+        </div>
+        <div class="stat-content">
+          <h3>Total</h3>
+          <p class="stat-value">{{ paiements().length }}</p>
+          <span class="stat-label">Paiement(s)</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 🎯 FILTRES -->
+  <div class="filtres-section">
+    <div class="filtre-groupe">
+      <label><i class="fas fa-filter"></i> Statut</label>
+      <select [(ngModel)]="filtreStatut" (ngModelChange)="onFiltreChange()" class="form-select">
+        <option value="TOUS">Tous les statuts</option>
+        <option [value]="StatutPaiement.EN_ATTENTE">⏳ En attente</option>
+        <option [value]="StatutPaiement.VALIDE">✅ Validés</option>
+        <option [value]="StatutPaiement.REFUSE">❌ Refusés</option>
+      </select>
+    </div>
+
+    <div class="filtre-groupe flex-grow">
+      <label><i class="fas fa-search"></i> Rechercher</label>
+      <input
+        type="text"
+        [(ngModel)]="filtreRecherche"
+        (ngModelChange)="onFiltreChange()"
+        placeholder="Code paiement, réservation..."
+        class="form-input"
+      />
+    </div>
+  </div>
+
+  <!-- ⏳ LOADING -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement de vos paiements...</p>
+    </div>
+  }
+
+  <!-- ❌ ERREUR -->
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- 📋 LISTE DES PAIEMENTS -->
+  @if (!isLoading() && !errorMessage()) {
+    <div class="paiements-list">
+      @if (paiementsFiltres().length === 0) {
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <h3>Aucun paiement trouvé</h3>
+          <p>Vous n'avez pas encore effectué de paiement</p>
+        </div>
+      } @else {
+        @for (paiement of paiementsFiltres(); track paiement.idPaiement) {
+          <div class="paiement-card" (click)="ouvrirModalDetails(paiement)">
+            <div class="paiement-header">
+              <div class="paiement-info">
+                <h3>{{ paiement.codePaiement }}</h3>
+                <p class="paiement-date">
+                  <i class="fas fa-calendar"></i>
+                  {{ formatDate(paiement.datePaiement) }}
+                </p>
+              </div>
+              <span class="badge" [ngClass]="getStatutBadgeClass(paiement.statutPaiement)">
+                {{ getStatutLabel(paiement.statutPaiement) }}
+              </span>
+            </div>
+
+            <div class="paiement-body">
+              <div class="info-row">
+                <span class="label"><i class="fas fa-receipt"></i> Réservation</span>
+                <span class="value">{{ paiement.referenceReservation }}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label"><i class="fas fa-money-bill-wave"></i> Montant payé</span>
+                <span class="value montant">{{ formatMontant(paiement.montantPaiement) }}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label"><i class="fas fa-credit-card"></i> Mode</span>
+                <span class="value">{{ paiement.modePaiement }}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label"><i class="fas fa-wallet"></i> Montant restant</span>
+                <span class="value" [class.text-success]="paiement.paiementComplet">
+                  {{ formatMontant(paiement.montantRestantApres) }}
+                </span>
+              </div>
+
+              @if (paiement.paiementComplet) {
+                <div class="paiement-complet">
+                  <i class="fas fa-check-circle"></i>
+                  Paiement complet
+                </div>
+              }
+
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  [class.complete]="paiement.paiementComplet"
+                  [style.width.%]="calculerPourcentagePaye(paiement)">
+                </div>
+              </div>
+              <p class="progress-text">
+                {{ calculerPourcentagePaye(paiement) | number:'1.0-0' }}% payé
+              </p>
+            </div>
+
+            <div class="paiement-footer">
+              <button class="btn-details">
+                <i class="fas fa-eye"></i>
+                Voir les détails
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>
+
+<!-- 🔍 MODAL DÉTAILS -->
+@if (showModalDetails()) {
+  <div class="modal-overlay" (click)="fermerModalDetails()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2><i class="fas fa-info-circle"></i> Détails du paiement</h2>
+        <button class="btn-close" (click)="fermerModalDetails()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      @if (paiementDetails(); as details) {
+        <div class="modal-body">
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Code Paiement</span>
+              <span class="detail-value">{{ details.codePaiement }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Réservation</span>
+              <span class="detail-value">
+                <a [routerLink]="['/client/reservation-details', details.idReservation]" class="link">
+                  {{ details.referenceReservation }}
+                </a>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Montant du paiement</span>
+              <span class="detail-value montant-highlight">{{ formatMontant(details.montantPaiement) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Montant total réservation</span>
+              <span class="detail-value">{{ formatMontant(details.montantTotalReservation) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Montant restant</span>
+              <span class="detail-value" [class.text-success]="details.paiementComplet">
+                {{ formatMontant(details.montantRestantApres) }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Mode de paiement</span>
+              <span class="detail-value">{{ details.modePaiement }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Statut</span>
+              <span class="badge" [ngClass]="getStatutBadgeClass(details.statutPaiement)">
+                {{ getStatutLabel(details.statutPaiement) }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Date du paiement</span>
+              <span class="detail-value">{{ formatDate(details.datePaiement) }}</span>
+            </div>
+            @if (details.dateValidation) {
+              <div class="detail-item">
+                <span class="detail-label">Date de validation</span>
+                <span class="detail-value text-success">
+                  <i class="fas fa-check"></i> {{ formatDate(details.dateValidation) }}
+                </span>
+              </div>
+            }
+            @if (details.descriptionPaiement) {
+              <div class="detail-item full-width">
+                <span class="detail-label">Description</span>
+                <span class="detail-value">{{ details.descriptionPaiement }}</span>
+              </div>
+            }
+            @if (details.referenceExterne) {
+              <div class="detail-item full-width">
+                <span class="detail-label">Référence externe</span>
+                <span class="detail-value">{{ details.referenceExterne }}</span>
+              </div>
+            }
+            @if (details.descriptionPaiement) {
+              <div class="detail-item full-width motif-refus">
+                <span class="detail-label">Motif de refus</span>
+                <span class="detail-value">{{ details.descriptionPaiement }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="progress-section">
+            <h3>Progression du paiement</h3>
+            <div class="progress-bar-large">
+              <div
+                class="progress-fill-large"
+                [class.complete]="details.paiementComplet"
+                [style.width.%]="calculerPourcentagePaye(details)">
+                {{ calculerPourcentagePaye(details) | number:'1.0-0' }}%
+              </div>
+            </div>
+            @if (details.paiementComplet) {
+              <p class="text-success mt-2">
+                <i class="fas fa-check-circle"></i> Paiement complet
+              </p>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="fermerModalDetails()">Fermer</button>
+      </div>
+    </div>
+  </div>
+}

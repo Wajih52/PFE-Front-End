@@ -200,6 +200,15 @@
               Annuler la réservation
             </button>
           }
+          <!-- Bouton pour effectuer un paiement -->
+          @if (res.montantTotal-(res.montantPaye??0) > 0) {
+              <button
+                [routerLink]="['/reservations', reservation()?.idReservation,'ajouter-paiement']"
+                class="btn-paiement">
+                <i class="fas fa-credit-card"></i>
+                Effectuer un paiement
+              </button>
+          }
         </div>
       </div>
 

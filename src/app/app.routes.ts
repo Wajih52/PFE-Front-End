@@ -188,14 +188,20 @@ export const routes: Routes = [
             canActivate: [authGuard],
             data: { role: 'CLIENT' }
           },
+
           {
-            path: 'reservations/:idReservation/ajouter-paiement',
-            component: AjouterPaiementComponent,
-            canActivate: [authGuard],
-            data: { roles: ['CLIENT'] }
-          }
+            path: 'mes-paiements',
+            loadComponent: () => import('./features/client/mes-paiements/mes-paiements.component')
+              .then(m => m.MesPaiementsComponent)
+          },
         ]
-      }
+      },
+      {
+        path: 'reservations/:idReservation/ajouter-paiement',
+        component: AjouterPaiementComponent,
+        canActivate: [authGuard],
+        data: { roles: ['CLIENT'] }
+      },
     ]
   },
   {

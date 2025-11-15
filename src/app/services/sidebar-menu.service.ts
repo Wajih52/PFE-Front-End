@@ -80,7 +80,7 @@ export class SidebarMenuService {
             id: 'payments',
             label: 'Mes Paiements',
             icon: '💳',
-            route: '/mes-paiements',
+            route: 'client/mes-paiements',
             order: 7
           },
           {

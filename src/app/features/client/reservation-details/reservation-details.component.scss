@@ -1268,3 +1268,39 @@
 .text-warning {
   color: #fa8c16;
 }
+
+
+// Bouton paiement
+.paiement-action {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #E5E7EB;
+
+  .btn-paiement {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: #C8A882;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-decoration: none;
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: #B39872;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(200, 168, 130, 0.4);
+    }
+  }
+}

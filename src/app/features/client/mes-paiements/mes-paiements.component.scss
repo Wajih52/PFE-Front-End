@@ -1,0 +1,713 @@
+// src/app/features/client/mes-paiements/mes-paiements.component.scss
+@use 'sass:color';
+
+// ==================== VARIABLES ====================
+$primary-color: #C8A882;
+$dark-color: #1A1A1A;
+$white: #FFFFFF;
+$background-light: #F8F9FA;
+$border-color: #E5E7EB;
+$text-dark: #1F2937;
+$text-gray: #6B7280;
+$text-muted: #9CA3AF;
+$success-color: #10B981;
+$warning-color: #F59E0B;
+$danger-color: #EF4444;
+$info-color: #3B82F6;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+$transition: all 0.3s ease;
+$border-radius: 12px;
+
+// ==================== CONTAINER ====================
+.mes-paiements-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 120px 20px 40px 20px;
+  min-height: 100vh;
+  background: $background-light;
+
+  @media (max-width: 768px) {
+    padding-top: 100px;
+  }
+}
+
+// ==================== HEADER ====================
+.page-header {
+  background: $white;
+  padding: 2rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin-bottom: 2rem;
+
+  .header-content {
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $dark-color;
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: $primary-color;
+        font-size: 1.8rem;
+      }
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: $text-gray;
+      margin: 0;
+    }
+  }
+}
+
+// ==================== STATISTIQUES ====================
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: $white;
+  padding: 1.5rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: $transition;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $box-shadow-lg;
+  }
+
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+
+  .stat-content {
+    flex: 1;
+
+    h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $text-gray;
+      margin: 0 0 0.5rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: $text-dark;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: $text-muted;
+    }
+  }
+
+  &.stat-total {
+    .stat-icon {
+      background: color.adjust($primary-color, $lightness: 45%);
+      color: $primary-color;
+    }
+  }
+
+  &.stat-valides {
+    .stat-icon {
+      background: color.adjust($success-color, $lightness: 45%);
+      color: $success-color;
+    }
+  }
+
+  &.stat-attente {
+    .stat-icon {
+      background: color.adjust($warning-color, $lightness: 40%);
+      color: color.adjust($warning-color, $lightness: -30%);
+    }
+  }
+
+  &.stat-total-count {
+    .stat-icon {
+      background: color.adjust($info-color, $lightness: 45%);
+      color: $info-color;
+    }
+  }
+}
+
+// ==================== FILTRES ====================
+.filtres-section {
+  background: $white;
+  padding: 1.5rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filtre-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.flex-grow {
+    flex: 1;
+  }
+
+  label {
+    font-weight: 600;
+    color: $text-dark;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: $primary-color;
+    }
+  }
+}
+
+.form-input,
+.form-select {
+  padding: 0.75rem 1rem;
+  border: 2px solid $border-color;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: $transition;
+  background: $white;
+  color: $text-dark;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(200, 168, 130, 0.1);
+  }
+}
+
+// ==================== LOADING ====================
+.loading-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    border: 4px solid $background-light;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ==================== ALERT ====================
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  &.alert-danger {
+    background: color.adjust($danger-color, $lightness: 45%);
+    color: $danger-color;
+    border: 2px solid $danger-color;
+  }
+}
+
+// ==================== LISTE PAIEMENTS ====================
+.paiements-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.paiement-card {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  transition: $transition;
+  cursor: pointer;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $box-shadow-lg;
+  }
+
+  .paiement-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -10%) 100%);
+    color: $white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .paiement-info {
+      h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .paiement-date {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+
+    .badge {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  }
+
+  .paiement-body {
+    padding: 1.5rem;
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid $background-light;
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      .label {
+        font-weight: 500;
+        color: $text-gray;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        i {
+          color: $primary-color;
+          font-size: 0.85rem;
+        }
+      }
+
+      .value {
+        font-weight: 600;
+        color: $text-dark;
+        font-size: 0.95rem;
+
+        &.montant {
+          color: $primary-color;
+          font-size: 1.1rem;
+        }
+
+        &.text-success {
+          color: $success-color;
+        }
+      }
+    }
+
+    .paiement-complet {
+      background: color.adjust($success-color, $lightness: 45%);
+      color: $success-color;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: $background-light;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 1rem;
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, $info-color, color.adjust($info-color, $lightness: 10%));
+        transition: width 0.5s ease;
+
+        &.complete {
+          background: linear-gradient(90deg, $success-color, color.adjust($success-color, $lightness: 10%));
+        }
+      }
+    }
+
+    .progress-text {
+      text-align: center;
+      margin: 0.5rem 0 0 0;
+      font-weight: 600;
+      color: $text-gray;
+      font-size: 0.85rem;
+    }
+  }
+
+  .paiement-footer {
+    padding: 1rem 1.5rem;
+    background: $background-light;
+    border-top: 1px solid $border-color;
+
+    .btn-details {
+      width: 100%;
+      padding: 0.75rem;
+      background: $primary-color;
+      color: $white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      &:hover {
+        background: color.adjust($primary-color, $lightness: -10%);
+      }
+    }
+  }
+}
+
+// ==================== EMPTY STATE ====================
+.empty-state {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 4rem 2rem;
+  text-align: center;
+  grid-column: 1 / -1;
+
+  i {
+    font-size: 4rem;
+    color: $primary-color;
+    opacity: 0.3;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    color: $text-dark;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+// ==================== BADGES ====================
+.badge {
+  &.badge-success {
+    background: color.adjust($success-color, $lightness: 45%);
+    color: $success-color;
+  }
+
+  &.badge-warning {
+    background: color.adjust($warning-color, $lightness: 40%);
+    color: color.adjust($warning-color, $lightness: -30%);
+  }
+
+  &.badge-danger {
+    background: color.adjust($danger-color, $lightness: 45%);
+    color: $danger-color;
+  }
+}
+
+// ==================== MODAL ====================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-lg;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  background: $dark-color;
+  color: $white;
+  border-radius: $border-radius $border-radius 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      color: $primary-color;
+    }
+  }
+
+  .btn-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: $white;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  background: $background-light;
+  border-radius: 0 0 $border-radius $border-radius;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+// ==================== DÉTAILS ====================
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .detail-item {
+    &.full-width {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    .detail-item.full-width {
+      grid-column: span 1;
+    }
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .detail-label {
+    font-weight: 600;
+    color: $text-gray;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+    color: $text-dark;
+
+    &.montant-highlight {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-color;
+    }
+  }
+
+  &.motif-refus {
+    background: color.adjust($danger-color, $lightness: 45%);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid $danger-color;
+
+    .detail-value {
+      color: $danger-color;
+    }
+  }
+}
+
+.link {
+  color: $info-color;
+  text-decoration: none;
+  font-weight: 600;
+  transition: $transition;
+
+  &:hover {
+    color: color.adjust($info-color, $lightness: -10%);
+    text-decoration: underline;
+  }
+}
+
+.progress-section {
+  background: $background-light;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: $text-dark;
+  }
+}
+
+.progress-bar-large {
+  width: 100%;
+  height: 40px;
+  background: $white;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid $border-color;
+  position: relative;
+
+  .progress-fill-large {
+    height: 100%;
+    background: linear-gradient(90deg, $info-color, color.adjust($info-color, $lightness: 10%));
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    font-weight: 700;
+    font-size: 1.1rem;
+
+    &.complete {
+      background: linear-gradient(90deg, $success-color, color.adjust($success-color, $lightness: 10%));
+    }
+  }
+}
+
+// ==================== BOUTONS ====================
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.btn-secondary {
+  background: $background-light;
+  color: $dark-color;
+  border: 2px solid $border-color;
+
+  &:hover {
+    background: $white;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+// ==================== HELPERS ====================
+.text-success {
+  color: $success-color;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}

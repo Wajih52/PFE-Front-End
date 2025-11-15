@@ -1,39 +1,157 @@
+<!-- src/app/features/pages/paiement/liste-paiements/liste-paiements.component.html -->
 <div class="paiements-container">
+
+  <!-- 📌 HEADER -->
   <div class="page-header">
-    <h1>💳 Gestion des Paiements</h1>
-    <button class="btn btn-primary" (click)="chargerPaiementsEnAttente()">
-      <i class="fa fa-clock"></i> Paiements en attente
-    </button>
-  </div>
-
-  <div class="filtres-section">
-    <div class="filtre-groupe">
-      <label>Statut :</label>
-      <select [(ngModel)]="filtreStatut" (change)="onFiltreStatutChange()" class="form-control">
-        <option value="TOUS">Tous les statuts</option>
-        <option [value]="StatutPaiement.EN_ATTENTE">En attente</option>
-        <option [value]="StatutPaiement.VALIDE">Validés</option>
-        <option [value]="StatutPaiement.REFUSE">Refusés</option>
-      </select>
+    <div class="header-content">
+      <h1><i class="fas fa-credit-card"></i> Gestion des Paiements</h1>
+      <p class="subtitle">Suivez et validez tous les paiements de vos clients</p>
     </div>
-
-    <div class="filtre-groupe flex-grow">
-      <label>Rechercher :</label>
-      <input type="text" [(ngModel)]="filtreRecherche" (input)="onRechercheChange()"
-             placeholder="Code paiement, client, réservation..." class="form-control" />
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="reinitialiserFiltres()">
+        <i class="fas fa-redo"></i> Réinitialiser
+      </button>
+      <button class="btn btn-primary" (click)="chargerPaiementsEnAttente()">
+        <i class="fas fa-clock"></i> En attente
+      </button>
     </div>
   </div>
 
-  <div *ngIf="loading" class="text-center my-4">
-    <div class="spinner-border" role="status">
-      <span class="sr-only">Chargement...</span>
+  <!-- 🎯 FILTRES ET TRI -->
+  <div class="filtres-container">
+    <!-- Ligne 1: Filtres principaux -->
+    <div class="filtres-row">
+      <div class="filtre-groupe">
+        <label><i class="fas fa-tag"></i> Statut</label>
+        <select [(ngModel)]="filtreStatut" (change)="onFiltreStatutChange()" class="form-select">
+          <option value="TOUS">Tous les statuts</option>
+          <option [value]="StatutPaiement.EN_ATTENTE">⏳ En attente</option>
+          <option [value]="StatutPaiement.VALIDE">✅ Validés</option>
+          <option [value]="StatutPaiement.REFUSE">❌ Refusés</option>
+        </select>
+      </div>
+
+      <div class="filtre-groupe flex-grow">
+        <label><i class="fas fa-search"></i> Rechercher</label>
+        <input
+          type="text"
+          [(ngModel)]="filtreRecherche"
+          (input)="onRechercheChange()"
+          placeholder="Code, client, réservation..."
+          class="form-input"
+        />
+      </div>
+
+      <div class="filtre-groupe">
+        <label><i class="fas fa-euro-sign"></i> Montant Min</label>
+        <input
+          type="number"
+          [(ngModel)]="filtreMontantMin"
+          (input)="onFiltreMontantChange()"
+          placeholder="0.00"
+          class="form-input"
+          min="0"
+          step="10"
+        />
+      </div>
+
+      <div class="filtre-groupe">
+        <label><i class="fas fa-euro-sign"></i> Montant Max</label>
+        <input
+          type="number"
+          [(ngModel)]="filtreMontantMax"
+          (input)="onFiltreMontantChange()"
+          placeholder="10000.00"
+          class="form-input"
+          min="0"
+          step="10"
+        />
+      </div>
+    </div>
+
+    <!-- Ligne 2: Filtres par date -->
+    <div class="filtres-row">
+      <div class="filtre-groupe">
+        <label><i class="fas fa-calendar-alt"></i> Date Début</label>
+        <input
+          type="date"
+          [(ngModel)]="filtreDateDebut"
+          class="form-input"
+        />
+      </div>
+
+      <div class="filtre-groupe">
+        <label><i class="fas fa-calendar-alt"></i> Date Fin</label>
+        <input
+          type="date"
+          [(ngModel)]="filtreDateFin"
+          class="form-input"
+        />
+      </div>
+
+      <div class="filtre-groupe">
+        <label>&nbsp;</label>
+        <button class="btn btn-secondary btn-block" (click)="chargerPaiementsParPeriode()">
+          <i class="fas fa-filter"></i> Filtrer par période
+        </button>
+      </div>
+    </div>
+
+    <!-- Ligne 3: Options de tri -->
+    <div class="tri-container">
+      <span class="tri-label"><i class="fas fa-sort"></i> Trier par:</span>
+      <div class="tri-options">
+        <button
+          class="tri-btn"
+          [class.active]="triActif === 'date'"
+          (click)="changerTri('date')">
+          Date
+          <i *ngIf="triActif === 'date'" class="fas" [class.fa-sort-up]="triOrdre === 'asc'" [class.fa-sort-down]="triOrdre === 'desc'"></i>
+        </button>
+        <button
+          class="tri-btn"
+          [class.active]="triActif === 'montant'"
+          (click)="changerTri('montant')">
+          Montant
+          <i *ngIf="triActif === 'montant'" class="fas" [class.fa-sort-up]="triOrdre === 'asc'" [class.fa-sort-down]="triOrdre === 'desc'"></i>
+        </button>
+        <button
+          class="tri-btn"
+          [class.active]="triActif === 'client'"
+          (click)="changerTri('client')">
+          Client
+          <i *ngIf="triActif === 'client'" class="fas" [class.fa-sort-up]="triOrdre === 'asc'" [class.fa-sort-down]="triOrdre === 'desc'"></i>
+        </button>
+        <button
+          class="tri-btn"
+          [class.active]="triActif === 'reservation'"
+          (click)="changerTri('reservation')">
+          Réservation
+          <i *ngIf="triActif === 'reservation'" class="fas" [class.fa-sort-up]="triOrdre === 'asc'" [class.fa-sort-down]="triOrdre === 'desc'"></i>
+        </button>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="erreur" class="alert alert-danger">{{ erreur }}</div>
+  <!-- ⏳ LOADING -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des paiements...</p>
+  </div>
 
+  <!-- ❌ ERREUR -->
+  <div *ngIf="erreur" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ erreur }}
+  </div>
+
+  <!-- 📊 TABLEAU -->
   <div *ngIf="!loading && !erreur" class="table-container">
-    <table class="table table-hover">
+    <div class="table-info">
+      <p><strong>{{ paiementsFiltres.length }}</strong> paiement(s) trouvé(s)</p>
+    </div>
+
+    <table class="table">
       <thead>
       <tr>
         <th>Code</th>
@@ -43,34 +161,48 @@
         <th>Mode</th>
         <th>Date</th>
         <th>Statut</th>
-        <th>Actions</th>
+        <th class="actions-col">Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let paiement of paiementsPagines">
-        <td><strong>{{ paiement.codePaiement }}</strong></td>
+      <tr *ngFor="let paiement of paiementsPagines" class="table-row">
         <td>
-          <a [routerLink]="['/admin/reservation-details', paiement.idReservation]">{{ paiement.referenceReservation }}</a>
-          <div class="small text-muted">{{ formatMontant(paiement.montantTotalReservation-paiement.montantDejaPayeAvant) }}</div>
+          <strong class="code">{{ paiement.codePaiement }}</strong>
         </td>
         <td>
-          {{ paiement.prenomClient }} {{ paiement.nomClient }}
-          <div class="small text-muted">{{ paiement.emailClient }}</div>
+          <a [routerLink]="['/admin/reservation-details', paiement.idReservation]" class="link">
+            {{ paiement.referenceReservation }}
+          </a>
+          <div class="small text-muted">
+            Total: {{ formatMontant(paiement.montantTotalReservation) }}
+          </div>
         </td>
         <td>
-          <strong>{{ formatMontant(paiement.montantPaiement) }}</strong>
+          <div class="client-info">
+            <strong>{{ paiement.prenomClient }} {{ paiement.nomClient }}</strong>
+            <div class="small text-muted">{{ paiement.emailClient }}</div>
+          </div>
+        </td>
+        <td>
+          <strong class="montant">{{ formatMontant(paiement.montantPaiement) }}</strong>
           <div class="small text-muted">Restant: {{ formatMontant(paiement.montantRestantApres) }}</div>
-          <div class="progress mt-1" style="height: 5px;">
-            <div class="progress-bar" [class.bg-success]="paiement.paiementComplet"
-                 [class.bg-info]="!paiement.paiementComplet" [style.width.%]="calculerPourcentagePaye(paiement)">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [class.complete]="paiement.paiementComplet"
+              [style.width.%]="calculerPourcentagePaye(paiement)">
             </div>
           </div>
         </td>
-        <td><span class="badge badge-secondary">{{ paiement.modePaiement }}</span></td>
         <td>
-          <div>{{ formatDate(paiement.datePaiement) }}</div>
-          <div *ngIf="paiement.dateValidation" class="small text-success">
-            Validé le {{ formatDate(paiement.dateValidation) }}
+          <span class="badge badge-mode">{{ paiement.modePaiement }}</span>
+        </td>
+        <td>
+          <div class="date-info">
+            {{ formatDate(paiement.datePaiement) }}
+            <div *ngIf="paiement.dateValidation" class="small text-success">
+              ✓ Validé le {{ formatDate(paiement.dateValidation) }}
+            </div>
           </div>
         </td>
         <td>
@@ -78,73 +210,204 @@
               {{ getStatutLabel(paiement.statutPaiement) }}
             </span>
           <div *ngIf="paiement.paiementComplet" class="small text-success mt-1">
-            <i class="fa fa-check-circle"></i> Complet
+            <i class="fas fa-check-circle"></i> Complet
           </div>
         </td>
-        <td>
+        <td class="actions-col">
           <div class="btn-group">
-            <button *ngIf="paiement.statutPaiement === StatutPaiement.EN_ATTENTE"
-                    (click)="validerPaiement(paiement)" class="btn btn-sm btn-success" title="Valider le paiement">
-              <i class="fa fa-check"></i>
+            <button
+              class="btn-icon btn-info"
+              (click)="ouvrirModalDetails(paiement)"
+              title="Détails">
+              <i class="fas fa-eye"></i>
             </button>
-            <button *ngIf="paiement.statutPaiement === StatutPaiement.EN_ATTENTE"
-                    (click)="ouvrirModalRefus(paiement)" class="btn btn-sm btn-danger" title="Refuser le paiement">
-              <i class="fa fa-times"></i>
+            <button
+              *ngIf="paiement.statutPaiement === StatutPaiement.EN_ATTENTE"
+              class="btn-icon btn-success"
+              (click)="validerPaiement(paiement)"
+              title="Valider">
+              <i class="fas fa-check"></i>
             </button>
-            <button [routerLink]="['/paiements', paiement.idPaiement]" class="btn btn-sm btn-info"
-                    title="Voir détails">
-              <i class="fa fa-eye"></i>
+            <button
+              *ngIf="paiement.statutPaiement === StatutPaiement.EN_ATTENTE"
+              class="btn-icon btn-danger"
+              (click)="ouvrirModalRefus(paiement)"
+              title="Refuser">
+              <i class="fas fa-times"></i>
             </button>
           </div>
         </td>
       </tr>
-      <tr *ngIf="paiementsFiltres.length === 0">
-        <td colspan="8" class="text-center text-muted">Aucun paiement trouvé</td>
+
+      <tr *ngIf="paiementsPagines.length === 0">
+        <td colspan="8" class="text-center empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>Aucun paiement trouvé</p>
+        </td>
       </tr>
       </tbody>
     </table>
 
-    <nav *ngIf="nombrePages > 1" class="mt-3">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="page === 1">
-          <a class="page-link" (click)="changePage(page - 1)">Précédent</a>
-        </li>
-        <li *ngFor="let p of [].constructor(nombrePages); let i = index" class="page-item"
-            [class.active]="page === i + 1">
-          <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="page === nombrePages">
-          <a class="page-link" (click)="changePage(page + 1)">Suivant</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</div>
-
-<div class="modal" [class.show]="showModalRefus" [style.display]="showModalRefus ? 'block' : 'none'">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Refuser le paiement</h5>
-        <button type="button" class="close" (click)="fermerModalRefus()"><span>&times;</span></button>
-      </div>
-      <div class="modal-body">
-        <p *ngIf="paiementARefuser">
-          Êtes-vous sûr de vouloir refuser le paiement <strong>{{ paiementARefuser.codePaiement }}</strong>
-          de <strong>{{ formatMontant(paiementARefuser.montantPaiement) }}</strong> ?
-        </p>
-        <div class="form-group">
-          <label>Motif du refus *</label>
-          <textarea [(ngModel)]="motifRefus" class="form-control" rows="4"
-                    placeholder="Expliquez pourquoi ce paiement est refusé..." required></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="fermerModalRefus()">Annuler</button>
-        <button type="button" class="btn btn-danger" (click)="confirmerRefus()">Confirmer le refus</button>
-      </div>
+    <!-- PAGINATION -->
+    <div *ngIf="nombrePages > 1" class="pagination">
+      <button
+        class="pagination-btn"
+        (click)="changerPage(page - 1)"
+        [disabled]="page === 1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="pagination-info">Page {{ page }} / {{ nombrePages }}</span>
+      <button
+        class="pagination-btn"
+        (click)="changerPage(page + 1)"
+        [disabled]="page === nombrePages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
   </div>
 </div>
 
-<div class="modal-backdrop fade" [class.show]="showModalRefus" *ngIf="showModalRefus"></div>
+<!-- 🔍 MODAL DÉTAILS -->
+<div *ngIf="showModalDetails" class="modal-overlay" (click)="fermerModalDetails()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2><i class="fas fa-info-circle"></i> Détails du paiement</h2>
+      <button class="btn-close" (click)="fermerModalDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="paiementDetails" class="modal-body">
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Code Paiement</span>
+          <span class="detail-value">{{ paiementDetails.codePaiement }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Réservation</span>
+          <span class="detail-value">
+            <a [routerLink]="['/admin/reservation-details', paiementDetails.idReservation]" class="link">
+              {{ paiementDetails.referenceReservation }}
+            </a>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Client</span>
+          <span class="detail-value">{{ paiementDetails.prenomClient }} {{ paiementDetails.nomClient }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">{{ paiementDetails.emailClient }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Montant du paiement</span>
+          <span class="detail-value montant-highlight">{{ formatMontant(paiementDetails.montantPaiement) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Montant total réservation</span>
+          <span class="detail-value">{{ formatMontant(paiementDetails.montantTotalReservation) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Montant restant</span>
+          <span class="detail-value">{{ formatMontant(paiementDetails.montantRestantApres) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Mode de paiement</span>
+          <span class="detail-value badge badge-mode">{{ paiementDetails.modePaiement }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Statut</span>
+          <span class="badge" [ngClass]="getStatutBadgeClass(paiementDetails.statutPaiement)">
+            {{ getStatutLabel(paiementDetails.statutPaiement) }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Date du paiement</span>
+          <span class="detail-value">{{ formatDate(paiementDetails.datePaiement) }}</span>
+        </div>
+        <div *ngIf="paiementDetails.dateValidation" class="detail-item">
+          <span class="detail-label">Date de validation</span>
+          <span class="detail-value">{{ formatDate(paiementDetails.dateValidation) }}</span>
+        </div>
+        <div *ngIf="paiementDetails.descriptionPaiement" class="detail-item full-width">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ paiementDetails.descriptionPaiement }}</span>
+        </div>
+        <div *ngIf="paiementDetails.referenceExterne" class="detail-item full-width">
+          <span class="detail-label">Référence externe</span>
+          <span class="detail-value">{{ paiementDetails.referenceExterne }}</span>
+        </div>
+        <div *ngIf="paiementDetails.descriptionPaiement" class="detail-item full-width">
+          <span class="detail-label">Motif de refus</span>
+          <span class="detail-value text-danger">{{ paiementDetails.descriptionPaiement }}</span>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <h3>Progression du paiement</h3>
+        <div class="progress-bar-large">
+          <div
+            class="progress-fill-large"
+            [class.complete]="paiementDetails.paiementComplet"
+            [style.width.%]="calculerPourcentagePaye(paiementDetails)">
+            {{ calculerPourcentagePaye(paiementDetails) | number:'1.0-0' }}%
+          </div>
+        </div>
+        <p *ngIf="paiementDetails.paiementComplet" class="text-success mt-2">
+          <i class="fas fa-check-circle"></i> Paiement complet
+        </p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="fermerModalDetails()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ❌ MODAL REFUS -->
+<div *ngIf="showModalRefus" class="modal-overlay" (click)="fermerModalRefus()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2><i class="fas fa-exclamation-triangle"></i> Refuser le paiement</h2>
+      <button class="btn-close" (click)="fermerModalRefus()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="warning-text">
+        Vous êtes sur le point de refuser le paiement
+        <strong>{{ paiementARefuser?.codePaiement }}</strong>
+        de <strong>{{ formatMontant(paiementARefuser?.montantPaiement || 0) }}</strong>.
+      </p>
+
+      <div class="form-group">
+        <label for="motifRefus">
+          <i class="fas fa-comment"></i> Motif du refus <span class="required">*</span>
+        </label>
+        <textarea
+          id="motifRefus"
+          [(ngModel)]="motifRefus"
+          class="form-textarea"
+          rows="4"
+          placeholder="Expliquez pourquoi ce paiement est refusé..."
+          required
+        ></textarea>
+        <small class="form-hint">Le client recevra ce motif par email.</small>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="fermerModalRefus()">
+        <i class="fas fa-times"></i> Annuler
+      </button>
+      <button
+        class="btn btn-danger"
+        (click)="confirmerRefus()"
+        [disabled]="!motifRefus.trim()">
+        <i class="fas fa-ban"></i> Confirmer le refus
+      </button>
+    </div>
+  </div>
+</div>

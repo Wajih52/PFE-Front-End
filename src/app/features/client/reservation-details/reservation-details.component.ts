@@ -3,7 +3,7 @@
 
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReservationService } from '../../../services/reservation.service';
 import {
@@ -21,7 +21,7 @@ import {ProduitService} from '../../../services/produit.service';
 @Component({
   selector: 'app-reservation-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './reservation-details.component.html',
   styleUrls: ['./reservation-details.component.scss']
 })
