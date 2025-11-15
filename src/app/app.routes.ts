@@ -15,6 +15,8 @@ import {MesDevisComponent} from './features/client/mes-devis/mes-devis.component
 import {MesCommandesComponent} from './features/client/mes-commandes/mes-commandes.component';
 import {DevisValidationComponent} from './features/admin/pages/devis-validation/devis-validation.component';
 import {ReservationsAdminComponent} from './features/admin/pages/reservations-admin/reservations-admin.component';
+import {AjouterPaiementComponent} from './features/pages/paiement/ajouter-paiement/ajouter-paiement.component';
+import {ListePaiementsComponent} from './features/pages/paiement/liste-paiements/liste-paiements.component';
 
 
 export const routes: Routes = [
@@ -155,6 +157,12 @@ export const routes: Routes = [
             component: ReservationDetailsComponent,
             canActivate: [authGuard],
             data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
+          },
+          {
+            path: 'paiements',
+            component: ListePaiementsComponent,
+            canActivate: [authGuard],
+            data: { roles: ['ADMIN', 'MANAGER'] }
           }
         ]
       },
@@ -179,6 +187,12 @@ export const routes: Routes = [
             component: ReservationDetailsComponent,
             canActivate: [authGuard],
             data: { role: 'CLIENT' }
+          },
+          {
+            path: 'reservations/:idReservation/ajouter-paiement',
+            component: AjouterPaiementComponent,
+            canActivate: [authGuard],
+            data: { roles: ['CLIENT'] }
           }
         ]
       }

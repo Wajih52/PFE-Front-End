@@ -291,6 +291,13 @@ export type StatutLivraison =
   | 'RETOURNEE'
   | 'ANNULEE';
 
+export type StatutPaiementRes =
+  | 'EN_ATTENTE_PAIEMENT'
+  | 'PARTIELLEMENT_PAYE'
+  | 'TOTALEMENT_PAYE'
+
+
+
 export enum ModePaiement {
   ESPECES = 'ESPECES',
   D17 = 'D17',
@@ -322,6 +329,13 @@ export const ModePaiementLabels: Record<ModePaiement, string> = {
   [ModePaiement.D17]: 'D17',
   [ModePaiement.VIREMENT]: 'Virement bancaire'
 };
+
+export const StatutPaiementResLabels: Record<StatutPaiementRes, string> = {
+  'EN_ATTENTE_PAIEMENT': 'En attente Paiement',
+  'PARTIELLEMENT_PAYE': 'Partiellement Payé',
+  'TOTALEMENT_PAYE': 'Totalement Payé',
+};
+
 
 
 
