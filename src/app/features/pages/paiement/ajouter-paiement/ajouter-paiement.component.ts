@@ -185,4 +185,15 @@ export class AjouterPaiementComponent implements OnInit {
     }
     return '/home'; // Fallback vers l'accueil
   }
+  /**
+   * Retourne l'icône Font Awesome pour chaque mode de paiement
+   */
+  getModePaiementIcon(mode: string): string {
+    const icons: { [key in ModePaiement]: string } = {
+      [ModePaiement.ESPECES]: 'fas fa-money-bill-wave',
+      [ModePaiement.VIREMENT]: 'fas fa-exchange-alt',
+      [ModePaiement.D17]: 'fas fa-credit-card'
+    };
+    return icons[mode as ModePaiement] || 'fas fa-wallet';
+  }
 }

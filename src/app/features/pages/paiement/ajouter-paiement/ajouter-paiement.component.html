@@ -1,148 +1,227 @@
-<div class="paiement-container">
+<div class="ajouter-paiement-container">
+  <!-- HEADER -->
   <div class="page-header">
-    <h1>💳 Ajouter un Paiement</h1>
-    <button class="btn btn-secondary" [routerLink]="[getRouteRetour(reservation?.idReservation)]">
-      <i class="fa fa-arrow-left"></i> Retour
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-credit-card"></i>
+        Ajouter un Paiement
+      </h1>
+      <a [routerLink]="[getRouteRetour(reservation?.idReservation)]" class="btn-retour">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+      </a>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading && !reservation" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des informations...</p>
+  </div>
+
+  <!-- ERREUR -->
+  <div *ngIf="erreur" class="alert alert-danger">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ erreur }}
+  </div>
+
+  <!-- SUCCÈS -->
+  <div *ngIf="succes" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    <h3>Paiement enregistré avec succès !</h3>
+    <p>Votre paiement est en attente de validation par un administrateur.</p>
+    <button class="btn btn-primary" [routerLink]="[getRouteRetour(reservation?.idReservation)]">
+      <i class="fas fa-arrow-left"></i>
+      Retour aux réservations
     </button>
   </div>
 
-  <div *ngIf="loading && !reservation" class="text-center my-5">
-    <div class="spinner-border" role="status">
-      <span class="sr-only">Chargement...</span>
-    </div>
-  </div>
+  <!-- FORMULAIRE -->
+  <div *ngIf="reservation && !succes" class="content-grid">
+    <!-- COLONNE GAUCHE: Infos réservation -->
+    <div class="info-section">
+      <h2>
+        <i class="fas fa-info-circle"></i>
+        Informations de la réservation
+      </h2>
 
-  <div *ngIf="erreur" class="alert alert-danger">
-    <i class="fa fa-exclamation-circle"></i> {{ erreur }}
-  </div>
-
-  <div *ngIf="reservation && !succes" class="row">
-    <div class="col-md-4">
-      <div class="card info-card">
-        <div class="card-header">
-          <h5><i class="fa fa-info-circle"></i> Informations de la réservation</h5>
+      <div class="info-card">
+        <div class="info-item">
+          <span class="info-label">Référence</span>
+          <span class="info-value">{{ reservation.referenceReservation }}</span>
         </div>
-        <div class="card-body">
-          <div class="info-item">
-            <label>Référence :</label>
-            <span>{{ reservation.referenceReservation }}</span>
-          </div>
 
-          <div class="info-item">
-            <label>Période :</label>
-            <span>Du {{ reservation.dateDebut }} au {{ reservation.dateFin }}</span>
-          </div>
+        <div class="info-item">
+          <span class="info-label">Période</span>
+          <span class="info-value">
+            Du {{ reservation.dateDebut | date:'dd/MM/yyyy' }} au {{ reservation.dateFin | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
 
-          <div class="info-item">
-            <label>Montant total :</label>
-            <span class="amount-highlight">{{ formatMontant(reservation.montantTotal) }}</span>
-          </div>
+        <div class="info-item">
+          <span class="info-label">Montant total</span>
+          <span class="info-value montant-total">{{ formatMontant(reservation.montantTotal) }}</span>
+        </div>
 
-          <div class="info-item">
-            <label>Déjà payé :</label>
-            <span class="text-success">{{ formatMontant(reservation.montantPaye || 0) }}</span>
-          </div>
+        <div class="info-item">
+          <span class="info-label">Déjà payé</span>
+          <span class="info-value success">{{ formatMontant(reservation.montantPaye || 0) }}</span>
+        </div>
 
-          <div class="info-item important">
-            <label>Restant à payer :</label>
-            <span class="amount-highlight text-danger">{{ formatMontant(reservation.montantRestant) }}</span>
-          </div>
+        <div class="info-item highlight">
+          <span class="info-label">Restant à payer</span>
+          <span class="info-value danger">{{ formatMontant(reservation.montantRestant) }}</span>
+        </div>
 
-          <div class="progress-section mt-3">
-            <label class="mb-2">Avancement du paiement :</label>
-            <div class="progress">
-              <div class="progress-bar bg-success"
-                   [style.width.%]="((reservation.montantPaye || 0) / reservation.montantTotal) * 100">
-                {{ ((reservation.montantPaye || 0) / reservation.montantTotal * 100).toFixed(0) }}%
-              </div>
+        <div class="progress-section">
+          <span class="progress-label">Avancement du paiement</span>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="((reservation.montantPaye || 0) / reservation.montantTotal) * 100">
+              {{ ((reservation.montantPaye || 0) / reservation.montantTotal * 100).toFixed(0) }}%
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-md-8">
-      <div class="card form-card">
-        <div class="card-header">
-          <h5><i class="fa fa-credit-card"></i> Détails du paiement</h5>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="paiementForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-              <label>Montant à payer * <small class="text-muted">(Max: {{ formatMontant(reservation.montantRestant) }})</small></label>
-              <input type="number" formControlName="montantPaiement" class="form-control"
-                     [class.is-invalid]="paiementForm.get('montantPaiement')?.invalid && paiementForm.get('montantPaiement')?.touched"
-                     placeholder="0.00" step="0.01" min="1" [max]="reservation.montantRestant" />
-              <div *ngIf="paiementForm.get('montantPaiement')?.invalid && paiementForm.get('montantPaiement')?.touched" class="invalid-feedback">
-                <div *ngIf="montantPaiementControl?.errors?.['required']">Le montant est obligatoire</div>
-                <div *ngIf="montantPaiementControl?.errors?.['min']">Le montant doit être supérieur à 0</div>
-              </div>
+    <!-- COLONNE DROITE: Formulaire -->
+    <div class="formulaire-section">
+      <h2>
+        <i class="fas fa-edit"></i>
+        Détails du paiement
+      </h2>
 
-              <div class="quick-actions mt-2">
-                <button type="button" class="btn btn-sm btn-outline-primary" (click)="payerAcompte30()">
-                  Acompte 30%
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-primary" (click)="payerAcompte50()">
-                  Acompte 50%
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-success" (click)="payerMontantRestant()">
-                  Montant complet
-                </button>
-              </div>
+      <form [formGroup]="paiementForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <!-- Montant -->
+          <div class="form-group full-width">
+            <label>
+              <i class="fas fa-money-bill-wave"></i>
+              Montant à payer
+              <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="montantPaiement"
+              class="form-control"
+              [class.error]="paiementForm.get('montantPaiement')?.invalid && paiementForm.get('montantPaiement')?.touched"
+              placeholder="0.00"
+              step="0.01"
+              min="1"
+              [max]="reservation.montantRestant"
+            />
+            <span class="form-hint">Maximum: {{ formatMontant(reservation.montantRestant) }}</span>
 
-              <div *ngIf="paiementForm.get('montantPaiement')?.value" class="mt-3 alert alert-info">
-                <strong>Après ce paiement :</strong><br>
-                Montant restant : {{ formatMontant(calculerMontantRestantApres()) }}
-              </div>
+            <div *ngIf="paiementForm.get('montantPaiement')?.invalid && paiementForm.get('montantPaiement')?.touched" class="error-message">
+              <span *ngIf="montantPaiementControl?.errors?.['required']">Le montant est obligatoire</span>
+              <span *ngIf="montantPaiementControl?.errors?.['min']">Le montant doit être supérieur à 0</span>
             </div>
 
-            <div class="form-group">
-              <label>Mode de paiement *</label>
-              <select formControlName="modePaiement" class="form-control"
-                      [class.is-invalid]="paiementForm.get('modePaiement')?.invalid && paiementForm.get('modePaiement')?.touched">
-                <option *ngFor="let mode of modesPaiement" [value]="mode">
-                  {{ getModePaiementLabel(mode) }}
-                </option>
-              </select>
-              <div *ngIf="paiementForm.get('modePaiement')?.invalid && paiementForm.get('modePaiement')?.touched" class="invalid-feedback">
-                Le mode de paiement est obligatoire
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Référence de transaction <small class="text-muted">(Numéro de chèque, virement, etc.)</small></label>
-              <input type="text" formControlName="referenceExterne" class="form-control"
-                     placeholder="Ex: CHQ-123456, VIREMENT-789" />
-            </div>
-
-            <div class="form-group">
-              <label>Commentaire <small class="text-muted">(optionnel)</small></label>
-              <textarea formControlName="descriptionPaiement" class="form-control" rows="3"
-                        placeholder="Ajoutez un commentaire si nécessaire..."></textarea>
-            </div>
-
-            <div class="alert alert-warning">
-              <i class="fa fa-exclamation-triangle"></i>
-              <strong>Important :</strong> Votre paiement sera enregistré et sera en attente de validation
-              par un administrateur. Vous recevrez une confirmation par email une fois validé.
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" [routerLink]="[getRouteAnnuler()]">
-                Annuler
+            <!-- Boutons rapides -->
+            <div class="quick-actions">
+              <button type="button" class="btn btn-quick" (click)="payerAcompte30()">
+                30% ({{ formatMontant(reservation.montantRestant * 0.3) }})
               </button>
-              <button type="submit" class="btn btn-primary" [disabled]="paiementForm.invalid || loading">
-                <span *ngIf="!loading">
-                  <i class="fa fa-check"></i> Enregistrer le paiement
-                </span>
-                <span *ngIf="loading">
-                  <i class="fa fa-spinner fa-spin"></i> Enregistrement...
-                </span>
+              <button type="button" class="btn btn-quick" (click)="payerAcompte50()">
+                50% ({{ formatMontant(reservation.montantRestant * 0.5) }})
+              </button>
+              <button type="button" class="btn btn-quick" (click)="payerMontantRestant()">
+                Solde complet
               </button>
             </div>
-          </form>
+
+            <!-- Montant restant après paiement -->
+            <div *ngIf="paiementForm.get('montantPaiement')?.value" class="helper-text">
+              <i class="fas fa-info-circle"></i>
+              <p>
+                <strong>Après ce paiement:</strong><br>
+                Montant restant: {{ formatMontant(calculerMontantRestantApres()) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Mode de paiement -->
+          <div class="form-group full-width">
+            <label>
+              <i class="fas fa-wallet"></i>
+              Mode de paiement
+              <span class="required">*</span>
+            </label>
+
+            <div class="modes-paiement">
+              <div *ngFor="let mode of modesPaiement" class="mode-option">
+                <input
+                  type="radio"
+                  [id]="'mode-' + mode"
+                  [value]="mode"
+                  formControlName="modePaiement"
+                />
+                <label [for]="'mode-' + mode">
+                  <i [class]="getModePaiementIcon(mode)"></i>
+                  <span>{{ getModePaiementLabel(mode) }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Référence externe -->
+          <div class="form-group full-width">
+            <label>
+              <i class="fas fa-hashtag"></i>
+              Référence de transaction
+            </label>
+            <input
+              type="text"
+              formControlName="referenceExterne"
+              class="form-control"
+              placeholder="Ex: CHQ-123456, VIREMENT-789"
+            />
+            <span class="form-hint">Numéro de chèque, référence de virement, etc.</span>
+          </div>
+
+          <!-- Commentaire -->
+          <div class="form-group full-width">
+            <label>
+              <i class="fas fa-comment"></i>
+              Commentaire
+            </label>
+            <textarea
+              formControlName="descriptionPaiement"
+              class="form-control"
+              rows="3"
+              placeholder="Ajoutez un commentaire si nécessaire..."
+            ></textarea>
+          </div>
         </div>
-      </div>
+        <br>
+        <!-- Note importante -->
+        <div class="helper-text">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>
+            <strong>Important:</strong> Votre paiement sera enregistré et sera en attente de validation par un administrateur. Vous recevrez une confirmation par email une fois validé.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" [routerLink]="[getRouteAnnuler()]">
+            <i class="fas fa-times"></i>
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="paiementForm.invalid || loading">
+            <span *ngIf="!loading">
+              <i class="fas fa-check"></i>
+              Enregistrer le paiement
+            </span>
+            <span *ngIf="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              Enregistrement...
+            </span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
