@@ -239,7 +239,12 @@ export class ReservationsAdminComponent implements OnInit {
   voirDetails(idReservation: number): void {
     this.router.navigate(['/admin/reservation-details', idReservation]);
   }
-
+  /**
+   * Naviguer vers la page d'ajout de paiement
+   */
+  ajouterPaiement(idReservation: number): void {
+    this.router.navigate(['/reservations', idReservation, 'ajouter-paiement']);
+  }
   /**
    * Exporter en CSV
    */

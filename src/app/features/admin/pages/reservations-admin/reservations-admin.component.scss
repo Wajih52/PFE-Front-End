@@ -377,7 +377,18 @@
 
             .impaye {
               color: #e53e3e;
+              font-weight: 800;
+              letter-spacing: 0.5px;
+            }
+            .paye {
+              color: #2e8f18;
               font-weight: 600;
+              background-color: #e4e2e2;
+              padding: 0.375rem 0.75rem;
+              border-radius: 20px;
+              font-size: 0.75rem;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
             }
           }
 
@@ -534,6 +545,73 @@
   .reservations-admin-container {
     .stats-cards {
       grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Groupe de boutons d'actions
+.actions-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+// Bouton d'action de base
+.btn-action {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 16px;
+  }
+
+  &:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Bouton détails (bleu)
+.btn-details {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(135deg, #2980b9, #21618c);
+  }
+}
+
+// Bouton paiement (vert)
+.btn-paiement {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(135deg, #229954, #1e8449);
+  }
+
+  // État désactivé
+  &.disabled,
+  &:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
     }
   }
 }

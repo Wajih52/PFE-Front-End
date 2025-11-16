@@ -1,7 +1,7 @@
 <div class="paiement-container">
   <div class="page-header">
     <h1>💳 Ajouter un Paiement</h1>
-    <button class="btn btn-secondary" [routerLink]="['client/mes-commandes']">
+    <button class="btn btn-secondary" [routerLink]="[getRouteRetour(reservation?.idReservation)]">
       <i class="fa fa-arrow-left"></i> Retour
     </button>
   </div>
@@ -128,7 +128,7 @@
             </div>
 
             <div class="form-actions">
-              <button type="button" class="btn btn-secondary" [routerLink]="['/mes-reservations']">
+              <button type="button" class="btn btn-secondary" [routerLink]="[getRouteAnnuler()]">
                 Annuler
               </button>
               <button type="submit" class="btn btn-primary" [disabled]="paiementForm.invalid || loading">

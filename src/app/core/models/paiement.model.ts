@@ -31,6 +31,7 @@ export interface PaiementResponseDto {
   datePaiement: string;
   dateValidation?: string;
   descriptionPaiement?: string;
+  motifRefus?: string;
   referenceExterne?: string;
   validePar?: string;
   nomClient: string;

@@ -337,9 +337,9 @@
           <span class="detail-label">Référence externe</span>
           <span class="detail-value">{{ paiementDetails.referenceExterne }}</span>
         </div>
-        <div *ngIf="paiementDetails.descriptionPaiement" class="detail-item full-width">
+        <div *ngIf="paiementDetails.motifRefus" class="detail-item full-width">
           <span class="detail-label">Motif de refus</span>
-          <span class="detail-value text-danger">{{ paiementDetails.descriptionPaiement }}</span>
+          <span class="detail-value text-danger">{{ paiementDetails.motifRefus }}</span>
         </div>
       </div>
 

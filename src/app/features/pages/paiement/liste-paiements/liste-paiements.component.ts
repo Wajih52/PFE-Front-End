@@ -212,7 +212,12 @@ export class ListePaiementsComponent implements OnInit {
     this.filtreMontantMax = null;
     this.filtreDateDebut = '';
     this.filtreDateFin = '';
-    this.appliquerFiltres();
+
+    // Réinitialiser aussi les tris
+    this.triActif = 'date';
+    this.triOrdre = 'desc';
+
+    this.chargerPaiements();
   }
 
   // Pagination

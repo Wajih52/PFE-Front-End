@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PaiementService } from '../../../../services/paiement.service';
 import { ReservationService } from '../../../../services/reservation.service';
+import { StorageService } from '../../../../core/services/storage.service';
 import {
   ModePaiement,
   ModePaiementLabels,
@@ -36,7 +37,8 @@ export class AjouterPaiementComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private paiementService: PaiementService,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+  private storage: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -159,5 +161,28 @@ export class AjouterPaiementComponent implements OnInit {
 
   get modePaiementControl():AbstractControl |null {
     return this.paiementForm.get('modePaiement');
+  }
+
+  /**
+   * Retourne la route de retour selon le rôle de l'utilisateur
+   */
+  getRouteAnnuler(): string {
+    if (this.storage.isClient()) {
+      return '/client/mes-commandes';
+    } else if (this.storage.isAdmin() || this.storage.hasRole('MANAGER') || this.storage.hasRole('EMPLOYE')) {
+      return '/admin/reservations';
+    }
+    return '/home'; // Fallback vers l'accueil
+  }
+  /**
+   * Retourne la route de retour selon le rôle de l'utilisateur
+   */
+  getRouteRetour(id : number|undefined): string {
+    if (this.storage.isClient()) {
+      return '/client/reservation-details/'+id;
+    } else if (this.storage.isAdmin() || this.storage.hasRole('MANAGER') || this.storage.hasRole('EMPLOYE')) {
+      return '/admin/reservation-details/'+id;
+    }
+    return '/home'; // Fallback vers l'accueil
   }
 }

@@ -17,6 +17,7 @@ import {
 import {ProduitResponse} from '../../../core/models';
 import {LigneReservationService} from '../../../services/ligne-reservation.service';
 import {ProduitService} from '../../../services/produit.service';
+import {StorageService} from '../../../core/services/storage.service';
 
 @Component({
   selector: 'app-reservation-details',
@@ -31,6 +32,7 @@ export class ReservationDetailsComponent implements OnInit {
   private produitService = inject(ProduitService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private storage= inject(StorageService);
 
   // Signals
   reservation = signal<ReservationResponseDto | null>(null);
@@ -507,14 +509,19 @@ export class ReservationDetailsComponent implements OnInit {
   }
 
   retourListeCommandes(): void {
-    const res = this.reservation();
-    if (res?.estDevis) {
-      this.router.navigate(['/client/mes-devis']);
-    } else {
-      this.router.navigate(['/client/mes-commandes']);
+    const res = this.reservation()
+    if (this.storage.isClient()) {
+      if (res?.estDevis) {
+        this.router.navigate(['/client/mes-devis']);
+      } else {
+        this.router.navigate(['/client/mes-commandes']);
+      }
+    }else if (this.storage.isAdmin() || this.storage.hasRole('MANAGER') || this.storage.hasRole('EMPLOYE')) {
+      this.router.navigate(['/admin/reservations']);
+    }else {
+      this.router.navigate(['/home']);
     }
   }
-
 
   /**
    * Obtenir l'URL de l'image du produit

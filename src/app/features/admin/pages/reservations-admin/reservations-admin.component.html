@@ -291,19 +291,34 @@
                   @if (!reservation.paiementComplet) {
                     <small class="impaye">Impayé: {{ reservation.montantRestant | number:'1.2-2' }} DT</small>
                   }
+                  @if (reservation.paiementComplet) {
+                    <small class="paye">Totalement Payé</small>
+                  }
                 </div>
               </td>
               <td>
                 <small>{{ formatDateTime(reservation.dateCreation) }}</small>
               </td>
               <td>
+                <div class="actions-buttons">
                 <button
-                  class="btn-action"
+                  class="btn-action btn-details"
                   (click)="voirDetails(reservation.idReservation)"
                   title="Voir détails"
                 >
                   <i class="fas fa-eye"></i>
                 </button>
+
+                  <button
+                    class="btn-action btn-paiement"
+                    [class.disabled]="reservation.paiementComplet"
+                    [disabled]="reservation.paiementComplet"
+                    (click)="!reservation.paiementComplet && ajouterPaiement(reservation.idReservation)"
+                    [title]="reservation.paiementComplet ? 'Paiement complet' : 'Ajouter un paiement'"
+                  >
+                    <i class="fas fa-credit-card"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           }
