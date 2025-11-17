@@ -38,6 +38,12 @@
   &.info {
     border-top: 5px solid #17a2b8;
   }
+
+  .message-text {
+    white-space: pre-line;
+    line-height: 1.5;
+    margin: 1rem 0;
+  }
 }
 
 @keyframes slideUp {

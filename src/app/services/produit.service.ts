@@ -74,6 +74,26 @@ export class ProduitService {
   }
 
   /**
+   * Supprimer définitivement un produit de la base de données
+   * DELETE /api/produits/{id}/supprimer-definitivement
+   * ⚠️ DANGER: Suppression permanente
+   * @requires ROLE: ADMIN uniquement
+   */
+  supprimerProduitDefinitivement(id: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(
+      `${this.API_URL}/${id}/supprimer-definitivement`
+    );
+  }
+  /**
+   * Réactiver un produit désactivé
+   * POST /api/produits/{id}/reactiver?quantite={qte}
+   * @requires ROLE: ADMIN, MANAGER
+   */
+  reactiverProduit(id: number, quantite: number): Observable<ProduitResponse> {
+    const params = new HttpParams().set('quantite', quantite.toString());
+    return this.http.post<ProduitResponse>(`${this.API_URL}/${id}/reactiver`, null, { params });
+  }
+  /**
    * Obtenir un produit par ID
    * GET /api/produits/{id}
    */
@@ -284,6 +304,18 @@ export class ProduitService {
     return this.http.post<ProduitResponse>(`${this.API_URL}/${id}/retrait-stock`, null, { params });
   }
 
+  /**
+   * Ajuster le stock d'un produit EN_QUANTITE
+   * PUT /api/produits/{id}/ajuster-stock?nouvelleQuantite={qte}&motif={motif}
+   * @requires ROLE: ADMIN, MANAGER
+   */
+  ajusterStock(id: number, nouvelleQuantite: number, motif?: string): Observable<ProduitResponse> {
+    let params = new HttpParams().set('nouvelleQuantite', nouvelleQuantite.toString());
+    if (motif) {
+      params = params.set('motif', motif);
+    }
+    return this.http.put<ProduitResponse>(`${this.API_URL}/${id}/ajuster-stock`, null, { params });
+  }
   // ============================================
   // HISTORIQUE DES MOUVEMENTS
   // ============================================

@@ -5,7 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   InstanceProduitRequest,
-  InstanceProduitResponse,
+  InstanceProduitResponse, MouvementStockResponse,
   StatutInstance
 } from '../core/models';
 
@@ -222,5 +222,15 @@ export class InstanceProduitService {
    */
   libererDeReservation(id: number): Observable<InstanceProduitResponse> {
     return this.http.post<InstanceProduitResponse>(`${this.API_URL}/${id}/liberer`, null);
+  }
+
+  /**
+   * Obtenir l'historique des mouvements d'une instance spécifique
+   * Utilise le repository MouvementStock avec findByCodeInstanceOrderByDateMouvementDesc
+   */
+  getHistoriqueMouvementsInstance(numeroSerie: string): Observable<MouvementStockResponse[]> {
+    return this.http.get<MouvementStockResponse[]>(
+      `${this.API_URL}/historique-instance/${numeroSerie}`
+    );
   }
 }

@@ -1,5 +1,3 @@
-<app-menu-navigation></app-menu-navigation>
-
 <div class="historique-container">
   <!-- En-tête -->
   <div class="header">
@@ -165,14 +163,33 @@
           </div>
 
           <div class="content-details">
-            <div class="detail-row">
+            <!-- Informations de stock (pour tous les types sauf RESERVATION) -->
+            <div class="detail-row" *ngIf="mouvement.typeMouvement !== TypeMouvement.RESERVATION">
               <span class="label">Stock:</span>
-              <span class="value">
-                {{ mouvement.quantiteAvant }}
+              <span class="value stock-change">
+      {{ mouvement.quantiteAvant }}
                 <span class="arrow">→</span>
-                <strong>{{ mouvement.quantiteApres }}</strong>
-              </span>
+      <strong [class.stock-up]="mouvement.quantiteApres > mouvement.quantiteAvant"
+              [class.stock-down]="mouvement.quantiteApres < mouvement.quantiteAvant">
+        {{ mouvement.quantiteApres }}
+      </strong>
+    </span>
             </div>
+
+            <!-- Informations spécifiques pour les RESERVATIONS -->
+            <ng-container *ngIf="mouvement.typeMouvement === TypeMouvement.RESERVATION">
+              <div class="detail-row">
+                <span class="label">Réservation:</span>
+                <span class="value reservation-link">#{{ mouvement.idReservation }}</span>
+              </div>
+
+              <div class="detail-row">
+                <span class="label">Quantité réservée:</span>
+                <span class="value quantite-reservee">
+                    {{ mouvement.quantite }} unité(s)
+                </span>
+              </div>
+            </ng-container>
 
             <div class="detail-row" *ngIf="mouvement.motif">
               <span class="label">Motif:</span>
@@ -189,7 +206,8 @@
               <span class="value instance">🏷️ {{ mouvement.numeroSerie }}</span>
             </div>
 
-            <div class="detail-row" *ngIf="mouvement.idReservation">
+            <div class="detail-row"
+                 *ngIf="mouvement.idReservation && mouvement.typeMouvement !== TypeMouvement.RESERVATION">
               <span class="label">Réservation:</span>
               <span class="value">#{{ mouvement.idReservation }}</span>
             </div>

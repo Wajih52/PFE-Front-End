@@ -104,6 +104,25 @@
         🔄 Réinitialiser
       </button>
     </div>
+
+    <div class="filter-date">
+      <label for="filterDate">📅 Date:</label>
+      <input
+        type="date"
+        id="filterDate"
+        [(ngModel)]="filterDate"
+        (ngModelChange)="onDateFilterChange()"
+        [min]="minDate"
+        class="form-control"
+      />
+      <button
+        class="btn btn-sm btn-secondary"
+        (click)="filterDate = minDate; onDateFilterChange()"
+        title="Réinitialiser à aujourd'hui"
+      >
+        🔄 Aujourd'hui
+      </button>
+    </div>
   </div>
 
   <!-- Tableau des produits -->
@@ -222,12 +241,42 @@
               🔢
             </button>
             <button
+              class="btn btn-sm btn-primary"
+              (click)="openAjustementModal(produit)"
+              title="Ajuster le stock"
+              *ngIf="produit.typeProduit === 'EN_QUANTITE'"
+            >
+              📊
+            </button>
+            <button
               class="btn btn-sm btn-warning"
               (click)="goToMouvements(produit.idProduit)"
               title="Historique"
             >
               📊
             </button>
+            <!-- Boutons selon l'état du produit -->
+            <ng-container *ngIf="produit.quantiteDisponible > 0">
+              <!-- Produit actif -->
+              <button
+                class="btn btn-sm btn-warning"
+                (click)="desactiverProduit(produit)"
+                title="Désactiver"
+              >
+                ⏸️
+              </button>
+            </ng-container>
+
+            <ng-container *ngIf="produit.quantiteDisponible === 0">
+              <!-- Produit désactivé -->
+              <button
+                class="btn btn-sm btn-success"
+                (click)="reactiverProduit(produit)"
+                title="Réactiver"
+              >
+                ▶️
+              </button>
+            </ng-container>
             <button
               class="btn btn-sm btn-danger"
               (click)="deleteProduit(produit)"
@@ -321,7 +370,7 @@
           <div class="detail-item">
             <strong>Stock disponible:</strong>
             <span [class]="getStockStatusClass(selectedProduit)">
-              {{ selectedProduit.quantiteDisponible }}
+              {{ selectedProduit.quantiteDisponible }} unités
             </span>
           </div>
 
@@ -338,7 +387,7 @@
           <div class="detail-item">
             <strong>En stock:</strong>
             <span [class.text-success]="selectedProduit.enStock" [class.text-danger]="!selectedProduit.enStock">
-              {{ selectedProduit.enStock ? 'Oui' : 'Non' }}
+             {{ selectedProduit.quantiteDisponible > 0 ? 'Oui' : 'Non' }}
             </span>
           </div>
 
@@ -386,6 +435,64 @@
       </button>
       <button class="btn btn-secondary" (click)="closeDetailsModal()">
         Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal ajustement stock -->
+<div *ngIf="showAjustementModal && produitAjustement" class="modal-overlay" (click)="closeAjustementModal()">
+  <div class="modal-content modal-ajustement" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>📊 Ajuster le stock</h2>
+      <button class="btn-close" (click)="closeAjustementModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="info-produit">
+        <h3>{{ produitAjustement.nomProduit }}</h3>
+        <p><strong>Code:</strong> {{ produitAjustement.codeProduit }}</p>
+        <p><strong>Stock actuel:</strong> <span class="current-stock">{{ produitAjustement.quantiteDisponible }}</span></p>
+      </div>
+
+      <div class="form-group">
+        <label for="nouvelleQuantite" class="required">Nouvelle quantité</label>
+        <input
+          type="number"
+          id="nouvelleQuantite"
+          [(ngModel)]="nouvelleQuantite"
+          class="form-control"
+          min="0"
+          placeholder="0"
+        />
+        <div class="stock-diff" [class.positive]="nouvelleQuantite - produitAjustement.quantiteDisponible > 0"
+             [class.negative]="nouvelleQuantite - produitAjustement.quantiteDisponible < 0">
+          Différence: {{ nouvelleQuantite - produitAjustement.quantiteDisponible >= 0 ? '+' : '' }}{{ nouvelleQuantite - produitAjustement.quantiteDisponible }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="motifAjustement" class="required">Motif de l'ajustement</label>
+        <textarea
+          id="motifAjustement"
+          [(ngModel)]="motifAjustement"
+          class="form-control"
+          rows="3"
+          placeholder="Ex: Inventaire, correction erreur de saisie, casse, vol..."
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeAjustementModal()">
+        Annuler
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="submitAjustementStock()"
+        [disabled]="!motifAjustement.trim()"
+      >
+        ✅ Ajuster le stock
       </button>
     </div>
   </div>

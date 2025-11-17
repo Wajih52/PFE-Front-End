@@ -14,6 +14,7 @@ import {
   TypeProduitLabels
 } from '../../../../core/models';
 import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
+import {NotificationService} from '../../../../services/notification.service';
 
 /**
  * Composant de liste des produits avec recherche, filtres et gestion
@@ -30,6 +31,7 @@ export class ProduitsListComponent implements OnInit {
   private produitService = inject(ProduitService);
   private confirmationService = inject(ConfirmationService);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
   // Données
   allProduits: ProduitResponse[] = [];
@@ -73,7 +75,23 @@ export class ProduitsListComponent implements OnInit {
   readonly categoriesList = Object.values(Categorie);
   readonly typesList = Object.values(TypeProduit);
 
+  // Modal ajustement stock
+  showAjustementModal = false;
+  produitAjustement: ProduitResponse | null = null;
+  nouvelleQuantite: number = 0;
+  motifAjustement: string = '';
+
+  // Filtre par date
+  filterDate: string = '';
+  minDate: string = '';
+
   ngOnInit(): void {
+
+    // Date minimale = aujourd'hui
+    const today = new Date();
+    this.minDate = today.toISOString().split('T')[0];
+    this.filterDate = this.minDate; // Par défaut aujourd'hui
+
     this.loadProduits();
   }
 
@@ -84,6 +102,26 @@ export class ProduitsListComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
+    // Si une date est sélectionnée, utiliser l'API avec période
+    if (this.filterDate) {
+      // Charger les produits disponibles pour cette date
+      this.produitService.getCatalogueDisponibleSurPeriode(
+        this.filterDate,
+        this.filterDate // Même date pour début et fin
+      ).subscribe({
+        next: (data) => {
+          this.allProduits = data;
+          this.applyFilters();
+          this.calculateStats();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Erreur chargement produits:', error);
+          this.errorMessage = 'Erreur lors du chargement des produits';
+          this.isLoading = false;
+        }
+      });
+    } else {
     this.produitService.getAllProduits().subscribe({
       next: (data) => {
         this.allProduits = data;
@@ -97,6 +135,7 @@ export class ProduitsListComponent implements OnInit {
         this.isLoading = false;
       }
     });
+    }
   }
 
   /**
@@ -107,6 +146,13 @@ export class ProduitsListComponent implements OnInit {
     this.stats.disponibles = this.allProduits.filter(p => p.quantiteDisponible > 0).length;
     this.stats.rupture = this.allProduits.filter(p => p.quantiteDisponible === 0).length;
     this.stats.critique = this.allProduits.filter(p => p.alerteStockCritique).length;
+  }
+
+  /**
+   * Appliquer le filtre de date
+   */
+  onDateFilterChange(): void {
+    this.loadProduits();
   }
 
   /**
@@ -251,30 +297,68 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * Supprimer un produit
+   * Supprimer un produit avec choix: soft delete ou hard delete
    */
   async deleteProduit(produit: ProduitResponse): Promise<void> {
-    const confirmed = await this.confirmationService.confirm({
-      title: 'Supprimer le produit',
-      message: `Voulez-vous vraiment supprimer le produit "${produit.nomProduit}" ? Cette action est irréversible.`,
-      confirmText: 'Oui, supprimer',
-      type: 'danger'
+    const typeConfirmed = await this.confirmationService.confirm({
+      title: 'Type de suppression',
+      message: `
+      Produit: ${produit.nomProduit} \n
+
+        Choisissez le type de suppression:\n
+
+          Désactiver : Le produit sera masqué mais conservé dans la base\n
+         Supprimer définitivement : ⚠️ Suppression permanente de la base de données\n
+    `,
+      confirmText: 'Désactiver',
+      cancelText: 'Supprimer définitivement',
+      type: 'warning'
     });
 
-    if (!confirmed) return;
+    if (typeConfirmed) {
+      // Soft delete
+      this.produitService.supprimerProduit(produit.idProduit).subscribe({
+        next: () => {
+          this.notificationService.success(`Produit "${produit.nomProduit}" désactivé avec succès`);
+          this.loadProduits();
+        },
+        error: (error) => {
+          console.error('Erreur désactivation produit:', error);
+          const errorMsg = error.error?.message || error.error || 'Erreur lors de la désactivation';
+          this.notificationService.error(errorMsg);
+        }
+      });
+    } else {
+      // Hard delete - confirmation supplémentaire
+      const hardDeleteConfirmed = await this.confirmationService.confirm({
+        title: 'Suppression définitive',
+        message: `
 
-    this.produitService.supprimerProduit(produit.idProduit).subscribe({
-      next: () => {
-        this.successMessage = 'Produit supprimé avec succès';
-        this.loadProduits();
-        setTimeout(() => this.successMessage = '', 3000);
-      },
-      error: (error) => {
-        console.error('Erreur suppression produit:', error);
-        this.errorMessage = error.error?.message || 'Erreur lors de la suppression';
-        setTimeout(() => this.errorMessage = '', 3000);
+         ATTENTION: Cette action est IRRÉVERSIBLE!\n
+          Le produit "${produit.nomProduit}" sera supprimé DÉFINITIVEMENT de la base de données.\n
+          Toutes les données associées seront perdues.\n
+         Êtes-vous absolument sûr?\n
+
+      `,
+        confirmText: 'Supprimer ',
+        cancelText: 'Annuler',
+        type: 'danger'
+      });
+
+      if (hardDeleteConfirmed) {
+        this.produitService.supprimerProduitDefinitivement(produit.idProduit).subscribe({
+          next: (response) => {
+            this.notificationService.success(response.message);
+            this.loadProduits();
+          },
+          error: (error) => {
+            console.error('Erreur suppression définitive:', error);
+            const errorMsg = error.error?.error || error.error?.message || 'Erreur lors de la suppression définitive';
+            this.notificationService.error(errorMsg);
+          }
+        });
       }
-    });
+    }
   }
 
   /**
@@ -293,5 +377,151 @@ export class ProduitsListComponent implements OnInit {
     if (produit.quantiteDisponible === 0) return 'Rupture';
     if (produit.alerteStockCritique) return 'Critique';
     return 'Disponible';
+  }
+
+  /**
+   * Ouvrir le modal d'ajustement de stock
+   */
+  openAjustementModal(produit: ProduitResponse): void {
+    if (produit.typeProduit !== TypeProduit.EN_QUANTITE) {
+      this.notificationService.warning('L\'ajustement de stock n\'est disponible que pour les produits EN_QUANTITE');
+      return;
+    }
+
+    this.produitAjustement = produit;
+    this.nouvelleQuantite = produit.quantiteDisponible;
+    this.motifAjustement = '';
+    this.showAjustementModal = true;
+  }
+
+  /**
+   * Fermer le modal d'ajustement
+   */
+  closeAjustementModal(): void {
+    this.showAjustementModal = false;
+    this.produitAjustement = null;
+    this.nouvelleQuantite = 0;
+    this.motifAjustement = '';
+  }
+
+  /**
+   * Soumettre l'ajustement de stock
+   */
+  async submitAjustementStock(): Promise<void> {
+    if (!this.produitAjustement) return;
+
+    // Validation
+    if (this.nouvelleQuantite < 0) {
+      this.notificationService.warning('La quantité ne peut pas être négative');
+      return;
+    }
+
+    if (!this.motifAjustement.trim()) {
+      this.notificationService.warning('Veuillez indiquer un motif pour l\'ajustement');
+      return;
+    }
+
+    // Confirmation
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Ajuster le stock',
+      message: `
+      <div>
+        <p><strong>Produit:</strong> ${this.produitAjustement.nomProduit}</p>
+        <p><strong>Stock actuel:</strong> ${this.produitAjustement.quantiteDisponible}</p>
+        <p><strong>Nouveau stock:</strong> ${this.nouvelleQuantite}</p>
+        <p><strong>Différence:</strong> ${this.nouvelleQuantite - this.produitAjustement.quantiteDisponible}</p>
+        <p><strong>Motif:</strong> ${this.motifAjustement}</p>
+      </div>
+    `,
+      confirmText: 'Oui, ajuster',
+      type: 'info'
+    });
+
+    if (!confirmed) return;
+
+    // Appel API
+    this.produitService.ajusterStock(
+      this.produitAjustement.idProduit,
+      this.nouvelleQuantite,
+      this.motifAjustement
+    ).subscribe({
+      next: (data) => {
+        this.notificationService.success(`Stock ajusté avec succès pour "${data.nomProduit}"`);
+        this.closeAjustementModal();
+        this.loadProduits();
+      },
+      error: (error) => {
+        console.error('Erreur ajustement stock:', error);
+        const errorMsg = error.error?.message || 'Erreur lors de l\'ajustement du stock';
+        this.notificationService.error(errorMsg);
+      }
+    });
+  }
+
+  /**
+   * Désactiver un produit (soft delete)
+   */
+  async desactiverProduit(produit: ProduitResponse): Promise<void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Désactiver le produit',
+      message: `Voulez-vous vraiment désactiver le produit "${produit.nomProduit}" ?<br>Le produit sera masqué mais pourra être réactivé ultérieurement.`,
+      confirmText: 'Oui, désactiver',
+      type: 'warning'
+    });
+
+    if (!confirmed) return;
+
+    this.produitService.supprimerProduit(produit.idProduit).subscribe({
+      next: () => {
+        this.notificationService.success(`Produit "${produit.nomProduit}" désactivé avec succès`);
+        this.loadProduits();
+      },
+      error: (error) => {
+        console.error('Erreur désactivation produit:', error);
+        const errorMsg = error.error?.message || 'Erreur lors de la désactivation';
+        this.notificationService.error(errorMsg);
+      }
+    });
+  }
+
+  /**
+   * Réactiver un produit désactivé
+   */
+  async reactiverProduit(produit: ProduitResponse): Promise<void> {
+    if (produit.typeProduit === TypeProduit.AVEC_REFERENCE) {
+      this.notificationService.warning('Pour réactiver un produit avec référence, vous devez réactiver ses instances individuellement');
+      this.router.navigate(['/admin/instances'], {
+        queryParams: { idProduit: produit.idProduit }
+      });
+      return;
+    }
+
+    // Demander la quantité à réactiver
+    const quantiteStr = await this.confirmationService.prompt({
+      title: 'Réactiver le produit',
+      message: `Quelle quantité souhaitez-vous réactiver pour "${produit.nomProduit}" ?`,
+      placeholder: '10',
+      inputType: 'number'
+    });
+
+    if (!quantiteStr) return;
+
+    const quantite = parseInt(quantiteStr, 10);
+    if (isNaN(quantite) || quantite <= 0) {
+      this.notificationService.warning('Veuillez saisir une quantité valide');
+      return;
+    }
+
+    this.produitService.reactiverProduit(produit.idProduit, quantite).subscribe({
+      next: (data) => {
+        this.notificationService.success(`Produit "${data.nomProduit}" réactivé avec succès (quantité: ${quantite})`);
+        this.loadProduits();
+      },
+      error: (error) => {
+        console.error('Erreur réactivation produit:', error);
+        const errorMsg = error.error?.message || 'Erreur lors de la réactivation';
+        this.notificationService.error(errorMsg);
+      }
+    });
   }
 }

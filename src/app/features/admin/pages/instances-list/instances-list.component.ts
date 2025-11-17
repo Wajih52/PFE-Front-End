@@ -456,6 +456,12 @@ async  retourDeMaintenance(): Promise<void> {
   }
 
   /**
+   * Naviguer vers l'historique des mouvements d'une instance
+   */
+  goToHistoriqueInstance(instance: InstanceProduitResponse): void {
+    this.router.navigate(['/admin/instances/historique', instance.numeroSerie]);
+  }
+  /**
    * Obtient la classe CSS selon le statut
    */
   getStatutClass(statut: StatutInstance): string {

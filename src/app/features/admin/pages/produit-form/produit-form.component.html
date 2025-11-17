@@ -178,10 +178,12 @@
             class="form-control"
             min="0"
             placeholder="5"
-            [value]="produitForm.get('seuilCritique')?.value || ''"
           />
           <div class="help-text">
             ℹ️ Vous serez alerté quand le stock atteint ce seuil
+          </div>
+          <div class="current-value" *ngIf="isEditMode && produit?.seuilCritique">
+            Valeur actuelle: {{ produit?.seuilCritique }}
           </div>
         </div>
       </div>

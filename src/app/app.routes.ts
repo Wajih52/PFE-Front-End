@@ -17,6 +17,7 @@ import {DevisValidationComponent} from './features/admin/pages/devis-validation/
 import {ReservationsAdminComponent} from './features/admin/pages/reservations-admin/reservations-admin.component';
 import {AjouterPaiementComponent} from './features/pages/paiement/ajouter-paiement/ajouter-paiement.component';
 import {ListePaiementsComponent} from './features/pages/paiement/liste-paiements/liste-paiements.component';
+import {InstanceHistoriqueComponent} from './features/admin/pages/instance-historique/instance-historique.component';
 
 
 export const routes: Routes = [
@@ -139,6 +140,12 @@ export const routes: Routes = [
           {
             path: 'instances/:id',
             component: InstanceDetailComponent,
+          },
+          {
+            path: 'instances/historique/:numeroSerie',
+            component: InstanceHistoriqueComponent,
+            canActivate: [authGuard, roleGuard],
+            data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
           },
           {
             path: 'devis-validation',

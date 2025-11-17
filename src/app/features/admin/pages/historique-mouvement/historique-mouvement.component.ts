@@ -11,12 +11,12 @@ import {
   TypeMouvementLabels,
   ProduitResponse
 } from '../../../../core/models';
-import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
+
 
 @Component({
   selector: 'app-historique-mouvement',
   standalone: true,
-  imports: [CommonModule, FormsModule, MenuNavigationComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './historique-mouvement.component.html',
   styleUrls: ['./historique-mouvement.component.scss']
 })

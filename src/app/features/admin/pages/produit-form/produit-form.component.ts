@@ -136,7 +136,7 @@ export class ProduitFormComponent implements OnInit {
       quantiteInitial: produit.quantiteInitial,
       typeProduit: produit.typeProduit,
       maintenanceRequise: produit.maintenanceRequise,
-      seuilCritique: produit.seuilCritique || null
+      seuilCritique: produit.seuilCritique ?? null
     });
 
     // Afficher l'image si elle existe
@@ -253,7 +253,7 @@ export class ProduitFormComponent implements OnInit {
       typeProduit: formValue.typeProduit,
       maintenanceRequise: formValue.maintenanceRequise || false,
       imageProduit: formValue.imageProduit || undefined,
-      seuilCritique: formValue.seuilCritique || undefined
+      seuilCritique: formValue.seuilCritique ?? undefined
     };
 
     // Appeler le service
