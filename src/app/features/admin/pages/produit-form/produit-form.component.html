@@ -96,7 +96,9 @@
 
       <div class="form-row">
         <!-- Type de produit -->
+        @if (!isEditMode){
         <div class="form-group">
+
           <label for="typeProduit" class="required">Type de produit</label>
           <select
             id="typeProduit"
@@ -121,8 +123,9 @@
             {{ getErrorMessage('typeProduit') }}
           </div>
         </div>
-
+        }
         <!-- Quantité initiale -->
+        @if (!isEditMode){
         <div class="form-group">
           <label for="quantiteInitial" [class.required]="produitForm.get('typeProduit')?.value === TypeProduit.EN_QUANTITE">
             Quantité initiale
@@ -143,6 +146,7 @@
             {{ getErrorMessage('quantiteInitial') }}
           </div>
         </div>
+        }
       </div>
 
       <div class="form-row">
@@ -174,6 +178,7 @@
             class="form-control"
             min="0"
             placeholder="5"
+            [value]="produitForm.get('seuilCritique')?.value || ''"
           />
           <div class="help-text">
             ℹ️ Vous serez alerté quand le stock atteint ce seuil

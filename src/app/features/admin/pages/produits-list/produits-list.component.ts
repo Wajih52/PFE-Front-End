@@ -22,7 +22,7 @@ import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.compon
 @Component({
   selector: 'app-produits-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MenuNavigationComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './produits-list.component.html',
   styleUrls: ['./produits-list.component.scss']
 })

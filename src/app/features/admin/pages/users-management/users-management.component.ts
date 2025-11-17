@@ -40,7 +40,7 @@ interface Stats {
 @Component({
   selector: 'app-users-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ManageUserRolesModalComponent, MenuNavigationComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ManageUserRolesModalComponent],
   providers: [DatePipe], // ✅ Ajout du DatePipe
   templateUrl: './users-management.component.html',
   styleUrl: './users-management.component.scss'

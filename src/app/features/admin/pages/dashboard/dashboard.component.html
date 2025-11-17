@@ -1,26 +1,13 @@
 <!-- src/app/features/dashboard/dashboard.component.html -->
 
-<div >
-  <app-menu-navigation></app-menu-navigation>
-</div>
 <div class="dashboard-container">
   <!-- Header -->
-  <header class="dashboard-header">
+  <!--<header class="dashboard-header">
     <div class="logo">
       <h2>Elegant Hive</h2>
     </div>
-    <div class="user-actions">
-      <button
-        class="btn-logout"
-        (click)="logout()"
-        [disabled]="isLoggingOut"
-      >
-        <span *ngIf="!isLoggingOut">🚪 Se déconnecter</span>
-        <span *ngIf="isLoggingOut">Déconnexion...</span>
-      </button>
-    </div>
   </header>
-
+-->
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
     <div class="spinner"></div>

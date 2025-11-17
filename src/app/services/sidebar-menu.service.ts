@@ -247,11 +247,18 @@ export class SidebarMenuService {
             order: 4
           },
           {
+            id: 'instances-management',
+            label: 'Gestion Instances',
+            icon: '🔖',
+            route: '/admin/instances',
+            order: 5
+          },
+          {
             id: 'stock-management',
             label: 'Gestion Stock',
             icon: '📊',
             route: '/admin/stock',
-            order: 5
+            order: 6
           }
         ]
       },

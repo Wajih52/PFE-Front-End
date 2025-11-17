@@ -21,7 +21,7 @@ import {NotificationService} from '../../../../services/notification.service';
 @Component({
   selector: 'app-instances-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MenuNavigationComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './instances-list.component.html',
   styleUrls: ['./instances-list.component.scss']
 })

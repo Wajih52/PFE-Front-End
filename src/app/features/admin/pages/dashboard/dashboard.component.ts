@@ -11,7 +11,7 @@ import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.compon
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MenuNavigationComponent, RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

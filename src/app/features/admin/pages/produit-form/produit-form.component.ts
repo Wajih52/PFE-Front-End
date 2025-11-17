@@ -80,7 +80,7 @@ export class ProduitFormComponent implements OnInit {
       typeProduit: ['', Validators.required],
       maintenanceRequise: [false],
       imageProduit: [''],
-      seuilCritique: ['', [Validators.min(0)]]
+      seuilCritique: [null, [Validators.min(0)]]
     });
 
     // Écouter le changement de type de produit
@@ -136,7 +136,7 @@ export class ProduitFormComponent implements OnInit {
       quantiteInitial: produit.quantiteInitial,
       typeProduit: produit.typeProduit,
       maintenanceRequise: produit.maintenanceRequise,
-      seuilCritique: produit.seuilCritique
+      seuilCritique: produit.seuilCritique || null
     });
 
     // Afficher l'image si elle existe

@@ -294,7 +294,7 @@ export class ProduitService {
    * @requires ROLE: ADMIN, EMPLOYE
    */
   getHistoriqueMouvements(id: number): Observable<MouvementStockResponse[]> {
-    return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/mouvements`);
+    return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/historique`);
   }
 
   /**

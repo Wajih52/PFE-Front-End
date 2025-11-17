@@ -11,7 +11,7 @@ import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.compon
 @Component({
   selector: 'app-roles-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MenuNavigationComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './roles-management.component.html',
   styleUrls: ['./roles-management.component.scss']
 })
