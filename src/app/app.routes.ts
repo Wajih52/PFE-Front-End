@@ -18,6 +18,10 @@ import {ReservationsAdminComponent} from './features/admin/pages/reservations-ad
 import {AjouterPaiementComponent} from './features/pages/paiement/ajouter-paiement/ajouter-paiement.component';
 import {ListePaiementsComponent} from './features/pages/paiement/liste-paiements/liste-paiements.component';
 import {InstanceHistoriqueComponent} from './features/admin/pages/instance-historique/instance-historique.component';
+import {ListeFacturesComponent} from './features/admin/pages/liste-factures/liste-factures.component';
+import {DetailFactureComponent} from './features/admin/pages/detail-facture/detail-facture.component';
+import {MesFacturesComponent} from './features/client/mes-factures/mes-factures.component';
+import {DetailFactureClientComponent} from './features/client/detail-facture-client/detail-facture-client.component';
 
 
 export const routes: Routes = [
@@ -170,6 +174,24 @@ export const routes: Routes = [
             component: ListePaiementsComponent,
             canActivate: [authGuard],
             data: { roles: ['ADMIN', 'MANAGER'] }
+          },
+          // Routes factures
+          {
+            path: 'factures',
+            children: [
+              {
+                path: '',
+                component: ListeFacturesComponent,
+                canActivate: [authGuard, roleGuard],
+                data: { title: 'Liste des Factures' }
+              },
+              {
+                path: ':id',
+                component: DetailFactureComponent,
+                canActivate: [authGuard, roleGuard],
+                data: { title: 'Détail Facture' }
+              }
+            ]
           }
         ]
       },
@@ -201,6 +223,20 @@ export const routes: Routes = [
             loadComponent: () => import('./features/client/mes-paiements/mes-paiements.component')
               .then(m => m.MesPaiementsComponent)
           },
+          {
+            path: 'mes-factures',
+            children: [
+              {
+                path: '',
+                component: MesFacturesComponent,
+                canActivate: [authGuard ,roleGuard(['CLIENT'])]
+              },
+              {
+                path: ':id',
+                component: DetailFactureClientComponent
+              }
+            ]
+          }
         ]
       },
       {

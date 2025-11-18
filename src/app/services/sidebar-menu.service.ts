@@ -50,13 +50,13 @@ export class SidebarMenuService {
             route: 'client/mes-devis',
             order: 3
           },
-          {
+        /*  {
             id: 'favorites',
             label: 'Mes Favoris',
             icon: '❤️',
             route: '/mes-favoris',
             order: 4
-          },
+          },*/
           {
             id: 'cart',
             label: 'Mon Panier',
@@ -73,7 +73,7 @@ export class SidebarMenuService {
             id: 'invoices',
             label: 'Mes Factures',
             icon: '🧾',
-            route: '/mes-factures',
+            route: 'client/mes-factures',
             order: 6
           },
           {
@@ -83,13 +83,13 @@ export class SidebarMenuService {
             route: 'client/mes-paiements',
             order: 7
           },
-          {
+          /*{
             id: 'coupons',
             label: 'Mes Coupons',
             icon: '🎫',
             route: '/mes-coupons',
             order: 8
-          }
+          }*/
         ]
       },
       {

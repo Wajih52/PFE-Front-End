@@ -1,0 +1,314 @@
+<!-- src/app/features/pages/factures/detail-facture/detail-facture.component.html -->
+
+<div class="detail-facture-container">
+
+  <!-- Navigation -->
+  <div class="breadcrumb">
+    <a routerLink="/admin/factures">
+      <i class="fas fa-file-invoice"></i> Factures
+    </a>
+    <span class="separator">/</span>
+    <span class="current">{{ facture?.numeroFacture || 'Détail' }}</span>
+  </div>
+
+  <!-- Messages -->
+  @if (succes) {
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ succes }}
+    </div>
+  }
+
+  @if (erreur) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ erreur }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (loading && !facture) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement de la facture...</p>
+    </div>
+  }
+
+  <!-- Contenu principal -->
+  @if (facture) {
+    <div class="facture-content">
+
+      <!-- En-tête -->
+      <div class="facture-header">
+        <div class="header-left">
+          <h1>
+            <i [class]="'fas ' + getTypeIcon(facture.typeFacture)"></i>
+            {{ facture.numeroFacture }}
+          </h1>
+          <div class="facture-meta">
+            <span class="facture-type">
+              {{ typeLabels[facture.typeFacture] }}
+            </span>
+            <span [class]="'badge ' + badgeClasses[facture.statutFacture]">
+              <i [class]="'fas ' + getStatutIcon(facture.statutFacture)"></i>
+              {{ statutLabels[facture.statutFacture] }}
+            </span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button (click)="telechargerPdf()" class="btn btn-primary">
+            <i class="fas fa-download"></i>
+            Télécharger PDF
+          </button>
+          <button (click)="regenererPdf()" class="btn btn-secondary" [disabled]="loading">
+            <i class="fas fa-sync-alt"></i>
+            Régénérer PDF
+          </button>
+          <button (click)="retourListe()" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid principal -->
+      <div class="detail-grid">
+
+        <!-- Informations générales -->
+        <div class="detail-card">
+          <h2>
+            <i class="fas fa-info-circle"></i>
+            Informations Générales
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Numéro de facture</label>
+              <span class="value numero">{{ facture.numeroFacture }}</span>
+            </div>
+            <div class="info-item">
+              <label>Type de facture</label>
+              <span class="value">{{ typeLabels[facture.typeFacture] }}</span>
+            </div>
+            <div class="info-item">
+              <label>Date de création</label>
+              <span class="value">{{ formatDate(facture.dateCreation) }}</span>
+            </div>
+            @if (facture.dateEcheance) {
+              <div class="info-item">
+                <label>Date d'échéance</label>
+                <span class="value">{{ formatDate(facture.dateEcheance) }}</span>
+              </div>
+            }
+            <div class="info-item">
+              <label>Générée par</label>
+              <span class="value">{{ facture.generePar }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statut (avec édition) -->
+        <div class="detail-card">
+          <h2>
+            <i class="fas fa-flag"></i>
+            Statut de la Facture
+          </h2>
+
+          @if (!editingStatut) {
+            <div class="statut-display">
+              <div class="statut-badge-large" [class]="badgeClasses[facture.statutFacture]">
+                <i [class]="'fas ' + getStatutIcon(facture.statutFacture)"></i>
+                {{ statutLabels[facture.statutFacture] }}
+              </div>
+              <button (click)="activerEditionStatut()" class="btn btn-sm btn-outline">
+                <i class="fas fa-edit"></i>
+                Modifier le statut
+              </button>
+            </div>
+          } @else {
+            <div class="statut-edition">
+              <label>Nouveau statut :</label>
+              <select [(ngModel)]="nouveauStatut" class="form-select">
+                @for (statut of statutsDisponibles; track statut) {
+                  <option [value]="statut">{{ statutLabels[statut] }}</option>
+                }
+              </select>
+              <div class="edition-actions">
+                <button (click)="modifierStatut()" class="btn btn-success" [disabled]="loading">
+                  <i class="fas fa-check"></i>
+                  Valider
+                </button>
+                <button (click)="annulerEditionStatut()" class="btn btn-secondary">
+                  <i class="fas fa-times"></i>
+                  Annuler
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Client -->
+        <div class="detail-card">
+          <h2>
+            <i class="fas fa-user"></i>
+            Informations Client
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Nom complet</label>
+              <span class="value">{{ facture.nomClient }} {{ facture.prenomClient }}</span>
+            </div>
+            <div class="info-item">
+              <label>Email</label>
+              <span class="value">
+                <a [href]="'mailto:' + facture.emailClient">{{ facture.emailClient }}</a>
+              </span>
+            </div>
+            @if (facture.telephoneClient) {
+              <div class="info-item">
+                <label>Téléphone</label>
+                <span class="value">
+                  <a [href]="'tel:' + facture.telephoneClient">{{ facture.telephoneClient }}</a>
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Réservation -->
+        <div class="detail-card">
+          <h2>
+            <i class="fas fa-calendar-check"></i>
+            Réservation Associée
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Référence</label>
+              <span class="value">
+                <a (click)="voirReservation()" class="link-reservation">
+                  {{ facture.referenceReservation }}
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              </span>
+            </div>
+            @if (reservation) {
+              <div class="info-item">
+                <label>Période</label>
+                <span class="value">
+                  Du {{ reservation.dateDebut }} au {{ reservation.dateFin }}
+                </span>
+              </div>
+              <div class="info-item">
+                <label>Statut réservation</label>
+                <span class="value">{{ reservation.statutReservation }}</span>
+              </div>
+              <div class="info-item">
+                <label>Nombre de produits</label>
+                <span class="value">{{ reservation.nombreProduits }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Montants -->
+        <div class="detail-card montants-card">
+          <h2>
+            <i class="fas fa-euro-sign"></i>
+            Montants
+          </h2>
+          <div class="montants-grid">
+            <div class="montant-ligne">
+              <span class="label">Montant HT</span>
+              <span class="valeur">{{ formatMontant(facture.montantHT) }}</span>
+            </div>
+            @if (facture.montantRemise && facture.montantRemise > 0) {
+              <div class="montant-ligne remise">
+                <span class="label">Remise</span>
+                <span class="valeur">- {{ formatMontant(facture.montantRemise) }}</span>
+              </div>
+            }
+            <div class="montant-ligne">
+              <span class="label">TVA (19%)</span>
+              <span class="valeur">{{ formatMontant(facture.montantTVA) }}</span>
+            </div>
+            <div class="montant-ligne total">
+              <span class="label">Montant TTC</span>
+              <span class="valeur">{{ formatMontant(facture.montantTTC) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paiement (pour factures finales) -->
+        @if (facture.typeFacture === TypeFacture.FINALE && reservation) {
+          <div class="detail-card paiement-card">
+            <h2>
+              <i class="fas fa-credit-card"></i>
+              Informations de Paiement
+            </h2>
+            <div class="paiement-info">
+              <div class="paiement-ligne">
+                <span class="label">Montant payé</span>
+                <span class="valeur paye">
+                  {{ formatMontant(reservation.montantPaye || 0) }}
+                </span>
+              </div>
+              <div class="paiement-ligne">
+                <span class="label">Reste à payer</span>
+                <span class="valeur restant">
+                  {{ formatMontant(reservation.montantRestant) }}
+                </span>
+              </div>
+              @if (reservation.paiementComplet) {
+                <div class="paiement-status paye-complet">
+                  <i class="fas fa-check-circle"></i>
+                  Paiement complet
+                </div>
+              } @else {
+                <div class="paiement-status paye-partiel">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Paiement en attente
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Notes et conditions -->
+        @if (facture.notes || facture.conditionsPaiement) {
+          <div class="detail-card notes-card">
+            <h2>
+              <i class="fas fa-sticky-note"></i>
+              Notes et Conditions
+            </h2>
+            @if (facture.notes) {
+              <div class="note-section">
+                <h3>Notes</h3>
+                <p>{{ facture.notes }}</p>
+              </div>
+            }
+            @if (facture.conditionsPaiement) {
+              <div class="note-section">
+                <h3>Conditions de paiement</h3>
+                <p>{{ facture.conditionsPaiement }}</p>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+
+      <!-- Actions en bas -->
+      <div class="bottom-actions">
+        <button (click)="voirReservation()" class="btn btn-outline">
+          <i class="fas fa-calendar-check"></i>
+          Voir la réservation
+        </button>
+        <button (click)="telechargerPdf()" class="btn btn-primary">
+          <i class="fas fa-download"></i>
+          Télécharger le PDF
+        </button>
+      </div>
+
+    </div>
+  }
+</div>

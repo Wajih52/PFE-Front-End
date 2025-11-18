@@ -1,0 +1,133 @@
+<!-- src/app/features/pages/factures/liste-factures/liste-factures.component.html -->
+
+<div class="liste-factures-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <i class="fas fa-file-invoice"></i>
+      Gestion des Factures
+    </h1>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filtres-container">
+    <div class="filtre-group">
+      <label>Type de facture :</label>
+      <select [(ngModel)]="filtreType" (ngModelChange)="appliquerFiltres()" class="form-select">
+        <option value="TOUS">Toutes</option>
+        <option [value]="TypeFacture.DEVIS">{{ typeLabels[TypeFacture.DEVIS] }}</option>
+        <option [value]="TypeFacture.PRO_FORMA">{{ typeLabels[TypeFacture.PRO_FORMA] }}</option>
+        <option [value]="TypeFacture.FINALE">{{ typeLabels[TypeFacture.FINALE] }}</option>
+      </select>
+    </div>
+
+    <div class="filtre-group">
+      <label>Statut :</label>
+      <select [(ngModel)]="filtreStatut" (ngModelChange)="appliquerFiltres()" class="form-select">
+        <option value="TOUS">Tous</option>
+        <option *ngFor="let statut of [StatutFacture.EN_ATTENTE_VALIDATION_CLIENT, StatutFacture.EN_ATTENTE_LIVRAISON, StatutFacture.A_REGLER, StatutFacture.PAYEE, StatutFacture.ANNULEE]" [value]="statut">
+          {{ statutLabels[statut] }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filtre-group search-group">
+      <label>Recherche :</label>
+      <input
+        type="text"
+        [(ngModel)]="filtreRecherche"
+        (ngModelChange)="appliquerFiltres()"
+        placeholder="N° facture, réservation, client..."
+        class="form-control"
+      />
+    </div>
+  </div>
+
+  <!-- Messages -->
+  @if (erreur) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ erreur }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (loading) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement des factures...</p>
+    </div>
+  }
+
+  <!-- Tableau des factures -->
+  @if (!loading && facturesFiltrees.length > 0) {
+    <div class="table-responsive">
+      <table class="factures-table">
+        <thead>
+        <tr>
+          <th>N° Facture</th>
+          <th>Type</th>
+          <th>Statut</th>
+          <th>Client</th>
+          <th>Réservation</th>
+          <th>Date</th>
+          <th>Montant TTC</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (facture of facturesFiltrees; track facture.idFacture) {
+            <tr>
+              <td class="numero-facture">{{ facture.numeroFacture }}</td>
+              <td>
+                <span class="badge badge-primary">
+                  {{ typeLabels[facture.typeFacture] }}
+                </span>
+              </td>
+              <td>
+                <span [class]="'badge ' + badgeClasses[facture.statutFacture]">
+                  {{ statutLabels[facture.statutFacture] }}
+                </span>
+              </td>
+              <td>{{ facture.nomClient }} {{ facture.prenomClient }}</td>
+              <td>
+                <a [routerLink]="['/admin/reservations', facture.idReservation]" class="link-reservation">
+                  {{ facture.referenceReservation }}
+                </a>
+              </td>
+              <td>{{ formatDate(facture.dateCreation) }}</td>
+              <td class="montant">{{ formatMontant(facture.montantTTC) }}</td>
+              <td>
+                <div class="actions-buttons">
+                  <button
+                    (click)="telechargerPdf(facture)"
+                    class="btn btn-sm btn-primary"
+                    title="Télécharger PDF"
+                  >
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button
+                    [routerLink]="['/admin/factures', facture.idFacture]"
+                    class="btn btn-sm btn-secondary"
+                    title="Voir détails"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Aucune facture -->
+  @if (!loading && facturesFiltrees.length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-file-invoice fa-3x"></i>
+      <p>Aucune facture trouvée</p>
+    </div>
+  }
+</div>

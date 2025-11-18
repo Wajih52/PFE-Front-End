@@ -1,0 +1,273 @@
+<!-- src/app/features/client/mes-factures/mes-factures.component.html -->
+
+<div class="mes-factures-container">
+
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-file-invoice"></i>
+        Mes Factures
+      </h1>
+      <p class="subtitle">Consultez et téléchargez toutes vos factures</p>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  @if (!loading && factures.length > 0) {
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-file-invoice"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ totalFactures }}</span>
+          <span class="stat-label">Factures</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon montant">
+          <i class="fas fa-euro-sign"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ formatMontant(montantTotal) }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon attente">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ facturesEnAttente }}</span>
+          <span class="stat-label">En attente</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Filtres et tri -->
+  <div class="filtres-container">
+    <div class="filtres-section">
+      <div class="filtre-group">
+        <label>
+          <i class="fas fa-filter"></i>
+          Type
+        </label>
+        <select [(ngModel)]="filtreType" (ngModelChange)="appliquerFiltres()" class="form-select">
+          <option value="TOUS">Tous les types</option>
+          <option [value]="TypeFacture.DEVIS">{{ typeLabels[TypeFacture.DEVIS] }}</option>
+          <option [value]="TypeFacture.PRO_FORMA">{{ typeLabels[TypeFacture.PRO_FORMA] }}</option>
+          <option [value]="TypeFacture.FINALE">{{ typeLabels[TypeFacture.FINALE] }}</option>
+        </select>
+      </div>
+
+      <div class="filtre-group">
+        <label>
+          <i class="fas fa-flag"></i>
+          Statut
+        </label>
+        <select [(ngModel)]="filtreStatut" (ngModelChange)="appliquerFiltres()" class="form-select">
+          <option value="TOUS">Tous les statuts</option>
+          <option [value]="StatutFacture.EN_ATTENTE_VALIDATION_CLIENT">
+            {{ statutLabels[StatutFacture.EN_ATTENTE_VALIDATION_CLIENT] }}
+          </option>
+          <option [value]="StatutFacture.EN_ATTENTE_LIVRAISON">
+            {{ statutLabels[StatutFacture.EN_ATTENTE_LIVRAISON] }}
+          </option>
+          <option [value]="StatutFacture.A_REGLER">
+            {{ statutLabels[StatutFacture.A_REGLER] }}
+          </option>
+          <option [value]="StatutFacture.PAYEE">
+            {{ statutLabels[StatutFacture.PAYEE] }}
+          </option>
+          <option [value]="StatutFacture.ANNULEE">
+            {{ statutLabels[StatutFacture.ANNULEE] }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tri-section">
+      <label>
+        <i class="fas fa-sort"></i>
+        Trier par
+      </label>
+      <div class="tri-buttons">
+        <button
+          (click)="changerTri('date')"
+          [class.active]="triPar === 'date'"
+          class="tri-btn"
+        >
+          Date
+          @if (triPar === 'date') {
+            <i [class]="triOrdre === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+          }
+        </button>
+        <button
+          (click)="changerTri('montant')"
+          [class.active]="triPar === 'montant'"
+          class="tri-btn"
+        >
+          Montant
+          @if (triPar === 'montant') {
+            <i [class]="triOrdre === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+          }
+        </button>
+        <button
+          (click)="changerTri('type')"
+          [class.active]="triPar === 'type'"
+          class="tri-btn"
+        >
+          Type
+          @if (triPar === 'type') {
+            <i [class]="triOrdre === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  @if (erreur) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ erreur }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (loading) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement de vos factures...</p>
+    </div>
+  }
+
+  <!-- Liste des factures -->
+  @if (!loading && facturesFiltrees.length > 0) {
+    <div class="factures-grid">
+      @for (facture of facturesFiltrees; track facture.idFacture) {
+        <div class="facture-card">
+          <!-- En-tête de la carte -->
+          <div class="card-header">
+            <div class="header-left">
+              <div class="facture-icon" [class]="'type-' + facture.typeFacture.toLowerCase()">
+                <i [class]="'fas ' + getTypeIcon(facture.typeFacture)"></i>
+              </div>
+              <div class="facture-info">
+                <h3>{{ facture.numeroFacture }}</h3>
+                <span class="facture-type">{{ typeLabels[facture.typeFacture] }}</span>
+              </div>
+            </div>
+            <span [class]="'badge ' + badgeClasses[facture.statutFacture]">
+              <i [class]="'fas ' + getStatutIcon(facture.statutFacture)"></i>
+              {{ statutLabels[facture.statutFacture] }}
+            </span>
+          </div>
+
+          <!-- Corps de la carte -->
+          <div class="card-body">
+            <div class="info-row">
+              <span class="label">
+                <i class="fas fa-calendar"></i>
+                Date
+              </span>
+              <span class="value">{{ formatDate(facture.dateCreation) }}</span>
+            </div>
+
+            @if (facture.dateEcheance) {
+              <div class="info-row">
+                <span class="label">
+                  <i class="fas fa-clock"></i>
+                  Échéance
+                </span>
+                <span class="value">{{ formatDate(facture.dateEcheance) }}</span>
+              </div>
+            }
+
+            <div class="info-row">
+              <span class="label">
+                <i class="fas fa-calendar-check"></i>
+                Réservation
+              </span>
+              <span class="value">
+                <a [routerLink]="['/client/mes-reservations']" class="link">
+                  {{ facture.referenceReservation }}
+                </a>
+              </span>
+            </div>
+
+            <div class="info-row montant-row">
+              <span class="label">
+                <i class="fas fa-euro-sign"></i>
+                Montant TTC
+              </span>
+              <span class="value montant">{{ formatMontant(facture.montantTTC) }}</span>
+            </div>
+
+            <!-- Alerte si en attente de paiement -->
+            @if (isFactureEnAttentePaiement(facture)) {
+              <div class="alerte-paiement">
+                <i class="fas fa-exclamation-triangle"></i>
+                En attente de paiement
+              </div>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="card-actions">
+            <button
+              (click)="telechargerPdf(facture)"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-download"></i>
+              Télécharger PDF
+            </button>
+            <button
+              [routerLink]="['/client/mes-factures', facture.idFacture]"
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-eye"></i>
+              Voir détails
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Aucune facture -->
+  @if (!loading && facturesFiltrees.length === 0 && factures.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-file-invoice fa-4x"></i>
+      </div>
+      <h2>Aucune facture disponible</h2>
+      <p>Vous n'avez pas encore de facture.</p>
+      <p>Vos factures apparaîtront ici une fois vos réservations confirmées.</p>
+      <a routerLink="/client/catalogue" class="btn btn-primary">
+        <i class="fas fa-shopping-cart"></i>
+        Parcourir le catalogue
+      </a>
+    </div>
+  }
+
+  <!-- Aucun résultat de filtre -->
+  @if (!loading && facturesFiltrees.length === 0 && factures.length > 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-filter fa-4x"></i>
+      </div>
+      <h2>Aucune facture trouvée</h2>
+      <p>Aucune facture ne correspond aux filtres sélectionnés.</p>
+      <button (click)="filtreType = 'TOUS'; filtreStatut = 'TOUS'; appliquerFiltres()" class="btn btn-secondary">
+        <i class="fas fa-redo"></i>
+        Réinitialiser les filtres
+      </button>
+    </div>
+  }
+
+</div>

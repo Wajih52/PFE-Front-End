@@ -18,6 +18,8 @@ import {ProduitResponse} from '../../../core/models';
 import {LigneReservationService} from '../../../services/ligne-reservation.service';
 import {ProduitService} from '../../../services/produit.service';
 import {StorageService} from '../../../core/services/storage.service';
+import {FactureResponse, TypeFacture} from '../../../core/models/facture.model';
+import {FactureService} from '../../../services/facture.service';
 
 @Component({
   selector: 'app-reservation-details',
@@ -33,6 +35,7 @@ export class ReservationDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private storage= inject(StorageService);
+  private factureService = inject(FactureService);
 
   // Signals
   reservation = signal<ReservationResponseDto | null>(null);

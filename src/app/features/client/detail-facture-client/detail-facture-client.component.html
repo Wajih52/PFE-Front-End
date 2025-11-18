@@ -1,0 +1,283 @@
+<!-- src/app/features/client/mes-factures/detail/detail-facture-client.component.html -->
+
+<div class="detail-facture-client-container">
+
+  <!-- Navigation -->
+  <div class="breadcrumb">
+    <a routerLink="/client/mes-factures">
+      <i class="fas fa-file-invoice"></i> Mes Factures
+    </a>
+    <span class="separator">/</span>
+    <span class="current">{{ facture?.numeroFacture || 'Détail' }}</span>
+  </div>
+
+  <!-- Messages -->
+  @if (erreur) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ erreur }}
+    </div>
+  }
+
+  <!-- Loader -->
+  @if (loading && !facture) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Chargement de votre facture...</p>
+    </div>
+  }
+
+  <!-- Contenu principal -->
+  @if (facture) {
+    <div class="facture-content">
+
+      <!-- En-tête -->
+      <div class="facture-header">
+        <div class="header-left">
+          <div class="facture-icon">
+            <i [class]="'fas ' + getTypeIcon(facture.typeFacture)"></i>
+          </div>
+          <div class="header-info">
+            <h1>{{ facture.numeroFacture }}</h1>
+            <div class="facture-meta">
+              <span class="facture-type">{{ typeLabels[facture.typeFacture] }}</span>
+              <span [class]="'badge ' + badgeClasses[facture.statutFacture]">
+                <i [class]="'fas ' + getStatutIcon(facture.statutFacture)"></i>
+                {{ statutLabels[facture.statutFacture] }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button (click)="telechargerPdf()" class="btn btn-primary">
+            <i class="fas fa-download"></i>
+            Télécharger PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Alerte paiement si nécessaire -->
+      @if (isFactureEnAttentePaiement()) {
+        <div class="alerte-paiement-important">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div class="alerte-content">
+            <h3>Paiement en attente</h3>
+            <p>Cette facture est en attente de règlement. Montant restant : <strong>{{ formatMontant(getMontantRestant()) }}</strong></p>
+          </div>
+        </div>
+      }
+
+      <!-- Grid principal -->
+      <div class="detail-grid">
+
+        <!-- Informations générales -->
+        <div class="detail-card">
+          <h2>
+            <i class="fas fa-info-circle"></i>
+            Informations de la Facture
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Numéro</label>
+              <span class="value numero">{{ facture.numeroFacture }}</span>
+            </div>
+            <div class="info-item">
+              <label>Type</label>
+              <span class="value">{{ typeLabels[facture.typeFacture] }}</span>
+            </div>
+            <div class="info-item">
+              <label>Date de création</label>
+              <span class="value">{{ formatDate(facture.dateCreation) }}</span>
+            </div>
+            @if (facture.dateEcheance) {
+              <div class="info-item">
+                <label>Date d'échéance</label>
+                <span class="value echeance">{{ formatDate(facture.dateEcheance) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Réservation -->
+        <div class="detail-card">
+          <h2>
+            <i class="fas fa-calendar-check"></i>
+            Réservation Associée
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Référence</label>
+              <span class="value">
+                <a (click)="voirReservation()" class="link-reservation">
+                  {{ facture.referenceReservation }}
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              </span>
+            </div>
+            @if (reservation) {
+              <div class="info-item">
+                <label>Période de location</label>
+                <span class="value">
+                  Du {{ reservation.dateDebut }} au {{ reservation.dateFin }}
+                </span>
+              </div>
+              <div class="info-item">
+                <label>Durée</label>
+                <span class="value">{{ reservation.joursLocation }} jour(s)</span>
+              </div>
+              <div class="info-item">
+                <label>Nombre de produits</label>
+                <span class="value">{{ reservation.nombreProduits }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Montants (toujours en haut) -->
+        <div class="detail-card montants-card">
+          <h2>
+            <i class="fas fa-euro-sign"></i>
+            Détail des Montants
+          </h2>
+          <div class="montants-grid">
+            <div class="montant-ligne">
+              <span class="label">Montant HT</span>
+              <span class="valeur">{{ formatMontant(facture.montantHT) }}</span>
+            </div>
+            @if (facture.montantRemise && facture.montantRemise > 0) {
+              <div class="montant-ligne remise">
+                <span class="label">Remise appliquée</span>
+                <span class="valeur">- {{ formatMontant(facture.montantRemise) }}</span>
+              </div>
+            }
+            <div class="montant-ligne">
+              <span class="label">TVA (19%)</span>
+              <span class="valeur">{{ formatMontant(facture.montantTVA) }}</span>
+            </div>
+            <div class="montant-ligne total">
+              <span class="label">Montant Total TTC</span>
+              <span class="valeur">{{ formatMontant(facture.montantTTC) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paiement (pour factures finales uniquement) -->
+        @if (facture.typeFacture === TypeFacture.FINALE && reservation) {
+          <div class="detail-card paiement-card">
+            <h2>
+              <i class="fas fa-credit-card"></i>
+              Situation de Paiement
+            </h2>
+            <div class="paiement-info">
+              <div class="paiement-ligne">
+                <span class="label">Montant déjà payé</span>
+                <span class="valeur paye">
+                  {{ formatMontant(reservation.montantPaye || 0) }}
+                </span>
+              </div>
+              <div class="paiement-ligne">
+                <span class="label">Reste à payer</span>
+                <span class="valeur restant" [class.complet]="isPaiementComplet()">
+                  {{ formatMontant(getMontantRestant()) }}
+                </span>
+              </div>
+
+              @if (isPaiementComplet()) {
+                <div class="paiement-status paye-complet">
+                  <i class="fas fa-check-circle"></i>
+                  <div>
+                    <strong>Paiement complet</strong>
+                    <p>Votre facture est entièrement réglée</p>
+                  </div>
+                </div>
+              } @else {
+                <div class="paiement-status paye-partiel">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <div>
+                    <strong>Paiement en attente</strong>
+                    <p>Il reste {{ formatMontant(getMontantRestant()) }} à régler</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Notes et conditions -->
+        @if (facture.notes || facture.conditionsPaiement) {
+          <div class="detail-card notes-card">
+            <h2>
+              <i class="fas fa-sticky-note"></i>
+              Informations Complémentaires
+            </h2>
+            @if (facture.notes) {
+              <div class="note-section">
+                <h3>Notes</h3>
+                <p>{{ facture.notes }}</p>
+              </div>
+            }
+            @if (facture.conditionsPaiement) {
+              <div class="note-section">
+                <h3>Conditions de paiement</h3>
+                <p>{{ facture.conditionsPaiement }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Produits de la réservation (si disponible) -->
+        @if (reservation && reservation.lignesReservation && reservation.lignesReservation.length > 0) {
+          <div class="detail-card produits-card">
+            <h2>
+              <i class="fas fa-box"></i>
+              Produits Réservés
+            </h2>
+            <div class="produits-liste">
+              @for (ligne of reservation.lignesReservation; track ligne.idLigneReservation) {
+                <div class="produit-item">
+                  @if (ligne.imageProduit) {
+                    <img [src]="ligne.imageProduit" [alt]="ligne.nomProduit" class="produit-image">
+                  } @else {
+                    <div class="produit-placeholder">
+                      <i class="fas fa-image"></i>
+                    </div>
+                  }
+                  <div class="produit-info">
+                    <h4>{{ ligne.nomProduit }}</h4>
+                    <p class="produit-details">
+                      Quantité : {{ ligne.quantite }} × {{ formatMontant(ligne.prixUnitaire) }}
+                    </p>
+                  </div>
+                  <div class="produit-total">
+                    {{ formatMontant(ligne.sousTotal) }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <!-- Actions en bas -->
+      <div class="bottom-actions">
+        <button (click)="retourListe()" class="btn btn-outline">
+          <i class="fas fa-arrow-left"></i>
+          Retour à mes factures
+        </button>
+        <button (click)="telechargerPdf()" class="btn btn-primary">
+          <i class="fas fa-download"></i>
+          Télécharger le PDF
+        </button>
+        @if (isFactureEnAttentePaiement()) {
+          <button (click)="voirReservation()" class="btn btn-success">
+            <i class="fas fa-credit-card"></i>
+            Effectuer un paiement
+          </button>
+        }
+      </div>
+
+    </div>
+  }
+</div>
