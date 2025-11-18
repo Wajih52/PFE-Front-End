@@ -104,7 +104,7 @@
         🔄 Réinitialiser
       </button>
     </div>
-
+<br>
     <!-- Zone filtre date -->
     <div class="date-filter-zone">
       <div class="date-filter-header">
@@ -249,7 +249,7 @@
         </td>
         <td>{{ produit.prixUnitaire | number:'1.2-2' }} TND</td>
         <td>
-          <div *ngIf="produitsDisponibilite.length === 0; else withDateFilter">
+          <div class="stock-info" *ngIf="produitsDisponibilite.length === 0; else withDateFilter">
             <!-- Affichage normal sans filtre -->
             <span [ngClass]="getStockStatusClass(produit)">
                {{ produit.quantiteDisponible }}
@@ -285,7 +285,7 @@
         </td>
         <td>
             <span
-              class="badge"
+              class="badge stock-info"
               [class]="getStockStatusClass(produit)"
             >
               {{ getStockStatusLabel(produit) }}
@@ -324,7 +324,7 @@
               📉
             </button>
             <button
-              class="btn btn-sm btn-warning"
+              class="btn btn-sm btn-normal"
               (click)="goToMouvements(produit.idProduit)"
               title="Historique"
             >
@@ -346,7 +346,7 @@
               <!-- Produit désactivé -->
               <button
                 class="btn btn-sm btn-success"
-                (click)="reactiverProduit()"
+                (click)="openReactivationModal(produit)"
                 title="Réactiver"
               >
                 ▶️
@@ -575,56 +575,137 @@
   </div>
 </div>
 
-<!-- Modal réactivation produit -->
+<!-- Modal réactivation produit  -->
 <div *ngIf="showReactivationModal && produitReactivation"
      class="modal-overlay"
      (click)="closeReactivationModal()">
   <div class="modal-content modal-reactivation" (click)="$event.stopPropagation()">
+
+    <!-- En-tête -->
     <div class="modal-header">
-      <h2>♻️ Réactiver le produit</h2>
-      <button class="btn-close" (click)="closeReactivationModal()">✕</button>
+      <div class="header-content">
+        <div class="icon-wrapper">
+          <i class="fas fa-redo-alt"></i>
+        </div>
+        <div class="header-text">
+          <h2>Réactiver le produit</h2>
+          <p>Remettre ce produit en service</p>
+        </div>
+      </div>
+      <button class="btn-close" (click)="closeReactivationModal()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
+    <!-- Corps du modal -->
     <div class="modal-body">
-      <div class="info-produit">
-        <h3>{{ produitReactivation.nomProduit }}</h3>
-        <p><strong>Code:</strong> {{ produitReactivation.codeProduit }}</p>
-        <p><strong>Type:</strong> {{ TypeProduitLabels[produitReactivation.typeProduit] }}</p>
+
+      <!-- Informations produit -->
+      <div class="info-produit-card">
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">Nom</span>
+            <span class="info-value primary">{{ produitReactivation.nomProduit }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Code</span>
+            <span class="info-value code">{{ produitReactivation.codeProduit }}</span>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">Catégorie</span>
+            <span class="info-value">
+              {{ CategorieLabels[produitReactivation.categorieProduit] }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Type</span>
+            <span class="info-value badge"
+                  [class.badge-quantite]="produitReactivation.typeProduit === TypeProduit.EN_QUANTITE"
+                  [class.badge-reference]="produitReactivation.typeProduit === TypeProduit.AVEC_REFERENCE">
+              {{ TypeProduitLabels[produitReactivation.typeProduit] }}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div *ngIf="produitReactivation.typeProduit === TypeProduit.EN_QUANTITE" class="form-group">
-        <label for="quantiteReactivation" class="required">Quantité initiale</label>
-        <input
-          type="number"
-          id="quantiteReactivation"
-          [(ngModel)]="quantiteReactivation"
-          class="form-control"
-          min="0"
-          placeholder="Entrez la quantité de départ"
-        />
-        <small class="help-text">
-          💡 Cette quantité sera le stock de départ après réactivation
-        </small>
+      <!-- Formulaire selon le type -->
+      <div *ngIf="produitReactivation.typeProduit === TypeProduit.EN_QUANTITE"
+           class="form-section">
+        <div class="form-group">
+          <label for="quantiteReactivation" class="required">
+            <i class="fas fa-boxes"></i>
+            Quantité initiale de stock
+          </label>
+          <input
+            type="number"
+            id="quantiteReactivation"
+            [(ngModel)]="quantiteReactivation"
+            class="form-control"
+            min="0"
+            step="1"
+            placeholder="Ex: 100"
+            [class.error]="quantiteReactivation < 0"
+          />
+          <div class="help-text">
+            <i class="fas fa-info-circle"></i>
+            Cette quantité sera le stock de départ après réactivation
+          </div>
+          <div *ngIf="quantiteReactivation < 0" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            La quantité ne peut pas être négative
+          </div>
+        </div>
       </div>
 
+      <!-- Message pour produits avec référence -->
       <div *ngIf="produitReactivation.typeProduit === TypeProduit.AVEC_REFERENCE"
            class="info-message">
-        <i class="fas fa-info-circle"></i>
-        <p>Pour les produits avec référence, vous devrez créer des instances après la réactivation.</p>
+        <div class="icon-container">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="message-content">
+          <p class="message-title">Produit avec référence</p>
+          <p class="message-text">
+            Après réactivation, vous devrez créer des instances individuelles
+            (avec numéros de série) pour ce produit.
+          </p>
+        </div>
       </div>
+
+      <!-- Avertissement -->
+      <div class="warning-message">
+        <div class="icon-container">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="message-content">
+          <p class="message-text">
+            <strong>Attention:</strong> Le produit redeviendra visible et disponible
+            pour les clients immédiatement après réactivation.
+          </p>
+        </div>
+      </div>
+
     </div>
 
+    <!-- Pied du modal -->
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeReactivationModal()">
+      <button class="btn btn-cancel" (click)="closeReactivationModal()">
+        <i class="fas fa-times"></i>
         Annuler
       </button>
       <button
         class="btn btn-success"
         (click)="reactiverProduit()"
+        [disabled]="produitReactivation.typeProduit === TypeProduit.EN_QUANTITE &&
+                    (quantiteReactivation === null || quantiteReactivation === undefined || quantiteReactivation < 0)"
       >
-        ♻️ Réactiver
+        <i class="fas fa-check"></i>
+        Réactiver le produit
       </button>
     </div>
+
   </div>
 </div>
-

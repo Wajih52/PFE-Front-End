@@ -254,8 +254,8 @@ export class SidebarMenuService {
             order: 5
           },
           {
-            id: 'stock-management',
-            label: 'Gestion Stock',
+            id: 'stock-historique',
+            label: 'Consultation Historique',
             icon: '📊',
             route: '/admin/stock',
             order: 6

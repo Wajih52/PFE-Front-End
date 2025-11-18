@@ -13,7 +13,7 @@ import {
   CategorieLabels,
   TypeProduitLabels
 } from '../../../../core/models';
-import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
+import { ToastrService } from 'ngx-toastr';
 import {NotificationService} from '../../../../services/notification.service';
 
 /**
@@ -32,6 +32,7 @@ export class ProduitsListComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
+  private toastr = inject(ToastrService);
 
   // Données
   allProduits: ProduitResponse[] = [];
@@ -543,12 +544,12 @@ export class ProduitsListComponent implements OnInit {
    */
   applyDateFilter(): void {
     if (!this.filterDateDebut || !this.filterDateFin) {
-      this.notificationService.warning('Veuillez sélectionner les deux dates');
+      this.toastr.warning('Veuillez sélectionner les deux dates');
       return;
     }
 
     if (new Date(this.filterDateDebut) > new Date(this.filterDateFin)) {
-      this.notificationService.warning('La date de début doit être antérieure à la date de fin');
+      this.toastr.warning('La date de début doit être antérieure à la date de fin');
       return;
     }
 
@@ -562,13 +563,13 @@ export class ProduitsListComponent implements OnInit {
         this.produitsDisponibilite = data;
         this.applyFilters();  // Réappliquer les autres filtres
         this.isLoadingDisponibilite = false;
-        this.notificationService.success(
+        this.toastr.success(
           `Disponibilité calculée pour la période du ${this.formatDate(this.filterDateDebut)} au ${this.formatDate(this.filterDateFin)}`
         );
       },
       error: (error) => {
         console.error('Erreur calcul disponibilité:', error);
-        this.notificationService.error('Erreur lors du calcul de la disponibilité');
+        this.toastr.error('Erreur lors du calcul de la disponibilité');
         this.isLoadingDisponibilite = false;
       }
     });
