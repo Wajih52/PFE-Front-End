@@ -105,23 +105,68 @@
       </button>
     </div>
 
-    <div class="filter-date">
-      <label for="filterDate">📅 Date:</label>
-      <input
-        type="date"
-        id="filterDate"
-        [(ngModel)]="filterDate"
-        (ngModelChange)="onDateFilterChange()"
-        [min]="minDate"
-        class="form-control"
-      />
-      <button
-        class="btn btn-sm btn-secondary"
-        (click)="filterDate = minDate; onDateFilterChange()"
-        title="Réinitialiser à aujourd'hui"
-      >
-        🔄 Aujourd'hui
-      </button>
+    <!-- Zone filtre date -->
+    <div class="date-filter-zone">
+      <div class="date-filter-header">
+        <h3>📅 Filtrer par période de disponibilité</h3>
+        <p class="subtitle">Voir la disponibilité réelle des produits sur une période donnée</p>
+      </div>
+
+      <div class="date-filter-inputs">
+        <div class="input-group">
+          <label for="dateDebut">
+            <i class="fas fa-calendar-day"></i>
+            Date de début
+          </label>
+          <input
+            type="date"
+            id="dateDebut"
+            [(ngModel)]="filterDateDebut"
+            class="date-input"
+            [min]="getMinDate()"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="dateFin">
+            <i class="fas fa-calendar-day"></i>
+            Date de fin
+          </label>
+          <input
+            type="date"
+            id="dateFin"
+            [(ngModel)]="filterDateFin"
+            class="date-input"
+            [min]="filterDateDebut || getMinDate()"
+          />
+        </div>
+
+        <div class="action-buttons-group">
+          <button
+            class="btn btn-primary btn-apply"
+            (click)="applyDateFilter()"
+            [disabled]="!filterDateDebut || !filterDateFin || isLoadingDisponibilite"
+          >
+            <i class="fas fa-search"></i>
+            {{ isLoadingDisponibilite ? 'Chargement...' : 'Appliquer' }}
+          </button>
+
+          <button
+            class="btn btn-secondary btn-reset"
+            (click)="resetDateFilter()"
+            *ngIf="produitsDisponibilite.length > 0"
+          >
+            <i class="fas fa-times"></i>
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="filterDateDebut && filterDateFin && produitsDisponibilite.length > 0"
+           class="active-filter-badge">
+        <i class="fas fa-check-circle"></i>
+        Filtre actif : du {{ formatDate(filterDateDebut) }} au {{ formatDate(filterDateFin) }}
+      </div>
     </div>
   </div>
 
@@ -161,6 +206,9 @@
           <span *ngIf="sortColumn === 'quantiteDisponible'">
               {{ sortDirection === 'asc' ? '▲' : '▼' }}
             </span>
+          <span *ngIf="filterDateDebut && filterDateFin" class="filter-info">
+             ({{ formatDate(filterDateDebut) }} - {{ formatDate(filterDateFin) }})
+          </span>
         </th>
         <th>Statut</th>
         <th>Actions</th>
@@ -201,9 +249,36 @@
         </td>
         <td>{{ produit.prixUnitaire | number:'1.2-2' }} TND</td>
         <td>
-            <span class="stock-info" [class]="getStockStatusClass(produit)">
-              {{ produit.quantiteDisponible }}
+          <div *ngIf="produitsDisponibilite.length === 0; else withDateFilter">
+            <!-- Affichage normal sans filtre -->
+            <span [ngClass]="getStockStatusClass(produit)">
+               {{ produit.quantiteDisponible }}
             </span>
+          </div>
+
+          <ng-template #withDateFilter>
+            <!-- Affichage avec filtre de date actif -->
+            <div class="stock-with-period">
+              <div class="stock-disponible">
+                <span class="label">Disponible:</span>
+                <span class="value disponible">
+                   {{ getDisponibilitePourProduit(produit.idProduit)?.quantiteDisponible || 0 }}
+               </span>
+              </div>
+              <div class="stock-reservee">
+                <span class="label">Réservé:</span>
+                <span class="value reservee">
+                  {{ getDisponibilitePourProduit(produit.idProduit)?.quantiteReservee || 0 }}
+                </span>
+              </div>
+              <div class="stock-total">
+                <span class="label">Total:</span>
+                <span class="value total">
+                      {{ getDisponibilitePourProduit(produit.idProduit)?.quantiteTotale || 0 }}
+                </span>
+              </div>
+            </div>
+          </ng-template>
           <div *ngIf="produit.maintenanceRequise" class="maintenance-badge">
             🔧 Maintenance
           </div>
@@ -246,7 +321,7 @@
               title="Ajuster le stock"
               *ngIf="produit.typeProduit === 'EN_QUANTITE'"
             >
-              📊
+              📉
             </button>
             <button
               class="btn btn-sm btn-warning"
@@ -271,7 +346,7 @@
               <!-- Produit désactivé -->
               <button
                 class="btn btn-sm btn-success"
-                (click)="reactiverProduit(produit)"
+                (click)="reactiverProduit()"
                 title="Réactiver"
               >
                 ▶️
@@ -333,7 +408,7 @@
     <div class="modal-body">
       <div class="product-details">
         <div *ngIf="selectedProduit.imageProduit" class="product-image-large">
-          <img [src]="'http://localhost:8080' + selectedProduit.imageProduit" [alt]="selectedProduit.nomProduit" />
+          <img [src]="'http://localhost:8080' + selectedProduit.imageProduit" [alt]="selectedProduit.nomProduit"/>
         </div>
 
         <div class="details-grid">
@@ -413,7 +488,8 @@
 
           <div *ngIf="selectedProduit.moyenneNotes" class="detail-item">
             <strong>Note moyenne:</strong>
-            <span>{{ selectedProduit.moyenneNotes | number:'1.1-1' }} / 5 ⭐ ({{ selectedProduit.nombreAvis }} avis)</span>
+            <span>{{ selectedProduit.moyenneNotes | number:'1.1-1' }} / 5 ⭐ ({{ selectedProduit.nombreAvis }}
+              avis)</span>
           </div>
         </div>
       </div>
@@ -452,7 +528,8 @@
       <div class="info-produit">
         <h3>{{ produitAjustement.nomProduit }}</h3>
         <p><strong>Code:</strong> {{ produitAjustement.codeProduit }}</p>
-        <p><strong>Stock actuel:</strong> <span class="current-stock">{{ produitAjustement.quantiteDisponible }}</span></p>
+        <p><strong>Stock actuel:</strong> <span class="current-stock">{{ produitAjustement.quantiteDisponible }}</span>
+        </p>
       </div>
 
       <div class="form-group">
@@ -497,3 +574,57 @@
     </div>
   </div>
 </div>
+
+<!-- Modal réactivation produit -->
+<div *ngIf="showReactivationModal && produitReactivation"
+     class="modal-overlay"
+     (click)="closeReactivationModal()">
+  <div class="modal-content modal-reactivation" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>♻️ Réactiver le produit</h2>
+      <button class="btn-close" (click)="closeReactivationModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="info-produit">
+        <h3>{{ produitReactivation.nomProduit }}</h3>
+        <p><strong>Code:</strong> {{ produitReactivation.codeProduit }}</p>
+        <p><strong>Type:</strong> {{ TypeProduitLabels[produitReactivation.typeProduit] }}</p>
+      </div>
+
+      <div *ngIf="produitReactivation.typeProduit === TypeProduit.EN_QUANTITE" class="form-group">
+        <label for="quantiteReactivation" class="required">Quantité initiale</label>
+        <input
+          type="number"
+          id="quantiteReactivation"
+          [(ngModel)]="quantiteReactivation"
+          class="form-control"
+          min="0"
+          placeholder="Entrez la quantité de départ"
+        />
+        <small class="help-text">
+          💡 Cette quantité sera le stock de départ après réactivation
+        </small>
+      </div>
+
+      <div *ngIf="produitReactivation.typeProduit === TypeProduit.AVEC_REFERENCE"
+           class="info-message">
+        <i class="fas fa-info-circle"></i>
+        <p>Pour les produits avec référence, vous devrez créer des instances après la réactivation.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeReactivationModal()">
+        Annuler
+      </button>
+      <button
+        class="btn btn-success"
+        (click)="reactiverProduit()"
+      >
+        ♻️ Réactiver
+      </button>
+    </div>
+  </div>
+</div>
+

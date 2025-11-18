@@ -5,7 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   Categorie,
-  MouvementStockResponse,
+  MouvementStockResponse, ProduitDisponibiliteDto,
   ProduitRequest,
   ProduitResponse, StockStatistiques,
   TypeMouvement,
@@ -274,6 +274,33 @@ export class ProduitService {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/recherche-avec-periode`, { params });
   }
 
+  /**
+   * ✅ NOUVEAU: Obtenir tous les produits avec leur disponibilité pour une période
+   * GET /api/produits/disponibilite-periode?dateDebut={date}&dateFin={date}
+   *
+   * Cette méthode retourne TOUS les produits avec:
+   * - quantiteTotale: le stock global du produit
+   * - quantiteReservee: la quantité réservée sur la période
+   * - quantiteDisponible: quantiteTotale - quantiteReservee
+   *
+   * @param dateDebut Date de début au format ISO (YYYY-MM-DD)
+   * @param dateFin Date de fin au format ISO (YYYY-MM-DD)
+   * @returns Liste des produits avec leur disponibilité calculée
+   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
+   */
+  getProduitsAvecDisponibilitePourPeriode(
+    dateDebut: string,
+    dateFin: string
+  ): Observable<ProduitDisponibiliteDto[]> {
+    const params = new HttpParams()
+      .set('dateDebut', dateDebut)
+      .set('dateFin', dateFin);
+
+    return this.http.get<ProduitDisponibiliteDto[]>(
+      `${this.API_URL}/disponibilite-periode`,
+      { params }
+    );
+  }
   // ============================================
   // GESTION DU STOCK (SANS_REFERENCE)
   // ============================================

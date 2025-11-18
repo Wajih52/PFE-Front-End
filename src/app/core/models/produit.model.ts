@@ -81,3 +81,16 @@ export interface verifieDispo {
   message: string,
   disponible: boolean
 }
+
+/**
+ * DTO pour la disponibilité d'un produit sur une période
+ */
+export interface ProduitDisponibiliteDto {
+  idProduit: number;
+  codeProduit: string;
+  nomProduit: string;
+  typeProduit: TypeProduit;
+  quantiteTotale: number;        // Stock total du produit
+  quantiteReservee: number;      // Quantité réservée sur la période
+  quantiteDisponible: number;    // quantiteTotale - quantiteReservee
+}

@@ -82,46 +82,35 @@ export class ProduitsListComponent implements OnInit {
   motifAjustement: string = '';
 
   // Filtre par date
-  filterDate: string = '';
   minDate: string = '';
+
+  //  Propriétés pour le filtre de date
+  filterDateDebut: string = '';
+  filterDateFin: string = '';
+  produitsDisponibilite: any[] = [];  // Pour stocker les infos de disponibilité
+  isLoadingDisponibilite = false;
+
+//  Propriétés pour le modal de réactivation
+  showReactivationModal = false;
+  produitReactivation: ProduitResponse | null = null;
+  quantiteReactivation = 0;
 
   ngOnInit(): void {
 
     // Date minimale = aujourd'hui
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
-    this.filterDate = this.minDate; // Par défaut aujourd'hui
 
     this.loadProduits();
   }
 
   /**
-   * Charger tous les produits
+   * Charger tous les produits (sans filtre de date)
    */
   loadProduits(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Si une date est sélectionnée, utiliser l'API avec période
-    if (this.filterDate) {
-      // Charger les produits disponibles pour cette date
-      this.produitService.getCatalogueDisponibleSurPeriode(
-        this.filterDate,
-        this.filterDate // Même date pour début et fin
-      ).subscribe({
-        next: (data) => {
-          this.allProduits = data;
-          this.applyFilters();
-          this.calculateStats();
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Erreur chargement produits:', error);
-          this.errorMessage = 'Erreur lors du chargement des produits';
-          this.isLoading = false;
-        }
-      });
-    } else {
     this.produitService.getAllProduits().subscribe({
       next: (data) => {
         this.allProduits = data;
@@ -135,9 +124,7 @@ export class ProduitsListComponent implements OnInit {
         this.isLoading = false;
       }
     });
-    }
   }
-
   /**
    * Calculer les statistiques locales
    */
@@ -148,12 +135,6 @@ export class ProduitsListComponent implements OnInit {
     this.stats.critique = this.allProduits.filter(p => p.alerteStockCritique).length;
   }
 
-  /**
-   * Appliquer le filtre de date
-   */
-  onDateFilterChange(): void {
-    this.loadProduits();
-  }
 
   /**
    * Appliquer les filtres et la recherche
@@ -303,12 +284,14 @@ export class ProduitsListComponent implements OnInit {
     const typeConfirmed = await this.confirmationService.confirm({
       title: 'Type de suppression',
       message: `
-      Produit: ${produit.nomProduit} \n
-
-        Choisissez le type de suppression:\n
-
-          Désactiver : Le produit sera masqué mais conservé dans la base\n
-         Supprimer définitivement : ⚠️ Suppression permanente de la base de données\n
+      <div>
+        <p><strong>Produit:</strong> ${produit.nomProduit}</p>
+        <p>Choisissez le type de suppression:</p>
+        <ul>
+          <li><strong>Désactiver</strong>: Le produit sera masqué mais conservé dans la base</li>
+          <li><strong>Supprimer définitivement</strong>: ⚠️ Suppression permanente de la base de données</li>
+        </ul>
+      </div>
     `,
       confirmText: 'Désactiver',
       cancelText: 'Supprimer définitivement',
@@ -334,11 +317,12 @@ export class ProduitsListComponent implements OnInit {
         title: 'Suppression définitive',
         message: `
 
-         ATTENTION: Cette action est IRRÉVERSIBLE!\n
-          Le produit "${produit.nomProduit}" sera supprimé DÉFINITIVEMENT de la base de données.\n
-          Toutes les données associées seront perdues.\n
-         Êtes-vous absolument sûr?\n
-
+         <div style="color: #d32f2f;">
+          <p><strong>ATTENTION: Cette action est IRRÉVERSIBLE!</strong></p>
+          <p>Le produit "${produit.nomProduit}" sera supprimé DÉFINITIVEMENT de la base de données.</p>
+          <p>Toutes les données associées seront perdues.</p>
+          <p><strong>Êtes-vous absolument sûr?</strong></p>
+        </div>
       `,
         confirmText: 'Supprimer ',
         cancelText: 'Annuler',
@@ -453,7 +437,7 @@ export class ProduitsListComponent implements OnInit {
       error: (error) => {
         console.error('Erreur ajustement stock:', error);
         const errorMsg = error.error?.message || 'Erreur lors de l\'ajustement du stock';
-        this.notificationService.error(errorMsg);
+        this.notificationService.error(errorMsg,4000);
       }
     });
   }
@@ -485,43 +469,132 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * Réactiver un produit désactivé
+   * ✅ MODIFIÉ: Réactiver un produit avec modal
    */
-  async reactiverProduit(produit: ProduitResponse): Promise<void> {
-    if (produit.typeProduit === TypeProduit.AVEC_REFERENCE) {
-      this.notificationService.warning('Pour réactiver un produit avec référence, vous devez réactiver ses instances individuellement');
-      this.router.navigate(['/admin/instances'], {
-        queryParams: { idProduit: produit.idProduit }
-      });
+  async reactiverProduit(): Promise<void> {
+    if (!this.produitReactivation) return;
+
+    // Validation
+    if (this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE &&
+      this.quantiteReactivation < 0) {
+      this.notificationService.warning('La quantité ne peut pas être négative');
       return;
     }
 
-    // Demander la quantité à réactiver
-    const quantiteStr = await this.confirmationService.prompt({
+    // Confirmation finale
+    const confirmed = await this.confirmationService.confirm({
       title: 'Réactiver le produit',
-      message: `Quelle quantité souhaitez-vous réactiver pour "${produit.nomProduit}" ?`,
-      placeholder: '10',
-      inputType: 'number'
+      message: `<p>Voulez-vous réactiver "${this.produitReactivation.nomProduit}" ?</p>
+              ${this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE ?
+        `<p><strong>Quantité initiale:</strong> ${this.quantiteReactivation}</p>` : ''}`,
+      confirmText: 'Oui, réactiver',
+      type: 'info'
     });
 
-    if (!quantiteStr) return;
+    if (!confirmed) return;
 
-    const quantite = parseInt(quantiteStr, 10);
-    if (isNaN(quantite) || quantite <= 0) {
-      this.notificationService.warning('Veuillez saisir une quantité valide');
-      return;
-    }
+    const idProduit = this.produitReactivation.idProduit;
 
-    this.produitService.reactiverProduit(produit.idProduit, quantite).subscribe({
-      next: (data) => {
-        this.notificationService.success(`Produit "${data.nomProduit}" réactivé avec succès (quantité: ${quantite})`);
+    this.produitService.reactiverProduit(
+      idProduit,
+      this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE ?
+        this.quantiteReactivation : 0
+    ).subscribe({
+      next: () => {
+        this.notificationService.success('Produit réactivé avec succès');
+        this.closeReactivationModal();
         this.loadProduits();
       },
       error: (error) => {
-        console.error('Erreur réactivation produit:', error);
-        const errorMsg = error.error?.message || 'Erreur lors de la réactivation';
-        this.notificationService.error(errorMsg);
+        console.error('Erreur réactivation:', error);
+        this.notificationService.error(error.error?.message || 'Erreur lors de la réactivation');
       }
     });
+  }
+
+  /**
+   * ✅ NOUVEAU: Ouvrir le modal de réactivation
+   */
+  openReactivationModal(produit: ProduitResponse): void {
+    this.produitReactivation = produit;
+    this.quantiteReactivation = produit.quantiteDisponible || 0;
+    this.showReactivationModal = true;
+  }
+
+  /**
+   * ✅ NOUVEAU: Fermer le modal de réactivation
+   */
+  closeReactivationModal(): void {
+    this.showReactivationModal = false;
+    this.produitReactivation = null;
+    this.quantiteReactivation = 0;
+  }
+
+
+  /**
+   * Obtenir la date minimale (aujourd'hui)
+   */
+  getMinDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  /**
+   * ✅ NOUVEAU: Appliquer le filtre de date
+   */
+  applyDateFilter(): void {
+    if (!this.filterDateDebut || !this.filterDateFin) {
+      this.notificationService.warning('Veuillez sélectionner les deux dates');
+      return;
+    }
+
+    if (new Date(this.filterDateDebut) > new Date(this.filterDateFin)) {
+      this.notificationService.warning('La date de début doit être antérieure à la date de fin');
+      return;
+    }
+
+    this.isLoadingDisponibilite = true;
+
+    this.produitService.getProduitsAvecDisponibilitePourPeriode(
+      this.filterDateDebut,
+      this.filterDateFin
+    ).subscribe({
+      next: (data) => {
+        this.produitsDisponibilite = data;
+        this.applyFilters();  // Réappliquer les autres filtres
+        this.isLoadingDisponibilite = false;
+        this.notificationService.success(
+          `Disponibilité calculée pour la période du ${this.formatDate(this.filterDateDebut)} au ${this.formatDate(this.filterDateFin)}`
+        );
+      },
+      error: (error) => {
+        console.error('Erreur calcul disponibilité:', error);
+        this.notificationService.error('Erreur lors du calcul de la disponibilité');
+        this.isLoadingDisponibilite = false;
+      }
+    });
+  }
+
+  /**
+   * ✅ NOUVEAU: Réinitialiser le filtre de date
+   */
+  resetDateFilter(): void {
+    this.filterDateDebut = '';
+    this.filterDateFin = '';
+    this.produitsDisponibilite = [];
+    this.applyFilters();
+  }
+
+  /**
+   * ✅ NOUVEAU: Obtenir la disponibilité pour un produit
+   */
+  getDisponibilitePourProduit(idProduit: number): any {
+    return this.produitsDisponibilite.find(p => p.idProduit === idProduit);
+  }
+
+  /**
+   * ✅ MODIFIÉ: Helper pour formatter les dates
+   */
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString('fr-FR');
   }
 }

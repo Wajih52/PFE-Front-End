@@ -1,1 +1,97 @@
-<p>instance-historique works!</p>
+
+
+<div class="historique-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <button class="btn-back" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <div class="header-info">
+        <h1>📜 Historique des mouvements</h1>
+        <p class="instance-info">Instance: <code>{{ numeroSerie }}</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement de l'historique...</p>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Contenu principal -->
+  <div *ngIf="!isLoading && !errorMessage" class="content">
+    <!-- Statistiques -->
+    <div class="stats-grid" *ngIf="mouvements.length > 0">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ mouvements.length }}</span>
+          <span class="stat-label">Mouvements totaux</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ formatDate(mouvements[0].dateMouvement) }}</span>
+          <span class="stat-label">Dernier mouvement</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-section" *ngIf="mouvements.length > 0">
+      <h2>Chronologie des mouvements</h2>
+
+      <div class="timeline">
+        <div *ngFor="let mouvement of mouvements" class="timeline-item">
+          <div class="timeline-marker">
+            <span class="marker-icon">{{ getIconForMouvement(mouvement.typeMouvement) }}</span>
+          </div>
+
+          <div class="timeline-content">
+            <div class="content-header">
+              <div class="header-left">
+                <span class="type-badge" [class]="'badge-' + mouvement.typeMouvement">
+                  {{ TypeMouvementLabels[mouvement.typeMouvement] }}
+                </span>
+                <span class="date">{{ formatDate(mouvement.dateMouvement) }}</span>
+              </div>
+            </div>
+
+            <div class="content-body">
+              <p class="motif">{{ mouvement.motif }}</p>
+
+              <div class="details-grid">
+                <div class="detail-item" *ngIf="mouvement.effectuePar">
+                  <span class="label">Par:</span>
+                  <span class="value">{{ mouvement.effectuePar }}</span>
+                </div>
+
+                <div class="detail-item" *ngIf="mouvement.idReservation">
+                  <span class="label">Réservation:</span>
+                  <span class="value">#{{ mouvement.idReservation }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <div *ngIf="mouvements.length === 0" class="empty-state">
+      <i class="fas fa-history"></i>
+      <h3>Aucun mouvement enregistré</h3>
+      <p>Cette instance n'a pas encore d'historique</p>
+    </div>
+  </div>
+</div>

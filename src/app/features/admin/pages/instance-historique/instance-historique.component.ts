@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InstanceProduitService } from '../../../../services/instance-produit.service';
 import {
-  MouvementStockResponse,
+  MouvementStockResponse, TypeMouvement,
   TypeMouvementLabels
 } from '../../../../core/models';
 import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
@@ -57,5 +57,40 @@ export class InstanceHistoriqueComponent implements OnInit {
 
   formatDate(date: Date): string {
     return new Date(date).toLocaleString('fr-FR');
+  }
+
+  /**
+   * Obtenir l'icône pour un type de mouvement
+   */
+  getIconForMouvement(type: TypeMouvement): string {
+    const icons: Record<TypeMouvement, string> = {
+      [TypeMouvement.CREATION]: '✨',        // Création produit
+      [TypeMouvement.AJOUT_STOCK]: '📦',     // Ajout stock
+      [TypeMouvement.ENTREE_STOCK]: '📥',    // Entrée stock
+      [TypeMouvement.RETRAIT_STOCK]: '📤',   // Retrait stock
+      [TypeMouvement.CORRECTION_STOCK]: '🔄', // Correction stock
+
+
+      [TypeMouvement.RESERVATION]: '📅',     // Réservation
+      [TypeMouvement.SORTIE_RESERVATION]: '🚀', // Sortie réservation
+      [TypeMouvement.RETOUR_RESERVATION]: '📥', // Retour réservation
+      [TypeMouvement.ANNULATION_RESERVATION]: '❌', // Annulation réservation
+
+      [TypeMouvement.MAINTENANCE]: '🔧',     // Maintenance
+      [TypeMouvement.RETOUR_MAINTENANCE]: '✅', // Retour maintenance
+
+      [TypeMouvement.LIVRAISON]: '🚚',       // Livraison
+      [TypeMouvement.RETOUR]: '↩️',          // Retour
+
+      [TypeMouvement.PRODUIT_ENDOMMAGE]: '⚠️', // Produit endommagé
+
+      [TypeMouvement.REACTIVATION]: '🔓',    // Réactivation
+      [TypeMouvement.DESACTIVATION]: '🔒' ,   // Désactivation
+
+      [TypeMouvement.AJOUT_INSTANCE]: '🆕',  // Ajout instance
+      [TypeMouvement.SUPPRESSION_INSTANCE]: '🗑️', // Suppression instance
+
+  };
+    return icons[type] || '📦';
   }
 }

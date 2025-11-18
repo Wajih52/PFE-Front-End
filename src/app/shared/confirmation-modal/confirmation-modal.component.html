@@ -8,7 +8,8 @@
     </div>
 
     <h2>{{ config?.title }}</h2>
-    <p class="message-text">{{ config?.message }}</p>
+    <div class="message-text" [innerHTML]="config?.message"></div>
+
 
 
     <div class="modal-actions">
