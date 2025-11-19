@@ -311,7 +311,7 @@
                   <!-- Bouton DEVIS pour EN_ATTENTE -->
                   @if (reservation.statutReservation === 'EN_ATTENTE') {
                     <button
-                      class="btn btn-success"
+                      class="btn-generate-facture btn-devis"
                       (click)="genererFacture(reservation, TypeFacture.DEVIS)"
                       [disabled]="isGenerating(reservation.idReservation, TypeFacture.DEVIS)"
                     >
@@ -319,7 +319,7 @@
                       @if (isGenerating(reservation.idReservation, TypeFacture.DEVIS)) {
                         <span>Génération...</span>
                       } @else {
-                        <span>Facture Devis</span>
+                        <span>Fac Devis</span>
                       }
                     </button>
                   }
@@ -327,7 +327,7 @@
                   <!-- Bouton PRO_FORMA pour CONFIRME -->
                   @if (reservation.statutReservation === 'CONFIRME') {
                     <button
-                      class="btn btn-info"
+                      class="btn-generate-facture btn-proforma"
                       (click)="genererFacture(reservation, TypeFacture.PRO_FORMA)"
                       [disabled]="isGenerating(reservation.idReservation, TypeFacture.PRO_FORMA)"
                     >
@@ -343,7 +343,7 @@
                   <!-- Bouton FINALE pour TERMINE avec paiement complet -->
                   @if (reservation.statutReservation === 'TERMINE' && reservation.paiementComplet) {
                     <button
-                      class="btn btn-primary"
+                      class="btn-generate-facture btn-finale"
                       (click)="genererFacture(reservation, TypeFacture.FINALE)"
                       [disabled]="isGenerating(reservation.idReservation, TypeFacture.FINALE)"
                     >
@@ -351,7 +351,7 @@
                       @if (isGenerating(reservation.idReservation, TypeFacture.FINALE)) {
                         <span>Génération...</span>
                       } @else {
-                        <span>Facture Finale</span>
+                        <span>Fac Finale</span>
                       }
                     </button>
                   }

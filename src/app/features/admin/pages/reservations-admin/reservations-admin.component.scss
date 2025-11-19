@@ -616,4 +616,77 @@
   }
 }
 
+// ===== 1. BOUTONS DE GÉNÉRATION DE FACTURES =====
 
+.btn-generate-facture {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  i {
+    font-size: 1rem;
+  }
+
+  // Variantes selon le type de facture
+  &.btn-devis {
+    background: linear-gradient(90deg, #f4b466 0%, #eb8836 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, #000000 0%, #000000 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(140, 142, 140, 0.3);
+    }
+  }
+
+  &.btn-proforma {
+    background: linear-gradient(135deg, #48ba77 0%, #239d57 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, #000000 0%, #000000 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(112, 115, 115, 0.3);
+    }
+  }
+
+  &.btn-finale {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
