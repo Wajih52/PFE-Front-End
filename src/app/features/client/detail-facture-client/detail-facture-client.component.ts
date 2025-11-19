@@ -15,7 +15,7 @@ import {
   formatMontantTND,
   formatDateFacture
 } from '../../../core/models/facture.model';
-import { ReservationResponseDto } from '../../../core/models/reservation.model';
+import {LigneReservationResponseDto, ReservationResponseDto} from '../../../core/models/reservation.model';
 
 @Component({
   selector: 'app-detail-facture-client',
@@ -93,7 +93,7 @@ export class DetailFactureClientComponent implements OnInit {
 
   voirReservation(): void {
     if (!this.facture) return;
-    this.router.navigate(['/client/mes-reservations']);
+    this.router.navigate(['/client/reservation-detail',this.facture.idReservation]);
   }
 
   retourListe(): void {
@@ -149,5 +149,21 @@ export class DetailFactureClientComponent implements OnInit {
   getMontantRestant(): number {
     if (!this.reservation) return 0;
     return this.reservation.montantRestant;
+  }
+
+  /**
+   * Obtenir l'URL de l'image du produit
+   */
+  getImageUrl(ligne: LigneReservationResponseDto): string {
+    if (ligne.imageProduit) {
+      // Si l'image est un chemin relatif, ajouter le base URL du serveur
+      if (ligne.imageProduit.startsWith('/') || ligne.imageProduit.startsWith('uploads/')) {
+        return `http://localhost:8080${ligne.imageProduit.startsWith('/') ? '' : '/'}${ligne.imageProduit}`;
+      }
+      // Si c'est déjà une URL complète, la retourner telle quelle
+      return ligne.imageProduit;
+    }
+    // Image placeholder si pas d'image
+    return 'https://via.placeholder.com/300x250/C8A882/FFFFFF?text=' + encodeURIComponent(ligne.nomProduit);
   }
 }

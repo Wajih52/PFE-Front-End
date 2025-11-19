@@ -7,6 +7,7 @@ import {Router, RouterLink} from '@angular/router';
 import { ReservationService } from '../../../services/reservation.service';
 import { ReservationResponseDto, ValidationDevisDto } from '../../../core/models/reservation.model';
 import {FormsModule} from '@angular/forms';
+import { FactureService } from '../../../services/facture.service';
 
 @Component({
   selector: 'app-mes-devis',
@@ -18,6 +19,9 @@ import {FormsModule} from '@angular/forms';
 export class MesDevisComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
+  private factureService = inject(FactureService);
+
+
 
   // Signals
   devis = signal<ReservationResponseDto[]>([]);
@@ -30,6 +34,8 @@ export class MesDevisComponent implements OnInit {
   showRejectModal = signal<boolean>(false);
   selectedDevis = signal<ReservationResponseDto | null>(null);
   motifRefus = signal<string>('');
+
+  downloadingFacture = signal<number | null>(null);
 
   ngOnInit(): void {
     this.chargerMesDevis();
@@ -152,6 +158,35 @@ export class MesDevisComponent implements OnInit {
         console.error('Erreur lors du refus du devis:', error);
         this.errorMessage.set('Impossible de refuser le devis. Veuillez réessayer.');
         this.showRejectModal.set(false);
+      }
+    });
+  }
+
+
+  /**
+   * Télécharger la facture DEVIS du devis validé
+   */
+  telechargerFactureDevis(devis: ReservationResponseDto): void {
+    this.downloadingFacture.set(devis.idReservation);
+
+    this.factureService.getFacturesByReservation(devis.idReservation).subscribe({
+      next: (factures) => {
+        const factureDevis = factures.find(f => f.typeFacture === 'DEVIS');
+
+        if (factureDevis) {
+          this.factureService.downloadFacturePdf(
+            factureDevis.idFacture,
+            factureDevis.numeroFacture
+          );
+          this.downloadingFacture.set(null);
+        } else {
+          alert('Aucune facture disponible pour ce devis');
+          this.downloadingFacture.set(null);
+        }
+      },
+      error: (error) => {
+        console.error('Erreur téléchargement facture:', error);
+        this.downloadingFacture.set(null);
       }
     });
   }

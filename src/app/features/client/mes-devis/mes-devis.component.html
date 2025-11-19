@@ -148,6 +148,18 @@
               <i class="fas fa-eye"></i>
               Voir détails
             </button>
+            <button
+              class="btn btn-info"
+              (click)="telechargerFactureDevis(d)"
+              [disabled]="downloadingFacture() === d.idReservation"
+            >
+              <i class="fas fa-download"></i>
+              @if (downloadingFacture() === d.idReservation) {
+                <span>Téléchargement...</span>
+              } @else {
+                <span>Télécharger Devis</span>
+              }
+            </button>
 
             <button
               class="btn btn-success"

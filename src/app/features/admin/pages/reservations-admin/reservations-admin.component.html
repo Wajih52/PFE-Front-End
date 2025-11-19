@@ -308,6 +308,53 @@
                 >
                   <i class="fas fa-eye"></i>
                 </button>
+                  <!-- Bouton DEVIS pour EN_ATTENTE -->
+                  @if (reservation.statutReservation === 'EN_ATTENTE') {
+                    <button
+                      class="btn btn-success"
+                      (click)="genererFacture(reservation, TypeFacture.DEVIS)"
+                      [disabled]="isGenerating(reservation.idReservation, TypeFacture.DEVIS)"
+                    >
+                      <i class="fas fa-file-invoice"></i>
+                      @if (isGenerating(reservation.idReservation, TypeFacture.DEVIS)) {
+                        <span>Génération...</span>
+                      } @else {
+                        <span>Facture Devis</span>
+                      }
+                    </button>
+                  }
+
+                  <!-- Bouton PRO_FORMA pour CONFIRME -->
+                  @if (reservation.statutReservation === 'CONFIRME') {
+                    <button
+                      class="btn btn-info"
+                      (click)="genererFacture(reservation, TypeFacture.PRO_FORMA)"
+                      [disabled]="isGenerating(reservation.idReservation, TypeFacture.PRO_FORMA)"
+                    >
+                      <i class="fas fa-file-invoice-dollar"></i>
+                      @if (isGenerating(reservation.idReservation, TypeFacture.PRO_FORMA)) {
+                        <span>Génération...</span>
+                      } @else {
+                        <span>Pro-forma</span>
+                      }
+                    </button>
+                  }
+
+                  <!-- Bouton FINALE pour TERMINE avec paiement complet -->
+                  @if (reservation.statutReservation === 'TERMINE' && reservation.paiementComplet) {
+                    <button
+                      class="btn btn-primary"
+                      (click)="genererFacture(reservation, TypeFacture.FINALE)"
+                      [disabled]="isGenerating(reservation.idReservation, TypeFacture.FINALE)"
+                    >
+                      <i class="fas fa-file-contract"></i>
+                      @if (isGenerating(reservation.idReservation, TypeFacture.FINALE)) {
+                        <span>Génération...</span>
+                      } @else {
+                        <span>Facture Finale</span>
+                      }
+                    </button>
+                  }
 
                   <button
                     class="btn-action btn-paiement"

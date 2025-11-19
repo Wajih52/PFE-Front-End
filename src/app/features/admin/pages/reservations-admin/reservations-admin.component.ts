@@ -12,6 +12,10 @@ import {
   StatutReservation,
   StatutReservationLabels
 } from '../../../../core/models/reservation.model';
+import { FactureService } from '../../../../services/facture.service';
+import { TypeFacture } from '../../../../core/models/facture.model';
+
+
 
 @Component({
   selector: 'app-reservations-admin',
@@ -23,12 +27,16 @@ import {
 export class ReservationsAdminComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
+  private factureService = inject(FactureService);
+
+
 
   // Signals
   reservations = signal<ReservationResponseDto[]>([]);
   reservationsFiltrees = signal<ReservationResponseDto[]>([]);
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
+  successMessage=signal<string>('');
 
   // Filtres
   filtreStatut = signal<StatutReservation | 'TOUS'>('TOUS');
@@ -54,6 +62,8 @@ export class ReservationsAdminComponent implements OnInit {
   // Tri
   triColonne = signal<string>('dateCreation');
   triOrdre = signal<'asc' | 'desc'>('desc');
+
+  generatingFacture = signal<{ id: number, type: TypeFacture } | null>(null);
 
   ngOnInit(): void {
     this.chargerReservations();
@@ -265,6 +275,80 @@ export class ReservationsAdminComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
+  /**
+   * Générer une facture selon le type
+   */
+  genererFacture(reservation: ReservationResponseDto, typeFacture: TypeFacture): void {
+    const typeLabels = {
+      'DEVIS': 'Devis',
+      'PRO_FORMA': 'Pro-forma',
+      'FINALE': 'Facture Finale'
+    };
+
+    const confirmation = confirm(
+      `Générer une facture ${typeLabels[typeFacture]} pour ${reservation.referenceReservation} ?\n` +
+      `Montant: ${reservation.montantTotal.toFixed(2)} DT`
+    );
+
+    if (!confirmation) return;
+
+    this.generatingFacture.set({
+      id: reservation.idReservation,
+      type: typeFacture
+    });
+
+    this.factureService.genererFactureAutomatique(
+      reservation.idReservation,
+      typeFacture
+    ).subscribe({
+      next: (facture) => {
+        this.successMessage.set(
+          `✅ Facture ${typeLabels[typeFacture]} ${facture.numeroFacture} générée !`
+        );
+        this.generatingFacture.set(null);
+
+        // Télécharger automatiquement
+        setTimeout(() => {
+          this.factureService.downloadFacturePdf(
+            facture.idFacture,
+            facture.numeroFacture
+          );
+        }, 500);
+      },
+      error: (error) => {
+        this.errorMessage.set('Impossible de générer la facture');
+        this.generatingFacture.set(null);
+      }
+    });
+  }
+
+  /**
+   * Vérifier quel type de facture peut être généré
+   */
+  peutGenererFacture(reservation: ReservationResponseDto, type: TypeFacture): boolean {
+    switch (type) {
+      case TypeFacture.DEVIS:
+        return reservation.statutReservation === 'EN_ATTENTE';
+
+      case TypeFacture.PRO_FORMA:
+        return reservation.statutReservation === 'CONFIRME';
+
+      case TypeFacture.FINALE:
+        return reservation.statutReservation === 'TERMINE' &&
+          reservation.paiementComplet;
+
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Vérifier si génération en cours pour cette réservation
+   */
+  isGenerating(idReservation: number, type: TypeFacture): boolean {
+    const gen = this.generatingFacture();
+    return gen !== null && gen.id === idReservation && gen.type === type;
+  }
   // ============ HELPERS ============
 
   formatDate(dateString: string): string {
@@ -295,4 +379,6 @@ export class ReservationsAdminComponent implements OnInit {
     if (statut === 'TOUS') return 'Tous';
     return this.statutLabels[statut];
   }
+
+  protected readonly TypeFacture = TypeFacture;
 }

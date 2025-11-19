@@ -12,6 +12,9 @@ import {
   LigneModificationDto,
   StatutReservationLabels
 } from '../../../../core/models/reservation.model';
+import { FactureService } from '../../../../services/facture.service';
+import { TypeFacture } from '../../../../core/models/facture.model';
+
 
 @Component({
   selector: 'app-devis-validation',
@@ -23,6 +26,8 @@ import {
 export class DevisValidationComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
+  private factureService = inject(FactureService);
+
 
   // Signals
   devis = signal<ReservationResponseDto[]>([]);
@@ -44,6 +49,8 @@ export class DevisValidationComponent implements OnInit {
   remisesRapides = [5, 10, 15, 20];
 
   readonly statutLabels = StatutReservationLabels;
+
+  generatingFacture = signal<number | null>(null);
 
   ngOnInit(): void {
     this.chargerDevisEnAttente();
@@ -203,6 +210,9 @@ export class DevisValidationComponent implements OnInit {
         this.successMessage.set(` Devis ${devis.referenceReservation} validé avec succès ! Le client sera notifié.`);
         this.showModifModal.set(false);
         this.chargerDevisEnAttente();// Recharger la liste
+        /*setTimeout(() => {
+          this.genererFactureDevis(devis);
+        }, 1000);*/
 
       },
       error: (error) => {
@@ -240,6 +250,43 @@ export class DevisValidationComponent implements OnInit {
    */
   voirDetails(idReservation: number): void {
     this.router.navigate(['/admin/reservation-details', idReservation]);
+  }
+
+
+ /**
+  * Générer facture DEVIS après validation
+*/
+  genererFactureDevis(reservation: ReservationResponseDto): void {
+    const confirmation = confirm(
+      `Générer une facture DEVIS pour ${reservation.referenceReservation} ?\n` +
+      `Montant: ${reservation.montantTotal.toFixed(2)} DT`
+    );
+
+    if (!confirmation) return;
+
+    this.generatingFacture.set(reservation.idReservation);
+
+    this.factureService.genererFactureAutomatique(
+      reservation.idReservation,
+      TypeFacture.DEVIS
+    ).subscribe({
+      next: (facture) => {
+        this.successMessage.set(`✅ Facture ${facture.numeroFacture} générée !`);
+        this.generatingFacture.set(null);
+
+        // Télécharger automatiquement
+        setTimeout(() => {
+          this.factureService.downloadFacturePdf(
+            facture.idFacture,
+            facture.numeroFacture
+          );
+        }, 500);
+      },
+      error: (error) => {
+        this.errorMessage.set('Impossible de générer la facture');
+        this.generatingFacture.set(null);
+      }
+    });
   }
 
   // ============ HELPERS ============

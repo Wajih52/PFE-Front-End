@@ -237,7 +237,7 @@
               @for (ligne of reservation.lignesReservation; track ligne.idLigneReservation) {
                 <div class="produit-item">
                   @if (ligne.imageProduit) {
-                    <img [src]="ligne.imageProduit" [alt]="ligne.nomProduit" class="produit-image">
+                    <img [src]="getImageUrl(ligne)" [alt]="ligne.nomProduit" class="produit-image">
                   } @else {
                     <div class="produit-placeholder">
                       <i class="fas fa-image"></i>
@@ -248,7 +248,11 @@
                     <p class="produit-details">
                       Quantité : {{ ligne.quantite }} × {{ formatMontant(ligne.prixUnitaire) }}
                     </p>
+                    <p class="produit-details">
+                      Période : {{ ligne.dateDebut }} - {{ ligne.dateFin }}
+                    </p>
                   </div>
+
                   <div class="produit-total">
                     {{ formatMontant(ligne.sousTotal) }}
                   </div>

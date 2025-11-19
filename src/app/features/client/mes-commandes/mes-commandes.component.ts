@@ -7,6 +7,8 @@ import {Router, RouterLink} from '@angular/router';
 import { ReservationService } from '../../../services/reservation.service';
 import { ReservationResponseDto, StatutReservationLabels } from '../../../core/models/reservation.model';
 import {FormsModule} from '@angular/forms';
+import { FactureService } from '../../../services/facture.service';
+import { FactureResponse } from '../../../core/models/facture.model';
 
 @Component({
   selector: 'app-mes-commandes',
@@ -18,6 +20,8 @@ import {FormsModule} from '@angular/forms';
 export class MesCommandesComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
+  private factureService = inject(FactureService);
+
 
   // Signals
   reservations = signal<ReservationResponseDto[]>([]);
@@ -31,6 +35,8 @@ export class MesCommandesComponent implements OnInit {
   // Labels
   readonly statutLabels = StatutReservationLabels;
 
+  factures = signal<Map<number, FactureResponse[]>>(new Map());
+  loadingFactures = signal<number | null>(null);
   ngOnInit(): void {
     this.chargerMesReservations();
   }
@@ -136,4 +142,54 @@ export class MesCommandesComponent implements OnInit {
   }
 
     protected readonly length = length;
+
+
+  /**
+   * Charger les factures d'une réservation
+   */
+  chargerFactures(idReservation: number): void {
+    this.loadingFactures.set(idReservation);
+
+    this.factureService.getFacturesByReservation(idReservation).subscribe({
+      next: (factures) => {
+        const map = new Map(this.factures());
+        map.set(idReservation, factures);
+        this.factures.set(map);
+        this.loadingFactures.set(null);
+      },
+      error: (error) => {
+        console.error('Erreur chargement factures:', error);
+        this.loadingFactures.set(null);
+      }
+    });
+  }
+
+  /**
+   * Télécharger une facture
+   */
+  telechargerFacture(facture: FactureResponse): void {
+    this.factureService.downloadFacturePdf(
+      facture.idFacture,
+      facture.numeroFacture
+    );
+  }
+
+  /**
+   * Obtenir les factures d'une réservation
+   */
+  getFactures(idReservation: number): FactureResponse[] {
+    return this.factures().get(idReservation) || [];
+  }
+
+  /**
+   * Obtenir le label du type de facture
+   */
+  getTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      'DEVIS': 'Devis',
+      'PRO_FORMA': 'Pro-forma',
+      'FINALE': 'Facture Finale'
+    };
+    return labels[type] || type;
+  }
 }

@@ -18,8 +18,9 @@ import {ProduitResponse} from '../../../core/models';
 import {LigneReservationService} from '../../../services/ligne-reservation.service';
 import {ProduitService} from '../../../services/produit.service';
 import {StorageService} from '../../../core/services/storage.service';
-import {FactureResponse, TypeFacture} from '../../../core/models/facture.model';
-import {FactureService} from '../../../services/facture.service';
+import { FactureService } from '../../../services/facture.service';
+import { FactureResponse } from '../../../core/models/facture.model';
+
 
 @Component({
   selector: 'app-reservation-details',
@@ -77,11 +78,15 @@ export class ReservationDetailsComponent implements OnInit {
   // Labels
   readonly statutLabels = StatutReservationLabels;
 
+  factures = signal<FactureResponse[]>([]);
+  loadingFactures = signal<boolean>(false);
+
   ngOnInit(): void {
     const idReservation = this.route.snapshot.params['id'];
     if (idReservation) {
       this.chargerReservation(+idReservation);
       this.chargerProduitsDisponibles();
+      this.chargerFactures();
     }
   }
 
@@ -106,6 +111,39 @@ export class ReservationDetailsComponent implements OnInit {
     });
   }
 
+  chargerFactures(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
+
+    this.loadingFactures.set(true);
+
+    this.factureService.getFacturesByReservation(+id).subscribe({
+      next: (factures) => {
+        this.factures.set(factures);
+        this.loadingFactures.set(false);
+      },
+      error: (error) => {
+        console.error('Erreur chargement factures:', error);
+        this.loadingFactures.set(false);
+      }
+    });
+  }
+  telechargerFacture(facture: FactureResponse): void {
+    this.factureService.downloadFacturePdf(
+      facture.idFacture,
+      facture.numeroFacture
+    );
+  }
+
+  voirDetailFacture(facture: FactureResponse): void {
+    // Navigation selon le rôle
+    const role = this.storage.getUserRoles();
+    if (role.includes('CLIENT')) {
+      this.router.navigate(['/client/mes-factures', facture.idFacture]);
+    } else {
+      this.router.navigate(['/admin/factures', facture.idFacture]);
+    }
+  }
    getPrixIntermediaire(
     montantTotal: number,
     remisePourcentage?: number,

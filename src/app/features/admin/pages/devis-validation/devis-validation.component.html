@@ -109,6 +109,18 @@
               <i class="fas fa-times"></i>
               Annuler
             </button>
+            <button
+              class="btn btn-success"
+              (click)="genererFactureDevis(d)"
+              [disabled]="generatingFacture() === d.idReservation"
+            >
+              <i class="fas fa-file-invoice"></i>
+              @if (generatingFacture() === d.idReservation) {
+                <span>Génération...</span>
+              } @else {
+                <span>Générer Devis PDF</span>
+              }
+            </button>
           </div>
         </div>
       }
