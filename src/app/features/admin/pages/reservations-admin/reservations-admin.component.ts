@@ -316,8 +316,9 @@ export class ReservationsAdminComponent implements OnInit {
         }, 500);
       },
       error: (error) => {
-        this.errorMessage.set('Impossible de générer la facture');
+        this.errorMessage.set(error?.error?.message || 'Impossible de générer la facture');
         this.generatingFacture.set(null);
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }

@@ -62,12 +62,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #0c81a5 0%, #0c80a4 100%);
       color: white;
       font-size: 1.5rem;
 
       &.montant {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #ef4390 0%, #f3092c 100%);
       }
 
       &.attente {
@@ -263,7 +263,7 @@
   }
 
   .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #9f9c9c 0%, #9f9e9e 100%);
     padding: 1.5rem;
     display: flex;
     justify-content: space-between;

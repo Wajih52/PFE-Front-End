@@ -93,7 +93,7 @@ export class DetailFactureClientComponent implements OnInit {
 
   voirReservation(): void {
     if (!this.facture) return;
-    this.router.navigate(['/client/reservation-detail',this.facture.idReservation]);
+    this.router.navigate(['/client/reservation-details',this.facture.idReservation]);
   }
 
   retourListe(): void {
