@@ -285,9 +285,12 @@ export type TypeProduit =
   | 'AVEC_REFERENCE';
 
 export type StatutLivraison =
+  |'NOT_TODAY'
   | 'EN_ATTENTE'
   | 'EN_COURS'
   | 'LIVREE'
+  |'RETOUR'
+  |'RETOUR_PARTIEL'
   | 'RETOURNEE'
   | 'ANNULEE';
 
@@ -317,11 +320,14 @@ export const StatutReservationLabels: Record<StatutReservation, string> = {
 };
 
 export const StatutLivraisonLabels: Record<StatutLivraison, string> = {
+  'NOT_TODAY':'Pas Aujourd\'hui',
   'EN_ATTENTE': 'En attente',
   'EN_COURS': 'En cours',
   'LIVREE': 'Livrée',
   'RETOURNEE': 'Retournée',
-  'ANNULEE': 'Annulée'
+  'ANNULEE': 'Annulée',
+  'RETOUR_PARTIEL': 'Retour Partiel',
+  'RETOUR':'Retour'
 };
 
 export const ModePaiementLabels: Record<ModePaiement, string> = {
