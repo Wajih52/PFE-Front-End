@@ -191,15 +191,15 @@
             }
           </div>
           <div class="factures-section">
-            <h4>
+            <h4 >
               <i class="fas fa-file-invoice"></i>
               Factures disponibles
             </h4>
-
+            <div class="btn-center-container">
             <!-- Bouton pour charger les factures -->
             @if (!factures().has(reservation.idReservation)) {
               <button
-                class="btn btn-secondary btn-sm"
+                class="btn btn-secondary "
                 (click)="chargerFactures(reservation.idReservation)"
                 [disabled]="loadingFactures() === reservation.idReservation"
               >
@@ -211,7 +211,7 @@
                 }
               </button>
             }
-
+            </div>
             <!-- Liste des factures -->
             @if (factures().has(reservation.idReservation)) {
               <div class="factures-list">

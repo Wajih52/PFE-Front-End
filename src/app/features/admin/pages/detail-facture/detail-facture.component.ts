@@ -187,9 +187,10 @@ export class DetailFactureComponent implements OnInit {
         }, 3000);
       },
       error: (error) => {
-        console.error('Erreur régénération PDF:', error);
-        this.erreur = 'Erreur lors de la régénération du PDF';
+
+        this.erreur = error?.error.message || 'Erreur lors de la régénération du PDF';
         this.loading = false;
+        setTimeout(() => this.erreur = '', 3000);
       }
     });
   }

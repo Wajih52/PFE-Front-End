@@ -312,79 +312,80 @@
           </div>
         </div>
       </div>
-      <div class="detail-section factures-section">
-        <h2>
-          <i class="fas fa-file-invoice"></i>
-          Factures
-        </h2>
 
-        @if (loadingFactures()) {
-          <div class="loading-factures">
-            <div class="spinner"></div>
-            <p>Chargement des factures...</p>
-          </div>
-        }
+    </div>
+  }
+  <div class="detail-section factures-section">
+    <h2>
+      <i class="fas fa-file-invoice"></i>
+      Factures
+    </h2>
 
-        @if (!loadingFactures() && factures().length > 0) {
-          <div class="factures-grid">
-            @for (facture of factures(); track facture.idFacture) {
-              <div class="facture-card">
-                <div class="facture-header">
-                  <span class="facture-numero">{{ facture.numeroFacture }}</span>
-                  <span [class]="'badge badge-' + facture.typeFacture.toLowerCase()">
+    @if (loadingFactures()) {
+      <div class="loading-factures">
+        <div class="spinner"></div>
+        <p>Chargement des factures...</p>
+      </div>
+    }
+
+    @if (!loadingFactures() && factures().length > 0) {
+      <div class="factures-grid">
+        @for (facture of factures(); track facture.idFacture) {
+          <div class="facture-card">
+            <div class="facture-header">
+              <span class="facture-numero">{{ facture.numeroFacture }}</span>
+              <span [class]="'badge badge-' + facture.typeFacture.toLowerCase()">
               {{ facture.typeFacture }}
             </span>
-                </div>
+            </div>
 
-                <div class="facture-body">
-                  <div class="facture-info-row">
-                    <span class="label">Date:</span>
-                    <span class="value">{{ facture.dateCreation | date:'dd/MM/yyyy' }}</span>
-                  </div>
-                  <div class="facture-info-row">
-                    <span class="label">Montant HT:</span>
-                    <span class="value">{{ facture.montantHT | number:'1.2-2' }} DT</span>
-                  </div>
-                  <div class="facture-info-row">
-                    <span class="label">TVA:</span>
-                    <span class="value">{{ facture.montantTVA | number:'1.2-2' }} DT</span>
-                  </div>
-                  <div class="facture-info-row total">
-                    <span class="label">Total TTC:</span>
-                    <span class="value">{{ facture.montantTTC | number:'1.2-2' }} DT</span>
-                  </div>
-                </div>
-
-                <div class="facture-actions">
-                  <button
-                    class="btn btn-primary btn-sm"
-                    (click)="voirDetailFacture(facture)"
-                  >
-                    <i class="fas fa-eye"></i>
-                    Détails
-                  </button>
-                  <button
-                    class="btn btn-secondary btn-sm"
-                    (click)="telechargerFacture(facture)"
-                  >
-                    <i class="fas fa-download"></i>
-                    PDF
-                  </button>
-                </div>
+            <div class="facture-body">
+              <div class="facture-info-row">
+                <span class="label">Date:</span>
+                <span class="value">{{ facture.dateCreation | date:'dd/MM/yyyy' }}</span>
               </div>
-            }
-          </div>
-        }
+              <div class="facture-info-row">
+                <span class="label">Montant HT:</span>
+                <span class="value">{{ facture.montantHT | number:'1.2-2' }} DT</span>
+              </div>
+              <div class="facture-info-row">
+                <span class="label">TVA:</span>
+                <span class="value">{{ facture.montantTVA | number:'1.2-2' }} DT</span>
+              </div>
+              <div class="facture-info-row total">
+                <span class="label">Total TTC:</span>
+                <span class="value">{{ facture.montantTTC | number:'1.2-2' }} DT</span>
+              </div>
+            </div>
 
-        @if (!loadingFactures() && factures().length === 0) {
-          <div class="no-factures">
-            <i class="fas fa-file-invoice"></i>
-            <p>Aucune facture n'a encore été générée pour cette réservation</p>
+            <div class="facture-actions">
+              <button
+                class="btn btn-primary btn-sm"
+                (click)="voirDetailFacture(facture)"
+              >
+                <i class="fas fa-eye"></i>
+                Détails
+              </button>
+              <button
+                class="btn btn-secondary btn-sm"
+                (click)="telechargerFacture(facture)"
+              >
+                <i class="fas fa-download"></i>
+                PDF
+              </button>
+            </div>
           </div>
         }
       </div>
-    </div>
-  }
+    }
+
+    @if (!loadingFactures() && factures().length === 0) {
+      <div class="no-factures">
+        <i class="fas fa-file-invoice"></i>
+        <p>Aucune facture n'a encore été générée pour cette réservation</p>
+      </div>
+    }
+  </div>
 </div>
 
 <!-- Modal Décalage Global -->
