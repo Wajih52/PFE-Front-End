@@ -221,20 +221,26 @@
               <span class="label">Montant HT</span>
               <span class="valeur">{{ formatMontant(facture.montantHT) }}</span>
             </div>
-            @if (facture.montantRemise && facture.montantRemise > 0) {
-              <div class="montant-ligne remise">
-                <span class="label">Remise</span>
-                <span class="valeur">- {{ formatMontant(facture.montantRemise) }}</span>
-              </div>
-            }
             <div class="montant-ligne">
               <span class="label">TVA (19%)</span>
               <span class="valeur">{{ formatMontant(facture.montantTVA) }}</span>
             </div>
             <div class="montant-ligne total">
-              <span class="label">Montant TTC</span>
+              <span class="label">Montant TTC
+                 <strong *ngIf="(facture.montantRemise && facture.montantRemise > 0)">(Sans Remise)</strong>
+              </span>
               <span class="valeur">{{ formatMontant(facture.montantTTC) }}</span>
             </div>
+            @if (facture.montantRemise && facture.montantRemise > 0) {
+              <div class="montant-ligne remise">
+                <span class="label">Remise</span>
+                <span class="valeur">- {{ formatMontant(facture.montantRemise) }}</span>
+              </div>
+              <div class="montant-ligne total">
+                <span class="label">Montant TTC</span>
+                <span class="valeur">{{ formatMontant(facture.montantTTC-facture.montantRemise) }}</span>
+              </div>
+            }
           </div>
         </div>
 

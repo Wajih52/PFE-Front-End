@@ -205,7 +205,7 @@
                 <i class="fas fa-euro-sign"></i>
                 Montant TTC
               </span>
-              <span class="value montant">{{ formatMontant(facture.montantTTC) }}</span>
+              <span class="value montant" >{{ formatMontant(facture.montantTTC-(facture.montantRemise ||0)) }}</span>
             </div>
 
             <!-- Alerte si en attente de paiement -->
