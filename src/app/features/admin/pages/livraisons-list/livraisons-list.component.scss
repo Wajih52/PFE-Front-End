@@ -1,0 +1,132 @@
+// src/app/features/admin/pages/livraisons-list/livraisons-list.component.scss
+// 🚚 Styles - Liste des livraisons
+
+.table {
+  font-size: 0.95rem;
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  tbody tr {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(0, 123, 255, 0.05);
+    }
+  }
+
+  td {
+    vertical-align: middle;
+  }
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.4em 0.8em;
+  font-weight: 500;
+}
+
+.btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.alert {
+  border-radius: 0.5rem;
+  border-left: 4px solid;
+
+  &.alert-success {
+    border-left-color: #28a745;
+  }
+
+  &.alert-danger {
+    border-left-color: #dc3545;
+  }
+
+  &.alert-info {
+    border-left-color: #17a2b8;
+  }
+}
+
+.card {
+  border-radius: 10px;
+  border: none;
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+.form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.input-group .form-control {
+  border-left: none;
+
+  &:focus {
+    border-color: #ced4da;
+    box-shadow: none;
+  }
+}
+
+// Animations pour les messages
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.alert {
+  animation: slideInDown 0.3s ease;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .btn-group {
+    flex-direction: column;
+
+    .btn {
+      border-radius: 0.25rem !important;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .table {
+    font-size: 0.85rem;
+
+    .btn-group-sm > .btn {
+      padding: 0.2rem 0.4rem;
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// Modal
+.modal.show {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

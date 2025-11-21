@@ -1,0 +1,331 @@
+<!-- src/app/features/admin/pages/livraisons-list/livraisons-list.component.html -->
+<!-- 🚚 Template - Liste des livraisons -->
+
+<div class="container-fluid py-4">
+  <!-- En-tête avec titre et bouton création -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">🚚 Gestion des Livraisons</h2>
+      <p class="text-muted mb-0">Gérez les livraisons de matériel pour vos événements</p>
+    </div>
+    <button class="btn btn-primary" (click)="creerLivraison()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Nouvelle Livraison
+    </button>
+  </div>
+
+  <!-- Messages de feedback -->
+  @if (successMessage()) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-2"></i>
+      {{ successMessage() }}
+      <button type="button" class="btn-close" (click)="successMessage.set('')"></button>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      {{ errorMessage() }}
+      <button type="button" class="btn-close" (click)="errorMessage.set('')"></button>
+    </div>
+  }
+
+  <!-- Carte avec filtres et actions rapides -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Filtres rapides par statut -->
+        <div class="col-12">
+          <label class="form-label fw-semibold">Filtres rapides :</label>
+          <div class="btn-group flex-wrap" role="group">
+            <button
+              type="button"
+              class="btn btn-sm"
+              [class.btn-primary]="filtreStatut() === 'TOUS'"
+              [class.btn-outline-secondary]="filtreStatut() !== 'TOUS'"
+              (click)="filtrerParStatut('TOUS')">
+              <i class="bi bi-list me-1"></i>
+              Toutes
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm"
+              [class.btn-warning]="filtreStatut() === 'EN_ATTENTE'"
+              [class.btn-outline-warning]="filtreStatut() !== 'EN_ATTENTE'"
+              (click)="filtrerParStatut('EN_ATTENTE')">
+              <i class="bi bi-clock me-1"></i>
+              En attente
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm"
+              [class.btn-info]="filtreStatut() === 'EN_COURS'"
+              [class.btn-outline-info]="filtreStatut() !== 'EN_COURS'"
+              (click)="filtrerParStatut('EN_COURS')">
+              <i class="bi bi-truck me-1"></i>
+              En cours
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm"
+              [class.btn-success]="filtreStatut() === 'LIVREE'"
+              [class.btn-outline-success]="filtreStatut() !== 'LIVREE'"
+              (click)="filtrerParStatut('LIVREE')">
+              <i class="bi bi-check-circle me-1"></i>
+              Livrées
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-primary ms-3"
+            (click)="chargerLivraisonsAujourdhui()">
+            <i class="bi bi-calendar-day me-1"></i>
+            Aujourd'hui
+          </button>
+        </div>
+
+        <!-- Barre de recherche -->
+        <div class="col-md-6">
+          <label for="rechercheTexte" class="form-label">Recherche :</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              id="rechercheTexte"
+              placeholder="Titre, client, référence, adresse..."
+              [(ngModel)]="rechercheTexte"
+              (ngModelChange)="appliquerFiltres()">
+          </div>
+        </div>
+
+        <!-- Filtre par date -->
+        <div class="col-md-4">
+          <label for="filtreDate" class="form-label">Date de livraison :</label>
+          <input
+            type="date"
+            class="form-control"
+            id="filtreDate"
+            [(ngModel)]="filtreDate"
+            (ngModelChange)="appliquerFiltres()">
+        </div>
+
+        <!-- Bouton réinitialiser -->
+        <div class="col-md-2 d-flex align-items-end">
+          <button
+            type="button"
+            class="btn btn-outline-secondary w-100"
+            (click)="reinitialiserFiltres()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-3 text-muted">Chargement des livraisons...</p>
+    </div>
+  }
+
+  <!-- Résultats -->
+  @if (!isLoading()) {
+    @if (livraisonsFiltrees().length === 0) {
+      <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle me-2"></i>
+        Aucune livraison trouvée avec ces critères de recherche.
+      </div>
+    } @else {
+      <!-- Compteur de résultats -->
+      <div class="mb-3">
+        <small class="text-muted">
+          {{ livraisonsFiltrees().length }} livraison(s) trouvée(s)
+        </small>
+      </div>
+
+      <!-- Table responsive -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Titre</th>
+            <th scope="col">Date & Heure</th>
+            <th scope="col">Client</th>
+            <th scope="col">Articles</th>
+            <th scope="col">Statut</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (livraison of livraisonsFiltrees(); track livraison.idLivraison) {
+              <tr>
+                <!-- ID -->
+                <td>
+                  <strong class="text-primary">#{{ livraison.idLivraison }}</strong>
+                </td>
+
+                <!-- Titre -->
+                <td>
+                  <div class="fw-semibold">{{ livraison.titreLivraison }}</div>
+                  <small class="text-muted">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {{ livraison.adresseLivraison }}
+                  </small>
+                </td>
+
+                <!-- Date & Heure -->
+                <td>
+                  <div>
+                    <i class="bi bi-calendar3 me-1"></i>
+                    {{ livraison.dateLivraison }}
+                  </div>
+                  <small class="text-muted">
+                    <i class="bi bi-clock me-1"></i>
+                    {{ livraison.heureLivraison }}
+                  </small>
+                </td>
+
+                <!-- Client -->
+                <td>
+                  <div>{{ livraison.nomClient }} {{ livraison.prenomClient }}</div>
+                  <small class="text-muted">{{ livraison.referenceReservation }}</small>
+                </td>
+
+                <!-- Nombre d'articles -->
+                <td>
+                  <span class="badge bg-secondary">
+                    {{ livraison.nombreTotalArticles }} article(s)
+                  </span>
+                </td>
+
+                <!-- Statut -->
+                <td>
+                  <span [class]="getStatutBadgeClass(livraison.statutLivraison)">
+                    {{ statutLabels[livraison.statutLivraison] }}
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                  <div class="btn-group btn-group-sm" role="group">
+                    <!-- Voir détails -->
+                    <button
+                      type="button"
+                      class="btn btn-outline-info"
+                      [routerLink]="['/admin/livraisons', livraison.idLivraison]"
+                      title="Voir les détails">
+                      <i class="bi bi-eye"></i>
+                    </button>
+
+                    <!-- Marquer en cours -->
+                    @if (canMarquerEnCoursFunc(livraison)) {
+                      <button
+                        type="button"
+                        class="btn btn-outline-primary"
+                        (click)="marquerEnCours(livraison)"
+                        [disabled]="isActionEnCours(livraison.idLivraison)"
+                        title="Marquer en cours">
+                        <i class="bi bi-play-circle"></i>
+                      </button>
+                    }
+
+                    <!-- Marquer livrée -->
+                    @if (canMarquerLivreeFunc(livraison)) {
+                      <button
+                        type="button"
+                        class="btn btn-outline-success"
+                        (click)="marquerLivree(livraison)"
+                        [disabled]="isActionEnCours(livraison.idLivraison)"
+                        title="Marquer livrée">
+                        <i class="bi bi-check-circle"></i>
+                      </button>
+                    }
+
+                    <!-- Télécharger bon de livraison -->
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      (click)="telechargerBonLivraison(livraison)"
+                      title="Télécharger le bon de livraison">
+                      <i class="bi bi-file-pdf"></i>
+                    </button>
+
+                    <!-- Supprimer -->
+                    @if (canSupprimer(livraison)) {
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger"
+                        (click)="demanderConfirmationSuppression(livraison)"
+                        [disabled]="isActionEnCours(livraison.idLivraison)"
+                        title="Supprimer">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>
+
+<!-- Modal de confirmation de suppression -->
+@if (showConfirmModal()) {
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Confirmer la suppression
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="fermerModalConfirmation()"></button>
+        </div>
+        <div class="modal-body">
+          @if (livraisonASupprimer()) {
+            <p>Êtes-vous sûr de vouloir supprimer cette livraison ?</p>
+            <div class="alert alert-warning">
+              <strong>{{ livraisonASupprimer()!.titreLivraison }}</strong><br>
+              <small>
+                Date: {{ livraisonASupprimer()!.dateLivraison }} à {{ livraisonASupprimer()!.heureLivraison }}
+              </small>
+            </div>
+            <p class="text-danger mb-0">
+              <i class="bi bi-info-circle me-1"></i>
+              Les lignes de réservation associées seront dissociées de cette livraison.
+            </p>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="fermerModalConfirmation()">
+            Annuler
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="supprimerLivraison()"
+            [disabled]="actionEnCours() !== null">
+            @if (actionEnCours()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+            }
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
