@@ -1,195 +1,614 @@
-// src/app/features/admin/pages/livraison-detail/livraison-detail.component.scss
-// 🚚 Styles - Détails d'une livraison
+// 🚚 Styles pour les détails d'une livraison
+// Design moderne avec animations et mise en page sophistiquée
 
-.card {
-  border-radius: 10px;
+// ==================== Variables ====================
+$primary-color: #0d6efd;
+$success-color: #198754;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #0dcaf0;
+$secondary-color: #6c757d;
+$dark-color: #212529;
+$light-bg: #f8f9fa;
+$white: #ffffff;
+$border-color: #dee2e6;
+
+// Couleurs des statuts
+$status-en-attente: #ffc107;
+$status-en-cours: #0dcaf0;
+$status-livree: #198754;
+$status-retournee: #6c757d;
+$status-annulee: #dc3545;
+
+// Espacements
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-xxl: 3rem;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// ==================== Conteneur Principal ====================
+.container-fluid {
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+}
+
+// ==================== En-tête avec Retour ====================
+.d-flex.align-items-center.mb-4 {
+  margin-bottom: $spacing-xl !important;
+  background: $white;
+  padding: $spacing-lg;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  .btn-outline-secondary {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid $border-color;
+    transition: all $transition-normal;
+
+    i {
+      font-size: 1.3rem;
+    }
+
+    &:hover {
+      background: $primary-color;
+      border-color: $primary-color;
+      color: $white;
+      transform: translateX(-4px);
+    }
+  }
+
+  .flex-grow-1 {
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: $dark-color;
+      margin-bottom: $spacing-xs;
+
+      @media (max-width: $breakpoint-md) {
+        font-size: 1.3rem;
+      }
+    }
+
+    .text-muted {
+      font-size: 0.9rem;
+      color: $secondary-color;
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+
+      i {
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .btn-group {
+    display: flex;
+    gap: $spacing-sm;
+
+    .btn {
+      border-radius: 10px;
+      padding: $spacing-sm $spacing-lg;
+      font-weight: 600;
+      transition: all $transition-normal;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      i {
+        font-size: 1.1rem;
+      }
+
+      &.btn-primary {
+        box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba($primary-color, 0.4);
+        }
+      }
+
+      &.btn-success {
+        box-shadow: 0 4px 12px rgba($success-color, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba($success-color, 0.4);
+        }
+      }
+
+      &.btn-warning {
+        box-shadow: 0 4px 12px rgba($warning-color, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba($warning-color, 0.4);
+        }
+      }
+
+      &.btn-danger {
+        box-shadow: 0 4px 12px rgba($danger-color, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba($danger-color, 0.4);
+        }
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+    }
+
+    @media (max-width: $breakpoint-md) {
+      flex-wrap: wrap;
+      width: 100%;
+
+      .btn {
+        flex: 1;
+        min-width: 120px;
+      }
+    }
+  }
+}
+
+// ==================== Messages Feedback ====================
+.alert {
+  border-radius: 12px;
   border: none;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-lg;
+  animation: slideInDown $transition-normal;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  .btn-close {
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ==================== Cards Principal ====================
+.card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all $transition-normal;
+  background: $white;
+  margin-bottom: $spacing-xl;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+  }
 
   .card-header {
-    border-radius: 10px 10px 0 0 !important;
-    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+    color: $white;
+    padding: $spacing-lg $spacing-xl;
+    border-bottom: none;
 
     h5 {
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      i {
+        font-size: 1.4rem;
+      }
+    }
+
+    &.bg-success {
+      background: linear-gradient(135deg, $success-color 0%, darken($success-color, 10%) 100%);
+    }
+
+    &.bg-warning {
+      background: linear-gradient(135deg, $warning-color 0%, darken($warning-color, 10%) 100%);
+      color: $dark-color;
+    }
+
+    &.bg-info {
+      background: linear-gradient(135deg, $info-color 0%, darken($info-color, 10%) 100%);
     }
   }
 
   .card-body {
-    padding: 1.5rem;
-  }
+    padding: $spacing-xl;
 
-  &.sticky-top {
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
+    @media (max-width: $breakpoint-md) {
+      padding: $spacing-lg;
+    }
   }
 }
 
-.affectation-card {
-  background-color: #f8f9fa;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  border-left: 3px solid #ffc107;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: #e9ecef;
-    transform: translateX(3px);
+// ==================== Row Layout ====================
+.row {
+  &.g-3 {
+    > * {
+      padding: $spacing-sm;
+    }
   }
+}
 
-  h6 {
-    color: #495057;
+// ==================== Informations Détaillées ====================
+.mb-0 {
+  strong {
+    color: $dark-color;
     font-weight: 600;
   }
 
-  small {
-    font-size: 0.85rem;
+  &:not(:last-child) {
+    margin-bottom: $spacing-md !important;
+  }
+}
+
+.text-muted {
+  color: $secondary-color !important;
+}
+
+// Icônes dans les informations
+p {
+  i {
+    margin-right: $spacing-xs;
+    color: $primary-color;
+  }
+}
+
+// ==================== Badges Statut ====================
+.badge {
+  padding: $spacing-sm $spacing-md;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &.bg-warning {
+    background: $status-en-attente !important;
+    color: $dark-color;
   }
 
-  .btn-outline-danger {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+  &.bg-info {
+    background: $status-en-cours !important;
+    color: $white;
   }
+
+  &.bg-success {
+    background: $status-livree !important;
+    color: $white;
+  }
+
+  &.bg-secondary {
+    background: $status-retournee !important;
+    color: $white;
+  }
+
+  &.bg-danger {
+    background: $status-annulee !important;
+    color: $white;
+  }
+}
+
+// ==================== Table Lignes Réservation ====================
+.table-responsive {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .table {
-  font-size: 0.95rem;
+  margin-bottom: 0;
+  background: $white;
 
-  thead th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
+  thead {
+    background: linear-gradient(135deg, $secondary-color 0%, darken($secondary-color, 10%) 100%);
+
+    th {
+      color: $white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: $spacing-md $spacing-lg;
+      border: none;
+      white-space: nowrap;
+    }
   }
 
-  tbody tr {
-    transition: background-color 0.2s ease;
+  tbody {
+    tr {
+      transition: all $transition-fast;
+      border-bottom: 1px solid #f0f2f5;
 
-    &:hover {
-      background-color: rgba(0, 123, 255, 0.05);
+      &:hover {
+        background: lighten($primary-color, 48%);
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      td {
+        padding: $spacing-md $spacing-lg;
+        vertical-align: middle;
+        font-size: 0.9rem;
+        color: $dark-color;
+      }
     }
   }
 }
 
-.badge {
-  font-size: 0.875rem;
-  padding: 0.4em 0.8em;
-  font-weight: 500;
-}
+// ==================== Loading Spinner ====================
+.text-center {
+  &.py-5 {
+    padding: $spacing-xl * 2 $spacing-md;
 
-label.small {
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.3rem;
+      color: $primary-color;
+    }
 
-.alert {
-  border-radius: 0.5rem;
-  border-left: 4px solid;
+    i {
+      font-size: 4rem;
+      color: lighten($secondary-color, 20%);
+      margin-bottom: $spacing-lg;
+      display: block;
+    }
 
-  &.alert-success {
-    border-left-color: #28a745;
-  }
-
-  &.alert-danger {
-    border-left-color: #dc3545;
-  }
-
-  &.alert-info {
-    border-left-color: #17a2b8;
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
-    color: #0c5460;
+    p {
+      font-size: 1.1rem;
+      color: $secondary-color;
+      margin-bottom: 0;
+    }
   }
 }
 
+// ==================== Modal Affectation ====================
 .modal {
+  .modal-dialog {
+    border-radius: 16px;
+  }
+
   .modal-content {
-    border-radius: 10px;
+    border-radius: 16px;
     border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
   }
 
   .modal-header {
-    border-radius: 10px 10px 0 0 !important;
-    border-bottom: none;
+    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+    color: $white;
+    border-radius: 16px 16px 0 0;
+    padding: $spacing-lg $spacing-xl;
+
+    .modal-title {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+
+    .btn-close {
+      filter: brightness(0) invert(1);
+    }
+  }
+
+  .modal-body {
+    padding: $spacing-xl;
+
+    .mb-3 {
+      margin-bottom: $spacing-lg !important;
+
+      label {
+        font-weight: 600;
+        color: $dark-color;
+        margin-bottom: $spacing-sm;
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+
+        .text-danger {
+          color: $danger-color;
+        }
+      }
+
+      select.form-select {
+        border-radius: 10px;
+        border: 2px solid #e0e6ed;
+        padding: $spacing-sm $spacing-md;
+        transition: all $transition-fast;
+        font-size: 0.95rem;
+
+        &:focus {
+          border-color: $primary-color;
+          box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.15);
+        }
+      }
+    }
   }
 
   .modal-footer {
-    border-top: 1px solid #dee2e6;
-  }
-}
+    padding: $spacing-lg $spacing-xl;
+    border-top: 1px solid #e0e6ed;
 
-.form-label {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0.5rem;
-}
+    .btn {
+      border-radius: 10px;
+      padding: $spacing-sm $spacing-lg;
+      font-weight: 600;
+      transition: all $transition-normal;
 
-.form-control,
-.form-select {
-  border-radius: 0.5rem;
-  border: 1px solid #ced4da;
+      &:hover {
+        transform: translateY(-2px);
+      }
 
-  &:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
-
-  &.is-invalid {
-    border-color: #dc3545;
-
-    &:focus {
-      border-color: #dc3545;
-      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
     }
   }
 }
 
-.btn {
-  border-radius: 0.5rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
+// ==================== Modal Confirmation ====================
+.modal-header.bg-danger {
+  background: linear-gradient(135deg, $danger-color 0%, darken($danger-color, 10%) 100%) !important;
+}
 
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+.modal-header.bg-warning {
+  background: linear-gradient(135deg, $warning-color 0%, darken($warning-color, 10%) 100%) !important;
+  color: $dark-color !important;
+}
 
-  &:active:not(:disabled) {
-    transform: translateY(0);
+// ==================== Alert dans Card ====================
+.card-body {
+  .alert {
+    border-radius: 10px;
+    padding: $spacing-md;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    i {
+      font-size: 1.3rem;
+    }
   }
 }
 
-.text-danger {
-  color: #dc3545 !important;
-  font-weight: 600;
+// ==================== Responsive Design ====================
+@media (max-width: $breakpoint-lg) {
+  .table {
+    thead {
+      th {
+        font-size: 0.7rem;
+        padding: $spacing-sm $spacing-md;
+      }
+    }
+
+    tbody {
+      td {
+        padding: $spacing-sm $spacing-md;
+        font-size: 0.85rem;
+      }
+    }
+  }
 }
 
-// Animations
-@keyframes slideInDown {
+@media (max-width: $breakpoint-md) {
+  .container-fluid {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .card {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .d-flex.align-items-center.mb-4 {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: $spacing-md;
+
+    .btn-outline-secondary {
+      align-self: flex-start;
+    }
+
+    .btn-group {
+      width: 100%;
+    }
+  }
+
+  .row {
+    .col-md-6,
+    .col-md-4,
+    .col-md-8 {
+      width: 100%;
+      margin-bottom: $spacing-md;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .table-responsive {
+    .table {
+      font-size: 0.8rem;
+
+      thead th,
+      tbody td {
+        padding: $spacing-xs $spacing-sm;
+      }
+    }
+  }
+}
+
+// ==================== Animations ====================
+@keyframes fadeIn {
   from {
-    transform: translateY(-20px);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
     opacity: 1;
   }
 }
 
-.alert {
-  animation: slideInDown 0.3s ease;
-}
-
-.card {
-  animation: fadeInUp 0.4s ease;
-}
-
-@keyframes fadeInUp {
+@keyframes slideInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -200,48 +619,82 @@ label.small {
   }
 }
 
-// Responsive
-@media (max-width: 992px) {
-  .sticky-top {
-    position: relative !important;
-    top: 0 !important;
+.card {
+  animation: slideInUp 0.5s ease-out;
+
+  &:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 0.3s;
   }
 }
 
-@media (max-width: 768px) {
-  .table {
-    font-size: 0.85rem;
+// ==================== Print Styles ====================
+@media print {
+  .btn,
+  .alert,
+  .modal {
+    display: none !important;
   }
 
-  .btn-group {
-    flex-direction: column;
+  .card {
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
 
-    .btn {
-      margin-bottom: 0.5rem;
-      border-radius: 0.5rem !important;
+  .container-fluid {
+    background: $white;
+  }
+}
+
+// ==================== Utilities ====================
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+// ==================== Dark Mode Support (optionnel) ====================
+@media (prefers-color-scheme: dark) {
+  .container-fluid {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+
+  .card {
+    background: #2d2d44;
+    color: #e0e0e0;
+
+    .card-body {
+      color: #e0e0e0;
+    }
+
+    strong {
+      color: #ffffff;
     }
   }
 
-  .affectation-card {
-    padding: 0.75rem;
-  }
-}
+  .table {
+    background: #2d2d44;
+    color: #e0e0e0;
 
-// Scrollbar personnalisé pour le sticky
-.sticky-top::-webkit-scrollbar {
-  width: 6px;
-}
+    tbody tr {
+      border-color: #3d3d54;
 
-.sticky-top::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.sticky-top::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-
-  &:hover {
-    background: #555;
+      &:hover {
+        background: #3d3d54;
+      }
+    }
   }
 }

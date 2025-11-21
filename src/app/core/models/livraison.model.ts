@@ -46,6 +46,7 @@ export interface LigneLivraisonDto {
   statutLivraisonLigne: StatutLivraison;
   typeProduit: string; // 'EN_QUANTITE' ou 'AVEC_REFERENCE'
   instancesReservees?: string[]; // Pour produits avec référence
+
 }
 
 export interface AffectationLivraisonRequestDto {
