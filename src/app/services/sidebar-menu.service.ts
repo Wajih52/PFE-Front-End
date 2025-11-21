@@ -136,7 +136,7 @@ export class SidebarMenuService {
             id: 'livraisons',
             label: 'Livraisons',
             icon: '🚚',
-            route: '/employe/livraisons',
+            route: '/admin/livraisons',
             order: 3
           },
           {

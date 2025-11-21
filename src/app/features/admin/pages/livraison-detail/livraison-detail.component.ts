@@ -1,30 +1,29 @@
 // src/app/features/admin/pages/livraison-detail/livraison-detail.component.ts
 // 🚚 Composant ADMIN/EMPLOYE - Détails d'une livraison
 
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { LivraisonService } from '../../../../services/livraison.service';
-import { UtilisateurService } from '../../../../services/uilisateur.service';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {LivraisonService} from '../../../../services/livraison.service';
+import {UtilisateurService} from '../../../../services/utilisateur.service';
 import {
-  LivraisonResponseDto,
-  AffectationLivraisonDto,
   AffectationLivraisonRequestDto,
-  StatutLivraisonLabels,
-  StatutLivraisonColors,
-  canModifierLivraison,
   canMarquerEnCours,
   canMarquerLivree,
-  formatDateHeureLivraison
+  canModifierLivraison,
+  formatDateHeureLivraison,
+  LivraisonResponseDto,
+  StatutLivraisonColors,
+  StatutLivraisonLabels
 } from '../../../../core/models/livraison.model';
-import { StatutLivraison } from '../../../../core/models/reservation.model';
-import { UtilisateurResponse } from '../../../../core/models';
+import {StatutLivraison} from '../../../../core/models/reservation.model';
+import {StatutCompte, UserResponse} from '../../../../core/models';
 
 @Component({
   selector: 'app-livraison-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './livraison-detail.component.html',
   styleUrls: ['./livraison-detail.component.scss']
 })
@@ -37,7 +36,7 @@ export class LivraisonDetailComponent implements OnInit {
 
   // Données
   livraison = signal<LivraisonResponseDto | null>(null);
-  employes = signal<UtilisateurResponse[]>([]);
+  employes = signal<UserResponse[]>([]);
 
   // États
   isLoading = signal<boolean>(true);
@@ -115,19 +114,21 @@ export class LivraisonDetailComponent implements OnInit {
   chargerEmployes(): void {
     this.utilisateurService.getAllUtilisateurs().subscribe({
       next: (users) => {
-        // Filtrer pour ne garder que les employés, managers et admins
-        const employesFiltres = users.filter(u =>
-          u.roles.some(r =>
-            r.roleName === 'EMPLOYE' ||
-            r.roleName === 'MANAGER' ||
-            r.roleName === 'ADMIN'
-          ) &&
-          u.accountLocked === false
-        );
+        const employesFiltres = users.filter(u => {
+          // ✅ roles est un string[], pas un UserRole[]
+          const hasEmployeRole = u.roles.some(role =>
+            role === 'EMPLOYE' ||
+            role === 'MANAGER' ||
+            role === 'ADMIN'
+          );
+
+          // ✅ etatCompte est un StatutCompte enum
+          const isActif = u.etatCompte === StatutCompte.ACTIF;
+
+          return isActif && hasEmployeRole;
+        });
+
         this.employes.set(employesFiltres);
-      },
-      error: (error) => {
-        console.error('Erreur:', error);
       }
     });
   }

@@ -1,5 +1,6 @@
 // src/app/features/admin/pages/livraison-create/livraison-create.component.ts
 // 🚚 Composant ADMIN/EMPLOYE - Créer une nouvelle livraison
+// VERSION CORRIGÉE : referenceReservation depuis la réservation parent
 
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -13,10 +14,17 @@ import {
   LigneReservationResponseDto
 } from '../../../../core/models/reservation.model';
 
+/**
+ * Interface étendue pour ajouter la référence de réservation aux lignes
+ */
+interface LigneAvecReference extends LigneReservationResponseDto {
+  referenceReservation: string; // Ajouté depuis la réservation parente
+}
+
 @Component({
   selector: 'app-livraison-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './livraison-create.component.html',
   styleUrls: ['./livraison-create.component.scss']
 })
@@ -32,11 +40,20 @@ export class LivraisonCreateComponent implements OnInit {
 
   // Données
   reservations = signal<ReservationResponseDto[]>([]);
-  lignesDisponibles = computed<LigneReservationResponseDto[]>(() => {
+
+  // ✅ CORRECTION : Computed signal qui enrichit les lignes avec referenceReservation
+  lignesDisponibles = computed<LigneAvecReference[]>(() => {
     return this.reservations()
       .filter(r => r.statutReservation === 'CONFIRME')
-      .flatMap(r => r.lignesReservation || [])
-      .filter(l => !l.idLivraison); // Lignes sans livraison assignée
+      .flatMap(reservation => {
+        // Pour chaque ligne, ajouter la référence de la réservation parente
+        return (reservation.lignesReservation || [])
+          .filter(ligne => !ligne.idLivraison) // Lignes sans livraison assignée
+          .map(ligne => ({
+            ...ligne,
+            referenceReservation: reservation.referenceReservation // ✅ Ajouté ici
+          }));
+      });
   });
 
   // Sélection
@@ -134,16 +151,16 @@ export class LivraisonCreateComponent implements OnInit {
   }
 
   /**
-   * Obtenir les lignes filtrées
+   * ✅ CORRECTION : Obtenir les lignes filtrées
    */
-  getLignesFiltrees(): LigneReservationResponseDto[] {
+  getLignesFiltrees(): LigneAvecReference[] {
     let lignes = this.lignesDisponibles();
 
     // Filtre par référence réservation
     if (this.filtreReservation()) {
       const recherche = this.filtreReservation().toLowerCase();
       lignes = lignes.filter(l =>
-        l.referenceReservation?.toLowerCase().includes(recherche)
+        l.referenceReservation.toLowerCase().includes(recherche) // ✅ Maintenant ça existe !
       );
     }
 

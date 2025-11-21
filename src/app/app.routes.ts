@@ -22,6 +22,9 @@ import {ListeFacturesComponent} from './features/admin/pages/liste-factures/list
 import {DetailFactureComponent} from './features/admin/pages/detail-facture/detail-facture.component';
 import {MesFacturesComponent} from './features/client/mes-factures/mes-factures.component';
 import {DetailFactureClientComponent} from './features/client/detail-facture-client/detail-facture-client.component';
+import {LivraisonsListComponent} from './features/admin/pages/livraisons-list/livraisons-list.component';
+import {LivraisonCreateComponent} from './features/admin/pages/livraison-create/livraison-create.component';
+import {LivraisonDetailComponent} from './features/admin/pages/livraison-detail/livraison-detail.component';
 
 
 export const routes: Routes = [
@@ -178,11 +181,11 @@ export const routes: Routes = [
           // Routes factures
           {
             path: 'factures',
+            canActivate: [authGuard, roleGuard],
             children: [
               {
                 path: '',
                 component: ListeFacturesComponent,
-                canActivate: [authGuard, roleGuard],
                 data: { title: 'Liste des Factures' }
               },
               {
@@ -190,6 +193,27 @@ export const routes: Routes = [
                 component: DetailFactureComponent,
                 canActivate: [authGuard, roleGuard],
                 data: { title: 'Détail Facture' }
+              }
+            ]
+          },
+          {
+            path: 'livraisons',
+            canActivate: [authGuard, roleGuard],
+            children: [
+              {
+                path: '',
+                component: LivraisonsListComponent,
+                data: { title: 'Liste des Livraisons' }
+              },
+              {
+                path: 'create',
+                component: LivraisonCreateComponent,
+                data: { title: 'Créer une Livraison' }
+              },
+              {
+                path: ':id',
+                component: LivraisonDetailComponent,
+                data: { title: 'Détails Livraison' }
               }
             ]
           }
