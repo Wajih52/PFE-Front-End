@@ -1,86 +1,761 @@
 // src/app/features/admin/pages/livraisons-list/livraisons-list.component.scss
-// 🚚 Styles - Liste des livraisons
+// 🚚 Styles REDESIGN - Liste des livraisons
 
-.table {
-  font-size: 0.95rem;
+@use 'sass:color';
 
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
+// ==================== VARIABLES ====================
+$primary-color: #C8A882;
+$dark-color: #1A1A1A;
+$white: #FFFFFF;
+$background-light: #F8F9FA;
+$border-color: #E5E7EB;
+$text-dark: #1F2937;
+$text-gray: #6B7280;
+$text-muted: #9CA3AF;
+$success-color: #10B981;
+$warning-color: #F59E0B;
+$danger-color: #EF4444;
+$info-color: #3B82F6;
+$secondary-color: #6B7280;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+$transition: all 0.3s ease;
+$border-radius: 12px;
 
-  tbody tr {
-    transition: background-color 0.2s ease;
+// ==================== CONTAINER ====================
+.livraisons-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: $background-light;
+}
 
-    &:hover {
-      background-color: rgba(0, 123, 255, 0.05);
+// ==================== HEADER ====================
+.page-header {
+  background: $white;
+  padding: 2rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+
+  .header-content {
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $dark-color;
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: $primary-color;
+        font-size: 1.8rem;
+      }
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: $text-gray;
+      margin: 0;
     }
   }
 
-  td {
-    vertical-align: middle;
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 }
 
-.badge {
-  font-size: 0.85rem;
-  padding: 0.4em 0.8em;
-  font-weight: 500;
+// ==================== BOUTONS ====================
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+
+  i {
+    font-size: 1rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
-.btn-group-sm > .btn {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+.btn-primary {
+  background: $primary-color;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background: color.adjust($primary-color, $lightness: -10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(200, 168, 130, 0.3);
+  }
 }
 
+.btn-secondary {
+  background: $secondary-color;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background: color.adjust($secondary-color, $lightness: -10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+  }
+}
+
+.btn-danger {
+  background: $danger-color;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background: color.adjust($danger-color, $lightness: -10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+}
+
+// ==================== MESSAGES D'ALERTE ====================
 .alert {
-  border-radius: 0.5rem;
-  border-left: 4px solid;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideInDown 0.3s ease;
+  box-shadow: $box-shadow;
+
+  i:first-child {
+    font-size: 1.5rem;
+  }
+
+  span {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    i {
+      font-size: 1.2rem;
+    }
+  }
 
   &.alert-success {
-    border-left-color: #28a745;
+    background: color.adjust($success-color, $lightness: 45%);
+    border-left: 4px solid $success-color;
+    color: color.adjust($success-color, $lightness: -20%);
   }
 
   &.alert-danger {
-    border-left-color: #dc3545;
-  }
-
-  &.alert-info {
-    border-left-color: #17a2b8;
+    background: color.adjust($danger-color, $lightness: 45%);
+    border-left: 4px solid $danger-color;
+    color: color.adjust($danger-color, $lightness: -20%);
   }
 }
 
-.card {
-  border-radius: 10px;
-  border: none;
+// ==================== FILTRES ====================
+.filtres-card {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin-bottom: 2rem;
+  overflow: hidden;
 
-  .card-body {
+  .filtres-header {
+    background: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -10%) 100%);
+    padding: 1rem 1.5rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $white;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .filtres-body {
     padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .filtre-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 200px;
+
+    &.full-width {
+      width: 100%;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: $text-dark;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        color: $primary-color;
+      }
+    }
+
+    .form-input {
+      padding: 0.75rem;
+      border: 2px solid $border-color;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: $transition;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba(200, 168, 130, 0.1);
+      }
+    }
+  }
+
+  .filtre-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .status-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    .status-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid $border-color;
+      border-radius: 8px;
+      background: $white;
+      cursor: pointer;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      color: $text-gray;
+
+      i {
+        font-size: 1rem;
+      }
+
+      &:hover {
+        border-color: $primary-color;
+        background: color.adjust($primary-color, $lightness: 48%);
+      }
+
+      &.active {
+        border-color: $primary-color;
+        background: $primary-color;
+        color: $white;
+
+        .badge {
+          background: $white !important;
+          color: $primary-color !important;
+        }
+      }
+    }
   }
 }
 
-.form-label {
+// ==================== CHARGEMENT ====================
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 1rem;
+  }
+}
+
+// ==================== TABLEAU ====================
+.table-card {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+}
+
+.livraisons-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -5%) 100%);
+
+    tr {
+      th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: $white;
+        font-size: 0.9rem;
+        white-space: nowrap;
+
+        i {
+          margin-right: 0.5rem;
+          opacity: 0.9;
+        }
+
+        &.text-center {
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border-color;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: color.adjust($primary-color, $lightness: 50%);
+      }
+
+      td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: $text-dark;
+        font-size: 0.9rem;
+
+        &.text-center {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+// ==================== ÉLÉMENTS DU TABLEAU ====================
+.id-badge {
+  display: inline-block;
+  background: color.adjust($primary-color, $lightness: 48%);
+  color: $primary-color;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  strong {
+    color: $text-dark;
+  }
+
+  i {
+    color: $warning-color;
+  }
+}
+
+.reference-badge {
+  display: inline-block;
+  background: color.adjust($info-color, $lightness: 45%);
+  color: $info-color;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .date, .time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+
+    i {
+      color: $primary-color;
+    }
+  }
+}
+
+.adresse-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 200px;
+
+  i {
+    color: $danger-color;
+    flex-shrink: 0;
+  }
+}
+
+.employes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.employe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: color.adjust($secondary-color, $lightness: 45%);
+  color: $secondary-color;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: #495057;
-  margin-bottom: 0.5rem;
-}
 
-.input-group-text {
-  background-color: #f8f9fa;
-  border-right: none;
-}
-
-.input-group .form-control {
-  border-left: none;
-
-  &:focus {
-    border-color: #ced4da;
-    box-shadow: none;
+  i {
+    font-size: 0.85rem;
   }
 }
 
-// Animations pour les messages
+// ==================== BADGES DE STATUT ====================
+.badge {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+
+  &.badge-warning {
+    background: color.adjust($warning-color, $lightness: 40%);
+    color: color.adjust($warning-color, $lightness: -20%);
+  }
+
+  &.badge-info {
+    background: color.adjust($info-color, $lightness: 45%);
+    color: color.adjust($info-color, $lightness: -20%);
+  }
+
+  &.badge-success {
+    background: color.adjust($success-color, $lightness: 45%);
+    color: color.adjust($success-color, $lightness: -20%);
+  }
+
+  &.badge-danger {
+    background: color.adjust($danger-color, $lightness: 45%);
+    color: color.adjust($danger-color, $lightness: -20%);
+  }
+
+  &.badge-secondary {
+    background: color.adjust($secondary-color, $lightness: 45%);
+    color: color.adjust($secondary-color, $lightness: -20%);
+  }
+
+  &.badge-primary {
+    background: color.adjust($primary-color, $lightness: 40%);
+    color: color.adjust($primary-color, $lightness: -20%);
+  }
+}
+
+// ==================== ACTIONS ====================
+.actions-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  i {
+    font-size: 1rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-info {
+    background: color.adjust($info-color, $lightness: 45%);
+    color: $info-color;
+
+    &:hover:not(:disabled) {
+      background: $info-color;
+      color: $white;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  &.btn-primary {
+    background: color.adjust($primary-color, $lightness: 45%);
+    color: $primary-color;
+
+    &:hover:not(:disabled) {
+      background: $primary-color;
+      color: $white;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(200, 168, 130, 0.3);
+    }
+  }
+
+  &.btn-success {
+    background: color.adjust($success-color, $lightness: 45%);
+    color: $success-color;
+
+    &:hover:not(:disabled) {
+      background: $success-color;
+      color: $white;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+    }
+  }
+
+  &.btn-secondary {
+    background: color.adjust($secondary-color, $lightness: 45%);
+    color: $secondary-color;
+
+    &:hover:not(:disabled) {
+      background: $secondary-color;
+      color: $white;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(107, 114, 128, 0.3);
+    }
+  }
+
+  &.btn-danger {
+    background: color.adjust($danger-color, $lightness: 45%);
+    color: $danger-color;
+
+    &:hover:not(:disabled) {
+      background: $danger-color;
+      color: $white;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
+    }
+  }
+}
+
+// ==================== ÉTAT VIDE ====================
+.empty-state {
+  background: $white;
+  border-radius: $border-radius;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: $box-shadow;
+
+  i {
+    font-size: 4rem;
+    color: $text-muted;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    color: $text-dark;
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// ==================== MODAL ====================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: $white;
+  border-radius: $border-radius;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: $box-shadow-lg;
+  animation: slideInDown 0.3s ease;
+
+  .modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $text-dark;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      color: $text-gray;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $text-dark;
+      }
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+
+    p {
+      margin: 0 0 1rem 0;
+      color: $text-dark;
+    }
+
+    .confirmation-details {
+      background: $background-light;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+
+      p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+
+        strong {
+          color: $text-dark;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+
+    .text-warning {
+      color: $warning-color;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+
+      i {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+}
+
+// ==================== ANIMATIONS ====================
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes slideInDown {
   from {
     transform: translateY(-20px);
@@ -92,41 +767,65 @@
   }
 }
 
-.alert {
-  animation: slideInDown 0.3s ease;
-}
-
-// Responsive
-@media (max-width: 768px) {
-  .btn-group {
-    flex-direction: column;
-
-    .btn {
-      border-radius: 0.25rem !important;
-      margin-bottom: 0.5rem;
-    }
-  }
-
-  .table {
+// ==================== RESPONSIVE ====================
+@media (max-width: 1200px) {
+  .livraisons-table {
     font-size: 0.85rem;
 
-    .btn-group-sm > .btn {
-      padding: 0.2rem 0.4rem;
-      font-size: 0.75rem;
+    thead th,
+    tbody td {
+      padding: 0.75rem;
     }
   }
 }
 
-// Modal
-.modal.show {
-  animation: fadeIn 0.3s ease;
+@media (max-width: 992px) {
+  .livraisons-container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filtres-body {
+    .filtre-row {
+      flex-direction: column;
+    }
+  }
+
+  .actions-group {
+    .btn-action {
+      width: 32px;
+      height: 32px;
+
+      i {
+        font-size: 0.9rem;
+      }
+    }
+  }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+@media (max-width: 768px) {
+  .page-header {
+    .header-content h1 {
+      font-size: 1.5rem;
+    }
   }
-  to {
-    opacity: 1;
+
+  .table-card {
+    .table-responsive {
+      overflow-x: scroll;
+    }
+  }
+
+  .livraisons-table {
+    min-width: 900px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
   }
 }
