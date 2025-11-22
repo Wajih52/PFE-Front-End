@@ -540,7 +540,7 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * ✅ NOUVEAU: Appliquer le filtre de date
+   *  Appliquer le filtre de date
    */
   applyDateFilter(): void {
     if (!this.filterDateDebut || !this.filterDateFin) {

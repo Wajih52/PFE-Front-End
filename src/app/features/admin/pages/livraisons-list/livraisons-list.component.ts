@@ -152,6 +152,7 @@ export class LivraisonsListComponent implements OnInit {
     this.rechercheTexte.set('');
     this.filtreDate.set('');
     this.appliquerFiltres();
+    this.chargerLivraisons();
   }
 
   /**
