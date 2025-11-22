@@ -250,8 +250,8 @@ export class LivraisonDetailComponent implements OnInit {
       idLivraison: livraison.idLivraison,
       idEmploye: Number(formValue.idEmploye),
       dateAffectation: formValue.dateAffectation,
-      heureDebut: this.livraisonService.formatTimeForApi(formValue.heureDebut),
-      heureFin: this.livraisonService.formatTimeForApi(formValue.heureFin),
+      heureAffectation: this.livraisonService.formatTimeForApi(formValue.heureDebut),
+
       notes: formValue.notes || undefined
     };
 

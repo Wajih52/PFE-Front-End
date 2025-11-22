@@ -28,6 +28,10 @@ export interface LivraisonResponseDto {
   heureLivraison: string;
   statutLivraison: StatutLivraison;
   observations?: string;
+
+  dateCreation: string;
+  dateModification: string;
+
   lignesReservation: LigneLivraisonDto[];
   affectations: AffectationLivraisonDto[];
   nomClient: string;
@@ -53,16 +57,14 @@ export interface AffectationLivraisonRequestDto {
   idLivraison: number;
   idEmploye: number;
   dateAffectation: string; // Format: YYYY-MM-DD
-  heureDebut: string; // Format: HH:mm:ss
-  heureFin: string; // Format: HH:mm:ss
+  heureAffectation: string; // Format: HH:mm:ss
   notes?: string;
 }
 
 export interface AffectationLivraisonDto {
   idAffectation: number;
   dateAffectation: string;
-  heureDebut: string;
-  heureFin: string;
+  heureAffectation:string;
   notes?: string;
   idEmploye: number;
   nomEmploye: string;
@@ -89,8 +91,7 @@ export interface LivraisonFormData {
 export interface AffectationFormData {
   employe: any; // Utilisateur sélectionné
   dateAffectation: Date;
-  heureDebut: string;
-  heureFin: string;
+  heureAffectation: string;
   notes?: string;
 }
 
@@ -193,3 +194,24 @@ export function formatDateHeureLivraison(date: string, heure: string): string {
   };
   return `${dateObj.toLocaleDateString('fr-FR', options)} à ${heure}`;
 }
+
+/**
+ * Formatter la date de création/modification
+ */
+export function formatDateTimeAudit(dateTime: string): string {
+  const date = new Date(dateTime);
+  return date.toLocaleString('fr-FR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+
+
+
+
+
+
