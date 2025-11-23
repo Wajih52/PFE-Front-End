@@ -56,8 +56,6 @@ export interface LigneLivraisonDto {
 export interface AffectationLivraisonRequestDto {
   idLivraison: number;
   idEmploye: number;
-  dateAffectation: string; // Format: YYYY-MM-DD
-  heureAffectation: string; // Format: HH:mm:ss
   notes?: string;
 }
 

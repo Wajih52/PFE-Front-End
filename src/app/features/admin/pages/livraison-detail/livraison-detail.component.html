@@ -15,6 +15,13 @@
         </p>
       }
     </div>
+      <button
+        class="btn btn-outline-primary me-2"
+        [routerLink]="['/admin/livraisons', livraison()!.idLivraison, 'edit']">
+        <i class="bi bi-pencil-square me-2"></i>
+        Modifier
+      </button>
+
     @if (livraison()) {
       <div class="btn-group">
         @if (canMarquerEnCoursFunc(livraison()!)) {
@@ -168,38 +175,93 @@
                   <th>Période</th>
                   <th>Statut</th>
                   <th>Références</th>
+                  @if (livraison()!.statutLivraison === 'EN_COURS') {
+                    <th class="text-center">Actions</th>
+                  }
                 </tr>
                 </thead>
                 <tbody>
                   @for (ligne of livraison()!.lignesReservation; track ligne.idLigne) {
-                    <tr>
+                    <tr [class.table-success]="ligne.statutLivraisonLigne === 'LIVREE'">
+                      <!-- Produit -->
                       <td>
-                        <strong>{{ ligne.nomProduit }}</strong>
-                        <br>
+                        <div class="fw-semibold">{{ ligne.nomProduit }}</div>
                         <small class="text-muted">{{ ligne.typeProduit }}</small>
                       </td>
+
+                      <!-- Quantité -->
                       <td>
-                        <span class="badge bg-secondary">{{ ligne.quantite }}</span>
+                <span class="badge bg-secondary">
+                  {{ ligne.quantite }} {{ ligne.quantite > 1 ? 'unités' : 'unité' }}
+                </span>
                       </td>
+
+                      <!-- Période -->
                       <td>
                         <small>
-                          Du {{ ligne.dateDebut }}<br>
-                          Au {{ ligne.dateFin }}
+                          <i class="bi bi-calendar3 me-1"></i>
+                          {{ ligne.dateDebut | date:'dd/MM/yyyy' }}
+                          <br>
+                          <i class="bi bi-calendar3 me-1"></i>
+                          {{ ligne.dateFin | date:'dd/MM/yyyy' }}
                         </small>
                       </td>
+
+                      <!-- Statut -->
                       <td>
-                        <span [class]="getStatutBadgeClass(ligne.statutLivraisonLigne)">
-                          {{ statutLabels[ligne.statutLivraisonLigne] }}
-                        </span>
+                <span [class]="getStatutLigneBadgeClass(ligne.statutLivraisonLigne)">
+                  <i [class]="'bi bi-' + (ligne.statutLivraisonLigne === 'LIVREE' ? 'check-circle' :
+                                          ligne.statutLivraisonLigne === 'EN_COURS' ? 'truck' :
+                                          ligne.statutLivraisonLigne === 'EN_ATTENTE' ? 'clock' :
+                                          'calendar-x')"></i>
+                  {{ getStatutLigneLabel(ligne.statutLivraisonLigne) }}
+                </span>
                       </td>
+
+                      <!-- Références -->
                       <td>
-                        @if (ligne.instancesReservees && ligne.instancesReservees.length > 0) {
-                          @for (ref of ligne.instancesReservees; track ref) {
-                            <span class="badge bg-info me-1">{{ ref }}</span>
-                          }
+                        @if (ligne.typeProduit === 'AVEC_REFERENCE' && ligne.instancesReservees && ligne.instancesReservees.length > 0) {
+                          <div class="d-flex flex-wrap gap-1">
+                            @for (instance of ligne.instancesReservees; track instance) {
+                              <span class="badge bg-info text-white">
+                        <i class="bi bi-hash"></i>{{ instance }}
+                      </span>
+                            }
+                          </div>
                         } @else {
                           <span class="text-muted">-</span>
                         }
+                      </td>
+                      <!-- Actions (bouton de livraison) -->
+                      @if (livraison()!.statutLivraison === 'EN_COURS') {
+                        <td class="text-center">
+                          @if (canMarquerLigneLivree(ligne)) {
+                            <button
+                              class="btn btn-sm btn-success"
+                              (click)="marquerLigneLivree(ligne.idLigne)"
+                              [disabled]="isLigneActionEnCours(ligne.idLigne)"
+                              title="Marquer comme livrée">
+                              @if (isLigneActionEnCours(ligne.idLigne)) {
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                              } @else {
+                                <i class="bi bi-check-circle me-1"></i>
+                              }
+                              Livrer
+                            </button>
+                          } @else if (ligne.statutLivraisonLigne === 'LIVREE') {
+                            <span class="badge bg-success">
+                      <i class="bi bi-check-circle-fill me-1"></i>
+                      Livrée
+                    </span>
+                          }
+                        </td>
+                      }
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="6" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        Aucune ligne de réservation
                       </td>
                     </tr>
                   }
@@ -208,6 +270,14 @@
             </div>
           </div>
         </div>
+        <!-- Note explicative -->
+        @if (livraison()!.statutLivraison === 'EN_COURS') {
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Information :</strong> Cliquez sur le bouton "Livrer" pour chaque ligne une fois que le matériel a été livré.
+            Lorsque toutes les lignes sont marquées comme livrées, la livraison sera automatiquement marquée comme LIVREE.
+          </div>
+        }
       </div>
 
       <!-- Colonne droite: Affectations -->
@@ -321,60 +391,6 @@
                 </div>
               }
             </div>
-
-            <div class="mb-3">
-              <label for="dateAffectation" class="form-label">
-                Date d'affectation <span class="text-danger">*</span>
-              </label>
-              <input
-                type="date"
-                class="form-control"
-                id="dateAffectation"
-                formControlName="dateAffectation"
-                [class.is-invalid]="submittedAffectation() && af['dateAffectation'].errors">
-              @if (submittedAffectation() && af['dateAffectation'].errors) {
-                <div class="invalid-feedback">
-                  La date est obligatoire
-                </div>
-              }
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="heureDebut" class="form-label">
-                  Heure début <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="time"
-                  class="form-control"
-                  id="heureDebut"
-                  formControlName="heureDebut"
-                  [class.is-invalid]="submittedAffectation() && af['heureDebut'].errors">
-                @if (submittedAffectation() && af['heureDebut'].errors) {
-                  <div class="invalid-feedback">
-                    L'heure de début est obligatoire
-                  </div>
-                }
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label for="heureFin" class="form-label">
-                  Heure fin <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="time"
-                  class="form-control"
-                  id="heureFin"
-                  formControlName="heureFin"
-                  [class.is-invalid]="submittedAffectation() && af['heureFin'].errors">
-                @if (submittedAffectation() && af['heureFin'].errors) {
-                  <div class="invalid-feedback">
-                    L'heure de fin est obligatoire
-                  </div>
-                }
-              </div>
-            </div>
-
             <div class="mb-3">
               <label for="notes" class="form-label">Notes / Instructions</label>
               <textarea

@@ -154,7 +154,7 @@ export class UtilisateurService {
           // ✅ FILTRAGE CORRIGÉ selon votre vraie structure
           const employes = users.filter(user => {
             // Vérifier que le compte est actif
-            const isActif = user.etatCompte === StatutCompte.ACTIF;
+            const isActif = user.etatCompte === StatutCompte.ACTIVE;
 
             // Vérifier que l'utilisateur a au moins un rôle employé/manager/admin
             const hasEmployeRole = user.roles.some(role =>
@@ -184,7 +184,7 @@ export class UtilisateurService {
       this.getAllUtilisateurs().subscribe({
         next: (users) => {
           const employes = users.filter(user =>
-            user.etatCompte === StatutCompte.ACTIF &&
+            user.etatCompte === StatutCompte.ACTIVE &&
             user.roles.includes('EMPLOYE')
           );
 
@@ -204,7 +204,7 @@ export class UtilisateurService {
       this.getAllUtilisateurs().subscribe({
         next: (users) => {
           const clients = users.filter(user =>
-            user.etatCompte === StatutCompte.ACTIF &&
+            user.etatCompte === StatutCompte.ACTIVE &&
             user.roles.includes('CLIENT')
           );
 
@@ -231,7 +231,7 @@ export class UtilisateurService {
    * Vérifier si un utilisateur est actif
    */
   isActif(user: UserResponse): boolean {
-    return user.etatCompte === StatutCompte.ACTIF;
+    return user.etatCompte === StatutCompte.ACTIVE;
   }
 
   /**

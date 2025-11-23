@@ -2,7 +2,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {catchError, Observable} from 'rxjs';
 import { variables } from '../core/environement/variables';
 import {
   LivraisonRequestDto,
@@ -10,7 +10,7 @@ import {
   AffectationLivraisonRequestDto,
   AffectationLivraisonDto
 } from '../core/models/livraison.model';
-import { StatutLivraison } from '../core/models/reservation.model';
+import {LigneReservationResponseDto, StatutLivraison} from '../core/models/reservation.model';
 
 /**
  * Service pour gérer les livraisons
@@ -133,6 +133,20 @@ export class LivraisonService {
    */
   marquerLivree(id: number): Observable<LivraisonResponseDto> {
     return this.http.patch<LivraisonResponseDto>(`${this.apiUrl}/${id}/livree`, null);
+  }
+
+  /**
+   * Marquer une ligne de réservation comme livrée
+   */
+  marquerLigneLivree(idLigne: number): Observable<LigneReservationResponseDto> {
+    return this.http.patch<LigneReservationResponseDto>(`${this.apiUrl}/lignes/${idLigne}/livree`, {})
+  }
+
+  /**
+   * Obtenir les lignes d'une livraison
+   */
+  getLignesLivraison(idLivraison: number): Observable<LigneReservationResponseDto[]> {
+    return this.http.get<LigneReservationResponseDto[]>(`${this.apiUrl}/${idLivraison}/lignes`)
   }
 
   // ============================================

@@ -45,7 +45,7 @@ export enum EtatPhysique {
  */
 export enum StatutInstance {
   DISPONIBLE = 'DISPONIBLE',
-  RESERVE = 'RESERVE',
+  EN_ATTENTE='EN_ATTENTE',
   EN_LIVRAISON = 'EN_LIVRAISON',
   EN_RETOUR = 'EN_RETOUR',
   EN_MAINTENANCE = 'EN_MAINTENANCE',
@@ -106,7 +106,7 @@ export const TypeProduitLabels: Record<TypeProduit, string> = {
 
 export const StatutInstanceLabels: Record<StatutInstance, string> = {
   [StatutInstance.DISPONIBLE]: 'Disponible',
-  [StatutInstance.RESERVE]: 'Réservé',
+  [StatutInstance.EN_ATTENTE]:'En Attente',
   [StatutInstance.EN_LIVRAISON]: 'En Livraison',
   [StatutInstance.EN_RETOUR]: 'En Retour',
   [StatutInstance.EN_MAINTENANCE]: 'En Maintenance',

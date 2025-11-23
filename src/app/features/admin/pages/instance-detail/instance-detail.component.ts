@@ -171,7 +171,7 @@ export class InstanceDetailComponent implements OnInit {
   getStatutClass(statut: StatutInstance): string {
     const classes: Record<StatutInstance, string> = {
       [StatutInstance.DISPONIBLE]: 'status-disponible',
-      [StatutInstance.RESERVE]: 'status-reserve',
+      [StatutInstance.EN_ATTENTE]:'status-attente',
       [StatutInstance.EN_LIVRAISON]: 'status-livraison',
       [StatutInstance.EN_RETOUR]: 'status-retour',
       [StatutInstance.EN_MAINTENANCE]: 'status-maintenance',

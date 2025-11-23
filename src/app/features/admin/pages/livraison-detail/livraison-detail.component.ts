@@ -23,7 +23,7 @@ import {StatutCompte, UserResponse} from '../../../../core/models';
 @Component({
   selector: 'app-livraison-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './livraison-detail.component.html',
   styleUrls: ['./livraison-detail.component.scss']
 })
@@ -73,9 +73,6 @@ export class LivraisonDetailComponent implements OnInit {
 
     this.affectationForm = this.fb.group({
       idEmploye: ['', Validators.required],
-      dateAffectation: [today, Validators.required],
-      heureDebut: ['08:00', Validators.required],
-      heureFin: ['17:00', Validators.required],
       notes: ['']
     });
   }
@@ -114,6 +111,7 @@ export class LivraisonDetailComponent implements OnInit {
   chargerEmployes(): void {
     this.utilisateurService.getAllUtilisateurs().subscribe({
       next: (users) => {
+        console.log(users);
         const employesFiltres = users.filter(u => {
           // ✅ roles est un string[], pas un UserRole[]
           const hasEmployeRole = u.roles.some(role =>
@@ -121,9 +119,10 @@ export class LivraisonDetailComponent implements OnInit {
             role === 'MANAGER' ||
             role === 'ADMIN'
           );
-
+            console.log('has employe Role ? {}',hasEmployeRole)
           // ✅ etatCompte est un StatutCompte enum
-          const isActif = u.etatCompte === StatutCompte.ACTIF;
+          const isActif = u.etatCompte === StatutCompte.ACTIVE;
+          console.log('isActif ? {}',isActif)
 
           return isActif && hasEmployeRole;
         });
@@ -211,9 +210,6 @@ export class LivraisonDetailComponent implements OnInit {
     this.showAffectationModal.set(true);
     this.affectationForm.reset({
       idEmploye: '',
-      dateAffectation: new Date().toISOString().split('T')[0],
-      heureDebut: '08:00',
-      heureFin: '17:00',
       notes: ''
     });
     this.submittedAffectation.set(false);
@@ -249,9 +245,6 @@ export class LivraisonDetailComponent implements OnInit {
     const request: AffectationLivraisonRequestDto = {
       idLivraison: livraison.idLivraison,
       idEmploye: Number(formValue.idEmploye),
-      dateAffectation: formValue.dateAffectation,
-      heureAffectation: this.livraisonService.formatTimeForApi(formValue.heureDebut),
-
       notes: formValue.notes || undefined
     };
 
@@ -326,5 +319,84 @@ export class LivraisonDetailComponent implements OnInit {
    */
   get af() {
     return this.affectationForm.controls;
+  }
+
+  /**
+   * Marquer une ligne spécifique comme livrée
+   */
+  marquerLigneLivree(idLigne: number): void {
+    const livraison = this.livraison();
+    if (!livraison) return;
+
+    if (confirm('Confirmer la livraison de cette ligne ?')) {
+      this.actionEnCours.set(`ligne-${idLigne}`);
+      this.errorMessage.set('');
+      this.successMessage.set('');
+
+      this.livraisonService.marquerLigneLivree(idLigne).subscribe({
+        next: (ligneUpdated) => {
+          this.successMessage.set('Ligne marquée comme livrée avec succès !');
+
+          // Recharger les détails de la livraison pour avoir les statuts à jour
+          this.chargerLivraison();
+
+          this.actionEnCours.set(null);
+
+          // Effacer le message après 3 secondes
+          setTimeout(() => this.successMessage.set(''), 3000);
+        },
+        error: (error) => {
+          console.error('Erreur:', error);
+          this.errorMessage.set(error.error?.message || 'Erreur lors du marquage de la ligne.');
+          this.actionEnCours.set(null);
+        }
+      });
+    }
+  }
+
+  /**
+   * Vérifier si une ligne peut être marquée comme livrée
+   */
+  canMarquerLigneLivree(ligne: any): boolean {
+    const livraison = this.livraison();
+    if (!livraison) return false;
+
+    // La ligne peut être marquée livrée si:
+    // - La livraison est EN_COURS
+    // - La ligne n'est pas déjà LIVREE
+    return livraison.statutLivraison === 'EN_COURS' &&
+      ligne.statutLivraisonLigne !== 'LIVREE';
+  }
+
+  /**
+   * Obtenir le label du statut d'une ligne
+   */
+  getStatutLigneLabel(statut: StatutLivraison): string {
+    return this.statutLabels[statut] || statut;
+  }
+
+  /**
+   * Obtenir la classe CSS du badge de statut d'une ligne
+   */
+  getStatutLigneBadgeClass(statut: StatutLivraison): string {
+    const colorMap: Record<StatutLivraison, string> = {
+      'NOT_TODAY': 'secondary',
+      'EN_ATTENTE': 'warning',
+      'EN_COURS': 'info',
+      'LIVREE': 'success',
+      'RETOUR': 'primary',
+      'RETOUR_PARTIEL': 'warning',
+      'RETOURNEE': 'success',
+      'ANNULEE': 'danger'
+    };
+
+    return `badge bg-${colorMap[statut] || 'secondary'}`;
+  }
+
+  /**
+   * Vérifier si une action est en cours pour une ligne spécifique
+   */
+  isLigneActionEnCours(idLigne: number): boolean {
+    return this.actionEnCours() === `ligne-${idLigne}`;
   }
 }

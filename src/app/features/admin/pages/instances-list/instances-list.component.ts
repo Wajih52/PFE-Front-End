@@ -142,7 +142,11 @@ export class InstancesListComponent implements OnInit {
     this.stats = {
       total: this.allInstances.length,
       disponibles: this.allInstances.filter(i => i.statut === StatutInstance.DISPONIBLE).length,
-      reserves: this.allInstances.filter(i => i.statut === StatutInstance.RESERVE).length,
+      reserves: this.allInstances.filter(i =>
+        i.statut === StatutInstance.EN_LIVRAISON ||
+        i.statut === StatutInstance.EN_UTILISATION||
+        i.statut === StatutInstance.EN_ATTENTE
+      ).length,
       enMaintenance: this.allInstances.filter(i => i.statut === StatutInstance.EN_MAINTENANCE).length,
       horsService: this.allInstances.filter(i => i.statut === StatutInstance.HORS_SERVICE).length
     };
@@ -467,7 +471,7 @@ async  retourDeMaintenance(): Promise<void> {
   getStatutClass(statut: StatutInstance): string {
     const classes: Record<StatutInstance, string> = {
       [StatutInstance.DISPONIBLE]: 'status-disponible',
-      [StatutInstance.RESERVE]: 'status-reserve',
+      [StatutInstance.EN_ATTENTE]:'status-attente',
       [StatutInstance.EN_LIVRAISON]: 'status-livraison',
       [StatutInstance.EN_RETOUR]: 'status-retour',
       [StatutInstance.EN_MAINTENANCE]: 'status-maintenance',

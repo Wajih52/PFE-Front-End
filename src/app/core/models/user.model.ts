@@ -4,7 +4,8 @@
  * Énumérations correspondant aux enums Java
  */
 export enum StatutCompte {
-  ACTIF = 'ACTIF',
+  ACTIVE = 'ACTIVE',
+  ARCHIVE='ARCHIVE',
   SUSPENDU = 'SUSPENDU',
   DESACTIVE = 'DESACTIVE'
 

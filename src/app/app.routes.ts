@@ -25,6 +25,7 @@ import {DetailFactureClientComponent} from './features/client/detail-facture-cli
 import {LivraisonsListComponent} from './features/admin/pages/livraisons-list/livraisons-list.component';
 import {LivraisonCreateComponent} from './features/admin/pages/livraison-create/livraison-create.component';
 import {LivraisonDetailComponent} from './features/admin/pages/livraison-detail/livraison-detail.component';
+import {LivraisonEditComponent} from './features/admin/pages/livraison-edit/livraison-edit.component';
 
 
 export const routes: Routes = [
@@ -214,6 +215,12 @@ export const routes: Routes = [
                 path: ':id',
                 component: LivraisonDetailComponent,
                 data: { title: 'Détails Livraison' }
+              },
+              {
+                path: ':id/edit',
+                component: LivraisonEditComponent,
+                canActivate: [authGuard, roleGuard],
+                data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
               }
             ]
           }
