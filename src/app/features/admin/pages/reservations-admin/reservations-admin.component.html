@@ -341,7 +341,7 @@
                   }
 
                   <!-- Bouton FINALE pour TERMINE avec paiement complet -->
-                  @if (reservation.statutReservation === 'TERMINE' && reservation.paiementComplet) {
+                  @if (reservation.statutReservation === 'TERMINE' && !reservation.paiementComplet) {
                     <button
                       class="btn-generate-facture btn-finale"
                       (click)="genererFacture(reservation, TypeFacture.FINALE)"

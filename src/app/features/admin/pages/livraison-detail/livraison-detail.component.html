@@ -15,12 +15,12 @@
         </p>
       }
     </div>
-      <button
-        class="btn btn-outline-primary me-2"
-        [routerLink]="['/admin/livraisons', livraison()!.idLivraison, 'edit']">
-        <i class="bi bi-pencil-square me-2"></i>
-        Modifier
-      </button>
+    <button
+      class="btn btn-outline-primary me-2"
+      [routerLink]="['/admin/livraisons', livraison()!.idLivraison, 'edit']">
+      <i class="bi bi-pencil-square me-2"></i>
+      Modifier
+    </button>
 
     @if (livraison()) {
       <div class="btn-group">
@@ -250,11 +250,48 @@
                             </button>
                           } @else if (ligne.statutLivraisonLigne === 'LIVREE') {
                             <span class="badge bg-success">
-                      <i class="bi bi-check-circle-fill me-1"></i>
-                      Livrée
-                    </span>
+                                   <i class="bi bi-check-circle-fill me-1"></i>
+                                    Livrée
+                            </span>
                           }
                         </td>
+                      }
+                      @if (ligne.statutLivraisonLigne === 'LIVREE') {
+                        <!-- Bouton Début retour -->
+                        <td class="text-center">
+                        <button
+                          class="btn btn-sm btn-warning"
+                          [disabled]="isLigneActionDisabled(ligne)"
+                          (click)="marquerLigneEnRetour(ligne.idLigne)">
+                          @if (isLigneActionEnCours(ligne.idLigne)) {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                          }
+                          <i class="bi bi-arrow-left-circle me-1"></i>
+                          Début retour
+                        </button>
+                      </td>
+                      }
+                      @if (ligne.statutLivraisonLigne === 'RETOUR') {
+                        <td class="text-center">
+                        <!-- Bouton Confirmer retour -->
+                        <button
+                          class="btn btn-sm btn-success"
+                          [disabled]="isLigneActionDisabled(ligne)"
+                          (click)="marquerLigneRetournee(ligne.idLigne)">
+                          @if (isLigneActionEnCours(ligne.idLigne)) {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                          }
+                          <i class="bi bi-check-circle-fill me-1"></i>
+                          Confirmer retour
+                        </button>
+                        </td>
+                      } @else {
+                        @if (ligne.statutLivraisonLigne === 'RETOURNEE') {
+                          <span class="text-success">
+                            <i class="bi bi-check-circle-fill me-1"></i>
+                               Terminé
+                          </span>
+                        }
                       }
                     </tr>
                   } @empty {
@@ -274,8 +311,10 @@
         @if (livraison()!.statutLivraison === 'EN_COURS') {
           <div class="alert alert-info">
             <i class="bi bi-info-circle me-2"></i>
-            <strong>Information :</strong> Cliquez sur le bouton "Livrer" pour chaque ligne une fois que le matériel a été livré.
-            Lorsque toutes les lignes sont marquées comme livrées, la livraison sera automatiquement marquée comme LIVREE.
+            <strong>Information :</strong> Cliquez sur le bouton "Livrer" pour chaque ligne une fois que le matériel a
+            été livré.
+            Lorsque toutes les lignes sont marquées comme livrées, la livraison sera automatiquement marquée comme
+            LIVREE.
           </div>
         }
       </div>

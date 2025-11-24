@@ -226,8 +226,6 @@ export class HistoriqueMouvementComponent implements OnInit {
       [TypeMouvement.SUPPRESSION_INSTANCE]: '🗑️', // Suppression instance
 
       [TypeMouvement.RESERVATION]: '📅',     // Réservation
-      [TypeMouvement.SORTIE_RESERVATION]: '🚀', // Sortie réservation
-      [TypeMouvement.RETOUR_RESERVATION]: '📥', // Retour réservation
       [TypeMouvement.ANNULATION_RESERVATION]: '❌', // Annulation réservation
 
       [TypeMouvement.MAINTENANCE]: '🔧',     // Maintenance

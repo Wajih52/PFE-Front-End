@@ -1,6 +1,6 @@
 <!-- src/app/features/admin/pages/livraisons-list/livraisons-list.component.html -->
 <!-- 🚚 Template - Liste des livraisons -->
-<div class="use-bootstrap">
+
 <div class="container-fluid py-4">
   <!-- En-tête avec titre et bouton création -->
   <div class="d-flex justify-content-between align-items-center mb-4">
@@ -74,6 +74,24 @@
               (click)="filtrerParStatut('LIVREE')">
               <i class="bi bi-check-circle me-1"></i>
               Livrées
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm"
+              [class.btn-info]="filtreStatut() === 'RETOUR'"
+              [class.btn-outline-info]="filtreStatut() !== 'RETOUR'"
+              (click)="filtrerParStatut('RETOUR')">
+              <i class="bi bi-truck me-1"></i>
+              En Retour
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm"
+              [class.btn-info]="filtreStatut() === 'RETOURNEE'"
+              [class.btn-outline-info]="filtreStatut() !== 'RETOURNEE'"
+              (click)="filtrerParStatut('RETOURNEE')">
+              <i class="bi bi-check-circle me-0"></i>
+              Retournée
             </button>
           </div>
           <br>
@@ -332,4 +350,3 @@
     </div>
   </div>
 }
-</div>

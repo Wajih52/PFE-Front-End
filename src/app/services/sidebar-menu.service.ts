@@ -140,13 +140,6 @@ export class SidebarMenuService {
             order: 3
           },
           {
-            id: 'retours',
-            label: 'Retours',
-            icon: '↩️',
-            route: '/employe/retours',
-            order: 4
-          },
-          {
             id: 'stock-employe',
             label: 'Gestion Stock',
             icon: '📦',
@@ -253,13 +246,13 @@ export class SidebarMenuService {
             route: '/admin/instances',
             order: 5
           },
-          {
+         /* {
             id: 'stock-historique',
             label: 'Consultation Historique',
             icon: '📊',
             route: '/admin/stock',
             order: 6
-          }
+          }*/
         ]
       },
       {
@@ -305,13 +298,13 @@ export class SidebarMenuService {
             route: '/admin/livraisons',
             order: 10
           },
-          {
+          /*{
             id: 'retours-admin',
             label: 'Gestion Retours',
             icon: '↩️',
             route: '/admin/retours',
             order: 11
-          },
+          },*/
           {
             id: 'calendrier',
             label: 'Calendrier Global',
@@ -382,9 +375,9 @@ export class SidebarMenuService {
     },
     {
       id: 'profile-settings',
-      label: 'Paramètres',
+      label: 'Menu',
       icon: '⚙️',
-      route: '/settings',
+      route: '/profile',
       order: 2
     },
     {

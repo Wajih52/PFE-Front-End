@@ -417,7 +417,7 @@ export class ReservationService {
   }
 
   /**
-   * Obtenir le badge de statut avec couleur
+   * Obtenir le badge de statut Reservation avec couleur
    */
   getStatutBadgeClass(statut: StatutReservation): string {
     const badges: Record<StatutReservation, string> = {
@@ -444,7 +444,6 @@ export class ReservationService {
     return labels[statut] || statut;
   }
 }
-
 // ============ DTOs ============
 
 export interface VerificationDisponibiliteDto {

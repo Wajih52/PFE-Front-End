@@ -73,10 +73,7 @@ export enum TypeMouvement {
   CREATION = 'CREATION',
   REACTIVATION = 'REACTIVATION',
   ENTREE_STOCK ='ENTREE_STOCK',
-  RETOUR_RESERVATION = 'RETOUR_RESERVATION',
   DESACTIVATION = 'DESACTIVATION',
-  SORTIE_RESERVATION='SORTIE_RESERVATION',
-
 }
 
 /**
@@ -131,7 +128,5 @@ export const TypeMouvementLabels: Record<TypeMouvement, string> = {
   [TypeMouvement.CREATION] : 'Creation',
   [TypeMouvement.REACTIVATION] : 'Réactivation',
   [TypeMouvement.ENTREE_STOCK] :'Entrée Stock',
-  [TypeMouvement.RETOUR_RESERVATION] : 'Retour Reservation',
   [TypeMouvement.DESACTIVATION] : 'Désactivation',
-  [TypeMouvement.SORTIE_RESERVATION] :'Sorite Reservation ',
 };

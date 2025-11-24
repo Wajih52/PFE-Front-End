@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl} from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -11,6 +11,7 @@ import {
   formatMontantTND
 } from '../../../../core/models/paiement.model';
 import { ReservationResponseDto } from '../../../../core/models/reservation.model';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-ajouter-paiement',
@@ -38,6 +39,7 @@ export class AjouterPaiementComponent implements OnInit {
     private router: Router,
     private paiementService: PaiementService,
     private reservationService: ReservationService,
+    private toastr : ToastrService,
   private storage: StorageService
   ) {}
 
@@ -102,9 +104,16 @@ export class AjouterPaiementComponent implements OnInit {
         this.succes = true;
         this.loading = false;
 
-        alert(`✅ Paiement enregistré avec succès !\n\nCode: ${response.codePaiement}\nMontant: ${formatMontantTND(response.montantPaiement)}\n\nVotre paiement est en attente de validation par un administrateur.`);
+        this.toastr.success(`✅ Paiement enregistré avec succès !\n\nCode: ${response.codePaiement}\nMontant: ${formatMontantTND(response.montantPaiement)}\n\nVotre paiement est en attente de validation par un administrateur.`);
 
-        this.router.navigate(['client/mes-reservations']);
+        if (this.storage.isClient()) {
+          this.router.navigate(['client/mes-paiements']);
+        }else if (this.storage.isAdmin() || this.storage.hasRole('MANAGER') || this.storage.hasRole('EMPLOYE')) {
+          this.router.navigate(['/admin/paiements']);
+        }else {
+          this.router.navigate(['/home']);
+        }
+
       },
       error: (error) => {
         console.error('Erreur lors de la création du paiement:', error);

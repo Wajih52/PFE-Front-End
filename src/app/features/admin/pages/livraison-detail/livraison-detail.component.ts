@@ -399,4 +399,158 @@ export class LivraisonDetailComponent implements OnInit {
   isLigneActionEnCours(idLigne: number): boolean {
     return this.actionEnCours() === `ligne-${idLigne}`;
   }
+
+  //=============================
+  // Gestion des Retours
+  //============================
+
+  /**
+   * Marquer une ligne comme "En retour"
+   */
+  marquerLigneEnRetour(idLigne: number): void {
+    const livraison = this.livraison();
+    if (!livraison) return;
+
+    if (confirm('Confirmer le début du retour de cette ligne ?')) {
+      this.actionEnCours.set(`retour-${idLigne}`);
+      this.errorMessage.set('');
+      this.successMessage.set('');
+
+      this.livraisonService.marquerLigneEnRetour(idLigne).subscribe({
+        next: (ligneUpdated) => {
+          this.successMessage.set('Ligne marquée en retour avec succès !');
+          this.chargerLivraison();
+          this.actionEnCours.set(null);
+          setTimeout(() => this.successMessage.set(''), 3000);
+        },
+        error: (error) => {
+          console.error('Erreur:', error);
+          this.errorMessage.set(error.error?.message || 'Erreur lors du marquage en retour.');
+          this.actionEnCours.set(null);
+        }
+      });
+    }
+  }
+
+  /**
+   * Marquer une ligne comme "Retournée" (complète)
+   */
+  marquerLigneRetournee(idLigne: number): void {
+    const livraison = this.livraison();
+    if (!livraison) return;
+
+    if (confirm('Confirmer que cette ligne est complètement retournée ? Le stock sera réintégré.')) {
+      this.actionEnCours.set(`retournee-${idLigne}`);
+      this.errorMessage.set('');
+      this.successMessage.set('');
+
+      this.livraisonService.marquerLigneRetournee(idLigne).subscribe({
+        next: (ligneUpdated) => {
+          this.successMessage.set('✅ Ligne retournée avec succès ! Stock réintégré.');
+          this.chargerLivraison();
+          this.actionEnCours.set(null);
+          setTimeout(() => this.successMessage.set(''), 3000);
+        },
+        error: (error) => {
+          console.error('Erreur:', error);
+          this.errorMessage.set(error.error?.message || 'Erreur lors du retour de la ligne.');
+          this.actionEnCours.set(null);
+        }
+      });
+    }
+  }
+
+  /**
+   * Vérifier si une ligne peut être marquée en retour
+   */
+  canMarquerLigneEnRetour(ligne: any): boolean {
+    const livraison = this.livraison();
+    if (!livraison) return false;
+
+    // La ligne peut être marquée en retour si:
+    // - La livraison est LIVREE, RETOUR ou RETOUR_PARTIEL
+    // - La ligne est LIVREE
+    return (livraison.statutLivraison === 'LIVREE' ||
+        livraison.statutLivraison === 'RETOUR' ||
+        livraison.statutLivraison === 'RETOUR_PARTIEL') &&
+      ligne.statutLivraisonLigne === 'LIVREE';
+  }
+
+  /**
+   * Vérifier si une ligne peut être marquée retournée
+   */
+  canMarquerLigneRetournee(ligne: any): boolean {
+    const livraison = this.livraison();
+    if (!livraison) return false;
+
+    // La ligne peut être marquée retournée si:
+    // - La ligne est en RETOUR ou LIVREE
+    return ligne.statutLivraisonLigne === 'RETOUR' ||
+      ligne.statutLivraisonLigne === 'LIVREE';
+  }
+
+  /**
+   * Obtenir le texte du bouton d'action pour une ligne
+   */
+  getLigneActionText(ligne: any): string {
+    switch (ligne.statutLivraisonLigne) {
+      case 'EN_ATTENTE':
+      case 'EN_COURS':
+        return '🚚 Marquer livrée';
+      case 'LIVREE':
+        return '🔙 Début retour';
+      case 'RETOUR':
+        return '✅ Confirmer retour';
+      case 'RETOURNEE':
+        return '✅ Retournée';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Gérer l'action d'une ligne selon son statut
+   */
+  handleLigneAction(ligne: any): void {
+    switch (ligne.statutLivraisonLigne) {
+      case 'EN_COURS':
+        this.marquerLigneLivree(ligne.idLigneReservation);
+        break;
+      case 'LIVREE':
+        this.marquerLigneEnRetour(ligne.idLigneReservation);
+        break;
+      case 'RETOUR':
+        this.marquerLigneRetournee(ligne.idLigneReservation);
+        break;
+    }
+  }
+
+  /**
+   * Vérifier si le bouton d'action doit être affiché pour une ligne
+   */
+  shouldShowLigneAction(ligne: any): boolean {
+    return ligne.statutLivraisonLigne !== 'RETOURNEE' &&
+      ligne.statutLivraisonLigne !== 'ANNULEE';
+  }
+
+  /**
+   * Vérifier si le bouton d'action doit être désactivé
+   */
+  isLigneActionDisabled(ligne: any): boolean {
+    const livraison = this.livraison();
+    if (!livraison) return true;
+
+    switch (ligne.statutLivraisonLigne) {
+      case 'EN_COURS':
+        return livraison.statutLivraison !== 'EN_COURS';
+      case 'LIVREE':
+        return !(livraison.statutLivraison === 'LIVREE' ||
+          livraison.statutLivraison === 'RETOUR' ||
+          livraison.statutLivraison === 'RETOUR_PARTIEL');
+      case 'RETOUR':
+        return false;
+      default:
+        return true;
+    }
+  }
 }

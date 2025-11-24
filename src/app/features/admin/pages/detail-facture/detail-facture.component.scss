@@ -212,16 +212,16 @@
   }
 
   &.paiement-card {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
+    background: linear-gradient(135deg, #c8c3c3 0%, #c3c8c8 100%);
+    color: #0e0d0d;
     border: none;
 
     h2 {
-      color: white;
+      color: #000000;
       border-bottom-color: rgba(255, 255, 255, 0.3);
 
       i {
-        color: white;
+        color: #000000;
       }
     }
   }

@@ -8,12 +8,13 @@ import { Router } from '@angular/router';
 import { ReservationService } from '../../../../services/reservation.service';
 import {
   ReservationResponseDto,
-  ReservationSearchDto,
+  ReservationSearchDto, StatutLivraisonLabels,
   StatutReservation,
   StatutReservationLabels
 } from '../../../../core/models/reservation.model';
 import { FactureService } from '../../../../services/facture.service';
 import { TypeFacture } from '../../../../core/models/facture.model';
+import {StatutLivraisonColors} from '../../../../core/models/livraison.model';
 
 
 
@@ -382,4 +383,6 @@ export class ReservationsAdminComponent implements OnInit {
   }
 
   protected readonly TypeFacture = TypeFacture;
+  protected readonly StatutLivraisonLabels = StatutLivraisonLabels;
+  protected readonly StatutLivraisonColors = StatutLivraisonColors;
 }

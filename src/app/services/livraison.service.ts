@@ -149,6 +149,30 @@ export class LivraisonService {
     return this.http.get<LigneReservationResponseDto[]>(`${this.apiUrl}/${idLivraison}/lignes`)
   }
 
+  //===========================================
+  // Gestion Des retours
+  //============================================
+
+  /**
+   * Marquer une ligne de réservation comme "En retour"
+   */
+  marquerLigneEnRetour(idLigne: number): Observable<LigneReservationResponseDto> {
+    return this.http.patch<LigneReservationResponseDto>(
+      `${this.apiUrl}/lignes/${idLigne}/en-retour`,
+      {}
+    );
+  }
+
+  /**
+   * Marquer une ligne de réservation comme "Retournée" (complète)
+   */
+  marquerLigneRetournee(idLigne: number): Observable<LigneReservationResponseDto> {
+    return this.http.patch<LigneReservationResponseDto>(
+      `${this.apiUrl}/lignes/${idLigne}/retournee`,
+      {}
+    );
+  }
+
   // ============================================
   // AFFECTATION D'EMPLOYÉS
   // ============================================
