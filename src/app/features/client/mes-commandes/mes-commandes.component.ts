@@ -93,7 +93,6 @@ export class MesCommandesComponent implements OnInit {
     return {
       total: all.length,
       confirmees: all.filter(r => r.statutReservation === 'CONFIRME').length,
-      enCours: all.filter(r => r.statutReservation === 'EN_COURS').length,
       terminees: all.filter(r => r.statutReservation === 'TERMINE').length,
       annulees: all.filter(r => r.statutReservation === 'ANNULE').length
     };

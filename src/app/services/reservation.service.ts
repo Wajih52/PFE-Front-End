@@ -424,7 +424,6 @@ export class ReservationService {
       'EN_ATTENTE': 'badge-warning',
       'CONFIRME': 'badge-success',
       'ANNULE': 'badge-danger',
-      'EN_COURS': 'badge-info',
       'TERMINE': 'badge-secondary'
     };
     return badges[statut] || 'badge-default';
@@ -438,7 +437,6 @@ export class ReservationService {
       'EN_ATTENTE': 'En attente',
       'CONFIRME': 'Confirmée',
       'ANNULE': 'Annulée',
-      'EN_COURS': 'En cours',
       'TERMINE': 'Terminée'
     };
     return labels[statut] || statut;

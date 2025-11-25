@@ -99,7 +99,7 @@ export class SidebarMenuService {
             id: 'reclamations',
             label: 'Mes Réclamations',
             icon: '⚠️',
-            route: '/mes-reclamations',
+            route: 'client/mes-reclamations',
             order: 9
           },
           {

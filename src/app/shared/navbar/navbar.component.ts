@@ -1,7 +1,7 @@
 // src/app/shared/navbar/navbar.component.ts
 
 import {Component, OnInit, OnDestroy, inject, PLATFORM_ID} from '@angular/core';
-import {CommonModule, isPlatformBrowser} from '@angular/common';
+import {CommonModule, isPlatformBrowser, NgOptimizedImage} from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { PanierService } from '../../services/panier.service';
@@ -11,7 +11,7 @@ import {ProfileDropdownComponent} from './profile-dropdown/profile-dropdown.comp
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule,ProfileDropdownComponent],
+  imports: [CommonModule, RouterModule, ProfileDropdownComponent, NgOptimizedImage],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })

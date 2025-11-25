@@ -277,7 +277,6 @@ export type StatutReservation =
   | 'EN_ATTENTE'
   | 'CONFIRME'
   | 'ANNULE'
-  | 'EN_COURS'
   | 'TERMINE';
 
 export type TypeProduit =
@@ -315,7 +314,6 @@ export const StatutReservationLabels: Record<StatutReservation, string> = {
   'EN_ATTENTE': 'En attente',
   'CONFIRME': 'Confirmée',
   'ANNULE': 'Annulée',
-  'EN_COURS': 'En cours',
   'TERMINE': 'Terminée'
 };
 

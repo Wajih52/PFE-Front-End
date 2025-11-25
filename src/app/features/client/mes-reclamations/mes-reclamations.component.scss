@@ -1,0 +1,372 @@
+// mes-reclamations.component.scss - SANS BOOTSTRAP
+
+// Variables (à adapter selon votre fichier de variables global)
+$primary-gold: #C7A781;
+$dark-black: #000000;
+$white: #ffffff;
+$text-gray: #6c757d;
+$light-bg: #f8f9fa;
+$border-light: #e0e0e0;
+
+// Container
+.reclamations-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 80vh;
+}
+
+// ========== HEADER ==========
+.page-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $dark-black;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-description {
+    font-size: 1.1rem;
+    color: $text-gray;
+  }
+}
+
+// ========== LOADING ==========
+.loading-state {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  .spinner-large {
+    width: 50px;
+    height: 50px;
+    border: 4px solid $light-bg;
+    border-top-color: $primary-gold;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1.5rem;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ========== ERROR ==========
+.error-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f8d7da;
+  border-radius: 12px;
+  border: 2px solid #dc3545;
+
+  .error-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #721c24;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-retry {
+    background: $primary-gold;
+    color: $white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background: $dark-black;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ========== EMPTY STATE ==========
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: $light-bg;
+  border-radius: 12px;
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $dark-black;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $text-gray;
+  }
+}
+
+// ========== SORT BAR ==========
+.sort-bar {
+  background: $light-bg;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  .sort-label {
+    font-weight: 600;
+    color: $dark-black;
+    font-size: 0.95rem;
+  }
+
+  .sort-btn {
+    background: $white;
+    border: 2px solid $border-light;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: $dark-black;
+
+    &:hover {
+      border-color: $primary-gold;
+      background: #fffef5;
+    }
+
+    &.active {
+      background: $primary-gold;
+      color: $white;
+      border-color: $primary-gold;
+      font-weight: 600;
+    }
+  }
+}
+
+// ========== RECLAMATIONS LIST ==========
+.reclamations-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.reclamation-card {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ========== CARD HEADER ==========
+.card-header {
+  background: linear-gradient(135deg, $light-bg 0%, #e9ecef 100%);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 2px solid $border-light;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .header-left {
+    .reclamation-code {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $dark-black;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .reclamation-date {
+      font-size: 0.9rem;
+      color: $text-gray;
+    }
+  }
+
+  .header-right {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}
+
+// ========== BADGES ==========
+.badge {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-warning {
+  background: #ffc107;
+  color: $dark-black;
+}
+
+.badge-info {
+  background: #17a2b8;
+  color: $white;
+}
+
+.badge-success {
+  background: #28a745;
+  color: $white;
+}
+
+.badge-danger {
+  background: #dc3545;
+  color: $white;
+}
+
+.badge-secondary {
+  background: #6c757d;
+  color: $white;
+}
+
+// ========== CARD BODY ==========
+.card-body {
+  padding: 1.5rem;
+
+  .reclamation-type {
+    margin-bottom: 1rem;
+
+    .type-badge {
+      display: inline-block;
+      background: $light-bg;
+      color: $dark-black;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid $border-light;
+    }
+  }
+
+  .reclamation-objet {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $dark-black;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .reclamation-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+}
+
+// ========== REPONSE SECTION ==========
+.reponse-section {
+  background: #e8f4f8;
+  border-left: 4px solid #17a2b8;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+
+  .reponse-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+
+    .reponse-icon {
+      font-size: 1.2rem;
+    }
+
+    h5 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #17a2b8;
+    }
+  }
+
+  .reponse-text {
+    color: $dark-black;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .reponse-date {
+    display: block;
+    color: $text-gray;
+    font-size: 0.85rem;
+  }
+}
+
+// ========== RESERVATION INFO ==========
+.reservation-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid $border-light;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $text-gray;
+  font-size: 0.9rem;
+
+  .reservation-icon {
+    font-size: 1.1rem;
+  }
+
+  strong {
+    color: $dark-black;
+  }
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 768px) {
+  .reclamations-container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+
+  .sort-bar {
+    .sort-btn {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+    }
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .header-right {
+      width: 100%;
+    }
+  }
+}

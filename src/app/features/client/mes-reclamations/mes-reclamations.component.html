@@ -1,0 +1,126 @@
+<!-- mes-reclamations.component.html - SANS BOOTSTRAP -->
+
+<div class="reclamations-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">📋 Mes Réclamations</h1>
+    <p class="page-description">Consultez l'état de toutes vos réclamations</p>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner-large"></div>
+      <p>Chargement de vos réclamations...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadReclamations()">Réessayer</button>
+    </div>
+  }
+
+  <!-- Contenu -->
+  @if (!isLoading() && !error()) {
+    @if (sortedReclamations().length === 0) {
+      <!-- Aucune réclamation -->
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>Aucune réclamation</h3>
+        <p>Vous n'avez pas encore soumis de réclamation</p>
+      </div>
+    } @else {
+      <!-- Barre de tri -->
+      <div class="sort-bar">
+        <span class="sort-label">Trier par:</span>
+        <button
+          class="sort-btn"
+          [class.active]="sortField() === 'date'"
+          (click)="changeSort('date')">
+          Date {{ getSortIcon('date') }}
+        </button>
+        <button
+          class="sort-btn"
+          [class.active]="sortField() === 'statut'"
+          (click)="changeSort('statut')">
+          Statut {{ getSortIcon('statut') }}
+        </button>
+        <button
+          class="sort-btn"
+          [class.active]="sortField() === 'type'"
+          (click)="changeSort('type')">
+          Type {{ getSortIcon('type') }}
+        </button>
+        <button
+          class="sort-btn"
+          [class.active]="sortField() === 'priorite'"
+          (click)="changeSort('priorite')">
+          Priorité {{ getSortIcon('priorite') }}
+        </button>
+      </div>
+
+      <!-- Liste des réclamations -->
+      <div class="reclamations-list">
+        @for (reclamation of sortedReclamations(); track reclamation.idReclamation) {
+          <div class="reclamation-card">
+            <!-- En-tête de la carte -->
+            <div class="card-header">
+              <div class="header-left">
+                <h3 class="reclamation-code">{{ reclamation.codeReclamation }}</h3>
+                <span class="reclamation-date">{{ formatDate(reclamation.dateReclamation) }}</span>
+              </div>
+              <div class="header-right">
+                <span class="badge" [class]="getStatutClass(reclamation.statutReclamation)">
+                  {{ statutLabels[reclamation.statutReclamation] }}
+                </span>
+                <span class="badge" [class]="getPrioriteClass(reclamation.prioriteReclamation)">
+                  {{ prioriteLabels[reclamation.prioriteReclamation] }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Corps de la carte -->
+            <div class="card-body">
+              <div class="reclamation-type">
+                <span class="type-badge">{{ typeLabels[reclamation.typeReclamation] }}</span>
+              </div>
+
+              <h4 class="reclamation-objet">{{ reclamation.objet }}</h4>
+
+              <p class="reclamation-description">{{ reclamation.descriptionReclamation }}</p>
+
+              <!-- Réponse de l'admin -->
+              @if (reclamation.reponse) {
+                <div class="reponse-section">
+                  <div class="reponse-header">
+                    <span class="reponse-icon">💬</span>
+                    <h5>Réponse de l'administration</h5>
+                  </div>
+                  <p class="reponse-text">{{ reclamation.reponse }}</p>
+                  <small class="reponse-date">
+                    Répondu le {{ formatDate(reclamation.dateReponse!) }}
+                    @if (reclamation.traitePar) {
+                      par {{ reclamation.traitePar }}
+                    }
+                  </small>
+                </div>
+              }
+
+              <!-- Info réservation -->
+              @if (reclamation.codeReservation) {
+                <div class="reservation-info">
+                  <span class="reservation-icon">📦</span>
+                  <span>Liée à la réservation: <strong>{{ reclamation.codeReservation }}</strong></span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

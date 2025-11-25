@@ -1,0 +1,199 @@
+<!-- gestion-reclamations.component.html - SANS BOOTSTRAP -->
+
+<div class="admin-container">
+  <!-- Header + Stats -->
+  <div class="page-header">
+    <h1 class="page-title">🎯 Gestion des Réclamations</h1>
+
+    <div class="stats-grid">
+      <div class="stat-card card-warning">
+        <div class="stat-value">{{ stats().enAttente }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
+      <div class="stat-card card-info">
+        <div class="stat-value">{{ stats().enCours }}</div>
+        <div class="stat-label">En cours</div>
+      </div>
+      <div class="stat-card card-success">
+        <div class="stat-value">{{ stats().resolu }}</div>
+        <div class="stat-label">Résolues</div>
+      </div>
+      <div class="stat-card card-danger">
+        <div class="stat-value">{{ stats().urgentesNonTraitees }}</div>
+        <div class="stat-label">Urgentes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <h3 class="filters-title">Filtres</h3>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Statut</label>
+        <select [(ngModel)]="filtreStatut" class="filter-select">
+          <option value="">Tous</option>
+          @for (statut of statutValues; track statut) {
+            <option [value]="statut">{{ statutLabels[statut] }}</option>
+          }
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Type</label>
+        <select [(ngModel)]="filtreType" class="filter-select">
+          <option value="">Tous</option>
+          @for (type of typeValues; track type) {
+            <option [value]="type">{{ typeLabels[type] }}</option>
+          }
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Priorité</label>
+        <select [(ngModel)]="filtrePriorite" class="filter-select">
+          <option value="">Toutes</option>
+          @for (priorite of prioriteValues; track priorite) {
+            <option [value]="priorite">{{ prioriteLabels[priorite] }}</option>
+          }
+        </select>
+      </div>
+      <div class="filter-group">
+        <button class="btn-reset" (click)="resetFilters()">Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading/Error -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner-large"></div>
+      <p>Chargement...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-state">{{ error() }}</div>
+  }
+
+  <!-- Tableau -->
+  @if (!isLoading() && !error()) {
+    <div class="table-container">
+      <table class="reclamations-table">
+        <thead>
+        <tr>
+          <th (click)="changeSort('date')" class="sortable">
+            Date {{ getSortIcon('date') }}
+          </th>
+          <th>Code</th>
+          <th (click)="changeSort('type')" class="sortable">
+            Type {{ getSortIcon('type') }}
+          </th>
+          <th (click)="changeSort('client')" class="sortable">
+            Client {{ getSortIcon('client') }}
+          </th>
+          <th>Objet</th>
+          <th (click)="changeSort('statut')" class="sortable">
+            Statut {{ getSortIcon('statut') }}
+          </th>
+          <th (click)="changeSort('priorite')" class="sortable">
+            Priorité {{ getSortIcon('priorite') }}
+          </th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (rec of filteredAndSortedReclamations(); track rec.idReclamation) {
+            <tr>
+              <td>{{ formatDate(rec.dateReclamation) }}</td>
+              <td><strong>{{ rec.codeReclamation }}</strong></td>
+              <td><span class="type-badge">{{ typeLabels[rec.typeReclamation] }}</span></td>
+              <td>
+                @if (rec.nomUtilisateur) {
+                  {{ rec.prenomUtilisateur }} {{ rec.nomUtilisateur }}
+                } @else {
+                  <em>Visiteur</em>
+                }
+              </td>
+              <td class="objet-cell">{{ rec.objet }}</td>
+              <td><span class="badge" [class]="getStatutClass(rec.statutReclamation)">
+                {{ statutLabels[rec.statutReclamation] }}
+              </span></td>
+              <td><span class="badge" [class]="getPrioriteClass(rec.prioriteReclamation)">
+                {{ prioriteLabels[rec.prioriteReclamation] }}
+              </span></td>
+              <td>
+                <button class="btn-action" (click)="openModal(rec)">Traiter</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (filteredAndSortedReclamations().length === 0) {
+        <div class="empty-table">Aucune réclamation trouvée</div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Modal personnalisé -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      @if (selectedReclamation()) {
+        <div class="modal-header">
+          <h2>Traiter la réclamation {{ selectedReclamation()!.codeReclamation }}</h2>
+          <button class="modal-close" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="reclamation-details">
+            <h4>Détails</h4>
+            <p><strong>Objet:</strong> {{ selectedReclamation()!.objet }}</p>
+            <p><strong>Description:</strong> {{ selectedReclamation()!.descriptionReclamation }}</p>
+            <p><strong>Email:</strong> {{ selectedReclamation()!.contactEmail }}</p>
+            @if (selectedReclamation()!.contactTelephone) {
+              <p><strong>Tél:</strong> {{ selectedReclamation()!.contactTelephone }}</p>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Statut</label>
+              <select [(ngModel)]="modalData.statutReclamation" class="form-select">
+                @for (statut of statutValues; track statut) {
+                  <option [value]="statut">{{ statutLabels[statut] }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priorité</label>
+              <select [(ngModel)]="modalData.prioriteReclamation" class="form-select">
+                @for (priorite of prioriteValues; track priorite) {
+                  <option [value]="priorite">{{ prioriteLabels[priorite] }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Votre réponse *</label>
+            <textarea [(ngModel)]="modalData.reponse" class="form-textarea" rows="5"
+                      placeholder="Entrez votre réponse..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+          <button class="btn-primary" (click)="submitResponse()"
+                  [disabled]="isProcessing() || !modalData.reponse.trim()">
+            @if (isProcessing()) {
+              <span class="spinner"></span> Envoi...
+            } @else {
+              Envoyer la réponse
+            }
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

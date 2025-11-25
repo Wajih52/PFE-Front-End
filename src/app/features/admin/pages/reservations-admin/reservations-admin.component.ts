@@ -55,7 +55,6 @@ export class ReservationsAdminComponent implements OnInit {
     'TOUS',
     'EN_ATTENTE',
     'CONFIRME',
-    'EN_COURS',
     'TERMINE',
     'ANNULE'
   ];
@@ -235,7 +234,6 @@ export class ReservationsAdminComponent implements OnInit {
       total: all.length,
       enAttente: all.filter(r => r.statutReservation === 'EN_ATTENTE').length,
       confirmees: all.filter(r => r.statutReservation === 'CONFIRME').length,
-      enCours: all.filter(r => r.statutReservation === 'EN_COURS').length,
       terminees: all.filter(r => r.statutReservation === 'TERMINE').length,
       annulees: all.filter(r => r.statutReservation === 'ANNULE').length,
       chiffreAffaires: all

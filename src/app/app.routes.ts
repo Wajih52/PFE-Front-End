@@ -26,6 +26,9 @@ import {LivraisonsListComponent} from './features/admin/pages/livraisons-list/li
 import {LivraisonCreateComponent} from './features/admin/pages/livraison-create/livraison-create.component';
 import {LivraisonDetailComponent} from './features/admin/pages/livraison-detail/livraison-detail.component';
 import {LivraisonEditComponent} from './features/admin/pages/livraison-edit/livraison-edit.component';
+import {ReclamationsListComponent} from './features/admin/pages/reclamations-list/reclamations-list.component';
+import {MesReclamationsComponent} from './features/client/mes-reclamations/mes-reclamations.component';
+import {NouvelleReclamationComponent} from './features/pages/nouvelle-reclamation/nouvelle-reclamation.component';
 
 
 export const routes: Routes = [
@@ -221,8 +224,14 @@ export const routes: Routes = [
                 component: LivraisonEditComponent,
                 canActivate: [authGuard, roleGuard],
                 data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
-              }
+              },
+
             ]
+          },
+          {
+            path: 'reclamations',
+            component: ReclamationsListComponent,
+            canActivate: [authGuard, roleGuard(['ADMIN'])]
           }
         ]
       },
@@ -265,8 +274,18 @@ export const routes: Routes = [
               {
                 path: ':id',
                 component: DetailFactureClientComponent
-              }
+              },
             ]
+          },
+          {
+            path: 'mes-reclamations',
+            component: MesReclamationsComponent,
+            canActivate: [authGuard]
+          },
+          {
+            path: 'nouvelle-reclamation',
+            component: NouvelleReclamationComponent,
+            canActivate: [authGuard] // Uniquement utilisateurs connectés
           }
         ]
       },

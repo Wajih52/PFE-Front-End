@@ -1,0 +1,216 @@
+<!-- nouvelle-reclamation.component.html - Design personnalisé -->
+
+<div class="reclamation-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <button class="btn-back" (click)="onCancel()">
+        <span class="back-icon">←</span>
+        Retour
+      </button>
+      <div class="header-text">
+        <h1 class="page-title">{{ selectedTypeIcon }} Nouvelle Réclamation</h1>
+        <p class="page-description">Décrivez votre problème, nous nous engageons à vous répondre rapidement</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages de succès/erreur -->
+  <div class="messages-container">
+    @if (submitSuccess()) {
+      <div class="alert alert-success">
+        <div class="alert-header">
+          <span class="alert-icon">✅</span>
+          <h3>Réclamation créée avec succès!</h3>
+        </div>
+        <div class="alert-body">
+          <p class="code-display">
+            Votre code de suivi: <strong class="code-value">{{ codeReclamation() }}</strong>
+          </p>
+          <p class="redirect-message">Vous allez être redirigé vers vos réclamations...</p>
+        </div>
+        <button class="alert-close" (click)="closeSuccess()">×</button>
+      </div>
+    }
+
+    @if (submitError()) {
+      <div class="alert alert-error">
+        <div class="alert-header">
+          <span class="alert-icon">⚠️</span>
+          <h3>Erreur</h3>
+        </div>
+        <div class="alert-body">
+          <p>{{ submitError() }}</p>
+        </div>
+        <button class="alert-close" (click)="closeError()">×</button>
+      </div>
+    }
+  </div>
+
+  <!-- Formulaire -->
+  <div class="form-card">
+    <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()">
+
+      <!-- Type de réclamation -->
+      <div class="form-section">
+        <h2 class="section-title">Type de réclamation *</h2>
+        <div class="types-grid">
+          @for (type of typesReclamation; track type.value) {
+            <label class="type-card"
+                   [class.selected]="reclamationForm.get('typeReclamation')?.value === type.value"
+                   [class.invalid]="isFieldInvalid('typeReclamation')">
+              <input
+                type="radio"
+                [value]="type.value"
+                formControlName="typeReclamation"
+                class="type-radio">
+              <div class="type-content">
+                <span class="type-icon">{{ type.icon }}</span>
+                <span class="type-label">{{ type.label }}</span>
+              </div>
+            </label>
+          }
+        </div>
+        @if (isFieldInvalid('typeReclamation')) {
+          <div class="field-error">{{ getFieldError('typeReclamation') }}</div>
+        }
+      </div>
+
+      <!-- Objet (si type = AUTRE) -->
+      @if (showObjetField) {
+        <div class="form-section objet-section">
+          <label class="form-label">
+            Objet de la réclamation *
+          </label>
+          <input
+            type="text"
+            formControlName="objet"
+            class="form-input"
+            [class.invalid]="isFieldInvalid('objet')"
+            placeholder="Précisez l'objet de votre réclamation"
+            maxlength="200">
+          @if (isFieldInvalid('objet')) {
+            <div class="field-error">{{ getFieldError('objet') }}</div>
+          }
+          <small class="field-hint">Maximum 200 caractères</small>
+        </div>
+      }
+
+      <!-- Description -->
+      <div class="form-section">
+        <label class="form-label">
+          Description détaillée *
+        </label>
+        <textarea
+          formControlName="descriptionReclamation"
+          class="form-textarea"
+          [class.invalid]="isFieldInvalid('descriptionReclamation')"
+          rows="6"
+          placeholder="Décrivez votre problème en détail (minimum 10 caractères)"
+          maxlength="1000"></textarea>
+        <div class="textarea-footer">
+          @if (isFieldInvalid('descriptionReclamation')) {
+            <div class="field-error">{{ getFieldError('descriptionReclamation') }}</div>
+          }
+          <small class="char-count">
+            {{ reclamationForm.get('descriptionReclamation')?.value?.length || 0 }} / 1000
+          </small>
+        </div>
+      </div>
+
+      <!-- Informations de contact -->
+      <div class="form-section">
+        <h2 class="section-title">Vos coordonnées</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input
+              type="email"
+              formControlName="contactEmail"
+              class="form-input"
+              [class.invalid]="isFieldInvalid('contactEmail')"
+              placeholder="votre@email.com">
+            @if (isFieldInvalid('contactEmail')) {
+              <div class="field-error">{{ getFieldError('contactEmail') }}</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Téléphone (optionnel)</label>
+            <input
+              type="tel"
+              formControlName="contactTelephone"
+              class="form-input"
+              [class.invalid]="isFieldInvalid('contactTelephone')"
+              placeholder="12345678">
+            @if (isFieldInvalid('contactTelephone')) {
+              <div class="field-error">{{ getFieldError('contactTelephone') }}</div>
+            }
+            <small class="field-hint">8 chiffres</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lier à une réservation -->
+      <div class="form-section">
+        <h2 class="section-title">Lier à une réservation (optionnel)</h2>
+        <p class="section-description">
+          Si votre réclamation concerne une réservation spécifique, vous pouvez la sélectionner ci-dessous
+        </p>
+
+        @if (isLoadingReservations()) {
+          <div class="loading-reservations">
+            <div class="spinner"></div>
+            <span>Chargement de vos réservations...</span>
+          </div>
+        } @else if (mesReservations().length > 0) {
+          <select formControlName="idReservation" class="form-select">
+            <option [value]="null">Aucune réservation (problème général)</option>
+            @for (reservation of mesReservations(); track reservation.idReservation) {
+              <option [value]="reservation.idReservation">
+                {{ reservation.referenceReservation }} - {{ reservation.dateDebut | date:'dd/MM/yyyy' }}
+                ({{ reservation.statutReservation }})
+              </option>
+            }
+          </select>
+        } @else {
+          <div class="no-reservations">
+            <span class="info-icon">ℹ️</span>
+            <p>Vous n'avez pas de réservations actives</p>
+          </div>
+        }
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting()">
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting() || reclamationForm.invalid">
+          @if (isSubmitting()) {
+            <span class="spinner-small"></span>
+            <span>Envoi en cours...</span>
+          } @else {
+            <span>Soumettre la réclamation</span>
+          }
+        </button>
+      </div>
+
+      <!-- Note légale -->
+      <div class="legal-note">
+        <span class="note-icon">🔒</span>
+        <p>
+          Vos informations sont traitées de manière confidentielle.
+          Nous nous engageons à vous répondre dans les 48 heures ouvrées.
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

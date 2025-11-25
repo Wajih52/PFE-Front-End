@@ -802,3 +802,200 @@ $border-light: #E5E5E5;
     font-size: 2rem !important;
   }
 }
+
+// SCSS À AJOUTER DANS home.component.scss
+// Ajouter ces styles à la fin du fichier
+
+// ========== MESSAGES D'ALERTE ==========
+.messages-container {
+  margin-bottom: 2rem;
+}
+
+.alert {
+  padding: 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.3s ease-out;
+
+  &-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+  }
+
+  &-error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 2px solid #dc3545;
+  }
+
+  &-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  &-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  &-text {
+    flex: 1;
+
+    strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    p {
+      margin: 0.25rem 0;
+      color: #555;
+    }
+
+    small {
+      display: block;
+      margin-top: 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+
+  &-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: #333;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ========== FORM LABEL & SELECT ==========
+.form-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $dark-black;
+  margin-bottom: 0.5rem;
+}
+
+.form-select {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid $border-light;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-gold;
+    box-shadow: 0 0 0 3px rgba($primary-gold, 0.1);
+  }
+}
+
+.form-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: $text-gray;
+  font-style: italic;
+}
+
+// ========== CHAMP OBJET (Animation) ==========
+.objet-field {
+  animation: slideDown 0.3s ease-out;
+
+  .form-input {
+    border-color: $primary-gold;
+    background: #fffef5;
+  }
+}
+
+// ========== SPINNER ==========
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ========== BOUTON DÉSACTIVÉ ==========
+.btn-submit {
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    &:hover {
+      background: $primary-gold;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  span {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 768px) {
+  .alert {
+    &-content {
+      flex-direction: column;
+    }
+
+    &-close {
+      align-self: flex-end;
+    }
+  }
+}
+
+
+
+
+//============================================
+
+

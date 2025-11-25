@@ -177,13 +177,51 @@
 </section>
 
 <!-- ========== CONTACT SECTION ========== -->
+<!-- SECTION CONTACT À REMPLACER DANS home.component.html -->
+<!-- Remplacer toute la section "contact-section" par ce code -->
+
 <section id="contact" class="contact-section">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Contactez-nous</h2>
       <p class="section-description">
-        Nous sommes à votre écoute pour répondre à toutes vos questions
+        Nous sommes à votre écoute pour répondre à toutes vos questions ou réclamations
       </p>
+    </div>
+
+    <!-- Messages de succès/erreur -->
+    <div class="messages-container">
+      @if (submitSuccess()) {
+        <div class="alert alert-success">
+          <div class="alert-content">
+            <span class="alert-icon">✅</span>
+            <div class="alert-text">
+              @if (codeReclamation()) {
+                <strong>Réclamation envoyée avec succès!</strong>
+                <p>Votre code de réclamation: <strong>{{ codeReclamation() }}</strong></p>
+                <small>Conservez ce code pour suivre votre réclamation</small>
+              } @else {
+                <strong>Message envoyé avec succès!</strong>
+                <p>Nous vous répondrons dans les plus brefs délais.</p>
+              }
+            </div>
+            <button class="alert-close" (click)="closeSuccess()">×</button>
+          </div>
+        </div>
+      }
+
+      @if (submitError()) {
+        <div class="alert alert-error">
+          <div class="alert-content">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-text">
+              <strong>Erreur</strong>
+              <p>{{ submitError() }}</p>
+            </div>
+            <button class="alert-close" (click)="closeError()">×</button>
+          </div>
+        </div>
+      }
     </div>
 
     <div class="contact-grid">
@@ -219,22 +257,95 @@
       </div>
 
       <div class="contact-form">
-        <form>
+        <form (ngSubmit)="onSubmit()">
+          <!-- Nom -->
           <div class="form-group">
-            <input type="text" placeholder="Votre nom" class="form-input">
+            <input
+              type="text"
+              [(ngModel)]="formData.nom"
+              name="nom"
+              placeholder="Votre nom *"
+              class="form-input"
+              required>
           </div>
+
+          <!-- Email -->
           <div class="form-group">
-            <input type="email" placeholder="Votre email" class="form-input">
+            <input
+              type="email"
+              [(ngModel)]="formData.email"
+              name="email"
+              placeholder="Votre email *"
+              class="form-input"
+              required>
           </div>
+
+          <!-- Téléphone -->
           <div class="form-group">
-            <input type="tel" placeholder="Votre téléphone" class="form-input">
+            <input
+              type="tel"
+              [(ngModel)]="formData.telephone"
+              name="telephone"
+              placeholder="Votre téléphone *"
+              class="form-input"
+              required>
           </div>
+
+          <!-- Type de réclamation (optionnel) -->
           <div class="form-group">
-            <textarea placeholder="Votre message" class="form-textarea" rows="5"></textarea>
+            <select
+              [(ngModel)]="formData.typeReclamation"
+              name="typeReclamation"
+              class="form-select">
+              <option value="">Message simple / Question</option>
+              @for (type of typesReclamation; track type.value) {
+                <option [value]="type.value">{{ type.label }}</option>
+              }
+            </select>
+            <small class="form-hint">Sélectionnez un type si vous souhaitez déposer une réclamation (optionnel)</small>
           </div>
-          <button type="submit" class="btn-submit">Envoyer le message</button>
+
+          <!-- Objet (uniquement si type = AUTRE) -->
+          @if (showObjetField) {
+            <div class="form-group objet-field">
+              <input
+                type="text"
+                [(ngModel)]="formData.objet"
+                name="objet"
+                placeholder="Précisez l'objet de votre réclamation *"
+                class="form-input"
+                required>
+            </div>
+          }
+
+          <!-- Message/Description -->
+          <div class="form-group">
+            <textarea
+              [(ngModel)]="formData.message"
+              name="message"
+              placeholder="Votre message ou description de la réclamation *"
+              class="form-textarea"
+              rows="5"
+              required>
+            </textarea>
+          </div>
+
+          <!-- Bouton de soumission -->
+          <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="spinner"></span>
+              <span>Envoi en cours...</span>
+            } @else {
+              <span>{{ formData.typeReclamation ? 'Envoyer la réclamation' : 'Envoyer le message' }}</span>
+            }
+          </button>
         </form>
       </div>
     </div>
   </div>
 </section>
+
+<app-footer></app-footer>

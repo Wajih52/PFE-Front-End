@@ -1,0 +1,558 @@
+// nouvelle-reclamation.component.scss - Design personnalisé
+
+// Variables
+$primary-gold: #C7A781;
+$dark-black: #000000;
+$white: #ffffff;
+$text-gray: #6c757d;
+$light-bg: #f8f9fa;
+$border-light: #e0e0e0;
+$error-red: #dc3545;
+$success-green: #28a745;
+$info-blue: #17a2b8;
+
+// ========== CONTAINER ==========
+.reclamation-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+// ========== HEADER ==========
+.page-header {
+  margin-bottom: 2rem;
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btn-back {
+    align-self: flex-start;
+    background: transparent;
+    border: 2px solid $border-light;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $dark-black;
+
+    .back-icon {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: $primary-gold;
+      color: $white;
+      border-color: $primary-gold;
+      transform: translateX(-5px);
+    }
+  }
+
+  .header-text {
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $dark-black;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-description {
+      font-size: 1.1rem;
+      color: $text-gray;
+    }
+  }
+}
+
+// ========== MESSAGES ==========
+.messages-container {
+  margin-bottom: 2rem;
+}
+
+.alert {
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  position: relative;
+  animation: slideDown 0.3s ease-out;
+
+  &-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid $success-green;
+  }
+
+  &-error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 2px solid $error-red;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    .alert-icon {
+      font-size: 2rem;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: $dark-black;
+    }
+  }
+
+  &-body {
+    padding-left: 3rem;
+
+    p {
+      margin: 0.5rem 0;
+      color: #555;
+    }
+
+    .code-display {
+      font-size: 1.1rem;
+      margin: 1rem 0;
+
+      .code-value {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+        font-size: 1.2rem;
+        color: $dark-black;
+        letter-spacing: 1px;
+      }
+    }
+
+    .redirect-message {
+      font-style: italic;
+      color: $text-gray;
+    }
+  }
+
+  &-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: $dark-black;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ========== FORM CARD ==========
+.form-card {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+}
+
+// ========== FORM SECTIONS ==========
+.form-section {
+  margin-bottom: 2.5rem;
+
+  &.objet-section {
+    animation: slideDown 0.3s ease-out;
+    background: #fffef5;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 2px dashed $primary-gold;
+  }
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: $dark-black;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: '';
+    width: 4px;
+    height: 1.3rem;
+    background: $primary-gold;
+    border-radius: 2px;
+  }
+}
+
+.section-description {
+  color: $text-gray;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+// ========== TYPES GRID ==========
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.type-card {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  .type-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .type-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background: $light-bg;
+    border: 2px solid $border-light;
+    border-radius: 10px;
+    transition: all 0.3s;
+
+    .type-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .type-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $dark-black;
+      text-align: center;
+    }
+  }
+
+  &:hover .type-content {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: $primary-gold;
+  }
+
+  &.selected .type-content {
+    background: linear-gradient(135deg, $primary-gold 0%, darken($primary-gold, 10%) 100%);
+    border-color: $primary-gold;
+    color: $white;
+
+    .type-label {
+      color: $white;
+    }
+  }
+
+  &.invalid .type-content {
+    border-color: $error-red;
+  }
+}
+
+// ========== FORM ELEMENTS ==========
+.form-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $dark-black;
+  margin-bottom: 0.5rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 2px solid $border-light;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s;
+  background: $white;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-gold;
+    box-shadow: 0 0 0 4px rgba($primary-gold, 0.1);
+  }
+
+  &::placeholder {
+    color: #adb5bd;
+  }
+
+  &.invalid {
+    border-color: $error-red;
+    background: #fff5f5;
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba($error-red, 0.1);
+    }
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+}
+
+// ========== FORM ROW ==========
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+// ========== ERRORS & HINTS ==========
+.field-error {
+  color: $error-red;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &::before {
+    content: '⚠';
+    font-size: 1rem;
+  }
+}
+
+.field-hint {
+  display: block;
+  margin-top: 0.5rem;
+  color: $text-gray;
+  font-size: 0.85rem;
+}
+
+.textarea-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+
+  .char-count {
+    color: $text-gray;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+// ========== LOADING & INFO STATES ==========
+.loading-reservations {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: $light-bg;
+  border-radius: 8px;
+  color: $text-gray;
+}
+
+.no-reservations {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: $light-bg;
+  border-radius: 8px;
+  border: 1px solid $border-light;
+
+  .info-icon {
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin: 0;
+    color: $text-gray;
+  }
+}
+
+// ========== SPINNERS ==========
+.spinner,
+.spinner-small {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ========== FORM ACTIONS ==========
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 2rem;
+  border-top: 2px solid $border-light;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  min-width: 180px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &-primary {
+    background: $primary-gold;
+    color: $white;
+
+    &:hover:not(:disabled) {
+      background: $dark-black;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &-secondary {
+    background: $text-gray;
+    color: $white;
+
+    &:hover:not(:disabled) {
+      background: darken($text-gray, 10%);
+    }
+  }
+}
+
+// ========== LEGAL NOTE ==========
+.legal-note {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba($info-blue, 0.05);
+  border-left: 4px solid $info-blue;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  .note-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 768px) {
+  .reclamation-container {
+    padding: 1rem;
+  }
+
+  .page-header .header-text .page-title {
+    font-size: 2rem;
+  }
+
+  .form-card {
+    padding: 1.5rem;
+  }
+
+  .types-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .types-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .type-card .type-content {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 1rem;
+  }
+}
