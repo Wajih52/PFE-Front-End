@@ -727,6 +727,14 @@ $border-light: #E5E5E5;
         border-color: $primary-gold;
         box-shadow: 0 0 0 3px rgba($primary-gold, 0.1);
       }
+      &.error {
+        border-color: #dc3545;
+
+        &:focus {
+          border-color: #dc3545;
+          box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+      }
     }
 
     .form-textarea {
@@ -803,8 +811,7 @@ $border-light: #E5E5E5;
   }
 }
 
-// SCSS À AJOUTER DANS home.component.scss
-// Ajouter ces styles à la fin du fichier
+
 
 // ========== MESSAGES D'ALERTE ==========
 .messages-container {
@@ -993,7 +1000,13 @@ $border-light: #E5E5E5;
   }
 }
 
-
+.error-message {
+  display: block;
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
 
 
 //============================================

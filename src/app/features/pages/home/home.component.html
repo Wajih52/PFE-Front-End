@@ -209,19 +209,6 @@
           </div>
         </div>
       }
-
-      @if (submitError()) {
-        <div class="alert alert-error">
-          <div class="alert-content">
-            <span class="alert-icon">⚠️</span>
-            <div class="alert-text">
-              <strong>Erreur</strong>
-              <p>{{ submitError() }}</p>
-            </div>
-            <button class="alert-close" (click)="closeError()">×</button>
-          </div>
-        </div>
-      }
     </div>
 
     <div class="contact-grid">
@@ -262,85 +249,112 @@
           <div class="form-group">
             <input
               type="text"
+              id="nom"
               [(ngModel)]="formData.nom"
               name="nom"
               placeholder="Votre nom *"
+              (blur)="validateField('nom')"
+              [class.error]="fieldErrors.nom()"
               class="form-input"
               required>
+            <span *ngIf="fieldErrors.nom()" class="error-message">
+             {{ fieldErrors.nom() }}
+        </span>
           </div>
+
 
           <!-- Email -->
           <div class="form-group">
             <input
               type="email"
+              id="email"
               [(ngModel)]="formData.email"
               name="email"
-              placeholder="Votre email *"
+              (blur)="validateField('email')"
+              [class.error]="fieldErrors.email()"
+              placeholder="votre.email@exemple.com"
               class="form-input"
-              required>
+            />
+            <span *ngIf="fieldErrors.email()" class="error-message">
+          {{ fieldErrors.email() }}
+        </span>
           </div>
 
           <!-- Téléphone -->
           <div class="form-group">
             <input
               type="tel"
+              id="telephone"
               [(ngModel)]="formData.telephone"
               name="telephone"
-              placeholder="Votre téléphone *"
+              (blur)="validateField('telephone')"
+              [class.error]="fieldErrors.telephone()"
+              placeholder="+216 50 000 000"
               class="form-input"
-              required>
+              maxlength="8"
+            />
+            <span *ngIf="fieldErrors.telephone()" class="error-message">
+          {{ fieldErrors.telephone() }}
+        </span>
           </div>
 
           <!-- Type de réclamation (optionnel) -->
           <div class="form-group">
+            <label for="typeReclamation" class="form-hint">Type de réclamation (optionnel)</label>
             <select
+              id="typeReclamation"
               [(ngModel)]="formData.typeReclamation"
               name="typeReclamation"
-              class="form-select">
-              <option value="">Message simple / Question</option>
-              @for (type of typesReclamation; track type.value) {
-                <option [value]="type.value">{{ type.label }}</option>
-              }
+              class="form-input"
+            >
+              <option value="">-- Simple message de contact --</option>
+              <option *ngFor="let type of typesReclamation" [value]="type.value">
+                {{ type.label }}
+              </option>
             </select>
-            <small class="form-hint">Sélectionnez un type si vous souhaitez déposer une réclamation (optionnel)</small>
           </div>
 
-          <!-- Objet (uniquement si type = AUTRE) -->
-          @if (showObjetField) {
-            <div class="form-group objet-field">
-              <input
-                type="text"
-                [(ngModel)]="formData.objet"
-                name="objet"
-                placeholder="Précisez l'objet de votre réclamation *"
-                class="form-input"
-                required>
-            </div>
-          }
+          <!-- Objet (si type = AUTRE) -->
+          <div *ngIf="showObjetField" class="form-group">
+            <input
+              type="text"
+              id="objet"
+              [(ngModel)]="formData.objet"
+              name="objet"
+              (blur)="validateField('objet')"
+              [class.error]="fieldErrors.objet()"
+              placeholder="Précisez l'objet de votre réclamation"
+              class="form-input"
+            />
+            <span *ngIf="fieldErrors.objet()" class="error-message">
+          {{ fieldErrors.objet() }}
+        </span>
+          </div>
 
-          <!-- Message/Description -->
+          <!-- Message -->
           <div class="form-group">
             <textarea
+              id="message"
               [(ngModel)]="formData.message"
               name="message"
-              placeholder="Votre message ou description de la réclamation *"
-              class="form-textarea"
+              (blur)="validateField('message')"
+              [class.error]="fieldErrors.message()"
               rows="5"
-              required>
-            </textarea>
+              placeholder="Décrivez votre demande..."
+              class="form-input"
+            ></textarea>
+            <span *ngIf="fieldErrors.message()" class="error-message">
+          {{ fieldErrors.message() }}
+        </span>
           </div>
 
-          <!-- Bouton de soumission -->
+          <!-- Bouton -->
           <button
             type="submit"
             class="btn-submit"
-            [disabled]="isSubmitting()">
-            @if (isSubmitting()) {
-              <span class="spinner"></span>
-              <span>Envoi en cours...</span>
-            } @else {
-              <span>{{ formData.typeReclamation ? 'Envoyer la réclamation' : 'Envoyer le message' }}</span>
-            }
+            [disabled]="isSubmitting()"
+          >
+            {{ isSubmitting() ? '⏳ Envoi en cours...' : ' Envoyer' }}
           </button>
         </form>
       </div>

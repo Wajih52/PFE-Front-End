@@ -128,6 +128,15 @@ export class HomeComponent implements OnInit {
     { value: TypeReclamation.AUTRE, label: 'Autre' }
   ];
 
+  // Erreurs par champ
+  fieldErrors = {
+    nom: signal<string>(''),
+    email: signal<string>(''),
+    telephone: signal<string>(''),
+    message: signal<string>(''),
+    objet: signal<string>('')
+  };
+
 
   constructor() {
     // ✅ AJOUTÉ : Vérifier l'authentification UNIQUEMENT côté client après le rendu
@@ -191,14 +200,93 @@ export class HomeComponent implements OnInit {
   }
 
   /**
+   * Valider un champ spécifique
+   */
+  validateField(fieldName: keyof typeof this.formData): void {
+    const value = this.formData[fieldName];
+
+    switch(fieldName) {
+      case 'nom':
+        if (!value) {
+          this.fieldErrors.nom.set('Le nom est obligatoire');
+        } else if (value.length < 2) {
+          this.fieldErrors.nom.set('Le nom doit contenir au moins 2 caractères');
+        } else {
+          this.fieldErrors.nom.set('');
+        }
+        break;
+
+      case 'email':
+        if (!value) {
+          this.fieldErrors.email.set('L\'email est obligatoire');
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          this.fieldErrors.email.set('Format d\'email invalide');
+        } else {
+          this.fieldErrors.email.set('');
+        }
+        break;
+
+      case 'telephone':
+        if (!value) {
+          this.fieldErrors.telephone.set('Le téléphone est obligatoire');
+        } else if (!/^\d{8}$/.test(value)) {
+          this.fieldErrors.telephone.set('Le téléphone doit contenir exactement 8 chiffres');
+        } else {
+          this.fieldErrors.telephone.set('');
+        }
+        break;
+
+      case 'message':
+        if (!value) {
+          this.fieldErrors.message.set('Le message est obligatoire');
+        } else if (value.length < 10) {
+          this.fieldErrors.message.set('Le message doit contenir au moins 10 caractères');
+        } else {
+          this.fieldErrors.message.set('');
+        }
+        break;
+
+      case 'objet':
+        if (this.formData.typeReclamation === TypeReclamation.AUTRE && !value) {
+          this.fieldErrors.objet.set('L\'objet est obligatoire pour le type "Autre"');
+        } else {
+          this.fieldErrors.objet.set('');
+        }
+        break;
+    }
+  }
+
+  /**
+   * Valider tous les champs
+   */
+  validateAllFields(): boolean {
+    this.validateField('nom');
+    this.validateField('email');
+    this.validateField('telephone');
+    this.validateField('message');
+
+    if (this.formData.typeReclamation === TypeReclamation.AUTRE) {
+      this.validateField('objet');
+    }
+
+    return !this.fieldErrors.nom() &&
+      !this.fieldErrors.email() &&
+      !this.fieldErrors.telephone() &&
+      !this.fieldErrors.message() &&
+      (this.formData.typeReclamation !== TypeReclamation.AUTRE || !this.fieldErrors.objet());
+  }
+
+
+  /**
    * Soumettre le formulaire (message simple ou réclamation)
    */
   onSubmit(): void {
-    // Validation basique
-    if (!this.formData.nom || !this.formData.email || !this.formData.telephone) {
-      this.submitError.set('Veuillez remplir tous les champs obligatoires');
+    // Valider tous les champs
+    if (!this.validateAllFields()) {
       return;
     }
+    // Réinitialiser l'erreur globale
+    this.submitError.set(null);
 
     // Si un type de réclamation est sélectionné, créer une réclamation
     if (this.formData.typeReclamation) {

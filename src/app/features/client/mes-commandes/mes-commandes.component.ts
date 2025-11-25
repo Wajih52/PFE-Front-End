@@ -5,7 +5,11 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import { ReservationService } from '../../../services/reservation.service';
-import { ReservationResponseDto, StatutReservationLabels } from '../../../core/models/reservation.model';
+import {
+  ReservationResponseDto, StatutLivraison,
+  StatutLivraisonLabels,
+  StatutReservationLabels
+} from '../../../core/models/reservation.model';
 import {FormsModule} from '@angular/forms';
 import { FactureService } from '../../../services/facture.service';
 import { FactureResponse } from '../../../core/models/facture.model';
@@ -34,6 +38,7 @@ export class MesCommandesComponent implements OnInit {
 
   // Labels
   readonly statutLabels = StatutReservationLabels;
+  readonly statutLivraisonLabels = StatutLivraisonLabels
 
   factures = signal<Map<number, FactureResponse[]>>(new Map());
   loadingFactures = signal<number | null>(null);
@@ -190,5 +195,25 @@ export class MesCommandesComponent implements OnInit {
       'FINALE': 'Facture Finale'
     };
     return labels[type] || type;
+  }
+
+  /**
+   * Obtenir la classe CSS du badge de statut de livraison
+   */
+  getStatutLivraisonBadgeClass(statut: StatutLivraison | undefined): string {
+    if (!statut) return 'badge-secondary';
+
+    const badges: Record<StatutLivraison, string> = {
+      'NOT_TODAY': 'badge-secondary',
+      'EN_ATTENTE': 'badge-warning',
+      'EN_COURS': 'badge-info',
+      'LIVREE': 'badge-success',
+      'RETOUR': 'badge-primary',
+      'RETOUR_PARTIEL': 'badge-warning',
+      'RETOURNEE': 'badge-success',
+      'ANNULEE': 'badge-danger'
+    };
+
+    return badges[statut] || 'badge-secondary';
   }
 }

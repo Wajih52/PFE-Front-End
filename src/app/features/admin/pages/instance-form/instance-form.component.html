@@ -112,7 +112,7 @@
       </div>
 
       <!-- Statut -->
-      <div class="form-group">
+      <div class="form-group" hidden>
         <label for="statut" class="required">Statut *</label>
         <select
           id="statut"
@@ -127,6 +127,27 @@
         <span *ngIf="hasError('statut', 'required')" class="error-message">
           Le statut est obligatoire
         </span>
+      </div>
+
+      <!-- État physique -->
+      <div class="form-group">
+        <label for="etatPhysique" class="required">État physique *</label>
+        <select
+          id="etatPhysique"
+          formControlName="etatPhysique"
+          class="form-control"
+          [class.error]="hasError('etatPhysique', 'required')"
+        >
+          <option *ngFor="let etat of etatPhysiqueList" [value]="etat">
+            {{ EtatPhysiqueLabels[etat] }}
+          </option>
+        </select>
+        <span *ngIf="hasError('etatPhysique', 'required')" class="error-message">
+    L'état physique est obligatoire
+  </span>
+        <small class="help-text">
+          Indiquez l'état physique actuel de cette instance
+        </small>
       </div>
 
       <!-- Commentaire -->

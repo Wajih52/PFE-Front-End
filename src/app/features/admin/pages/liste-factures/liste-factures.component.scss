@@ -17,7 +17,7 @@
     gap: 0.5rem;
 
     i {
-      color: #3498db;
+      color: #bd9e7a;
     }
   }
 }
@@ -271,6 +271,90 @@
     thead th,
     tbody td {
       padding: 0.75rem 0.5rem;
+    }
+  }
+}
+
+// ============================================
+// SECTION DE TRI
+// ============================================
+
+.tri-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tri-label {
+  font-weight: 600;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i {
+    color: #C7A781;
+  }
+}
+
+.tri-options {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tri-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  color: #495057;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+
+  &:hover {
+    background: #f8f9fa;
+    border-color: #C7A781;
+    color: #C7A781;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #C7A781 0%, #B8976F 100%);
+    color: white;
+    border-color: #C7A781;
+    box-shadow: 0 2px 4px rgba(199, 167, 129, 0.3);
+  }
+
+  i {
+    font-size: 0.8rem;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .tri-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tri-options {
+    width: 100%;
+
+    .tri-btn {
+      flex: 1;
+      justify-content: center;
+      min-width: 100px;
     }
   }
 }

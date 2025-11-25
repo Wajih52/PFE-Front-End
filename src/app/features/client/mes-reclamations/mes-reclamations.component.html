@@ -3,10 +3,15 @@
 <div class="reclamations-container">
   <!-- Header -->
   <div class="page-header">
-    <h1 class="page-title">📋 Mes Réclamations</h1>
-    <p class="page-description">Consultez l'état de toutes vos réclamations</p>
-  </div>
+    <div class="header-content">
+      <h1 class="page-title">📋 Mes Réclamations</h1>
+      <p class="page-description">Consultez l'état de toutes vos réclamations</p>
+    </div>
+    <button class="btn-nouvelle-reclamation" (click)="nouvelleReclamation()">
+      ➕ Nouvelle réclamation
+    </button>
 
+  </div>
   <!-- Loading -->
   @if (isLoading()) {
     <div class="loading-state">

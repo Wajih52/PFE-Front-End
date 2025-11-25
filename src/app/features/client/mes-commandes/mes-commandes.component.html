@@ -98,7 +98,17 @@
               [ngClass]="getStatutBadgeClass(reservation.statutReservation)"
             >
               {{ statutLabels[reservation.statutReservation] }}
-            </span>
+            </span><br>
+            <!-- Statut Livraison -->
+            @if (reservation.statutLivraisonRes) {
+              <span
+                class="badge badge-livraison"
+                [ngClass]="getStatutLivraisonBadgeClass(reservation.statutLivraisonRes)"
+              >
+                  <i class="fas fa-truck"></i>
+                {{ statutLivraisonLabels[reservation.statutLivraisonRes] }}
+                </span>
+            }
           </div>
 
           <!-- Corps de la carte -->

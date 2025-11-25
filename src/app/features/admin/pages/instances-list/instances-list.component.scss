@@ -728,3 +728,29 @@
     }
   }
 }
+
+// Badges pour état physique
+.status-neuf {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-bon-etat {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-etat-moyen {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-usage {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-endommage {
+  background: #dc3545;
+  color: white;
+}

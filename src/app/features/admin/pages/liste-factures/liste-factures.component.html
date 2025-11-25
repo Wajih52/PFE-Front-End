@@ -43,6 +43,61 @@
       />
     </div>
   </div>
+  <!-- Section de tri -->
+  <div class="tri-container">
+    <span class="tri-label"><i class="fas fa-sort"></i> Trier par:</span>
+    <div class="tri-options">
+      <button
+        class="tri-btn"
+        [class.active]="triPar === 'date'"
+        (click)="changerTri('date')">
+        Date
+        <i *ngIf="triPar === 'date'" class="fas"
+           [class.fa-sort-up]="triOrdre === 'asc'"
+           [class.fa-sort-down]="triOrdre === 'desc'"></i>
+      </button>
+
+      <button
+        class="tri-btn"
+        [class.active]="triPar === 'montant'"
+        (click)="changerTri('montant')">
+        Montant
+        <i *ngIf="triPar === 'montant'" class="fas"
+           [class.fa-sort-up]="triOrdre === 'asc'"
+           [class.fa-sort-down]="triOrdre === 'desc'"></i>
+      </button>
+
+      <button
+        class="tri-btn"
+        [class.active]="triPar === 'client'"
+        (click)="changerTri('client')">
+        Client
+        <i *ngIf="triPar === 'client'" class="fas"
+           [class.fa-sort-up]="triOrdre === 'asc'"
+           [class.fa-sort-down]="triOrdre === 'desc'"></i>
+      </button>
+
+      <button
+        class="tri-btn"
+        [class.active]="triPar === 'reservation'"
+        (click)="changerTri('reservation')">
+        Réservation
+        <i *ngIf="triPar === 'reservation'" class="fas"
+           [class.fa-sort-up]="triOrdre === 'asc'"
+           [class.fa-sort-down]="triOrdre === 'desc'"></i>
+      </button>
+
+      <button
+        class="tri-btn"
+        [class.active]="triPar === 'type'"
+        (click)="changerTri('type')">
+        Type
+        <i *ngIf="triPar === 'type'" class="fas"
+           [class.fa-sort-up]="triOrdre === 'asc'"
+           [class.fa-sort-down]="triOrdre === 'desc'"></i>
+      </button>
+    </div>
+  </div>
 
   <!-- Messages -->
   @if (erreur) {

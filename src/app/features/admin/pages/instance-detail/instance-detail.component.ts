@@ -8,7 +8,9 @@ import { ConfirmationService } from '../../../../core/services/confirmation.serv
 import {
   InstanceProduitResponse,
   StatutInstance,
-  StatutInstanceLabels
+  StatutInstanceLabels,
+  EtatPhysique,
+  EtatPhysiqueLabels
 } from '../../../../core/models';
 import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
 import {NotificationService} from '../../../../services/notification.service';
@@ -42,6 +44,9 @@ export class InstanceDetailComponent implements OnInit {
   // Enums pour le template
   StatutInstance = StatutInstance;
   StatutInstanceLabels = StatutInstanceLabels;
+
+  EtatPhysique = EtatPhysique;
+  EtatPhysiqueLabels = EtatPhysiqueLabels;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -208,5 +213,16 @@ export class InstanceDetailComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  getEtatPhysiqueClass(etat: EtatPhysique): string {
+    const classes: Record<EtatPhysique, string> = {
+      [EtatPhysique.NEUF]: 'status-neuf',
+      [EtatPhysique.BON_ETAT]: 'status-bon-etat',
+      [EtatPhysique.ETAT_MOYEN]: 'status-etat-moyen',
+      [EtatPhysique.USAGE]: 'status-usage',
+      [EtatPhysique.ENDOMMAGE]: 'status-endommage'
+    };
+    return classes[etat] || '';
   }
 }

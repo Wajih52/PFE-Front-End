@@ -10,6 +10,7 @@ export interface InstanceProduitRequest {
   numeroSerie?: string;         // Auto-généré si non fourni
   observation?: string;
   statut?: StatutInstance;      // DISPONIBLE par défaut
+  etatPhysique?: EtatPhysique
 }
 
 /**

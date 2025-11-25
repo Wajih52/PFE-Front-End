@@ -31,7 +31,7 @@ export class ReclamationService {
    * Créer une réclamation (visiteur ou client connecté)
    */
   creerReclamation(request: ReclamationRequest): Observable<ReclamationResponse> {
-    return this.http.post<ReclamationResponse>(this.apiUrl, request);
+    return this.http.post<ReclamationResponse>(`${this.apiUrl}/create`, request);
   }
 
   /**

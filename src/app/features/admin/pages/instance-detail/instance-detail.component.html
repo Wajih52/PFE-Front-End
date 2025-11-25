@@ -64,6 +64,15 @@
             </div>
 
             <div class="info-item">
+              <span class="label">État physique</span>
+              <span class="value">
+                        <span class="status-badge" [ngClass]="getEtatPhysiqueClass(instance.etatPhysique)">
+                              {{ EtatPhysiqueLabels[instance.etatPhysique] }}
+                       </span>
+              </span>
+            </div>
+
+            <div class="info-item">
               <span class="label">Date d'ajout</span>
               <span class="value">{{ formatDate(instance.dateAcquisition) }}</span>
             </div>

@@ -12,6 +12,7 @@ import {
   TypeReclamationLabels,
   PrioriteReclamationLabels
 } from '../../../core/models/reclamation.enums';
+import {Router} from '@angular/router';
 
 type SortField = 'date' | 'statut' | 'type' | 'priorite';
 type SortDirection = 'asc' | 'desc';
@@ -25,6 +26,7 @@ type SortDirection = 'asc' | 'desc';
 })
 export class MesReclamationsComponent implements OnInit {
   private reclamationService = inject(ReclamationService);
+  private router = inject(Router);
 
   // Données
   reclamations = signal<ReclamationResponse[]>([]);
@@ -71,6 +73,10 @@ export class MesReclamationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadReclamations();
+  }
+
+  nouvelleReclamation(): void {
+    this.router.navigate(['client/nouvelle-reclamation']);
   }
 
   /**

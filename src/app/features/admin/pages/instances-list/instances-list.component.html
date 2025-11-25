@@ -157,6 +157,7 @@
               {{ sortDirection === 'asc' ? '▲' : '▼' }}
             </span>
         </th>
+        <th>Etat Physique</th>
         <th>Commentaire</th>
         <th (click)="sortBy('dateAcquisition')" class="sortable">
           Date d'ajout
@@ -181,6 +182,11 @@
             <span class="status-badge" [ngClass]="getStatutClass(instance.statut)">
               {{ StatutInstanceLabels[instance.statut] }}
             </span>
+        </td>
+        <td>
+           <span class="status-badge" [ngClass]="getEtatPhysiqueClass(instance.etatPhysique)">
+                              {{ EtatPhysiqueLabels[instance.etatPhysique] }}
+                       </span>
         </td>
         <td>
           <small *ngIf="instance.observation" class="text-muted">

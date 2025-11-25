@@ -235,7 +235,7 @@
 
         &.badge-warning {
           background-color: #ed8936;
-          color: white;
+          color: #000000;
         }
 
         &.badge-info {
@@ -628,4 +628,68 @@ h4 {
   border-radius: 8px;
   border: 2px dashed #bdc3c7;
   margin: 0;
+}
+
+// Container pour les badges
+.badges-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+// Badge de livraison avec icône
+.badge-livraison {
+  font-size: 0.85rem;
+
+  i {
+    margin-right: 0.3rem;
+  }
+}
+
+// Responsive : empiler les badges sur mobile
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+
+  .badges-container {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+}
+
+// Classes de couleur pour les badges de livraison
+.badge-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #16181b;
+}
+
+.badge-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  color: white;
+}
+
+.badge-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
 }

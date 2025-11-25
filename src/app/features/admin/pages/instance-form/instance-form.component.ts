@@ -11,10 +11,11 @@ import {
   InstanceProduitResponse,
   ProduitResponse,
   StatutInstance,
-  StatutInstanceLabels
+  StatutInstanceLabels,
+  EtatPhysique,
+  EtatPhysiqueLabels
 } from '../../../../core/models';
 import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
-import {NotificationComponent} from '../../../../shared/notification/notification.component';
 import {NotificationService} from '../../../../services/notification.service';
 
 /**
@@ -55,7 +56,10 @@ export class InstanceFormComponent implements OnInit {
   // Enums pour le template
   StatutInstance = StatutInstance;
   StatutInstanceLabels = StatutInstanceLabels;
+  EtatPhysique = EtatPhysique ;
+  EtatPhysiqueLabels = EtatPhysiqueLabels;
   statutsList = Object.values(StatutInstance);
+  etatPhysiqueList =Object.values(EtatPhysique)
   // Liste filtrée
   statutsFiltres = [
     StatutInstance.DISPONIBLE,
@@ -68,6 +72,8 @@ export class InstanceFormComponent implements OnInit {
   showBatchCreation = false;
   batchQuantity = 1;
   batchPrefix = 'Ce Champ est géneré automatiquement';
+
+  protected readonly Math = Math;
 
   ngOnInit(): void {
 
@@ -84,6 +90,7 @@ export class InstanceFormComponent implements OnInit {
       idProduit: ['', Validators.required],
       numeroSerie: [''], // Auto-généré si vide
       statut: [StatutInstance.DISPONIBLE, Validators.required],
+      etatPhysique : [EtatPhysique.BON_ETAT, Validators.required],
       observation: ['']
     });
 
@@ -141,6 +148,7 @@ export class InstanceFormComponent implements OnInit {
           idProduit: instance.idProduit,
           numeroSerie: instance.numeroSerie,
           statut: instance.statut,
+          etatPhysique:instance.etatPhysique||EtatPhysique.BON_ETAT,
           observation: instance.observation
         });
         this.onProduitChange();
@@ -184,6 +192,7 @@ export class InstanceFormComponent implements OnInit {
       idProduit: +this.instanceForm.value.idProduit,
       numeroSerie: this.instanceForm.value.numeroSerie || undefined,
       statut: this.instanceForm.value.statut,
+      etatPhysique : this.instanceForm.value.etatPhysique,
       observation: this.instanceForm.value.observation || undefined
     };
 
@@ -277,12 +286,7 @@ export class InstanceFormComponent implements OnInit {
     return !!(field?.hasError(errorType) && field?.touched);
   }
 
-  /**
-   * Toggle du mode création en lot
-   */
-  toggleBatchMode(): void {
-    this.showBatchCreation = !this.showBatchCreation;
-  }
 
-    protected readonly Math = Math;
+
+
 }

@@ -7,6 +7,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { InstanceProduitService } from '../../../../services/instance-produit.service';
 import { ConfirmationService } from '../../../../core/services/confirmation.service';
 import {
+  EtatPhysique,
+  EtatPhysiqueLabels,
   InstanceProduitResponse,
   StatutInstance,
   StatutInstanceLabels
@@ -82,6 +84,7 @@ export class InstancesListComponent implements OnInit {
     StatutInstance.HORS_SERVICE,
     StatutInstance.PERDU
   ];
+  EtatPhysiqueLabels = EtatPhysiqueLabels;
 
   // Données du formulaire de maintenance
   maintenanceData = {
@@ -513,5 +516,16 @@ async  retourDeMaintenance(): Promise<void> {
   onItemsPerPageChange(): void {
     this.currentPage = 1;
     this.updatePagination();
+  }
+
+  getEtatPhysiqueClass(etat: EtatPhysique): string {
+    const classes: Record<EtatPhysique, string> = {
+      [EtatPhysique.NEUF]: 'status-neuf',
+      [EtatPhysique.BON_ETAT]: 'status-bon-etat',
+      [EtatPhysique.ETAT_MOYEN]: 'status-etat-moyen',
+      [EtatPhysique.USAGE]: 'status-usage',
+      [EtatPhysique.ENDOMMAGE]: 'status-endommage'
+    };
+    return classes[etat] || '';
   }
 }
