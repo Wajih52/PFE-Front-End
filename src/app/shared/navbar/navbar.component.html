@@ -23,6 +23,7 @@
         <ng-container *ngIf="isAuthenticated$ | async; else notAuthenticated">
           <div class="user-menu">
             <app-profile-dropdown></app-profile-dropdown>
+            <app-notification-panel></app-notification-panel>
           </div>
         </ng-container>
         <!-- Template pour utilisateur non connecté -->

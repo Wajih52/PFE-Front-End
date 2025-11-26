@@ -1,0 +1,97 @@
+<!-- Badge de notification -->
+<div class="notification-trigger" (click)="togglePanel()">
+  <svg class="notification-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  @if (count() > 0) {
+    <span class="notification-badge">{{ count() > 99 ? '99+' : count() }}</span>
+  }
+</div>
+
+<!-- Overlay -->
+@if (isOpen()) {
+  <div class="notification-overlay" (click)="closePanel()"></div>
+}
+
+<!-- Panneau de notifications -->
+<div class="notification-panel" [class.open]="isOpen()">
+  <!-- Header -->
+  <div class="panel-header">
+    <h3>Notifications</h3>
+    <div class="header-actions">
+      @if (count() > 0) {
+        <button class="btn-mark-all" (click)="marquerToutesCommeLues()">
+          Tout marquer comme lu
+        </button>
+      }
+      <button class="btn-close" (click)="closePanel()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+          <path d="M15 5L5 15M5 5l10 10" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Liste des notifications -->
+  <div class="panel-body">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+      </div>
+    } @else if (notifications().length === 0) {
+      <div class="empty-state">
+        <svg class="empty-icon" width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="30" stroke="#d4af37" stroke-width="2" fill="none"/>
+          <path d="M32 44a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM32 20v16" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h4>Aucune notification</h4>
+        <p>Vous êtes à jour !</p>
+      </div>
+    } @else {
+      <div class="notifications-list">
+        @for (notification of notifications(); track notification.idNotification) {
+          <div
+            class="notification-item"
+            [class]="getNotificationClass(notification.typeNotification)"
+            (click)="onNotificationClick(notification)"
+          >
+            <div class="notification-icon-wrapper">
+              <span class="notification-emoji">{{ notification.typeIcone }}</span>
+            </div>
+
+            <div class="notification-content">
+              <div class="notification-header">
+                <h4>{{ notification.titre }}</h4>
+                <span class="notification-time">{{ getTempsRelatif(notification.dateCreation) }}</span>
+              </div>
+              <p class="notification-message">{{ notification.message }}</p>
+              <span class="notification-type-label">{{ notification.typeLibelle }}</span>
+            </div>
+
+            <button
+              class="btn-delete"
+              (click)="supprimerNotification($event, notification.idNotification)"
+              title="Supprimer"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                <path d="M2 4h12M5.5 4V2.5A1.5 1.5 0 0 1 7 1h2a1.5 1.5 0 0 1 1.5 1.5V4m2 0v9.5A1.5 1.5 0 0 1 11 15H5a1.5 1.5 0 0 1-1.5-1.5V4" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Footer -->
+  @if (notifications().length > 0) {
+    <div class="panel-footer">
+      <button class="btn-see-all" (click)="closePanel()">
+        Voir toutes les notifications
+      </button>
+    </div>
+  }
+</div>

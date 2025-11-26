@@ -7,11 +7,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { PanierService } from '../../services/panier.service';
 import { Subject, takeUntil } from 'rxjs';
 import {ProfileDropdownComponent} from './profile-dropdown/profile-dropdown.component';
+import {NotificationPanelComponent} from '../notification-panel/notification-panel.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProfileDropdownComponent, NgOptimizedImage],
+  imports: [CommonModule, RouterModule, ProfileDropdownComponent, NgOptimizedImage, NotificationPanelComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })

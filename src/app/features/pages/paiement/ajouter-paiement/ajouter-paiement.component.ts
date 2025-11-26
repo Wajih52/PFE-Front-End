@@ -12,6 +12,7 @@ import {
 } from '../../../../core/models/paiement.model';
 import { ReservationResponseDto } from '../../../../core/models/reservation.model';
 import {ToastrService} from 'ngx-toastr';
+import {NotificationPersistantService} from '../../../../services/notification-persistant.service';
 
 @Component({
   selector: 'app-ajouter-paiement',
@@ -40,7 +41,8 @@ export class AjouterPaiementComponent implements OnInit {
     private paiementService: PaiementService,
     private reservationService: ReservationService,
     private toastr : ToastrService,
-  private storage: StorageService
+  private storage: StorageService,
+    private notificationPersist : NotificationPersistantService
   ) {}
 
   ngOnInit(): void {
@@ -105,7 +107,7 @@ export class AjouterPaiementComponent implements OnInit {
         this.loading = false;
 
         this.toastr.success(`✅ Paiement enregistré avec succès !\n\nCode: ${response.codePaiement}\nMontant: ${formatMontantTND(response.montantPaiement)}\n\nVotre paiement est en attente de validation par un administrateur.`);
-
+        this.notificationPersist.refreshCount();
         if (this.storage.isClient()) {
           this.router.navigate(['client/mes-paiements']);
         }else if (this.storage.isAdmin() || this.storage.hasRole('MANAGER') || this.storage.hasRole('EMPLOYE')) {

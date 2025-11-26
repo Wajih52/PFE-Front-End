@@ -1,0 +1,339 @@
+// Variables de couleurs
+$primary-color: #d4af37;
+$background-dark: #1a1a1a;
+$text-light: #fffcfc;
+$text-gray: #999999;
+$border-color: #333333;
+
+// Déclencheur (icône de cloche)
+.notification-trigger {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #c6a783;
+  }
+
+  .notification-icon {
+    color: #000000;
+    display: block;
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #e74c3c;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+// Overlay
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Panneau de notifications
+.notification-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background-color: $background-dark;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease-in-out;
+
+  &.open {
+    right: 0;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    right: -100%;
+  }
+}
+
+// Header
+.panel-header {
+  padding: 20px;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    color: $text-light;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-mark-all {
+    background: none;
+    border: 1px solid $primary-color;
+    color: $primary-color;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $primary-color;
+      color: $background-dark;
+    }
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    color: $text-gray;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: $text-light;
+    }
+  }
+}
+
+// Body
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background-dark;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-color;
+    border-radius: 3px;
+
+    &:hover {
+      background: $primary-color;
+    }
+  }
+}
+
+// États vides et chargement
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: $text-gray;
+  text-align: center;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .empty-icon {
+    margin-bottom: 20px;
+  }
+
+  h4 {
+    color: $text-light;
+    margin: 20px 0 10px;
+    font-size: 18px;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 14px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Liste des notifications
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-item {
+  display: flex;
+  gap: 12px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(-2px);
+  }
+
+  // Classes selon le type
+  &.notif-success { border-left-color: #27ae60; }
+  &.notif-info { border-left-color: #3498db; }
+  &.notif-warning { border-left-color: #f39c12; }
+  &.notif-danger { border-left-color: #e74c3c; }
+  &.notif-primary { border-left-color: $primary-color; }
+  &.notif-default { border-left-color: $text-gray; }
+
+  .notification-icon-wrapper {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba($primary-color, 0.1);
+    border-radius: 50%;
+
+    .notification-emoji {
+      font-size: 20px;
+    }
+  }
+
+  .notification-content {
+    flex: 1;
+    min-width: 0;
+
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+
+      h4 {
+        color: $text-light;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+      }
+
+      .notification-time {
+        color: $text-gray;
+        font-size: 11px;
+        white-space: nowrap;
+        margin-left: 8px;
+      }
+    }
+
+    .notification-message {
+      color: $text-gray;
+      font-size: 13px;
+      line-height: 1.4;
+      margin: 0 0 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .notification-type-label {
+      display: inline-block;
+      background-color: rgba($primary-color, 0.2);
+      color: $primary-color;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+  }
+
+  .btn-delete {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: $text-gray;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    &:hover {
+      color: #e74c3c;
+    }
+  }
+
+  &:hover .btn-delete {
+    opacity: 1;
+  }
+}
+
+// Footer
+.panel-footer {
+  padding: 15px 20px;
+  border-top: 1px solid $border-color;
+
+  .btn-see-all {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid $primary-color;
+    color: $primary-color;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $primary-color;
+      color: $background-dark;
+    }
+  }
+}
