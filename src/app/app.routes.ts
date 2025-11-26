@@ -29,6 +29,7 @@ import {LivraisonEditComponent} from './features/admin/pages/livraison-edit/livr
 import {ReclamationsListComponent} from './features/admin/pages/reclamations-list/reclamations-list.component';
 import {MesReclamationsComponent} from './features/client/mes-reclamations/mes-reclamations.component';
 import {NouvelleReclamationComponent} from './features/pages/nouvelle-reclamation/nouvelle-reclamation.component';
+import {MesNotificationsComponent} from './features/pages/mes-notifications/mes-notifications.component';
 
 
 export const routes: Routes = [
@@ -84,12 +85,16 @@ export const routes: Routes = [
     component: LayoutWithSidebarComponent,
     children: [
       {
-        // Routes CLIENT
         path: 'profile',
         canActivate: [authGuard],
         resolve: { auth: authResolver },
         loadComponent: () => import('./features/pages/profile/profile.component')
           .then(m => m.ProfileComponent)
+      },
+      {
+        path: 'notifications',
+        component: MesNotificationsComponent,
+        canActivate: [authGuard]
       },
       //Routes Admin
       {

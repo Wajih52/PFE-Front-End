@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { NotificationPersistantService } from '../../services/notification-persistant.service';
 import { NotificationResponse } from '../../core/models/notification.model';
 
 @Component({
   selector: 'app-notification-panel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './notification-panel.component.html',
   styleUrls: ['./notification-panel.component.scss']
 })

@@ -89,7 +89,9 @@
   <!-- Footer -->
   @if (notifications().length > 0) {
     <div class="panel-footer">
-      <button class="btn-see-all" (click)="closePanel()">
+      <button class="btn-see-all"
+              [routerLink]="['/notifications']"
+              (click)="closePanel()">
         Voir toutes les notifications
       </button>
     </div>

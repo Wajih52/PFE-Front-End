@@ -108,6 +108,13 @@ export class SidebarMenuService {
             icon: '⭐',
             route: '/mes-evaluations',
             order: 10
+          },
+          {
+            id: 'notifications-client',
+            label: 'Centre Notifications',
+            icon: '🔔',
+            route: '/notifications',
+            order: 11
           }
         ]
       }
@@ -157,6 +164,13 @@ export class SidebarMenuService {
             icon: '⚠️',
             route: '/employe/reclamations',
             order: 6
+          },
+          {
+            id: 'notifications-employe',
+            label: 'Centre Notifications',
+            icon: '🔔',
+            route: '/notifications',
+            order: 7
           }
         ]
       }
@@ -201,6 +215,13 @@ export class SidebarMenuService {
             icon: '📈',
             route: '/manager/statistiques',
             order: 5
+          },
+          {
+            id: 'notifications-manager',
+            label: 'Centre Notifications',
+            icon: '🔔',
+            route: '/notifications',
+            order: 6
           }
         ]
       }
@@ -333,9 +354,9 @@ export class SidebarMenuService {
           },
           {
             id: 'notifications-admin',
-            label: 'Notifications',
+            label: 'Centre Notifications',
             icon: '🔔',
-            route: '/admin/notifications',
+            route: '/notifications',
             order: 15
           }
         ]
