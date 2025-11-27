@@ -101,30 +101,6 @@
             </div>
           </div>
 
-          <div class="info-item">
-            <label>Client</label>
-            <div class="value">
-              <i class="bi bi-person"></i>
-              {{ livraison()!.nomClient }} {{ livraison()!.prenomClient }}
-            </div>
-          </div>
-
-          <div class="info-item">
-            <label>Email</label>
-            <div class="value">
-              <i class="bi bi-envelope"></i>
-              {{ livraison()!.emailClient }}
-            </div>
-          </div>
-
-          <div class="info-item">
-            <label>Téléphone</label>
-            <div class="value">
-              <i class="bi bi-telephone"></i>
-              {{ livraison()!.telephoneClient }}
-            </div>
-          </div>
-
           <div class="info-item full-width">
             <label>Adresse de livraison</label>
             <div class="value">
@@ -153,11 +129,28 @@
       <div class="card-body">
         <div class="info-grid">
           <div class="info-item">
-            <label>Nom du client</label>
+            <label>Nom </label>
             <div class="value">
               {{ livraison()!.nomClient }} {{ livraison()!.prenomClient }}
             </div>
           </div>
+
+          <div class="info-item">
+            <label>Numéro Télephone </label>
+            <div class="value">
+              <i class="bi bi-telephone"></i>
+              {{ livraison()!.telephoneClient }}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <label>adresse Email</label>
+            <div class="value">
+              <i class="bi bi-envelope"></i>
+              {{ livraison()!.emailClient }}
+            </div>
+          </div>
+
 
           <div class="info-item">
             <label>Référence réservation</label>
@@ -165,6 +158,82 @@
               {{ livraison()!.referenceReservation }}
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Employés Affectés -->
+    <div class="employes-section">
+      <div class="employes-card sticky-card">
+        <div class="card-header header-warning">
+          <div class="header-flex">
+            <h5>
+              <i class="bi bi-people"></i>
+              Employés Affectés
+            </h5>
+            <button
+              class="btn-add"
+              (click)="ouvrirModalAffectation()"
+              [disabled]="livraison()!.statutLivraison === 'LIVREE' || livraison()!.statutLivraison === 'RETOURNEE'">
+              <i class="bi bi-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          @if (livraison()!.affectations.length === 0) {
+            <div class="empty-state">
+              <i class="bi bi-person-x"></i>
+              <p>Aucun employé affecté</p>
+            </div>
+          } @else {
+            @for (affectation of livraison()!.affectations; track affectation.idAffectation) {
+              <div class="affectation-card">
+                <div class="affectation-content">
+                  <div class="employe-info">
+                    <h6 class="employe-name">
+                      {{ affectation.nomEmploye }} {{ affectation.prenomEmploye }}
+                    </h6>
+                    <div class="employe-contact">
+                  <span class="contact-item">
+                    <i class="bi bi-envelope"></i>
+                    {{ affectation.emailEmploye }}
+                  </span>
+                      @if (affectation.telephoneEmploye) {
+                        <span class="contact-item">
+                      <i class="bi bi-telephone"></i>
+                          {{ affectation.telephoneEmploye }}
+                    </span>
+                      }
+                    </div>
+                    <div class="affectation-datetime">
+                  <span class="datetime-item">
+                    <i class="bi bi-calendar3"></i>
+                    {{ affectation.dateAffectation }}
+                  </span>
+                      <span class="datetime-item">
+                    <i class="bi bi-clock"></i>
+                        {{ affectation.heureAffectation }}
+                  </span>
+                    </div>
+                    @if (affectation.notes) {
+                      <div class="affectation-notes">
+                        <i class="bi bi-sticky"></i>
+                        {{ affectation.notes }}
+                      </div>
+                    }
+                  </div>
+                  <button
+                    class="btn-remove"
+                    (click)="retirerAffectation(affectation.idAffectation)"
+                    [disabled]="isActionEnCours('retirer-' + affectation.idAffectation)"
+                    title="Retirer l'affectation">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            }
+          }
         </div>
       </div>
     </div>
@@ -297,3 +366,82 @@
     }
   }
 </div>
+
+<!-- Modal Affectation Employé -->
+@if (showAffectationModal()) {
+  <div class="modal-overlay" (click)="fermerModalAffectation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-content">
+        <div class="modal-header header-warning">
+          <h5 class="modal-title">
+            <i class="bi bi-person-plus"></i>
+            Affecter un Employé
+          </h5>
+          <button type="button" class="btn-close" (click)="fermerModalAffectation()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+
+        <form [formGroup]="affectationForm" (ngSubmit)="affecterEmploye()">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="idEmploye" class="form-label">
+                Employé <span class="required">*</span>
+              </label>
+              <select
+                class="form-control"
+                id="idEmploye"
+                formControlName="idEmploye"
+                [class.invalid]="submittedAffectation() && af['idEmploye'].errors">
+                <option value="">-- Sélectionner un employé --</option>
+                @for (employe of employes(); track employe.idUtilisateur) {
+                  <option [value]="employe.idUtilisateur">
+                    {{ employe.nom }} {{ employe.prenom }} ({{ employe.email }})
+                  </option>
+                }
+              </select>
+              @if (submittedAffectation() && af['idEmploye'].errors) {
+                <div class="error-message">
+                  <i class="bi bi-exclamation-circle"></i>
+                  Veuillez sélectionner un employé
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="notes" class="form-label">Notes / Instructions</label>
+              <textarea
+                class="form-control"
+                id="notes"
+                formControlName="notes"
+                rows="4"
+                placeholder="Instructions spécifiques pour cet employé..."></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="fermerModalAffectation()"
+              [disabled]="isActionEnCours('affecter-employe')">
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isActionEnCours('affecter-employe')">
+              @if (isActionEnCours('affecter-employe')) {
+                <span class="spinner"></span>
+                Affectation...
+              } @else {
+                <i class="bi bi-check-circle"></i>
+                Affecter
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
