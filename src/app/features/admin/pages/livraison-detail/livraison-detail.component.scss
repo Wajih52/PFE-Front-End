@@ -1,29 +1,26 @@
-// ==========================================
-// 🚚 LIVRAISON DETAIL - SCSS
-// Design professionnel pour Elegant Hive
-// ==========================================
-
+// livraison-detail-v1.component.scss - VERSION SIMPLE
 @use 'sass:color';
 
 // ==================== VARIABLES ====================
-$primary-color: #C8A882;      // Gold principal
-$primary-dark: #B8935A;        // Gold foncé
-$primary-light: #D4B998;       // Gold clair
+$primary-color: #C8A882;
+$primary-dark: color.adjust($primary-color, $lightness: -15%);
+$primary-light: color.adjust($primary-color, $lightness: 45%);
 
-$dark-color: #1A1A1A;
-$white: #FFFFFF;
-$background-light: #F8F9FA;
-$border-color: #E5E7EB;
-$text-dark: #1F2937;
-$text-gray: #6B7280;
-$text-muted: #9CA3AF;
+$dark-color: #000000;
+$white: #ffffff;
+$text-dark: #1a1a1a;
+$text-gray: #6c757d;
+$text-muted: #999999;
 
-// Couleurs des statuts Bootstrap
-$success-color: #198754;
-$danger-color: #dc3545;
-$warning-color: #ffc107;
-$info-color: #0dcaf0;
+$background-light: #f8f9fa;
+$border-color: #e0e0e0;
 $secondary-color: #6c757d;
+
+// Couleurs de statut
+$success-color: #28a745;
+$danger-color: #dc3545;
+$info-color: #17a2b8;
+$warning-color: #ffc107;
 
 // Espacements
 $spacing-xs: 0.25rem;
@@ -31,52 +28,48 @@ $spacing-sm: 0.5rem;
 $spacing-md: 1rem;
 $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
-$spacing-xxl: 3rem;
 
 // Transitions
 $transition-fast: 0.2s ease;
 $transition-normal: 0.3s ease;
 
-// Breakpoints
-$breakpoint-sm: 576px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
-
 // ==================== CONTAINER PRINCIPAL ====================
-.container-fluid {
-  &.py-4 {
-    padding-top: $spacing-xl;
-    padding-bottom: $spacing-xl;
-    background: $background-light;
-    min-height: 100vh;
+.detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+  background: $background-light;
+  min-height: 100vh;
 
-    @media (max-width: $breakpoint-md) {
-      padding: $spacing-md;
-    }
+  @media (max-width: 768px) {
+    padding: $spacing-md;
   }
 }
 
-// ==================== EN-TÊTE AVEC RETOUR ====================
-.d-flex.align-items-center.mb-4 {
+// ==================== EN-TÊTE ====================
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex-wrap: wrap;
   background: $white;
   padding: $spacing-lg;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: $spacing-xl !important;
+  margin-bottom: $spacing-xl;
 
-  .btn.btn-outline-secondary {
+  .btn-back {
+    background: $white;
+    border: 2px solid $border-color;
     border-radius: 50%;
     width: 48px;
     height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid $border-color;
-    transition: all $transition-normal;
-    margin-right: $spacing-md;
-    background: $white;
     color: $text-gray;
+    cursor: pointer;
+    transition: all $transition-normal;
 
     i {
       font-size: 1.3rem;
@@ -90,27 +83,24 @@ $breakpoint-xl: 1200px;
     }
   }
 
-  .flex-grow-1 {
+  .header-title {
     flex: 1;
 
     h2 {
       font-size: 1.8rem;
       font-weight: 700;
       color: $dark-color;
-      margin-bottom: $spacing-xs !important;
+      margin: 0 0 $spacing-xs 0;
 
-      @media (max-width: $breakpoint-md) {
-        font-size: 1.3rem;
+      @media (max-width: 768px) {
+        font-size: 1.4rem;
       }
     }
 
-    p.text-muted {
+    p {
       font-size: 0.9rem;
       color: $text-gray;
-      margin-bottom: 0 !important;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
+      margin: 0;
 
       i {
         color: $primary-color;
@@ -118,98 +108,123 @@ $breakpoint-xl: 1200px;
     }
   }
 
-  // Groupe de boutons d'action
-  .btn-group {
+  .btn-edit {
+    background: transparent;
+    border: 2px solid $primary-color;
+    color: $primary-color;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-normal;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    &:hover {
+      background: $primary-color;
+      color: $white;
+      transform: translateY(-2px);
+    }
+  }
+
+  .action-buttons {
     display: flex;
     gap: $spacing-sm;
+    flex-wrap: wrap;
 
-    .btn {
-      padding: $spacing-sm $spacing-lg;
-      font-weight: 600;
-      border-radius: 8px;
-      transition: all $transition-normal;
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-      border: none;
+    @media (max-width: 768px) {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
 
-      i {
-        font-size: 1rem;
+  .btn-action {
+    padding: $spacing-sm $spacing-lg;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-normal;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    color: $white;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: center;
+    }
+
+    i {
+      font-size: 1.1rem;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.btn-primary {
+      background: $primary-color;
+
+      &:hover:not(:disabled) {
+        background: $primary-dark;
+        transform: translateY(-2px);
       }
+    }
 
-      &.btn-primary {
-        background: $primary-color;
-        color: $white;
-        box-shadow: 0 2px 8px rgba(200, 168, 130, 0.3);
+    &.btn-success {
+      background: $success-color;
 
-        &:hover:not(:disabled) {
-          background: $primary-dark;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(200, 168, 130, 0.4);
-        }
+      &:hover:not(:disabled) {
+        background: color.adjust($success-color, $lightness: -10%);
+        transform: translateY(-2px);
       }
+    }
 
-      &.btn-success {
-        background: $success-color;
-        color: $white;
-        box-shadow: 0 2px 8px rgba(25, 135, 84, 0.3);
+    &.btn-secondary {
+      background: $secondary-color;
 
-        &:hover:not(:disabled) {
-          background: color.adjust($success-color, $lightness: -10%);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
-        }
-      }
-
-      &.btn-warning {
-        background: $warning-color;
-        color: $dark-color;
-        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-
-        &:hover:not(:disabled) {
-          background: color.adjust($warning-color, $lightness: -10%);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
-        }
-      }
-
-      &.btn-danger {
-        background: $danger-color;
-        color: $white;
-        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-
-        &:hover:not(:disabled) {
-          background: color.adjust($danger-color, $lightness: -10%);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
-        }
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      &:active:not(:disabled) {
-        transform: translateY(0);
+      &:hover:not(:disabled) {
+        background: color.adjust($secondary-color, $lightness: -10%);
+        transform: translateY(-2px);
       }
     }
   }
 }
 
-// ==================== ALERTS ====================
+// ==================== ALERTES ====================
 .alert {
-  border-radius: 8px;
-  padding: $spacing-md $spacing-lg;
-  margin-bottom: $spacing-lg;
   display: flex;
   align-items: center;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  border-radius: 8px;
+  margin-bottom: $spacing-lg;
+  animation: slideIn 0.3s ease;
+  position: relative;
 
   i {
     font-size: 1.2rem;
-    margin-right: $spacing-sm;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  .btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: opacity $transition-fast;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &.alert-success {
@@ -224,67 +239,56 @@ $breakpoint-xl: 1200px;
     border-left: 4px solid $danger-color;
   }
 
-  .btn-close {
-    padding: $spacing-xs;
+  &.alert-info {
+    background: color.adjust($info-color, $lightness: 40%);
+    color: color.adjust($info-color, $lightness: -25%);
+    border-left: 4px solid $info-color;
+  }
+}
+
+// ==================== CHARGEMENT ====================
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl * 2;
+  gap: $spacing-lg;
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid $background-light;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 1rem;
   }
 }
 
 // ==================== CARTES ====================
-.card {
-  border: none;
+.info-card {
+  background: $white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: $white;
   margin-bottom: $spacing-xl;
   overflow: hidden;
 
-  &.shadow-sm {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  &.mb-4 {
-    margin-bottom: $spacing-xl !important;
-  }
-
   .card-header {
-    padding: $spacing-lg $spacing-xl;
-    border: none;
-
-    &.bg-primary {
-      background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%) !important;
-
-      &.text-white {
-        color: $white !important;
-      }
-    }
-
-    &.bg-secondary {
-      background: linear-gradient(135deg, $secondary-color 0%, color.adjust($secondary-color, $lightness: -10%) 100%) !important;
-
-      &.text-white {
-        color: $white !important;
-      }
-    }
-
-    &.bg-success {
-      background: linear-gradient(135deg, $success-color 0%, color.adjust($success-color, $lightness: -10%) 100%) !important;
-
-      &.text-white {
-        color: $white !important;
-      }
-    }
-
-    &.bg-info {
-      background: linear-gradient(135deg, $info-color 0%, color.adjust($info-color, $lightness: -10%) 100%) !important;
-
-      &.text-white {
-        color: $white !important;
-      }
-    }
+    padding: $spacing-md $spacing-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $white;
 
     h5 {
-      margin-bottom: 0 !important;
-      font-weight: 700;
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: $spacing-sm;
@@ -294,608 +298,368 @@ $breakpoint-xl: 1200px;
       }
     }
 
-    .d-flex.justify-content-between.align-items-center {
-      .badge {
-        padding: $spacing-xs $spacing-md;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.85rem;
+    .badge {
+      background: rgba(255, 255, 255, 0.3);
+      color: $white;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
 
-        &.bg-light {
-          background: $white !important;
-          color: $dark-color !important;
-        }
+    &.header-primary {
+      background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+    }
 
-        &.bg-warning {
-          background: $warning-color !important;
-          color: $dark-color !important;
-        }
+    &.header-secondary {
+      background: linear-gradient(135deg, $secondary-color 0%, color.adjust($secondary-color, $lightness: -10%) 100%);
+    }
 
-        &.bg-info {
-          background: $info-color !important;
-          color: $white !important;
-        }
-
-        &.bg-success {
-          background: $success-color !important;
-          color: $white !important;
-        }
-
-        &.bg-secondary {
-          background: $secondary-color !important;
-          color: $white !important;
-        }
-
-        &.bg-danger {
-          background: $danger-color !important;
-          color: $white !important;
-        }
-      }
+    &.header-success {
+      background: linear-gradient(135deg, $success-color 0%, color.adjust($success-color, $lightness: -10%) 100%);
     }
   }
 
   .card-body {
     padding: $spacing-lg $spacing-xl;
 
-    &.p-0 {
-      padding: 0 !important;
+    &.no-padding {
+      padding: 0;
     }
 
-    .row.g-3 {
-      gap: $spacing-md;
-    }
-
-    .col-md-6,
-    .col-md-4,
-    .col-12 {
-      label.text-muted.small {
-        font-size: 0.85rem;
-        color: $text-muted;
-        margin-bottom: $spacing-xs;
-        display: block;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-      }
-
-      .fw-bold {
-        font-weight: 700 !important;
-        color: $dark-color;
-        font-size: 1rem;
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-
-        i {
-          color: $primary-color;
-          font-size: 1.1rem;
-        }
-
-        &.text-primary {
-          color: $primary-color !important;
-        }
-      }
-
-      .badge {
-        padding: $spacing-xs $spacing-md;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-
-        i {
-          font-size: 0.85rem;
-        }
-
-        &.bg-warning {
-          background: $warning-color !important;
-          color: $dark-color !important;
-        }
-
-        &.bg-info {
-          background: $info-color !important;
-          color: $white !important;
-        }
-
-        &.bg-success {
-          background: $success-color !important;
-          color: $white !important;
-        }
-
-        &.bg-secondary {
-          background: $secondary-color !important;
-          color: $white !important;
-        }
-
-        &.bg-danger {
-          background: $danger-color !important;
-          color: $white !important;
-        }
-      }
-
-      .alert.alert-info {
-        background: color.adjust($info-color, $lightness: 45%);
-        color: color.adjust($info-color, $lightness: -30%);
-        border-left: 4px solid $info-color;
-        border-radius: 8px;
-        padding: $spacing-md;
-        margin-bottom: 0 !important;
-      }
-    }
-
-    // Carte employés affectés
-    .empleado-item {
-      background: $background-light;
-      border-radius: 8px;
+    @media (max-width: 768px) {
       padding: $spacing-md;
+    }
+  }
+}
+
+// ==================== GRILLE D'INFOS ====================
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-lg;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: $text-muted;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .value {
+      font-size: 1rem;
+      color: $text-dark;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: $spacing-sm;
-      transition: all $transition-fast;
-
-      &:hover {
-        background: color.adjust($background-light, $lightness: -5%);
-      }
+      gap: $spacing-xs;
 
       i {
         color: $primary-color;
-        font-size: 1.3rem;
+        font-size: 1.1rem;
       }
 
-      span {
-        font-weight: 600;
-        color: $dark-color;
+      &.highlight {
+        color: $primary-color;
+        font-size: 1.1rem;
+      }
+
+      &.observations {
+        background: color.adjust($info-color, $lightness: 45%);
+        padding: $spacing-md;
+        border-radius: 6px;
+        font-weight: 400;
+        color: color.adjust($info-color, $lightness: -30%);
+        border-left: 4px solid $info-color;
       }
     }
+  }
+}
 
-    // Timeline
-    .timeline-item {
-      display: flex;
-      gap: $spacing-md;
-      padding: $spacing-md 0;
-      border-left: 2px solid $border-color;
-      margin-left: $spacing-md;
-      padding-left: $spacing-lg;
-      position: relative;
+// ==================== BADGES ====================
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 
-      &::before {
-        content: '';
-        position: absolute;
-        left: -6px;
-        top: $spacing-lg;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: $primary-color;
+  &.badge-en_attente {
+    background: color.adjust($warning-color, $lightness: 35%);
+    color: color.adjust($warning-color, $lightness: -30%);
+  }
+
+  &.badge-en_cours {
+    background: color.adjust($info-color, $lightness: 35%);
+    color: color.adjust($info-color, $lightness: -30%);
+  }
+
+  &.badge-livree {
+    background: color.adjust($success-color, $lightness: 40%);
+    color: color.adjust($success-color, $lightness: -25%);
+  }
+
+  &.badge-en_retour {
+    background: color.adjust($warning-color, $lightness: 30%);
+    color: color.adjust($warning-color, $lightness: -35%);
+  }
+
+  &.badge-retournee {
+    background: color.adjust($secondary-color, $lightness: 35%);
+    color: color.adjust($secondary-color, $lightness: -25%);
+  }
+}
+
+// ==================== TABLE ====================
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: $background-light;
+
+    tr {
+      th {
+        padding: $spacing-md $spacing-lg;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: $text-dark;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid $border-color;
+
+        &.text-center {
+          text-align: center;
+        }
+
+        @media (max-width: 768px) {
+          padding: $spacing-sm;
+          font-size: 0.7rem;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background $transition-fast;
+      border-bottom: 1px solid $border-color;
+
+      &:hover {
+        background: $primary-light;
       }
 
-      .timeline-content {
-        .text-muted.small {
-          font-size: 0.8rem;
+      &.row-success {
+        background: color.adjust($success-color, $lightness: 47%);
+      }
+
+      td {
+        padding: $spacing-md $spacing-lg;
+        vertical-align: middle;
+
+        @media (max-width: 768px) {
+          padding: $spacing-sm;
+          font-size: 0.85rem;
+        }
+
+        &.text-center {
+          text-align: center;
+        }
+
+        .product-name {
+          font-weight: 600;
+          color: $text-dark;
+          margin-bottom: $spacing-xs;
+        }
+
+        .product-type {
+          font-size: 0.85rem;
           color: $text-muted;
         }
 
-        p {
-          color: $text-dark;
-          margin-top: $spacing-xs;
-          font-weight: 600;
-        }
-      }
-    }
-  }
-}
-
-// ==================== TABLE PRODUITS ====================
-.table-responsive {
-  .table {
-    margin-bottom: 0;
-
-    thead {
-      &.table-light {
-        background: $background-light;
-
-        tr th {
-          color: $text-dark;
-          font-weight: 600;
-          text-transform: uppercase;
-          font-size: 0.8rem;
-          letter-spacing: 0.5px;
-          padding: $spacing-md $spacing-lg;
-          border-bottom: 2px solid $border-color;
-          white-space: nowrap;
-
-          &.text-center {
-            text-align: center;
-          }
-        }
-      }
-    }
-
-    tbody {
-      tr {
-        transition: all $transition-fast;
-        border-bottom: 1px solid $border-color;
-
-        &:hover {
-          background: color.adjust($primary-color, $lightness: 48%);
-        }
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        td {
-          padding: $spacing-md $spacing-lg;
-          vertical-align: middle;
-          font-size: 0.95rem;
-          color: $text-dark;
-
-          &.text-center {
-            text-align: center;
-          }
-
-          .fw-semibold {
-            font-weight: 600;
-            color: $dark-color;
-          }
-
-          small.text-muted {
-            color: $text-gray;
-            font-size: 0.85rem;
-            display: block;
-            margin-top: 0.2rem;
-          }
-
-          .badge {
-            padding: $spacing-xs $spacing-sm;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-
-            &.bg-primary {
-              background: $primary-color !important;
-              color: $white !important;
-            }
-
-            &.bg-warning {
-              background: $warning-color !important;
-              color: $dark-color !important;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// ==================== BOUTONS D'ACTION ====================
-.d-flex.gap-2.justify-content-end {
-  display: flex;
-  gap: $spacing-sm;
-  justify-content: flex-end;
-
-  .btn {
-    padding: $spacing-sm $spacing-lg;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: all $transition-normal;
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    border: none;
-
-    i {
-      font-size: 1rem;
-    }
-
-    &.btn-primary {
-      background: $primary-color;
-      color: $white;
-
-      &:hover:not(:disabled) {
-        background: $primary-dark;
-        transform: translateY(-2px);
-      }
-    }
-
-    &.btn-secondary {
-      background: $secondary-color;
-      color: $white;
-
-      &:hover {
-        background: color.adjust($secondary-color, $lightness: -10%);
-        transform: translateY(-2px);
-      }
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-}
-
-// ==================== SPINNER DE CHARGEMENT ====================
-.text-center.py-5 {
-  padding-top: $spacing-xl !important;
-  padding-bottom: $spacing-xl !important;
-
-  .spinner-border {
-    color: $primary-color;
-    width: 3rem;
-    height: 3rem;
-  }
-
-  p {
-    margin-top: $spacing-md;
-    color: $text-gray;
-    font-size: 1rem;
-  }
-}
-
-// ==================== MODAL ====================
-.modal {
-  .modal-dialog {
-    max-width: 600px;
-  }
-
-  .modal-content {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-
-    .modal-header {
-      background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
-      color: $white;
-      border-radius: 12px 12px 0 0;
-      padding: $spacing-lg $spacing-xl;
-      border: none;
-
-      .modal-title {
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-
-        i {
-          font-size: 1.5rem;
-        }
-      }
-
-      .btn-close {
-        filter: brightness(0) invert(1);
-        opacity: 0.8;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
-
-    .modal-body {
-      padding: $spacing-xl;
-
-      form {
-        .mb-3 {
-          margin-bottom: $spacing-md !important;
-
-          label {
-            font-weight: 600;
-            color: $text-dark;
-            margin-bottom: $spacing-sm;
-            font-size: 0.9rem;
-
-            .text-danger {
-              color: $danger-color !important;
-            }
-          }
-
-          select.form-select {
-            border: 1px solid $border-color;
-            padding: $spacing-sm $spacing-md;
-            font-size: 0.95rem;
-            border-radius: 6px;
-            transition: all $transition-fast;
-
-            &:focus {
-              border-color: $primary-color;
-              box-shadow: 0 0 0 0.2rem rgba(200, 168, 130, 0.15);
-              outline: none;
-            }
-
-            option {
-              padding: $spacing-sm;
-            }
-          }
-
-          .text-muted {
-            font-size: 0.85rem;
-            color: $text-muted;
-            margin-top: $spacing-xs;
-          }
-        }
-      }
-    }
-
-    .modal-footer {
-      padding: $spacing-lg $spacing-xl;
-      border-top: 1px solid $border-color;
-      display: flex;
-      gap: $spacing-sm;
-      justify-content: flex-end;
-
-      .btn {
-        border-radius: 8px;
-        padding: $spacing-sm $spacing-lg;
-        font-weight: 600;
-        transition: all $transition-normal;
-
-        &:hover {
-          transform: translateY(-2px);
-        }
-
-        &.btn-secondary {
+        .badge-quantity {
           background: $secondary-color;
-          border: none;
           color: $white;
-
-          &:hover {
-            background: color.adjust($secondary-color, $lightness: -10%);
-          }
+          padding: $spacing-xs $spacing-md;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          display: inline-block;
         }
 
-        &.btn-primary {
-          background: $primary-color;
-          border: none;
-          color: $white;
+        .date-range {
+          font-size: 0.85rem;
+          color: $text-gray;
 
-          &:hover:not(:disabled) {
-            background: $primary-dark;
-          }
+          div {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+            margin-bottom: $spacing-xs;
 
-          &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            i {
+              color: $primary-color;
+            }
           }
         }
       }
     }
+  }
+}
+
+// ==================== BOUTONS ACTIONS TABLE ====================
+.btn-action-small {
+  padding: $spacing-xs $spacing-sm;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin: 0 $spacing-xs;
+  color: $white;
+
+  @media (max-width: 768px) {
+    padding: $spacing-xs;
+    font-size: 0.7rem;
+  }
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-success {
+    background: $success-color;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($success-color, $lightness: -10%);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-warning {
+    background: $warning-color;
+    color: $dark-color;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($warning-color, $lightness: -10%);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-info {
+    background: $info-color;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($info-color, $lightness: -10%);
+      transform: translateY(-1px);
+    }
+  }
+
+  .spinner-small {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: $white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+// ==================== ANIMATIONS ====================
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
 // ==================== RESPONSIVE ====================
-@media (max-width: $breakpoint-lg) {
-  .table {
-    thead tr th {
-      font-size: 0.75rem !important;
-      padding: $spacing-sm $spacing-md !important;
-    }
-
-    tbody tr td {
-      padding: $spacing-sm $spacing-md !important;
-      font-size: 0.85rem !important;
-    }
+@media (max-width: 768px) {
+  .detail-container {
+    padding: $spacing-md;
   }
-}
 
-@media (max-width: $breakpoint-md) {
-  .d-flex.align-items-center.mb-4 {
+  .page-header {
     flex-direction: column;
-    align-items: flex-start !important;
-    gap: $spacing-md;
+    align-items: stretch;
 
-    .btn-group {
+    .btn-back {
       width: 100%;
-      flex-direction: column;
+      border-radius: 8px;
+    }
 
-      .btn {
+    .header-title {
+      text-align: center;
+    }
+
+    .btn-edit {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .action-buttons {
+      width: 100%;
+
+      .btn-action {
         width: 100%;
         justify-content: center;
       }
     }
   }
 
-  .card {
-    .card-header {
-      padding: $spacing-md !important;
-
-      h5 {
-        font-size: 1rem !important;
-      }
-    }
-
-    .card-body {
-      padding: $spacing-md !important;
-    }
+  .info-card .card-body {
+    padding: $spacing-md;
   }
 
-  .table-responsive {
-    .table {
-      font-size: 0.8rem;
+  .custom-table {
+    font-size: 0.8rem;
+
+    thead th,
+    tbody td {
+      padding: $spacing-sm;
     }
   }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .container-fluid.py-4 {
-    padding: $spacing-md !important;
-  }
-
-  .d-flex.align-items-center.mb-4 {
-    padding: $spacing-md !important;
-
-    .btn.btn-outline-secondary {
-      width: 36px;
-      height: 36px;
-
-      i {
-        font-size: 1rem;
-      }
-    }
-
-    .flex-grow-1 h2 {
-      font-size: 1.1rem !important;
-    }
-  }
-
-  .table-responsive {
-    .table {
-      thead tr th {
-        padding: $spacing-xs $spacing-sm !important;
-        font-size: 0.7rem !important;
-      }
-
-      tbody tr td {
-        padding: $spacing-xs $spacing-sm !important;
-        font-size: 0.75rem !important;
-      }
-    }
-  }
-}
-
-// ==================== ANIMATIONS ====================
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.card {
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.d-flex.align-items-center.mb-4 {
-  animation: slideDown 0.5s ease-in-out;
-}
-
-// ==================== UTILITIES ====================
-.fw-semibold {
-  font-weight: 600 !important;
-}
-
-.fw-bold {
-  font-weight: 700 !important;
-}
-
-.text-nowrap {
-  white-space: nowrap;
 }

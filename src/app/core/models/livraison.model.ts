@@ -36,6 +36,8 @@ export interface LivraisonResponseDto {
   affectations: AffectationLivraisonDto[];
   nomClient: string;
   prenomClient: string;
+  emailClient:string;
+  telephoneClient:String;
   notes:string ;
   referenceReservation: string;
   nombreTotalArticles: number;

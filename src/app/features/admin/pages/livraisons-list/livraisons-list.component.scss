@@ -1,23 +1,26 @@
+// livraisons-list.component.scss - SANS BOOTSTRAP
 @use 'sass:color';
+
 // ==================== VARIABLES ====================
-$primary-color: #C8A882;      // Gold principal
-$primary-dark: #B8935A;        // Gold foncé
-$primary-light: #D4B998;       // Gold clair
+$primary-color: #C8A882;
+$primary-dark: color.adjust($primary-color, $lightness: -15%);
+$primary-light: color.adjust($primary-color, $lightness: 45%);
 
-$dark-color: #1A1A1A;
-$white: #FFFFFF;
-$background-light: #F8F9FA;
-$border-color: #685e5e;
-$text-dark: #1F2937;
-$text-gray: #6B7280;
-$text-muted: #9CA3AF;
+$dark-color: #000000;
+$white: #ffffff;
+$text-dark: #1a1a1a;
+$text-gray: #6c757d;
+$text-muted: #999999;
 
-// Couleurs des statuts Bootstrap
-$success-color: #198754;
-$danger-color: #dc3545;
-$warning-color: #ffc107;
-$info-color: #0dcaf0;
+$background-light: #f8f9fa;
+$border-color: #e0e0e0;
 $secondary-color: #6c757d;
+
+// Couleurs de statut
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$success-color: #28a745;
+$danger-color: #dc3545;
 
 // Espacements
 $spacing-xs: 0.25rem;
@@ -30,539 +33,592 @@ $spacing-xl: 2rem;
 $transition-fast: 0.2s ease;
 $transition-normal: 0.3s ease;
 
-// Breakpoints
-$breakpoint-sm: 576px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
+// ==================== CONTENEUR PRINCIPAL ====================
+.livraisons-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-xl;
 
-// ==================== CONTAINER PRINCIPAL ====================
-.container-fluid {
-  &.py-4 {
-    padding-top: $spacing-xl;
-    padding-bottom: $spacing-xl;
-    background: $background-light;
-    min-height: 100vh;
+  // ==================== EN-TÊTE ====================
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
 
-    @media (max-width: $breakpoint-md) {
-      padding: $spacing-md;
-    }
-  }
-}
+    .header-content {
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $dark-color;
+        margin: 0 0 $spacing-xs 0;
+      }
 
-// ==================== EN-TÊTE ====================
-.d-flex.justify-content-between.align-items-center.mb-4 {
-  margin-bottom: $spacing-xl !important;
-
-  div {
-    h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: $dark-color;
-      margin-bottom: $spacing-xs !important;
-
-      @media (max-width: $breakpoint-md) {
-        font-size: 1.5rem;
+      p {
+        color: $text-muted;
+        margin: 0;
+        font-size: 0.95rem;
       }
     }
 
-    p.text-muted {
-      font-size: 0.95rem;
-      color: $text-gray;
-      margin-bottom: 0 !important;
+    .create-button {
+      background: $primary-color;
+      color: $white;
+      border: none;
+      padding: $spacing-sm $spacing-lg;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all $transition-normal;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      i {
+        font-size: 1.1rem;
+      }
+
+      &:hover {
+        background: $primary-dark;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(200, 168, 130, 0.3);
+      }
     }
   }
 
-  .btn.btn-primary {
-    background: $primary-color;
-    border: none;
-    color: $white;
-    padding: $spacing-sm $spacing-lg;
-    font-weight: 600;
+  // ==================== ALERTES ====================
+  .alert {
+    padding: $spacing-md $spacing-lg;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(200, 168, 130, 0.3);
-    transition: all $transition-normal;
+    margin-bottom: $spacing-lg;
     display: flex;
     align-items: center;
     gap: $spacing-sm;
+    position: relative;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease;
 
     i {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
 
-    &:hover {
-      background: $primary-dark;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(200, 168, 130, 0.4);
+    &.alert-success {
+      background: color.adjust($success-color, $lightness: 45%);
+      color: color.adjust($success-color, $lightness: -20%);
+      border-color: $success-color;
     }
 
-    &:active {
-      transform: translateY(0);
+    &.alert-danger {
+      background: color.adjust($danger-color, $lightness: 45%);
+      color: color.adjust($danger-color, $lightness: -20%);
+      border-color: $danger-color;
     }
 
-    @media (max-width: $breakpoint-sm) {
-      padding: $spacing-sm $spacing-md;
-      font-size: 0.9rem;
+    .close-button {
+      background: none;
+      border: none;
+      padding: $spacing-xs;
+      cursor: pointer;
+      margin-left: auto;
+      color: inherit;
+      font-size: 1.2rem;
+      line-height: 1;
+
+      &:hover {
+        opacity: 0.7;
+      }
     }
   }
-}
 
-// ==================== ALERTS ====================
-.alert {
-  border-radius: 8px;
-  padding: $spacing-md $spacing-lg;
-  margin-bottom: $spacing-lg;
-  display: flex;
-  align-items: center;
-  border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-  i {
-    font-size: 1.2rem;
-  }
-
-  &.alert-success {
-    background: color.adjust($success-color, $lightness: 45%);
-    color: color.adjust($success-color, $lightness: -20%);
-    border-left: 4px solid $success-color;
-  }
-
-  &.alert-danger {
-    background: color.adjust($danger-color, $lightness: 45%);
-    color: color.adjust($danger-color, $lightness: -20%);
-    border-left: 4px solid $danger-color;
-  }
-
-  .btn-close {
-    padding: $spacing-xs;
-  }
-}
-
-// ==================== CARTE FILTRES ====================
-.card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: $white;
-
-  &.shadow-sm {
+  // ==================== CARTE FILTRES ====================
+  .filters-card {
+    background: $white;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  &.mb-4 {
-    margin-bottom: $spacing-xl !important;
-  }
-
-  .card-body {
+    margin-bottom: $spacing-xl;
     padding: $spacing-lg;
 
-    .row.g-3 {
+    .filters-grid {
+      display: grid;
       gap: $spacing-md;
-    }
 
-    // Filtres rapides
-    .col-12 {
-      .form-label.fw-semibold {
-        font-weight: 600;
-        color: $text-dark;
-        margin-bottom: $spacing-sm;
-        font-size: 0.95rem;
-      }
-
-      // Groupe de boutons de filtre
-      .btn-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: $spacing-sm;
-
-        .btn {
-          border-radius: 8px;
-          padding: $spacing-xs $spacing-md;
-          font-size: 0.85rem;
+      // Filtres rapides (boutons)
+      .filter-quick {
+        .filter-label {
           font-weight: 600;
-          transition: all $transition-fast;
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-
-          i {
-            font-size: 0.9rem;
-          }
-
-          // Bouton "Tous"
-          &.btn-primary {
-            background: $primary-color;
-            border-color: $primary-color;
-            color: $white;
-          }
-
-          &.btn-outline-secondary {
-            border-color: $border-color;
-            color: $text-gray;
-
-            &:hover {
-              background: $background-light;
-            }
-          }
-
-          // Boutons statuts
-          &.btn-warning {
-            background: $warning-color;
-            border-color: $warning-color;
-            color: $dark-color;
-          }
-
-          &.btn-outline-warning {
-            border-color: $warning-color;
-            color: $warning-color;
-
-            &:hover {
-              background: color.adjust($warning-color, $lightness: 45%);
-            }
-          }
-
-          &.btn-info {
-            background: $info-color;
-            border-color: $info-color;
-            color: $white;
-          }
-
-          &.btn-outline-info {
-            border-color: $info-color;
-            color: $info-color;
-
-            &:hover {
-              background: color.adjust($info-color, $lightness: 45%);
-            }
-          }
-
-          &.btn-success {
-            background: $success-color;
-            border-color: $success-color;
-            color: $white;
-          }
-
-          &.btn-outline-success {
-            border-color: $success-color;
-            color: $success-color;
-
-            &:hover {
-              background: color.adjust($success-color, $lightness: 45%);
-            }
-          }
-        }
-      }
-
-      // Bouton "Aujourd'hui"
-      .btn.btn-sm.btn-primary.ms-3 {
-        background: $primary-color;
-        border: none;
-        color: $white;
-        margin-left: $spacing-md !important;
-
-        &:hover {
-          background: $primary-dark;
-        }
-      }
-    }
-
-    // Champs de formulaire
-    .col-md-6,
-    .col-md-3 {
-      .form-label {
-        font-weight: 600;
-        color: $text-dark;
-        margin-bottom: $spacing-sm;
-        font-size: 0.9rem;
-      }
-
-      .input-group {
-        .input-group-text {
-          background: $background-light;
-          border: 1px solid $border-color;
-          color: $text-gray;
-
-          i {
-            font-size: 1rem;
-          }
-        }
-
-        .form-control {
-          border: 1px solid $border-color;
-          padding: $spacing-sm $spacing-md;
+          color: $text-dark;
+          margin-bottom: $spacing-sm;
           font-size: 0.95rem;
-          transition: all $transition-fast;
+          display: block;
+        }
 
-          &:focus {
-            border-color: $primary-color;
-            box-shadow: 0 0 0 0.2rem rgba(200, 168, 130, 0.15);
-            outline: none;
+        .button-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: $spacing-sm;
+
+          .filter-btn {
+            border-radius: 8px;
+            padding: $spacing-xs $spacing-md;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all $transition-fast;
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+            cursor: pointer;
+            border: 2px solid;
+
+            i {
+              font-size: 0.9rem;
+            }
+
+            // Bouton actif
+            &.active-primary {
+              background: $primary-color;
+              border-color: $primary-color;
+              color: $white;
+            }
+
+            // Boutons de statut
+            &.btn-warning {
+              background: $warning-color;
+              border-color: $warning-color;
+              color: $dark-color;
+
+              &:not(.active-primary) {
+                background: transparent;
+                color: $warning-color;
+              }
+            }
+
+            &.btn-info {
+              background: $info-color;
+              border-color: $info-color;
+              color: $white;
+
+              &:not(.active-primary) {
+                background: transparent;
+                color: $info-color;
+              }
+            }
+
+            &.btn-success {
+              background: $success-color;
+              border-color: $success-color;
+              color: $white;
+
+              &:not(.active-primary) {
+                background: transparent;
+                color: $success-color;
+              }
+            }
+
+            &.btn-secondary {
+              background: $secondary-color;
+              border-color: $secondary-color;
+              color: $white;
+
+              &:not(.active-primary) {
+                background: $background-light;
+                border-color: $border-color;
+                color: $text-gray;
+              }
+            }
+
+            &:hover:not(.active-primary) {
+              background: color.adjust($primary-color, $lightness: 48%);
+            }
+          }
+        }
+      }
+
+      // Filtres date et champs
+      .filter-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing-md;
+
+        .filter-group {
+          .filter-label {
+            font-weight: 600;
+            color: $text-dark;
+            margin-bottom: $spacing-sm;
+            font-size: 0.9rem;
+            display: block;
           }
 
-          &::placeholder {
-            color: $text-muted;
+          .input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid $border-color;
+            border-radius: 6px;
+            overflow: hidden;
+
+            .input-icon {
+              background: $background-light;
+              padding: $spacing-sm $spacing-md;
+              color: $text-gray;
+              border-right: 1px solid $border-color;
+
+              i {
+                font-size: 1rem;
+              }
+            }
+
+            input {
+              flex: 1;
+              border: none;
+              padding: $spacing-sm $spacing-md;
+              font-size: 0.95rem;
+              background: $white;
+
+              &:focus {
+                outline: none;
+              }
+
+              &::placeholder {
+                color: $text-muted;
+              }
+            }
+
+            &:focus-within {
+              border-color: $primary-color;
+              box-shadow: 0 0 0 3px rgba(200, 168, 130, 0.15);
+            }
+          }
+
+          input {
+            width: 100%;
+            border: 1px solid $border-color;
+            padding: $spacing-sm $spacing-md;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            transition: all $transition-fast;
+
+            &:focus {
+              border-color: $primary-color;
+              box-shadow: 0 0 0 3px rgba(200, 168, 130, 0.15);
+              outline: none;
+            }
+          }
+
+          .today-button {
+            background: $primary-color;
+            border: none;
+            color: $white;
+            padding: $spacing-xs $spacing-md;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all $transition-normal;
+            margin-left: $spacing-md;
+
+            &:hover {
+              background: $primary-dark;
+            }
           }
         }
-      }
 
-      .form-control {
-        border: 1px solid $border-color;
-        padding: $spacing-sm $spacing-md;
-        font-size: 0.95rem;
-        border-radius: 6px;
-        transition: all $transition-fast;
+        .filter-actions {
+          display: flex;
+          align-items: flex-end;
 
-        &:focus {
-          border-color: $primary-color;
-          box-shadow: 0 0 0 0.2rem rgba(200, 168, 130, 0.15);
-          outline: none;
-        }
-      }
-    }
+          .search-button {
+            background: $primary-color;
+            border: none;
+            color: $white;
+            padding: $spacing-sm $spacing-lg;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all $transition-normal;
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
 
-    // Boutons d'action
-    .col-12 {
-      .btn.btn-outline-primary {
-        border-color: $primary-color;
-        color: $primary-color;
-        padding: $spacing-sm $spacing-lg;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: all $transition-normal;
+            i {
+              font-size: 1rem;
+            }
 
-        &:hover {
-          background: $primary-color;
-          color: $white;
-          transform: translateY(-2px);
-        }
-      }
-
-      .btn.btn-outline-secondary {
-        border-color: $secondary-color;
-        color: $secondary-color;
-        padding: $spacing-sm $spacing-lg;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: all $transition-normal;
-
-        &:hover {
-          background: $secondary-color;
-          color: $white;
+            &:hover {
+              background: $primary-dark;
+              transform: translateY(-2px);
+            }
+          }
         }
       }
     }
   }
-}
 
-// ==================== COMPTEUR DE RÉSULTATS ====================
-.mb-3 {
-  small.text-muted {
+  // ==================== COMPTEUR DE RÉSULTATS ====================
+  .results-counter {
+    margin-bottom: $spacing-md;
     font-size: 0.85rem;
     color: $text-muted;
     font-weight: 500;
   }
-}
 
-// ==================== TABLE ====================
-.table-responsive {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: $white;
+  // ==================== TABLE ====================
+  .table-container {
+    background: $white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 
-  .table {
-    margin-bottom: 0;
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
 
-    thead {
-      &.table-light {
+      thead {
         background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
 
         tr th {
-          color: $white !important;
+          color: $white;
           font-weight: 600;
           text-transform: uppercase;
           font-size: 0.8rem;
           letter-spacing: 0.5px;
           padding: $spacing-md $spacing-lg;
+          text-align: left;
           border: none;
           white-space: nowrap;
 
           &.text-end {
-            text-align: end;
+            text-align: right;
           }
         }
       }
-    }
 
-    tbody {
-      tr {
-        transition: all $transition-fast;
-        border-bottom: 1px solid $border-color;
+      tbody {
+        tr {
+          transition: all $transition-fast;
+          border-bottom: 1px solid $border-color;
 
-        &:hover {
-          background: color.adjust($primary-color, $lightness: 48%);
-          cursor: pointer;
-          transform: scale(1.002);
-        }
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        td {
-          padding: $spacing-md $spacing-lg;
-          vertical-align: middle;
-          font-size: 0.95rem;
-          color: $text-dark;
-
-          // ID
-          strong.text-primary {
-            color: $primary-color !important;
-            font-weight: 700;
-            font-size: 1rem;
+          &:hover {
+            background: $primary-light;
+            cursor: pointer;
+            transform: scale(1.001);
           }
 
-          // Titre et adresse
-          .fw-semibold {
-            font-weight: 600;
-            color: $dark-color;
-            margin-bottom: 0.25rem;
+          &:last-child {
+            border-bottom: none;
           }
 
-          small.text-muted {
-            color: $text-gray;
-            font-size: 0.85rem;
-            display: block;
+          td {
+            padding: $spacing-md $spacing-lg;
+            vertical-align: middle;
+            font-size: 0.95rem;
+            color: $text-dark;
 
-            i {
-              color: $text-muted;
-            }
-          }
-
-          // Date & Heure
-          div {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-bottom: 0.25rem;
-
-            i {
+            // ID
+            .id-text {
               color: $primary-color;
-              font-size: 0.9rem;
+              font-weight: 700;
+              font-size: 1rem;
             }
-          }
 
-          // Badge statut
-          .badge {
-            padding: $spacing-xs $spacing-md;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
+            // Titre et adresse
+            .title-text {
+              font-weight: 600;
+              color: $dark-color;
+              margin-bottom: 0.25rem;
+              display: block;
+            }
 
-            i {
+            .address-text {
+              color: $text-gray;
               font-size: 0.85rem;
-            }
-
-            &.bg-warning {
-              background: $warning-color !important;
-              color: $dark-color !important;
-            }
-
-            &.bg-info {
-              background: $info-color !important;
-              color: $white !important;
-            }
-
-            &.bg-success {
-              background: $success-color !important;
-              color: $white !important;
-            }
-
-            &.bg-secondary {
-              background: $secondary-color !important;
-              color: $white !important;
-            }
-
-            &.bg-danger {
-              background: $danger-color !important;
-              color: $white !important;
-            }
-          }
-
-          // Actions
-          &.text-end {
-            .btn-group {
               display: flex;
-              gap: $spacing-xs;
-              justify-content: flex-end;
+              align-items: center;
+              gap: 0.3rem;
 
-              .btn {
-                padding: $spacing-xs $spacing-sm;
-                font-size: 0.85rem;
-                border-radius: 6px;
-                transition: all $transition-fast;
+              i {
+                color: $text-muted;
+              }
+            }
+
+            // Date & Heure
+            .date-info {
+              display: flex;
+              flex-direction: column;
+              gap: 0.25rem;
+
+              div {
                 display: flex;
                 align-items: center;
                 gap: 0.3rem;
-                border: none;
 
                 i {
+                  color: $primary-color;
                   font-size: 0.9rem;
                 }
+              }
+            }
 
-                &.btn-sm.btn-outline-primary {
-                  border: 1px solid $primary-color;
-                  color: $primary-color;
+            // Client
+            .client-info {
+              font-weight: 600;
+              color: $dark-color;
+              margin-bottom: 0.25rem;
+              display: block;
+            }
 
-                  &:hover {
-                    background: $primary-color;
-                    color: $white;
-                    transform: translateY(-2px);
+            .client-email {
+              color: $text-gray;
+              font-size: 0.85rem;
+              display: flex;
+              align-items: center;
+              gap: 0.3rem;
+
+              i {
+                color: $text-muted;
+              }
+            }
+
+            // Badge statut
+            .status-badge {
+              padding: $spacing-xs $spacing-md;
+              border-radius: 20px;
+              font-weight: 600;
+              font-size: 0.75rem;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.3rem;
+
+              i {
+                font-size: 0.85rem;
+              }
+
+              &.badge-warning {
+                background: $warning-color;
+                color: $dark-color;
+              }
+
+              &.badge-info {
+                background: $info-color;
+                color: $white;
+              }
+
+              &.badge-success {
+                background: $success-color;
+                color: $white;
+              }
+
+              &.badge-secondary {
+                background: $secondary-color;
+                color: $white;
+              }
+
+              &.badge-danger {
+                background: $danger-color;
+                color: $white;
+              }
+            }
+
+            // Actions
+            &.actions-cell {
+              text-align: right;
+
+              .action-buttons {
+                display: flex;
+                gap: $spacing-xs;
+                justify-content: flex-end;
+
+                .action-btn {
+                  padding: $spacing-xs $spacing-sm;
+                  font-size: 0.85rem;
+                  border-radius: 6px;
+                  transition: all $transition-fast;
+                  display: flex;
+                  align-items: center;
+                  gap: 0.3rem;
+                  cursor: pointer;
+                  border: 1px solid;
+
+                  i {
+                    font-size: 0.9rem;
                   }
-                }
 
-                &.btn-sm.btn-outline-info {
-                  border: 1px solid $info-color;
-                  color: $info-color;
+                  &.btn-view {
+                    border-color: $primary-color;
+                    color: $primary-color;
+                    background: transparent;
 
-                  &:hover {
-                    background: $info-color;
-                    color: $white;
-                    transform: translateY(-2px);
+                    &:hover {
+                      background: $primary-color;
+                      color: $white;
+                      transform: translateY(-2px);
+                    }
                   }
-                }
 
-                &.btn-sm.btn-outline-success {
-                  border: 1px solid $success-color;
-                  color: $success-color;
+                  &.btn-edit {
+                    border-color: $info-color;
+                    color: $info-color;
+                    background: transparent;
 
-                  &:hover {
+                    &:hover {
+                      background: $info-color;
+                      color: $white;
+                      transform: translateY(-2px);
+                    }
+                  }
+
+                  &.btn-enroute {
+                    border-color: $success-color;
+                    color: $success-color;
+                    background: transparent;
+
+                    &:hover {
+                      background: $success-color;
+                      color: $white;
+                      transform: translateY(-2px);
+                    }
+                  }
+
+                  &.btn-complete {
+                    border-color: $success-color;
+                    color: $white;
                     background: $success-color;
-                    color: $white;
-                    transform: translateY(-2px);
+
+                    &:hover {
+                      background: color.adjust($success-color, $lightness: -10%);
+                      transform: translateY(-2px);
+                    }
                   }
-                }
 
-                &.btn-sm.btn-outline-danger {
-                  border: 1px solid $danger-color;
-                  color: $danger-color;
+                  &.btn-download {
+                    border-color: $secondary-color;
+                    color: $secondary-color;
+                    background: transparent;
 
-                  &:hover {
-                    background: $danger-color;
-                    color: $white;
-                    transform: translateY(-2px);
+                    &:hover {
+                      background: $secondary-color;
+                      color: $white;
+                      transform: translateY(-2px);
+                    }
                   }
-                }
 
-                &:disabled {
-                  opacity: 0.5;
-                  cursor: not-allowed;
-                  transform: none !important;
+                  &.btn-delete {
+                    border-color: $danger-color;
+                    color: $danger-color;
+                    background: transparent;
+
+                    &:hover {
+                      background: $danger-color;
+                      color: $white;
+                      transform: translateY(-2px);
+                    }
+                  }
+
+                  &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    pointer-events: none;
+                  }
                 }
               }
             }
@@ -571,204 +627,144 @@ $breakpoint-xl: 1200px;
       }
     }
   }
-}
 
-// ==================== SPINNER DE CHARGEMENT ====================
-.text-center.py-5 {
-  padding-top: $spacing-xl !important;
-  padding-bottom: $spacing-xl !important;
+  // ==================== MESSAGE VIDE ====================
+  .empty-state {
+    text-align: center;
+    padding: $spacing-xl * 2;
+    color: $text-muted;
 
-  .spinner-border {
-    color: $primary-color;
-    width: 3rem;
-    height: 3rem;
-  }
-
-  p {
-    margin-top: $spacing-md;
-    color: $text-gray;
-    font-size: 1rem;
-  }
-}
-
-// ==================== MESSAGE VIDE ====================
-.alert.alert-info {
-  background: color.adjust($info-color, $lightness: 45%);
-  color: color.adjust($info-color, $lightness: -30%);
-  border-left: 4px solid $info-color;
-  border-radius: 8px;
-  padding: $spacing-lg;
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-
-  i {
-    font-size: 1.5rem;
-  }
-}
-
-// ==================== MODAL ====================
-.modal {
-  .modal-dialog {
-    max-width: 500px;
-  }
-
-  .modal-content {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-
-    .modal-header {
-      background: linear-gradient(135deg, $danger-color 0%, color.adjust($danger-color, $lightness: -10%) 100%);
-      color: $white;
-      border-radius: 12px 12px 0 0;
-      padding: $spacing-lg $spacing-xl;
-      border: none;
-
-      .modal-title {
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-
-        i {
-          font-size: 1.5rem;
-        }
-      }
-
-      .btn-close {
-        filter: brightness(0) invert(1);
-        opacity: 0.8;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
+    i {
+      font-size: 4rem;
+      margin-bottom: $spacing-lg;
+      opacity: 0.5;
     }
 
-    .modal-body {
-      padding: $spacing-xl;
-      font-size: 1rem;
-      color: $text-dark;
-    }
-
-    .modal-footer {
-      padding: $spacing-lg $spacing-xl;
-      border-top: 1px solid $border-color;
-      display: flex;
-      gap: $spacing-sm;
-      justify-content: flex-end;
-
-      .btn {
-        border-radius: 8px;
-        padding: $spacing-sm $spacing-lg;
-        font-weight: 600;
-        transition: all $transition-normal;
-
-        &:hover {
-          transform: translateY(-2px);
-        }
-
-        &.btn-secondary {
-          background: $secondary-color;
-          border: none;
-          color: $white;
-
-          &:hover {
-            background: color.adjust($secondary-color, $lightness: -10%);
-          }
-        }
-
-        &.btn-danger {
-          background: $danger-color;
-          border: none;
-          color: $white;
-
-          &:hover {
-            background: color.adjust($danger-color, $lightness: -10%);
-          }
-        }
-      }
-    }
-  }
-}
-
-// ==================== RESPONSIVE ====================
-@media (max-width: $breakpoint-lg) {
-  .table {
-    thead tr th {
-      font-size: 0.75rem !important;
-      padding: $spacing-sm $spacing-md !important;
-    }
-
-    tbody tr td {
-      padding: $spacing-sm $spacing-md !important;
-      font-size: 0.85rem !important;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .d-flex.justify-content-between.align-items-center.mb-4 {
-    flex-direction: column;
-    align-items: flex-start !important;
-    gap: $spacing-md;
-
-    .btn.btn-primary {
-      width: 100%;
-      justify-content: center;
+    p {
+      font-size: 1.2rem;
+      font-weight: 600;
     }
   }
 
-  .btn-group {
-    width: 100%;
+  // ==================== LOADING ====================
+  .loading-state {
+    text-align: center;
+    padding: $spacing-xl * 2;
 
-    .btn {
-      flex: 1;
-    }
-  }
-
-  .table-responsive {
-    .table {
-      font-size: 0.8rem;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .container-fluid.py-4 {
-    padding: $spacing-md !important;
-  }
-
-  .card .card-body {
-    padding: $spacing-md;
-  }
-
-  .table-responsive {
-    .table {
-      thead tr th {
-        padding: $spacing-xs $spacing-sm !important;
-        font-size: 0.7rem !important;
-      }
-
-      tbody tr td {
-        padding: $spacing-xs $spacing-sm !important;
-        font-size: 0.75rem !important;
-
-        .btn-group .btn {
-          padding: 0.2rem 0.4rem;
-          font-size: 0.75rem;
-
-          i {
-            display: none; // Cacher les icônes sur mobile
-          }
-        }
-      }
+    .spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 4px solid $border-color;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
   }
 }
 
 // ==================== ANIMATIONS ====================
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==================== MODAL CONFIRMATION ====================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+
+  .modal-content {
+    background: $white;
+    border-radius: 12px;
+    padding: $spacing-xl;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+
+    .modal-header {
+      margin-bottom: $spacing-lg;
+
+      h3 {
+        color: $dark-color;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+    }
+
+    .modal-body {
+      margin-bottom: $spacing-lg;
+      color: $text-dark;
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: $spacing-md;
+
+      .modal-btn {
+        padding: $spacing-sm $spacing-lg;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all $transition-normal;
+        border: 2px solid;
+
+        &.btn-cancel {
+          background: transparent;
+          border-color: $secondary-color;
+          color: $secondary-color;
+
+          &:hover {
+            background: $secondary-color;
+            color: $white;
+          }
+        }
+
+        &.btn-confirm {
+          background: $danger-color;
+          border-color: $danger-color;
+          color: $white;
+
+          &:hover {
+            background: color.adjust($danger-color, $lightness: -10%);
+            transform: translateY(-2px);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -778,16 +774,57 @@ $breakpoint-xl: 1200px;
   }
 }
 
-.card,
-.table-responsive {
-  animation: fadeIn 0.4s ease-in-out;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-// ==================== UTILITIES ====================
-.fw-semibold {
-  font-weight: 600 !important;
-}
+// ==================== RESPONSIVE ====================
+@media (max-width: 768px) {
+  .livraisons-container {
+    padding: $spacing-md;
 
-.text-nowrap {
-  white-space: nowrap;
+    .page-header {
+      flex-direction: column;
+      gap: $spacing-md;
+      align-items: stretch;
+
+      .create-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .filters-card {
+      .filter-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        .filter-btn {
+          font-size: 0.75rem;
+          padding: $spacing-xs $spacing-sm;
+        }
+      }
+    }
+
+    .table-container {
+      overflow-x: auto;
+
+      .custom-table {
+        font-size: 0.85rem;
+
+        thead tr th,
+        tbody tr td {
+          padding: $spacing-sm $spacing-md;
+        }
+      }
+    }
+  }
 }

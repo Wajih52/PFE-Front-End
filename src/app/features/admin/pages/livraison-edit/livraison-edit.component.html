@@ -1,161 +1,156 @@
-<div class="container-fluid py-4">
+<!-- livraison-edit.component.html - SANS BOOTSTRAP -->
+<!-- ✏️ Template - Modifier une livraison -->
+
+<div class="edit-container">
   <!-- En-tête -->
-  <div class="d-flex align-items-center mb-4">
-    <button class="btn btn-outline-secondary me-3" (click)="annuler()">
+  <div class="page-header">
+    <button class="back-button" (click)="annuler()">
       <i class="bi bi-arrow-left"></i>
     </button>
-    <div>
-      <h2 class="mb-1">✏️ Modifier la Livraison</h2>
+    <div class="header-content">
+      <h2>✏️ Modifier la Livraison</h2>
       @if (livraison()) {
-        <p class="text-muted mb-0">Livraison #{{ livraison()!.idLivraison }}</p>
+        <p>Livraison #{{ livraison()!.idLivraison }}</p>
       }
     </div>
   </div>
 
   <!-- Messages -->
   @if (successMessage()) {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <i class="bi bi-check-circle me-2"></i>
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle"></i>
       {{ successMessage() }}
     </div>
   }
 
   @if (errorMessage()) {
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <i class="bi bi-exclamation-triangle me-2"></i>
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle"></i>
       {{ errorMessage() }}
-      <button type="button" class="btn-close" (click)="errorMessage.set('')"></button>
+      <button class="close-button" (click)="errorMessage.set('')">×</button>
     </div>
   }
 
   <!-- Chargement -->
   @if (isLoading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement...</span>
-      </div>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement...</p>
     </div>
   } @else {
     <!-- Formulaire -->
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-pencil-square me-2"></i>
+      <div class="form-card">
+        <div class="card-header">
+          <h5>
+            <i class="bi bi-pencil-square"></i>
             Informations de la Livraison
           </h5>
         </div>
         <div class="card-body">
-          <div class="row g-3">
+          <div class="form-grid">
             <!-- Titre -->
-            <div class="col-md-6">
-              <label for="titreLivraison" class="form-label">
-                Titre <span class="text-danger">*</span>
+            <div class="form-group">
+              <label for="titreLivraison">
+                Titre <span class="required">*</span>
               </label>
               <input
                 type="text"
-                class="form-control"
                 id="titreLivraison"
                 formControlName="titreLivraison"
                 placeholder="Ex: Livraison Mariage Durand"
+                [class.invalid]="editForm.get('titreLivraison')?.invalid && editForm.get('titreLivraison')?.touched"
               />
               @if (editForm.get('titreLivraison')?.invalid && editForm.get('titreLivraison')?.touched) {
-                <div class="text-danger small mt-1">
+                <span class="error-text">
                   Le titre est requis (min. 3 caractères)
-                </div>
+                </span>
               }
             </div>
 
             <!-- Adresse -->
-            <div class="col-md-6">
-              <label for="adresseLivraison" class="form-label">
-                Adresse <span class="text-danger">*</span>
+            <div class="form-group">
+              <label for="adresseLivraison">
+                Adresse <span class="required">*</span>
               </label>
               <input
                 type="text"
-                class="form-control"
                 id="adresseLivraison"
                 formControlName="adresseLivraison"
                 placeholder="123 Avenue de la République, Tunis"
+                [class.invalid]="editForm.get('adresseLivraison')?.invalid && editForm.get('adresseLivraison')?.touched"
               />
               @if (editForm.get('adresseLivraison')?.invalid && editForm.get('adresseLivraison')?.touched) {
-                <div class="text-danger small mt-1">
+                <span class="error-text">
                   L'adresse est requise (min. 5 caractères)
-                </div>
+                </span>
               }
             </div>
 
             <!-- Date -->
-            <div class="col-md-6">
-              <label for="dateLivraison" class="form-label">
-                Date <span class="text-danger">*</span>
+            <div class="form-group">
+              <label for="dateLivraison">
+                Date <span class="required">*</span>
               </label>
               <input
                 type="date"
-                class="form-control"
                 id="dateLivraison"
                 formControlName="dateLivraison"
+                [class.invalid]="editForm.get('dateLivraison')?.invalid && editForm.get('dateLivraison')?.touched"
               />
               @if (editForm.get('dateLivraison')?.invalid && editForm.get('dateLivraison')?.touched) {
-                <div class="text-danger small mt-1">
+                <span class="error-text">
                   La date est requise
-                </div>
+                </span>
               }
             </div>
 
             <!-- Heure -->
-            <div class="col-md-6">
-              <label for="heureLivraison" class="form-label">
-                Heure <span class="text-danger">*</span>
+            <div class="form-group">
+              <label for="heureLivraison">
+                Heure <span class="required">*</span>
               </label>
               <input
                 type="time"
-                class="form-control"
                 id="heureLivraison"
                 formControlName="heureLivraison"
+                [class.invalid]="editForm.get('heureLivraison')?.invalid && editForm.get('heureLivraison')?.touched"
               />
               @if (editForm.get('heureLivraison')?.invalid && editForm.get('heureLivraison')?.touched) {
-                <div class="text-danger small mt-1">
+                <span class="error-text">
                   L'heure est requise
-                </div>
+                </span>
               }
             </div>
 
             <!-- Observations -->
-            <div class="col-12">
-              <label for="observations" class="form-label">Observations</label>
+            <div class="form-group full-width">
+              <label for="observations">
+                Observations (facultatif)
+              </label>
               <textarea
-                class="form-control"
                 id="observations"
                 formControlName="observations"
-                rows="4"
-                placeholder="Notes ou instructions particulières..."
+                placeholder="Instructions spécifiques, notes, etc."
+                rows="3"
               ></textarea>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Boutons -->
-      <div class="d-flex justify-content-end gap-2 mt-4">
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="annuler()"
-          [disabled]="isSaving()">
-          <i class="bi bi-x-circle me-2"></i>
+      <!-- Boutons d'action -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="annuler()" [disabled]="isSaving()">
+          <i class="bi bi-x-circle"></i>
           Annuler
         </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          [disabled]="editForm.invalid || isSaving()">
+        <button type="submit" class="btn-submit" [disabled]="editForm.invalid||isSaving()">
           @if (isSaving()) {
-            <span class="spinner-border spinner-border-sm me-2"></span>
-          } @else {
-            <i class="bi bi-check-circle me-2"></i>
+            <span class="spinner"></span>
           }
-          Enregistrer les modifications
+          <i class="bi bi-check-circle"></i>
+          Enregistrer
         </button>
       </div>
     </form>

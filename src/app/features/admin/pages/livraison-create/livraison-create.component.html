@@ -1,302 +1,327 @@
-<!-- src/app/features/admin/pages/livraison-create/livraison-create.component.html -->
+<!-- livraison-create.component.html - SANS BOOTSTRAP -->
 <!-- 🚚 Template - Créer une nouvelle livraison -->
 
-<div class="container-fluid py-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-      <!-- En-tête -->
-      <div class="d-flex align-items-center mb-4">
-        <button class="btn btn-outline-secondary me-3" (click)="annuler()">
-          <i class="bi bi-arrow-left"></i>
-        </button>
-        <div>
-          <h2 class="mb-1">🚚 Créer une Nouvelle Livraison</h2>
-          <p class="text-muted mb-0">Remplissez les informations et sélectionnez les produits à livrer</p>
+<div class="create-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <button class="back-button" (click)="annuler()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <div class="header-content">
+      <h2>🚚 Créer une Nouvelle Livraison</h2>
+      <p>Remplissez les informations et sélectionnez les produits à livrer</p>
+    </div>
+  </div>
+
+  <!-- Messages de feedback -->
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle"></i>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle"></i>
+      {{ errorMessage() }}
+      <button class="close-button" (click)="errorMessage.set('')">×</button>
+    </div>
+  }
+
+  <!-- Formulaire -->
+  <form [formGroup]="livraisonForm" (ngSubmit)="onSubmit()">
+    <!-- Informations de base -->
+    <div class="form-section">
+      <div class="section-card">
+        <div class="card-header">
+          <h5>
+            <i class="bi bi-info-circle"></i>
+            Informations de Livraison
+          </h5>
         </div>
-      </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <!-- Titre -->
+            <div class="form-group">
+              <label for="titreLivraison">
+                Titre de la livraison <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="titreLivraison"
+                formControlName="titreLivraison"
+                placeholder="Ex: Livraison Mariage Durand"
+                [class.invalid]="submitted() && f['titreLivraison'].invalid"
+              />
+              @if (submitted() && f['titreLivraison'].errors) {
+                <span class="error-text">
+                  Le titre est requis (min. 3 caractères)
+                </span>
+              }
+            </div>
 
-      <!-- Messages de feedback -->
-      @if (successMessage()) {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <i class="bi bi-check-circle me-2"></i>
-          {{ successMessage() }}
-        </div>
-      }
+            <!-- Adresse -->
+            <div class="form-group">
+              <label for="adresseLivraison">
+                Adresse de livraison <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="adresseLivraison"
+                formControlName="adresseLivraison"
+                placeholder="123 Avenue de la République, Tunis"
+                [class.invalid]="submitted() && f['adresseLivraison'].errors"
+              />
+              @if (submitted() && f['adresseLivraison'].errors) {
+                <span class="error-text">
+                  L'adresse est requise (min. 5 caractères)
+                </span>
+              }
+            </div>
 
-      @if (errorMessage()) {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          {{ errorMessage() }}
-          <button type="button" class="btn-close" (click)="errorMessage.set('')"></button>
-        </div>
-      }
+            <!-- Date -->
+            <div class="form-group">
+              <label for="dateLivraison">
+                Date de livraison <span class="required">*</span>
+              </label>
+              <input
+                type="date"
+                id="dateLivraison"
+                formControlName="dateLivraison"
+                [class.invalid]="submitted() && f['dateLivraison'].invalid"
+              />
+              @if (submitted() && f['dateLivraison'].errors) {
+                <span class="error-text">
+                  La date est requise
+                </span>
+              }
+            </div>
 
-      <!-- Formulaire -->
-      <form [formGroup]="livraisonForm" (ngSubmit)="onSubmit()">
-        <!-- Informations de base -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">
-              <i class="bi bi-info-circle me-2"></i>
-              Informations de Livraison
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <!-- Titre -->
-              <div class="col-md-6">
-                <label for="titreLivraison" class="form-label">
-                  Titre de la livraison <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="titreLivraison"
-                  formControlName="titreLivraison"
-                  [class.is-invalid]="submitted() && f['titreLivraison'].errors"
-                  placeholder="Ex: Livraison Mariage Dupont">
-                @if (submitted() && f['titreLivraison'].errors) {
-                  <div class="invalid-feedback">
-                    Le titre est obligatoire (minimum 3 caractères)
-                  </div>
-                }
-              </div>
+            <!-- Heure -->
+            <div class="form-group">
+              <label for="heureLivraison">
+                Heure de livraison <span class="required">*</span>
+              </label>
+              <input
+                type="time"
+                id="heureLivraison"
+                formControlName="heureLivraison"
+                [class.invalid]="submitted() && f['heureLivraison'].invalid"
+              />
+              @if (submitted() && f['heureLivraison'].errors) {
+                <span class="error-text">
+                  L'heure est requise
+                </span>
+              }
+            </div>
 
-              <!-- Adresse -->
-              <div class="col-md-6">
-                <label for="adresseLivraison" class="form-label">
-                  Adresse de livraison <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="adresseLivraison"
-                  formControlName="adresseLivraison"
-                  [class.is-invalid]="submitted() && f['adresseLivraison'].errors"
-                  placeholder="123 Avenue de la République, Paris">
-                @if (submitted() && f['adresseLivraison'].errors) {
-                  <div class="invalid-feedback">
-                    L'adresse est obligatoire (minimum 5 caractères)
-                  </div>
-                }
-              </div>
-
-              <!-- Date -->
-              <div class="col-md-6">
-                <label for="dateLivraison" class="form-label">
-                  Date de livraison <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="date"
-                  class="form-control"
-                  id="dateLivraison"
-                  formControlName="dateLivraison"
-                  [class.is-invalid]="submitted() && f['dateLivraison'].errors">
-                @if (submitted() && f['dateLivraison'].errors) {
-                  <div class="invalid-feedback">
-                    La date est obligatoire
-                  </div>
-                }
-              </div>
-
-              <!-- Heure -->
-              <div class="col-md-6">
-                <label for="heureLivraison" class="form-label">
-                  Heure de livraison <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="time"
-                  class="form-control"
-                  id="heureLivraison"
-                  formControlName="heureLivraison"
-                  [class.is-invalid]="submitted() && f['heureLivraison'].errors">
-                @if (submitted() && f['heureLivraison'].errors) {
-                  <div class="invalid-feedback">
-                    L'heure est obligatoire
-                  </div>
-                }
-              </div>
-
-              <!-- Observations -->
-              <div class="col-12">
-                <label for="observations" class="form-label">
-                  Observations / Notes
-                </label>
-                <textarea
-                  class="form-control"
-                  id="observations"
-                  formControlName="observations"
-                  rows="3"
-                  placeholder="Notes ou instructions particulières..."></textarea>
-              </div>
+            <!-- Observations -->
+            <div class="form-group full-width">
+              <label for="observations">
+                Observations (facultatif)
+              </label>
+              <textarea
+                id="observations"
+                formControlName="observations"
+                placeholder="Instructions spécifiques, notes, etc."
+                rows="3"
+              ></textarea>
+              <span class="help-text">
+                Ajoutez des instructions ou notes particulières pour cette livraison
+              </span>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Sélection des lignes de réservation -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-primary text-white">
-            <div class="d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">
-                <i class="bi bi-box-seam me-2"></i>
-                Produits à Livrer
-                <span class="badge bg-light text-dark ms-2">
-                  {{ getNombreLignesSelectionnees() }} / {{ getNombreLignesDisponibles() }}
-                </span>
-              </h5>
-              <div class="btn-group btn-group-sm">
-                <button
-                  type="button"
-                  class="btn btn-light"
-                  (click)="selectionnerToutesLignes()">
+    <!-- Sélection des produits -->
+    <div class="form-section">
+      <div class="section-card">
+        <div class="card-header">
+          <h5>
+            <i class="bi bi-box-seam"></i>
+            Sélection des Produits
+          </h5>
+        </div>
+
+        <!-- Filtres -->
+        <div class="card-body">
+          <div class="filters-section">
+            <h6>🔍 Filtrer les lignes de réservation</h6>
+            <div class="filters-grid">
+              <div class="filter-group">
+                <label for="filtreReservation">Filtrer par réservation :</label>
+                <div class="input-group">
+                  <div class="input-icon">
+                    <i class="bi bi-search"></i>
+                  </div>
+                  <input
+                    type="text"
+                    id="filtreReservation"
+                    [(ngModel)]="filtreReservation"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Référence réservation..."
+                  />
+                </div>
+              </div>
+
+              <div class="filter-group">
+                <label for="filtreProduit">Filtrer par produit :</label>
+                <div class="input-group">
+                  <div class="input-icon">
+                    <i class="bi bi-box"></i>
+                  </div>
+                  <input
+                    type="text"
+                    id="filtreProduit"
+                    [(ngModel)]="filtreProduit"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="Nom du produit..."
+                  />
+                </div>
+              </div>
+
+              <div class="filter-actions">
+                <button type="button" class="btn-select-all" (click)="selectionnerToutesLignes()">
+                  <i class="bi bi-check-all"></i>
                   Tout sélectionner
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-light"
-                  (click)="deselectionnerToutesLignes()">
+                <button type="button" class="btn-clear" (click)="deselectionnerToutesLignes()">
+                  <i class="bi bi-x-lg"></i>
                   Tout désélectionner
                 </button>
               </div>
             </div>
-          </div>
-          <div class="card-body">
-            <!-- Filtres -->
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <label for="filtreReservation" class="form-label">Filtrer par réservation :</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="filtreReservation"
-                  [(ngModel)]="filtreReservation"
-                  [ngModelOptions]="{standalone: true}"
-                  placeholder="Référence réservation...">
-              </div>
-              <div class="col-md-6">
-                <label for="filtreProduit" class="form-label">Filtrer par produit :</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="filtreProduit"
-                  [(ngModel)]="filtreProduit"
-                  [ngModelOptions]="{standalone: true}"
-                  placeholder="Nom du produit...">
-              </div>
+            <div class="selection-counter">
+              <strong>{{ getNombreLignesSelectionnees() }}</strong> ligne(s) sélectionnée(s) sur
+              <strong>{{ getLignesFiltrees().length }}</strong> affichée(s)
             </div>
+          </div>
+        </div>
 
-            <!-- Loading -->
-            @if (isLoading()) {
-              <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="mt-3 text-muted">Chargement des lignes disponibles...</p>
-              </div>
-            }
+        <!-- Loading -->
+        @if (isLoading()) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color: #999;">Chargement des lignes disponibles...</p>
+          </div>
+        }
 
-            <!-- Aucune ligne disponible -->
-            @if (!isLoading() && lignesDisponibles().length === 0) {
-              <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                Aucune ligne de réservation disponible pour livraison.
-              </div>
-            }
+        <!-- Aucune ligne disponible -->
+        @if (!isLoading() && lignesDisponibles().length === 0) {
+          <div class="card-body">
+            <div class="alert alert-danger">
+              <i class="bi bi-info-circle"></i>
+              Aucune ligne de réservation disponible pour livraison.
+            </div>
+          </div>
+        }
 
-            <!-- Table des lignes -->
-            @if (!isLoading() && lignesDisponibles().length > 0) {
-              <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                  <thead class="table-light">
-                  <tr>
-                    <th width="50">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        [checked]="getNombreLignesSelectionnees() === getNombreLignesDisponibles() && getNombreLignesDisponibles() > 0"
-                        (change)="getNombreLignesSelectionnees() === getNombreLignesDisponibles() ? deselectionnerToutesLignes() : selectionnerToutesLignes()">
-                    </th>
-                    <th>Réservation</th>
-                    <th>Produit</th>
-                    <th>Quantité</th>
-                    <th>Date début</th>
-                    <th>Date fin</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    @for (ligne of getLignesFiltrees(); track ligne.idLigneReservation) {
-                      <tr
-                        (click)="toggleLigneSelection(ligne.idLigneReservation)"
-                        [class.table-primary]="isLigneSelectionnee(ligne.idLigneReservation)"
-                        style="cursor: pointer;">
-                        <td>
+        <!-- Table des lignes -->
+        @if (!isLoading() && lignesDisponibles().length > 0) {
+          <div class="card-body">
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                <tr>
+                  <th class="text-center" style="width: 50px;">
+                    <input
+                      type="checkbox"
+                      [checked]="getNombreLignesSelectionnees() === getLignesFiltrees().length && getLignesFiltrees().length > 0"
+                      (change)="getNombreLignesSelectionnees() === getLignesFiltrees().length ? deselectionnerToutesLignes() : selectionnerToutesLignes()"
+                      style="width: 20px; height: 20px; cursor: pointer; accent-color: #C8A882;"
+                    />
+                  </th>
+                  <th>Réservation</th>
+                  <th>Produit</th>
+                  <th>Quantité</th>
+                  <th>Date début</th>
+                  <th>Date fin</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (ligne of getLignesFiltrees(); track ligne.idLigneReservation) {
+                    <tr
+                      (click)="toggleLigneSelection(ligne.idLigneReservation)"
+                      [class.selected-row]="isLigneSelectionnee(ligne.idLigneReservation)"
+                      style="cursor: pointer;">
+                      <td class="text-center">
+                        <div class="checkbox-cell">
                           <input
                             type="checkbox"
-                            class="form-check-input"
                             [checked]="isLigneSelectionnee(ligne.idLigneReservation)"
-                            (click)="$event.stopPropagation()">
-                        </td>
-                        <td>
-                          <small class="text-muted">{{ ligne.referenceReservation }}</small>
-                        </td>
-                        <td>
-                          <strong>{{ ligne.nomProduit }}</strong>
-                        </td>
-                        <td>
-                          <span class="badge bg-secondary">{{ ligne.quantite }}</span>
-                        </td>
-                        <td>{{ ligne.dateDebut }}</td>
-                        <td>{{ ligne.dateFin }}</td>
-                      </tr>
-                    } @empty {
-                      <tr>
-                        <td colspan="6" class="text-center text-muted">
-                          Aucune ligne ne correspond aux filtres
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
+                            (click)="$event.stopPropagation()"
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <span class="reservation-ref">{{ ligne.referenceReservation }}</span>
+                      </td>
+                      <td>
+                        <div class="product-info">
+                          <div class="product-name">{{ ligne.nomProduit }}</div>
+                          <div class="product-type">{{ ligne.typeProduit }}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="quantity-badge">{{ ligne.quantite }}</span>
+                      </td>
+                      <td>
+                        <div class="date-range">
+                          <div class="date-item">
+                            <i class="bi bi-calendar3"></i>
+                            {{ ligne.dateDebut }}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="date-range">
+                          <div class="date-item">
+                            <i class="bi bi-calendar3"></i>
+                            {{ ligne.dateFin }}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="6" class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <p>Aucune ligne ne correspond aux filtres</p>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
 
-              <!-- Info sélection -->
-              @if (getNombreLignesSelectionnees() > 0) {
-                <div class="alert alert-info mb-0">
-                  <i class="bi bi-check-circle me-2"></i>
-                  <strong>{{ getNombreLignesSelectionnees() }}</strong> ligne(s) sélectionnée(s)
-                </div>
-              }
+            <!-- Info sélection -->
+            @if (getNombreLignesSelectionnees() > 0) {
+              <div class="alert alert-success" style="margin-top: 1rem; margin-bottom: 0;">
+                <i class="bi bi-check-circle"></i>
+                <strong>{{ getNombreLignesSelectionnees() }}</strong> ligne(s) sélectionnée(s) pour cette livraison
+              </div>
             }
           </div>
-        </div>
-
-        <!-- Boutons d'action -->
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                (click)="annuler()"
-                [disabled]="isSaving()">
-                <i class="bi bi-x-circle me-2"></i>
-                Annuler
-              </button>
-
-              <button
-                type="submit"
-                class="btn btn-primary btn-lg"
-                [disabled]="isSaving() || getNombreLignesSelectionnees() === 0">
-                @if (isSaving()) {
-                  <span class="spinner-border spinner-border-sm me-2"></span>
-                  Création en cours...
-                } @else {
-                  <i class="bi bi-check-circle me-2"></i>
-                  Créer la Livraison
-                }
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
+        }
+      </div>
     </div>
-  </div>
+
+    <!-- Boutons d'action -->
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="annuler()">
+        <i class="bi bi-x-circle"></i>
+        Annuler
+      </button>
+      <button type="submit" class="btn-submit" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <span class="spinner"></span>
+        }
+        <i class="bi bi-check-circle"></i>
+        Créer la livraison
+      </button>
+    </div>
+  </form>
 </div>

@@ -1,0 +1,364 @@
+// livraison-edit.component.scss - SANS BOOTSTRAP
+@use 'sass:color';
+
+// ==================== VARIABLES ====================
+$primary-color: #C8A882;
+$primary-dark: color.adjust($primary-color, $lightness: -15%);
+$primary-light: color.adjust($primary-color, $lightness: 45%);
+
+$dark-color: #000000;
+$white: #ffffff;
+$text-dark: #1a1a1a;
+$text-gray: #6c757d;
+$text-muted: #999999;
+
+$background-light: #f8f9fa;
+$border-color: #e0e0e0;
+$secondary-color: #6c757d;
+
+// Couleurs de statut
+$success-color: #28a745;
+$danger-color: #dc3545;
+$info-color: #17a2b8;
+$warning-color: #ffc107;
+
+// Espacements
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// ==================== CONTENEUR PRINCIPAL ====================
+.edit-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+
+  // ==================== EN-TÊTE ====================
+  .page-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+    gap: $spacing-md;
+
+    .back-button {
+      background: transparent;
+      border: 2px solid $secondary-color;
+      color: $secondary-color;
+      padding: $spacing-sm $spacing-md;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all $transition-normal;
+      display: flex;
+      align-items: center;
+
+      i {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        background: $secondary-color;
+        color: $white;
+      }
+    }
+
+    .header-content {
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $dark-color;
+        margin: 0 0 $spacing-xs 0;
+      }
+
+      p {
+        color: $text-muted;
+        margin: 0;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  // ==================== ALERTES ====================
+  .alert {
+    padding: $spacing-md $spacing-lg;
+    border-radius: 8px;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease;
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    &.alert-success {
+      background: color.adjust($success-color, $lightness: 45%);
+      color: color.adjust($success-color, $lightness: -20%);
+      border-color: $success-color;
+    }
+
+    &.alert-danger {
+      background: color.adjust($danger-color, $lightness: 45%);
+      color: color.adjust($danger-color, $lightness: -20%);
+      border-color: $danger-color;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      padding: $spacing-xs;
+      cursor: pointer;
+      margin-left: auto;
+      color: inherit;
+      font-size: 1.2rem;
+      line-height: 1;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  // ==================== LOADING ====================
+  .loading-state {
+    text-align: center;
+    padding: $spacing-xl * 3;
+
+    .spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 4px solid $border-color;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      margin-top: $spacing-md;
+      color: $text-muted;
+    }
+  }
+
+  // ==================== FORMULAIRE ====================
+  .form-card {
+    background: $white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+
+    .card-header {
+      background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+      color: $white;
+      padding: $spacing-md $spacing-lg;
+
+      h5 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        i {
+          font-size: 1.3rem;
+        }
+      }
+    }
+
+    .card-body {
+      padding: $spacing-lg $spacing-xl;
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-lg;
+
+        &.full-width {
+          grid-template-columns: 1fr;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+
+          label {
+            font-weight: 600;
+            color: $text-dark;
+            margin-bottom: $spacing-sm;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+
+            .required {
+              color: $danger-color;
+            }
+          }
+
+          input,
+          textarea {
+            border: 1px solid $border-color;
+            padding: $spacing-sm $spacing-md;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            transition: all $transition-fast;
+            background: $white;
+
+            &:focus {
+              border-color: $primary-color;
+              box-shadow: 0 0 0 3px rgba(200, 168, 130, 0.15);
+              outline: none;
+            }
+
+            &::placeholder {
+              color: $text-muted;
+            }
+
+            &.invalid {
+              border-color: $danger-color;
+
+              &:focus {
+                box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+              }
+            }
+          }
+
+          textarea {
+            resize: vertical;
+            min-height: 100px;
+          }
+
+          .error-text {
+            color: $danger-color;
+            font-size: 0.85rem;
+            margin-top: $spacing-xs;
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+          }
+        }
+      }
+    }
+  }
+
+  // ==================== BOUTONS D'ACTION ====================
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-md;
+    margin-top: $spacing-xl;
+
+    button {
+      padding: $spacing-sm $spacing-xl;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all $transition-normal;
+      border: 2px solid;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      i {
+        font-size: 1.1rem;
+      }
+
+      &.btn-cancel {
+        background: transparent;
+        border-color: $secondary-color;
+        color: $secondary-color;
+
+        &:hover {
+          background: $secondary-color;
+          color: $white;
+        }
+      }
+
+      &.btn-submit {
+        background: $primary-color;
+        border-color: $primary-color;
+        color: $white;
+
+        &:hover {
+          background: $primary-dark;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(200, 168, 130, 0.3);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          pointer-events: none;
+        }
+
+        .spinner {
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+          border: 2px solid $white;
+          border-top-color: transparent;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+      }
+    }
+  }
+}
+
+// ==================== ANIMATIONS ====================
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: 768px) {
+  .edit-container {
+    padding: $spacing-md;
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-card {
+      .card-body {
+        padding: $spacing-md;
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    .form-actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

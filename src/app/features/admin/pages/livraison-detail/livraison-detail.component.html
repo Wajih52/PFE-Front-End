@@ -1,52 +1,49 @@
-<!-- src/app/features/admin/pages/livraison-detail/livraison-detail.component.html -->
-<!-- 🚚 Template - Détails d'une livraison -->
+<!-- livraison-detail.component.html - VERSION SIMPLE (sans modal ni sidebar) -->
 
-<div class="container-fluid py-4">
+<div class="detail-container">
   <!-- En-tête -->
-  <div class="d-flex align-items-center mb-4">
-    <button class="btn btn-outline-secondary me-3" (click)="retourListe()">
+  <div class="page-header">
+    <button class="btn-back" (click)="retourListe()">
       <i class="bi bi-arrow-left"></i>
     </button>
-    <div class="flex-grow-1">
+    <div class="header-title">
       @if (livraison()) {
-        <h2 class="mb-1">🚚 {{ livraison()!.titreLivraison }}</h2>
-        <p class="text-muted mb-0">
-          <i class="bi bi-hash me-1"></i>Livraison #{{ livraison()!.idLivraison }}
-        </p>
+        <h2>🚚 {{ livraison()!.titreLivraison }}</h2>
+        <p><i class="bi bi-hash"></i>Livraison #{{ livraison()!.idLivraison }}</p>
       }
     </div>
     <button
-      class="btn btn-outline-primary me-2"
+      class="btn-edit"
       [routerLink]="['/admin/livraisons', livraison()!.idLivraison, 'edit']">
       <i class="bi bi-pencil-square me-2"></i>
       Modifier
     </button>
 
     @if (livraison()) {
-      <div class="btn-group">
+      <div class="action-buttons">
         @if (canMarquerEnCoursFunc(livraison()!)) {
           <button
-            class="btn btn-primary"
+            class="btn-action btn-primary"
             (click)="marquerEnCours()"
             [disabled]="isActionEnCours('marquer-en-cours')">
-            <i class="bi bi-play-circle me-2"></i>
-            Marquer en cours
+            <i class="bi bi-play-circle"></i>
+            <span>Marquer en cours</span>
           </button>
         }
         @if (canMarquerLivreeFunc(livraison()!)) {
           <button
-            class="btn btn-success"
+            class="btn-action btn-success"
             (click)="marquerLivree()"
             [disabled]="isActionEnCours('marquer-livree')">
-            <i class="bi bi-check-circle me-2"></i>
-            Marquer livrée
+            <i class="bi bi-check-circle"></i>
+            <span>Marquer livrée</span>
           </button>
         }
         <button
-          class="btn btn-secondary"
+          class="btn-action btn-secondary"
           (click)="telechargerBonLivraison()">
-          <i class="bi bi-file-pdf me-2"></i>
-          Bon de livraison
+          <i class="bi bi-file-pdf"></i>
+          <span>Bon de livraison</span>
         </button>
       </div>
     }
@@ -54,415 +51,249 @@
 
   <!-- Messages -->
   @if (successMessage()) {
-    <div class="alert alert-success alert-dismissible fade show">
-      <i class="bi bi-check-circle me-2"></i>
-      {{ successMessage() }}
-      <button type="button" class="btn-close" (click)="successMessage.set('')"></button>
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ successMessage() }}</span>
+      <button class="btn-close" (click)="successMessage.set('')">×</button>
     </div>
   }
 
   @if (errorMessage()) {
-    <div class="alert alert-danger alert-dismissible fade show">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      {{ errorMessage() }}
-      <button type="button" class="btn-close" (click)="errorMessage.set('')"></button>
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage() }}</span>
+      <button class="btn-close" (click)="errorMessage.set('')">×</button>
     </div>
   }
 
-  <!-- Loading -->
+  <!-- Chargement -->
   @if (isLoading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-3 text-muted">Chargement des détails...</p>
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des détails...</p>
     </div>
   }
 
-  <!-- Contenu -->
+  <!-- Contenu principal -->
   @if (!isLoading() && livraison()) {
-    <div class="row g-4">
-      <!-- Colonne gauche: Informations principales -->
-      <div class="col-lg-8">
-        <!-- Informations de livraison -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">
-              <i class="bi bi-info-circle me-2"></i>
-              Informations de Livraison
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="text-muted small">Date & Heure</label>
-                <div class="fw-bold">
-                  <i class="bi bi-calendar3 me-2"></i>
-                  {{ formatDateHeure(livraison()!.dateLivraison, livraison()!.heureLivraison) }}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label class="text-muted small">Statut</label>
-                <div>
-                  <span [class]="getStatutBadgeClass(livraison()!.statutLivraison)">
-                    {{ statutLabels[livraison()!.statutLivraison] }}
-                  </span>
-                </div>
-              </div>
-              <div class="col-12">
-                <label class="text-muted small">Adresse de livraison</label>
-                <div class="fw-bold">
-                  <i class="bi bi-geo-alt me-2"></i>
-                  {{ livraison()!.adresseLivraison }}
-                </div>
-              </div>
-              @if (livraison()!.observations) {
-                <div class="col-12">
-                  <label class="text-muted small">Observations</label>
-                  <div class="alert alert-info mb-0">
-                    {{ livraison()!.observations }}
-                  </div>
-                </div>
-              }
+
+    <!-- Carte 1: Informations de Livraison -->
+    <div class="info-card">
+      <div class="card-header header-primary">
+        <h5><i class="bi bi-info-circle"></i> Informations de Livraison</h5>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Date & Heure</label>
+            <div class="value">
+              <i class="bi bi-calendar3"></i>
+              {{ formatDateHeure(livraison()!.dateLivraison, livraison()!.heureLivraison) }}
             </div>
           </div>
-        </div>
 
-        <!-- Informations client -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0">
-              <i class="bi bi-person me-2"></i>
-              Informations Client
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="text-muted small">Nom du client</label>
-                <div class="fw-bold">
-                  {{ livraison()!.nomClient }} {{ livraison()!.prenomClient }}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label class="text-muted small">Référence réservation</label>
-                <div class="fw-bold text-primary">
-                  {{ livraison()!.referenceReservation }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Produits à livrer -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-success text-white">
-            <div class="d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">
-                <i class="bi bi-box-seam me-2"></i>
-                Produits à Livrer
-              </h5>
-              <span class="badge bg-light text-dark">
-                {{ livraison()!.nombreTotalArticles }} article(s)
+          <div class="info-item">
+            <label>Statut</label>
+            <div class="value">
+              <span [class]="'badge badge-' + livraison()!.statutLivraison.toLowerCase()">
+                {{ statutLabels[livraison()!.statutLivraison] }}
               </span>
             </div>
           </div>
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table table-hover mb-0">
-                <thead class="table-light">
-                <tr>
-                  <th>Produit</th>
-                  <th>Quantité</th>
-                  <th>Période</th>
-                  <th>Statut</th>
-                  <th>Références</th>
-                  @if (livraison()!.statutLivraison === 'EN_COURS') {
-                    <th class="text-center">Actions</th>
-                  }
-                </tr>
-                </thead>
-                <tbody>
-                  @for (ligne of livraison()!.lignesReservation; track ligne.idLigne) {
-                    <tr [class.table-success]="ligne.statutLivraisonLigne === 'LIVREE'">
-                      <!-- Produit -->
-                      <td>
-                        <div class="fw-semibold">{{ ligne.nomProduit }}</div>
-                        <small class="text-muted">{{ ligne.typeProduit }}</small>
-                      </td>
 
-                      <!-- Quantité -->
-                      <td>
-                <span class="badge bg-secondary">
-                  {{ ligne.quantite }} {{ ligne.quantite > 1 ? 'unités' : 'unité' }}
-                </span>
-                      </td>
-
-                      <!-- Période -->
-                      <td>
-                        <small>
-                          <i class="bi bi-calendar3 me-1"></i>
-                          {{ ligne.dateDebut | date:'dd/MM/yyyy' }}
-                          <br>
-                          <i class="bi bi-calendar3 me-1"></i>
-                          {{ ligne.dateFin | date:'dd/MM/yyyy' }}
-                        </small>
-                      </td>
-
-                      <!-- Statut -->
-                      <td>
-                <span [class]="getStatutLigneBadgeClass(ligne.statutLivraisonLigne)">
-                  <i [class]="'bi bi-' + (ligne.statutLivraisonLigne === 'LIVREE' ? 'check-circle' :
-                                          ligne.statutLivraisonLigne === 'EN_COURS' ? 'truck' :
-                                          ligne.statutLivraisonLigne === 'EN_ATTENTE' ? 'clock' :
-                                          'calendar-x')"></i>
-                  {{ getStatutLigneLabel(ligne.statutLivraisonLigne) }}
-                </span>
-                      </td>
-
-                      <!-- Références -->
-                      <td>
-                        @if (ligne.typeProduit === 'AVEC_REFERENCE' && ligne.instancesReservees && ligne.instancesReservees.length > 0) {
-                          <div class="d-flex flex-wrap gap-1">
-                            @for (instance of ligne.instancesReservees; track instance) {
-                              <span class="badge bg-info text-white">
-                        <i class="bi bi-hash"></i>{{ instance }}
-                      </span>
-                            }
-                          </div>
-                        } @else {
-                          <span class="text-muted">-</span>
-                        }
-                      </td>
-                      <!-- Actions (bouton de livraison) -->
-                      @if (livraison()!.statutLivraison === 'EN_COURS') {
-                        <td class="text-center">
-                          @if (canMarquerLigneLivree(ligne)) {
-                            <button
-                              class="btn btn-sm btn-success"
-                              (click)="marquerLigneLivree(ligne.idLigne)"
-                              [disabled]="isLigneActionEnCours(ligne.idLigne)"
-                              title="Marquer comme livrée">
-                              @if (isLigneActionEnCours(ligne.idLigne)) {
-                                <span class="spinner-border spinner-border-sm me-1"></span>
-                              } @else {
-                                <i class="bi bi-check-circle me-1"></i>
-                              }
-                              Livrer
-                            </button>
-                          } @else if (ligne.statutLivraisonLigne === 'LIVREE') {
-                            <span class="badge bg-success">
-                                   <i class="bi bi-check-circle-fill me-1"></i>
-                                    Livrée
-                            </span>
-                          }
-                        </td>
-                      }
-                      @if (ligne.statutLivraisonLigne === 'LIVREE') {
-                        <!-- Bouton Début retour -->
-                        <td class="text-center">
-                        <button
-                          class="btn btn-sm btn-warning"
-                          [disabled]="isLigneActionDisabled(ligne)"
-                          (click)="marquerLigneEnRetour(ligne.idLigne)">
-                          @if (isLigneActionEnCours(ligne.idLigne)) {
-                            <span class="spinner-border spinner-border-sm me-1"></span>
-                          }
-                          <i class="bi bi-arrow-left-circle me-1"></i>
-                          Début retour
-                        </button>
-                      </td>
-                      }
-                      @if (ligne.statutLivraisonLigne === 'RETOUR') {
-                        <td class="text-center">
-                        <!-- Bouton Confirmer retour -->
-                        <button
-                          class="btn btn-sm btn-success"
-                          [disabled]="isLigneActionDisabled(ligne)"
-                          (click)="marquerLigneRetournee(ligne.idLigne)">
-                          @if (isLigneActionEnCours(ligne.idLigne)) {
-                            <span class="spinner-border spinner-border-sm me-1"></span>
-                          }
-                          <i class="bi bi-check-circle-fill me-1"></i>
-                          Confirmer retour
-                        </button>
-                        </td>
-                      } @else {
-                        @if (ligne.statutLivraisonLigne === 'RETOURNEE') {
-                          <span class="text-success">
-                            <i class="bi bi-check-circle-fill me-1"></i>
-                               Terminé
-                          </span>
-                        }
-                      }
-                    </tr>
-                  } @empty {
-                    <tr>
-                      <td colspan="6" class="text-center text-muted py-4">
-                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                        Aucune ligne de réservation
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+          <div class="info-item">
+            <label>Client</label>
+            <div class="value">
+              <i class="bi bi-person"></i>
+              {{ livraison()!.nomClient }} {{ livraison()!.prenomClient }}
             </div>
           </div>
-        </div>
-        <!-- Note explicative -->
-        @if (livraison()!.statutLivraison === 'EN_COURS') {
-          <div class="alert alert-info">
-            <i class="bi bi-info-circle me-2"></i>
-            <strong>Information :</strong> Cliquez sur le bouton "Livrer" pour chaque ligne une fois que le matériel a
-            été livré.
-            Lorsque toutes les lignes sont marquées comme livrées, la livraison sera automatiquement marquée comme
-            LIVREE.
-          </div>
-        }
-      </div>
 
-      <!-- Colonne droite: Affectations -->
-      <div class="col-lg-4">
-        <div class="card shadow-sm sticky-top" style="top: 20px;">
-          <div class="card-header bg-warning text-dark">
-            <div class="d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">
-                <i class="bi bi-people me-2"></i>
-                Employés Affectés
-              </h5>
-              <button
-                class="btn btn-sm btn-dark"
-                (click)="ouvrirModalAffectation()"
-                [disabled]="livraison()!.statutLivraison === 'LIVREE' || livraison()!.statutLivraison === 'RETOURNEE'">
-                <i class="bi bi-plus"></i>
-              </button>
+          <div class="info-item">
+            <label>Email</label>
+            <div class="value">
+              <i class="bi bi-envelope"></i>
+              {{ livraison()!.emailClient }}
             </div>
           </div>
-          <div class="card-body">
-            @if (livraison()!.affectations.length === 0) {
-              <div class="text-center py-4 text-muted">
-                <i class="bi bi-person-x fs-1 d-block mb-2"></i>
-                Aucun employé affecté
+
+          <div class="info-item">
+            <label>Téléphone</label>
+            <div class="value">
+              <i class="bi bi-telephone"></i>
+              {{ livraison()!.telephoneClient }}
+            </div>
+          </div>
+
+          <div class="info-item full-width">
+            <label>Adresse de livraison</label>
+            <div class="value">
+              <i class="bi bi-geo-alt"></i>
+              {{ livraison()!.adresseLivraison }}
+            </div>
+          </div>
+
+          @if (livraison()!.observations) {
+            <div class="info-item full-width">
+              <label>Observations</label>
+              <div class="value observations">
+                {{ livraison()!.observations }}
               </div>
-            } @else {
-              @for (affectation of livraison()!.affectations; track affectation.idAffectation) {
-                <div class="affectation-card mb-3">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                      <h6 class="mb-1">
-                        {{ affectation.nomEmploye }} {{ affectation.prenomEmploye }}
-                      </h6>
-                      <small class="text-muted d-block">
-                        <i class="bi bi-envelope me-1"></i>
-                        {{ affectation.emailEmploye }}
-                      </small>
-                      @if (affectation.telephoneEmploye) {
-                        <small class="text-muted d-block">
-                          <i class="bi bi-telephone me-1"></i>
-                          {{ affectation.telephoneEmploye }}
-                        </small>
-                      }
-                      <div class="mt-2">
-                        <i class="bi bi-calendar3 me-1"></i>
-                        <small>{{ affectation.dateAffectation }}</small>
-                      </div>
-                      <div>
-                        <i class="bi bi-clock me-1"></i>
-                        <small>{{ affectation.heureAffectation }}</small>
-                      </div>
-                      @if (affectation.notes) {
-                        <div class="mt-2">
-                          <small class="text-muted">
-                            <i class="bi bi-sticky me-1"></i>
-                            {{ affectation.notes }}
-                          </small>
-                        </div>
-                      }
-                    </div>
-                    <button
-                      class="btn btn-sm btn-outline-danger"
-                      (click)="retirerAffectation(affectation.idAffectation)"
-                      [disabled]="isActionEnCours('retirer-' + affectation.idAffectation)">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              }
-            }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte 2: Informations Client -->
+    <div class="info-card">
+      <div class="card-header header-secondary">
+        <h5><i class="bi bi-person"></i> Informations Client</h5>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Nom du client</label>
+            <div class="value">
+              {{ livraison()!.nomClient }} {{ livraison()!.prenomClient }}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <label>Référence réservation</label>
+            <div class="value highlight">
+              {{ livraison()!.referenceReservation }}
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Carte 3: Produits à Livrer -->
+    <div class="info-card">
+      <div class="card-header header-success">
+        <h5><i class="bi bi-box-seam"></i> Produits à Livrer</h5>
+        <span class="badge">{{ livraison()!.nombreTotalArticles }} article(s)</span>
+      </div>
+      <div class="card-body no-padding">
+        <table class="custom-table">
+          <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Période</th>
+            <th>Statut</th>
+            <th>Références</th>
+            @if (livraison()!.statutLivraison === 'EN_COURS') {
+              <th class="text-center">Actions</th>
+            }
+          </tr>
+          </thead>
+          <tbody>
+            @for (ligne of livraison()!.lignesReservation; track ligne.idLigne) {
+              <tr [class.row-success]="ligne.statutLivraisonLigne === 'LIVREE'">
+                <!-- Produit -->
+                <td>
+                  <div class="product-name">{{ ligne.nomProduit }}</div>
+                  <div class="product-type">{{ ligne.typeProduit }}</div>
+                </td>
+
+                <!-- Quantité -->
+                <td>
+                  <span class="badge-quantity">
+                    {{ ligne.quantite }} {{ ligne.quantite > 1 ? 'unités' : 'unité' }}
+                  </span>
+                </td>
+
+                <!-- Période -->
+                <td>
+                  <div class="date-range">
+                    <div><i class="bi bi-calendar3"></i> {{ ligne.dateDebut | date:'dd/MM/yyyy' }}</div>
+                    <div><i class="bi bi-calendar3"></i> {{ ligne.dateFin | date:'dd/MM/yyyy' }}</div>
+                  </div>
+                </td>
+
+                <!-- Statut -->
+                <td>
+                  <span [class]="'badge badge-' + ligne.statutLivraisonLigne.toLowerCase()">
+                    <i [class]="'bi bi-' + (ligne.statutLivraisonLigne === 'LIVREE' ? 'check-circle' :
+                                            ligne.statutLivraisonLigne === 'EN_COURS' ? 'truck' :
+                                            ligne.statutLivraisonLigne === 'EN_ATTENTE' ? 'hourglass-split' :
+                                            ligne.statutLivraisonLigne === 'RETOUR' ? 'arrow-return-left' :
+                                            'check-circle')"></i>
+                    {{ ligne.statutLivraisonLigne }}
+                  </span>
+                </td>
+
+                <!-- Références -->
+                <td>{{ ligne.instancesReservees || 'Non spécifiées' }}</td>
+
+                <!-- Actions -->
+                @if (livraison()!.statutLivraison === 'EN_COURS') {
+                  <td class="text-center">
+                    @if (canMarquerLigneLivree(ligne)) {
+                      <button
+                        class="btn-action-small btn-success"
+                        (click)="marquerLigneLivree(ligne.idLigne)"
+                        [disabled]="isLigneActionEnCours(ligne.idLigne)"
+                        title="Marquer comme livrée">
+                        @if (isLigneActionEnCours(ligne.idLigne)) {
+                          <span class="spinner-small"></span>
+                        } @else {
+                          <i class="bi bi-check-circle"></i>
+                        }
+                        Livrer
+                      </button>
+                    }
+                  </td>
+                }
+                @if (ligne.statutLivraisonLigne === 'LIVREE') {
+                  <!-- Bouton Début retour -->
+                  <td class="text-center">
+                    <button
+                      class="btn-action-small btn-warning"
+                      [disabled]="isLigneActionDisabled(ligne)"
+                      (click)="marquerLigneEnRetour(ligne.idLigne)">
+                      @if (isLigneActionEnCours(ligne.idLigne)) {
+                        <span class="spinner-small"></span>
+                      }
+                      <i class="bi bi-arrow-return-left"></i>
+                      En Retour
+                    </button>
+                  </td>
+                }
+                @if (ligne.statutLivraisonLigne === 'RETOUR') {
+                  <td class="text-center">
+                    <!-- Bouton Confirmer retour -->
+                    <button
+                      class="btn-action-small btn-info"
+                      [disabled]="isLigneActionDisabled(ligne)"
+                      (click)="marquerLigneRetournee(ligne.idLigne)">
+                      @if (isLigneActionEnCours(ligne.idLigne)) {
+                        <span class="spinner-small"></span>
+                      }
+                      <i class="bi bi-check-circle"></i>
+                      Confirmer retour
+                    </button>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Note explicative -->
+    @if (livraison()!.statutLivraison === 'EN_COURS') {
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <span>
+          <strong>Information :</strong> Cliquez sur le bouton "Livrer" pour chaque ligne une fois que le matériel a été
+          livré. Lorsque toutes les lignes sont marquées comme livrées, la livraison sera automatiquement marquée comme
+          LIVREE.
+        </span>
+      </div>
+    }
   }
 </div>
-
-<!-- Modal d'affectation -->
-@if (showAffectationModal()) {
-  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header bg-warning text-dark">
-          <h5 class="modal-title">
-            <i class="bi bi-person-plus me-2"></i>
-            Affecter un Employé
-          </h5>
-          <button type="button" class="btn-close" (click)="fermerModalAffectation()"></button>
-        </div>
-        <form [formGroup]="affectationForm" (ngSubmit)="affecterEmploye()">
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="idEmploye" class="form-label">
-                Employé <span class="text-danger">*</span>
-              </label>
-              <select
-                class="form-select"
-                id="idEmploye"
-                formControlName="idEmploye"
-                [class.is-invalid]="submittedAffectation() && af['idEmploye'].errors">
-                <option value="">-- Sélectionner un employé --</option>
-                @for (employe of employes(); track employe.idUtilisateur) {
-                  <option [value]="employe.idUtilisateur">
-                    {{ employe.nom }} {{ employe.prenom }} ({{ employe.email }})
-                  </option>
-                }
-              </select>
-              @if (submittedAffectation() && af['idEmploye'].errors) {
-                <div class="invalid-feedback">
-                  Veuillez sélectionner un employé
-                </div>
-              }
-            </div>
-            <div class="mb-3">
-              <label for="notes" class="form-label">Notes / Instructions</label>
-              <textarea
-                class="form-control"
-                id="notes"
-                formControlName="notes"
-                rows="3"
-                placeholder="Instructions spécifiques pour cet employé..."></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="fermerModalAffectation()"
-              [disabled]="isActionEnCours('affecter-employe')">
-              Annuler
-            </button>
-            <button
-              type="submit"
-              class="btn btn-warning text-dark"
-              [disabled]="isActionEnCours('affecter-employe')">
-              @if (isActionEnCours('affecter-employe')) {
-                <span class="spinner-border spinner-border-sm me-2"></span>
-                Affectation...
-              } @else {
-                <i class="bi bi-check-circle me-2"></i>
-                Affecter
-              }
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-}
