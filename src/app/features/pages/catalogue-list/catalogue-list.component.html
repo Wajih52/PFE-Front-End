@@ -1,5 +1,4 @@
 <!-- src/app/features/pages/catalogue-list/catalogue-list.component.html -->
-<!-- ✅ VERSION CORRIGÉE - Tous les problèmes UI résolus -->
 
 <div class="catalogue-container">
 
@@ -100,7 +99,7 @@
             />
           </div>
 
-          <!-- ✅ FIX #2: Catégories avec sélection fonctionnelle -->
+          <!--  Catégories avec sélection fonctionnelle -->
           <div class="filtre-group">
             <label>Catégories</label>
             <div class="categorie-list">
@@ -172,7 +171,7 @@
       <!-- ========== GRILLE DE PRODUITS ========== -->
       <main class="produits-grid-container">
 
-        <!-- ✅ FIX #5: Header avec tri à droite -->
+        <!--  Header avec tri à droite -->
         <div class="resultats-header">
           <div class="resultats-info">
             <p>
@@ -183,7 +182,7 @@
             </p>
           </div>
 
-          <!-- ✅ FIX #3 & #5: Tri stylisé et positionné à droite -->
+          <!--  Tri  -->
           <div class="tri-container">
             <label for="tri">
               <i class="fas fa-sort"></i>
@@ -226,7 +225,7 @@
                     (error)="onImageError($event)"
                   />
 
-                  <!-- ✅ FIX #4: Badge de quantité visible et fonctionnel -->
+                  <!-- Badge de quantité  -->
                   @if (getQuantiteDisponible(produit.idProduit) !== null) {
                     @if (getQuantiteDisponible(produit.idProduit) === 0) {
                       <div class="badge-disponibilite indisponible">
@@ -279,7 +278,7 @@
                         <i class="fas fa-eye"></i>
                       </button>
 
-                      <!-- ✅ FIX #6: Bouton ajouter désactivé si indisponible -->
+                      <!--  Bouton ajouter désactivé si indisponible -->
                       <button
                         class="btn-add-cart"
                         (click)="ajouterAuPanier(produit)"
