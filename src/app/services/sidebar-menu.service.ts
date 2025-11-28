@@ -103,11 +103,11 @@ export class SidebarMenuService {
             order: 9
           },
           {
-            id: 'evaluations',
-            label: 'Mes Évaluations',
+            id: 'avis',
+            label: 'Mes avis',
             icon: '⭐',
-            route: '/mes-evaluations',
-            order: 10
+            route: 'client/mes-avis',
+            order: 10,
           },
           {
             id: 'notifications-client',
@@ -347,17 +347,24 @@ export class SidebarMenuService {
           },
           {
             id: 'evaluations-admin',
-            label: 'Évaluations',
-            icon: '⭐',
-            route: '/admin/evaluations',
+            label: 'Modération Avis',
+            icon: '⚖️',
+            route: '/admin/avis/moderation',
             order: 14
+          },
+          {
+            id: 'statistique-avis-admin',
+            label: 'Statistiques Avis',
+            icon: '📊',
+            route: '/admin/avis/statistiques',
+            order: 15
           },
           {
             id: 'notifications-admin',
             label: 'Centre Notifications',
             icon: '🔔',
             route: '/notifications',
-            order: 15
+            order: 16
           }
         ]
       },
@@ -369,14 +376,14 @@ export class SidebarMenuService {
             label: 'Statistiques',
             icon: '📈',
             route: '/admin/statistiques',
-            order: 16
+            order: 17
           },
           {
             id: 'rapports',
             label: 'Rapports',
             icon: '📑',
             route: '/admin/rapports',
-            order: 17
+            order: 18
           }
         ]
       }

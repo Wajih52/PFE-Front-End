@@ -1,0 +1,65 @@
+<div class="avis-create-container">
+  <div class="avis-create-card">
+    <h1>✍️ Laisser un avis</h1>
+
+    @if (loading()) {
+      <div class="loading">Chargement...</div>
+    } @else if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    } @else {
+      <form [formGroup]="avisForm" (ngSubmit)="onSubmit()">
+
+        <!-- Note (Étoiles) -->
+        <div class="form-group">
+          <label>Note <span class="required">*</span></label>
+          <div class="stars-container">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <span
+                class="star"
+                [class.active]="star <= selectedNote()"
+                (click)="setNote(star)"
+                (mouseenter)="hoverNote.set(star)"
+                (mouseleave)="hoverNote.set(0)">
+                    {{ star <= (hoverNote() || selectedNote()) ? '★' : '☆' }}
+                  </span>
+            }
+          </div>
+          @if (avisForm.get('note')?.invalid && avisForm.get('note')?.touched) {
+            <small class="error">La note est obligatoire</small>
+          }
+        </div>
+
+        <!-- Commentaire -->
+        <div class="form-group">
+          <label>Commentaire (optionnel)</label>
+          <textarea
+            formControlName="commentaire"
+            rows="5"
+            placeholder="Partagez votre expérience avec ce produit..."
+            maxlength="1000">
+              </textarea>
+          <small class="char-count">
+            {{ avisForm.get('commentaire')?.value?.length || 0 }} / 1000
+          </small>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="goBack()">
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="avisForm.invalid || submitting()">
+            {{ submitting() ? 'Envoi...' : 'Publier l\'avis' }}
+          </button>
+        </div>
+      </form>
+    }
+
+    @if (successMessage()) {
+      <div class="success-message">{{ successMessage() }}</div>
+    }
+  </div>
+</div>

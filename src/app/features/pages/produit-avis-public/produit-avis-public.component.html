@@ -1,0 +1,69 @@
+<div class="produit-avis-container">
+  <h1>⭐ Avis des clients</h1>
+
+  @if (loading()) {
+    <div class="loading">Chargement...</div>
+  } @else {
+    <!-- Statistiques -->
+    @if (statistiques()) {
+      <div class="stats-card">
+        <div class="note-globale">
+          <div class="note-value">{{ statistiques()!.moyenneNotes | number:'1.1-1' }}</div>
+          <div class="stars">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <span [class.active]="star <= Math.round(statistiques()!.moyenneNotes)">★</span>
+            }
+          </div>
+          <div class="total-avis">{{ statistiques()!.nombreAvisApprouves }} avis</div>
+        </div>
+
+        <div class="repartition">
+          @for (etoile of [5, 4, 3, 2, 1]; track etoile) {
+            <div class="bar-row">
+              <span class="etoile-label">{{ etoile }} ★</span>
+              <div class="bar-container">
+                <div
+                  class="bar-fill"
+                  [style.width.%]="getPourcentage(etoile)">
+                </div>
+              </div>
+              <span class="count">{{ getNombre(etoile) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Liste des avis -->
+    @if (avisList().length === 0) {
+      <div class="empty-state">
+        <p>Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+      </div>
+    } @else {
+      <div class="avis-list">
+        @for (avis of avisList(); track avis.idAvis) {
+          <div class="avis-card">
+            <div class="avis-header">
+              <div class="client-info">
+                <strong>{{ avis.nomClient }}.</strong>
+                <small>{{ avis.dateAvis | date:'dd MMM yyyy' }}</small>
+              </div>
+              <div class="note">
+                <div class="stars">
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <span [class.active]="star <= avis.note">★</span>
+                  }
+                </div>
+                <span class="note-value">{{ avis.note }}/5</span>
+              </div>
+            </div>
+
+            @if (avis.commentaire) {
+              <p class="commentaire">{{ avis.commentaire }}</p>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

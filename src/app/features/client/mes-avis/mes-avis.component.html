@@ -1,0 +1,64 @@
+<div class="mes-avis-container">
+  <h1>📝 Mes Avis</h1>
+
+  @if (loading()) {
+    <div class="loading">Chargement...</div>
+  } @else if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  } @else if (avisList().length === 0) {
+    <div class="empty-state">
+      <p>Vous n'avez pas encore laissé d'avis.</p>
+    </div>
+  } @else {
+    <div class="avis-grid">
+      @for (avis of avisList(); track avis.idAvis) {
+        <div class="avis-card">
+          <div class="avis-header">
+            <div class="produit-info">
+              <h3>{{ avis.nomProduit }}</h3>
+              <span class="code">{{ avis.codeProduit }}</span>
+            </div>
+            <div class="statut" [class]="getStatutClass(avis.statut)">
+              {{ getStatutLabel(avis.statut) }}
+            </div>
+          </div>
+
+          <div class="note-section">
+            <div class="stars">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <span [class.active]="star <= avis.note">
+                      {{ star <= avis.note ? '★' : '☆' }}
+                    </span>
+              }
+            </div>
+            <span class="note-value">{{ avis.note }}/5</span>
+          </div>
+
+          @if (avis.commentaire) {
+            <p class="commentaire">{{ avis.commentaire }}</p>
+          }
+
+          <div class="avis-footer">
+            <small class="date">{{ avis.dateAvis | date:'dd/MM/yyyy à HH:mm' }}</small>
+
+            @if (avis.peutEtreModifie) {
+              <button class="btn btn-sm btn-edit" (click)="modifierAvis(avis)">
+                ✏️ Modifier
+              </button>
+            }
+
+            <button class="btn btn-sm btn-delete" (click)="supprimerAvis(avis)">
+              🗑️ Supprimer
+            </button>
+          </div>
+
+          @if (avis.statut === StatutAvis.REJETE && avis.commentaireModeration) {
+            <div class="moderation-message">
+              <strong>Raison du rejet :</strong> {{ avis.commentaireModeration }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -79,6 +79,21 @@ export const routes: Routes = [
     loadComponent: () => import('./features/pages/home/home.component')
       .then(m => m.HomeComponent)
   },
+  // ============================================
+  // ROUTES PUBLIQUES - CONSULTATION AVIS
+  // ============================================
+  {
+    path: 'produits/:id/avis',
+    loadComponent: () => import('./features/pages/produit-avis-public/produit-avis-public.component')
+      .then(m => m.ProduitAvisPublicComponent),
+    title: 'Avis du Produit'
+  },
+/*  {
+    path: 'produits/:id/details',
+    loadComponent: () => import('./features/pages/produit-details/produit-details.component')
+      .then(m => m.ProduitDetailsComponent),
+    title: 'Détails du Produit'
+  },*/
   // Routes Avec Side Bar
   {
     path: '',
@@ -237,6 +252,24 @@ export const routes: Routes = [
             path: 'reclamations',
             component: ReclamationsListComponent,
             canActivate: [authGuard, roleGuard(['ADMIN'])]
+          },
+          {
+            path: 'avis/moderation',
+            loadComponent: () => import('./features/admin/pages/avis-moderation/avis-moderation.component')
+              .then(m => m.AvisModerationComponent),
+            title: 'Modération des Avis'
+          },
+          {
+            path: 'avis/statistiques',
+            loadComponent: () => import('./features/admin/pages/avis-statistiques/avis-statistiques.component')
+              .then(m => m.AvisStatistiquesComponent),
+            title: 'Statistiques des Avis'
+          },
+          {
+            path: 'produits/:id/avis',
+            loadComponent: () => import('./features/admin/pages/produit-avis-admin/produit-avis-admin.component')
+              .then(m => m.ProduitAvisAdminComponent),
+            title: 'Avis du Produit'
           }
         ]
       },
@@ -291,6 +324,24 @@ export const routes: Routes = [
             path: 'nouvelle-reclamation',
             component: NouvelleReclamationComponent,
             canActivate: [authGuard] // Uniquement utilisateurs connectés
+          },
+          {
+            path: 'mes-avis',
+            loadComponent: () => import('./features/client/mes-avis/mes-avis.component')
+              .then(m => m.MesAvisComponent),
+            title: 'Mes Avis'
+          },
+          {
+            path: 'avis/creer/:idReservation/:idProduit',
+            loadComponent: () => import('./features/client/avis-create/avis-create.component')
+              .then(m => m.AvisCreateComponent),
+            title: 'Créer un Avis'
+          },
+          {
+            path: 'avis/modifier/:idAvis',
+            loadComponent: () => import('./features/client/avis-edit/avis-edit.component')
+              .then(m => m.AvisEditComponent),
+            title: 'Modifier mon Avis'
           }
         ]
       },

@@ -1344,3 +1344,124 @@ $shadow-md: 0 4px 12px;
     max-width: 400px;
   }
 }
+
+.btn-avis {
+  background: linear-gradient(135deg, #C8A882 0%, #d4b896 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(200, 168, 130, 0.3);
+}
+
+.btn-avis:hover {
+  background: linear-gradient(135deg, #b89872 0%, #C8A882 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(200, 168, 130, 0.4);
+}
+
+.btn-avis:active {
+  transform: translateY(0);
+}
+
+.avis-deja-donne {
+  display: flex;
+  align-items: center;
+}
+
+.badge-avis {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid #c3e6cb;
+}
+
+@media (max-width: 768px) {
+  .ligne-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-avis, .avis-deja-donne {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .btn-avis {
+    width: 100%;
+  }
+}
+
+
+// pour les badges de livraison
+
+// Container pour les badges
+.badges-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+// Badge de livraison avec icône
+.badge-livraison {
+  font-size: 0.85rem;
+
+  i {
+    margin-right: 0.3rem;
+  }
+}
+
+// Responsive : empiler les badges sur mobile
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+
+  .badges-container {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+}
+
+// Classes de couleur pour les badges de livraison
+.badge-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #16181b;
+}
+
+.badge-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  color: white;
+}
+
+.badge-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+

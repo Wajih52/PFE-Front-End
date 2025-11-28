@@ -43,6 +43,16 @@
         >
           {{ statutLabels[res.statutReservation] }}
         </span>
+        <!-- Statut Livraison -->
+        @if (res.statutLivraisonRes) {
+          <span
+            class="badge badge-livraison"
+            [ngClass]="getStatutLivraisonBadgeClass(res.statutLivraisonRes)"
+          >
+                  <i class="fas fa-truck"></i>
+            {{ statutLivraisonLabels[res.statutLivraisonRes] }}
+                </span>
+        }
       </div>
     </div>
 
@@ -279,7 +289,20 @@
                   <div class="produit-montant">
                     Sous-total: <strong>{{ (ligne.sousTotal * calculerJours(ligne.dateDebut, ligne.dateFin)| number:'1.2-2')  }} DT</strong>
                   </div>
-
+                  <!-- Bouton "Laisser un avis" - Uniquement pour CLIENT et si réservation TERMINÉE -->
+                  @if (isClient() && reservation()!.statutReservation === 'TERMINE') {
+                    @if (produitsAvecAvis().has(ligne.idProduit)) {
+                      <div class="avis-deja-donne">
+                        <span class="badge-avis">✅ Avis donné</span>
+                      </div>
+                    } @else {
+                      <button
+                        class="btn-avis"
+                        (click)="laisserAvis(ligne.idProduit)">
+                        ⭐ Laisser un avis
+                      </button>
+                    }
+                  }
                   @if (peutModifier()) {
                     <div class="actions-ligne">
                     <button

@@ -19,6 +19,7 @@ import {
 } from '../../../../core/models/livraison.model';
 import {StatutLivraison} from '../../../../core/models/reservation.model';
 import {StatutCompte, UserResponse} from '../../../../core/models';
+import {NotificationPersistantService} from '../../../../services/notification-persistant.service';
 
 @Component({
   selector: 'app-livraison-detail',
@@ -33,6 +34,7 @@ export class LivraisonDetailComponent implements OnInit {
   private livraisonService = inject(LivraisonService);
   private utilisateurService = inject(UtilisateurService);
   private fb = inject(FormBuilder);
+  private notificationPersist = inject(NotificationPersistantService)
 
   // Données
   livraison = signal<LivraisonResponseDto | null>(null);
@@ -150,7 +152,7 @@ export class LivraisonDetailComponent implements OnInit {
         this.successMessage.set('Livraison marquée en cours !');
         this.livraison.set(updated);
         this.actionEnCours.set(null);
-
+        this.notificationPersist.refreshCount();
         setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
@@ -179,7 +181,7 @@ export class LivraisonDetailComponent implements OnInit {
         this.successMessage.set('Livraison marquée comme livrée !');
         this.livraison.set(updated);
         this.actionEnCours.set(null);
-
+        this.notificationPersist.refreshCount();
         setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
@@ -254,7 +256,7 @@ export class LivraisonDetailComponent implements OnInit {
         this.fermerModalAffectation();
         this.chargerLivraison(); // Recharger pour avoir les affectations à jour
         this.actionEnCours.set(null);
-
+        this.notificationPersist.refreshCount();
         setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
@@ -282,7 +284,7 @@ export class LivraisonDetailComponent implements OnInit {
         this.successMessage.set('Affectation retirée avec succès !');
         this.chargerLivraison();
         this.actionEnCours.set(null);
-
+        this.notificationPersist.refreshCount();
         setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
@@ -421,6 +423,7 @@ export class LivraisonDetailComponent implements OnInit {
           this.successMessage.set('Ligne marquée en retour avec succès !');
           this.chargerLivraison();
           this.actionEnCours.set(null);
+          this.notificationPersist.refreshCount();
           setTimeout(() => this.successMessage.set(''), 3000);
         },
         error: (error) => {
@@ -449,6 +452,7 @@ export class LivraisonDetailComponent implements OnInit {
           this.successMessage.set('✅ Ligne retournée avec succès ! Stock réintégré.');
           this.chargerLivraison();
           this.actionEnCours.set(null);
+          this.notificationPersist.refreshCount();
           setTimeout(() => this.successMessage.set(''), 3000);
         },
         error: (error) => {

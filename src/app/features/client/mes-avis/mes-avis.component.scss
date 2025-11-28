@@ -1,0 +1,161 @@
+.mes-avis-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.avis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.avis-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.avis-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.avis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.produit-info h3 {
+  margin: 0 0 0.25rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.code {
+  font-size: 0.875rem;
+  color: #888;
+}
+
+.statut {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statut.en-attente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.statut.approuve {
+  background: #d4edda;
+  color: #155724;
+}
+
+.statut.rejete {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.note-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.stars span {
+  font-size: 1.5rem;
+  color: #ddd;
+}
+
+.stars span.active {
+  color: #f39c12;
+}
+
+.note-value {
+  font-weight: 600;
+  color: #555;
+}
+
+.commentaire {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.avis-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.date {
+  color: #888;
+  flex: 1;
+}
+
+.btn {
+  padding: 0.375rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-edit {
+  background: #C8A882;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #b89872;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #c0392b;
+}
+
+.moderation-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #fff3cd;
+  border-left: 3px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.loading, .error-message, .empty-state {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+}
+
+.error-message {
+  color: #e74c3c;
+}

@@ -1,17 +1,18 @@
 // src/app/features/pages/panier/panier.component.ts
-// ✅ VERSION CORRIGÉE - Problèmes 6-10 résolus
 
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { PanierService } from '../../../services/panier.service';
-import { ReservationService } from '../../../services/reservation.service';
-import { ProduitService } from '../../../services/produit.service';
-import { LignePanier } from '../../../core/models/panier.model';
-import { DevisRequestDto } from '../../../core/models/reservation.model';
-import { ToastrService } from 'ngx-toastr';
+
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
+import {PanierService} from '../../../services/panier.service';
+import {ReservationService} from '../../../services/reservation.service';
+import {ProduitService} from '../../../services/produit.service';
+import {LignePanier} from '../../../core/models/panier.model';
+import {DevisRequestDto} from '../../../core/models/reservation.model';
+import {ToastrService} from 'ngx-toastr';
 import {ConfirmationService} from '../../../core/services/confirmation.service';
+import {NotificationPersistantService} from '../../../services/notification-persistant.service';
 
 @Component({
   selector: 'app-panier',
@@ -27,6 +28,7 @@ export class PanierComponent implements OnInit {
   private router = inject(Router);
   private toastr = inject(ToastrService);
   private confirmationService = inject(ConfirmationService);
+  private notificationPersist = inject(NotificationPersistantService)
 
   // STATE SIGNALS
   lignes = this.panierService.lignes;
@@ -38,16 +40,13 @@ export class PanierComponent implements OnInit {
   //loading states
   isCreatingDevis = signal<boolean>(false);     // Pour "Demander devis"
   isCreatingCommande = signal<boolean>(false);   // Pour "Commander directement"
-  isCheckingAvailability = signal<boolean>(false);
+
 
   // Observations client
   observations = signal<string>('');
 
-  // Mode de validation
-  modeValidation = signal<'devis' | 'direct'>('devis');
 
-  // ✅ FIX #7: Disponibilité PAR LIGNE (pas par produit global)
-  // La clé est construite comme: "idProduit-dateDebut-dateFin"
+  //  Disponibilité PAR LIGNE (pas par produit global)
   disponibilitesParLigne = signal<Map<string, { disponible: boolean; quantiteMax: number }>>(new Map());
 
   ngOnInit(): void {
@@ -56,12 +55,12 @@ export class PanierComponent implements OnInit {
       this.observations.set(savedObservations);
     }
 
-    // ✅ FIX #10: Vérifier automatiquement à l'init (pas de bouton nécessaire)
+    //  Vérifier automatiquement à l'init (pas de bouton nécessaire)
     this.verifierDisponibilitesAutomatique();
   }
 
   /**
-   * ✅ FIX #10: Vérification automatique sans bouton
+   *  Vérification automatique sans bouton
    */
   private verifierDisponibilitesAutomatique(): void {
     const lignes = this.lignes();
@@ -73,7 +72,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #7: Vérifier la disponibilité d'UNE ligne spécifique
+   *  Vérifier la disponibilité d'UNE ligne spécifique
    */
   private verifierDisponibiliteLigne(ligne: LignePanier): void {
     this.produitService.verifierDisponibiliteSurPeriode(
@@ -98,31 +97,22 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ Générer une clé unique pour chaque ligne
+   *  Générer une clé unique pour chaque ligne
    */
   protected getCleUnique(ligne: LignePanier): string {
     return `${ligne.idProduit}-${ligne.dateDebut}-${ligne.dateFin}`;
   }
 
   /**
-   * ✅ FIX #7: Obtenir la disponibilité d'une ligne spécifique
+   *  Obtenir la disponibilité d'une ligne spécifique
    */
   getDisponibiliteLigne(ligne: LignePanier): { disponible: boolean; quantiteMax: number } | undefined {
     const cle = this.getCleUnique(ligne);
-    const dispo = this.disponibilitesParLigne().get(cle);
-
-    // ✅ DEBUG: Ajouter un console.log pour vérifier
-    console.log(`📊 Disponibilité pour ${ligne.nomProduit}:`, {
-      cle,
-      quantiteActuelle: ligne.quantite,
-      dispo
-    });
-
-    return dispo;
+    return this.disponibilitesParLigne().get(cle);
   }
 
   /**
-   * ✅ FIX #7 & #8: Vérifier si une ligne est disponible
+   *  Vérifier si une ligne est disponible
    */
   isLigneDisponible(ligne: LignePanier): boolean {
     const dispo = this.getDisponibiliteLigne(ligne);
@@ -130,12 +120,12 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #8 & #9: Incrémenter la quantité avec validation
+   *  Incrémenter la quantité avec validation
    */
   incrementerQuantite(ligne: LignePanier): void {
     const dispo = this.getDisponibiliteLigne(ligne);
 
-    // ✅ FIX #9: Vérifier si on peut incrémenter
+    //  Vérifier si on peut incrémenter
     if (dispo && ligne.quantite >= dispo.quantiteMax) {
       this.toastr.warning(
         `Maximum ${dispo.quantiteMax} disponible(s) pour cette période`,
@@ -149,7 +139,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #8: Décrémenter la quantité
+   * Décrémenter la quantité
    */
   decrementerQuantite(ligne: LignePanier): void {
     if (ligne.quantite <= 1) {
@@ -159,14 +149,13 @@ export class PanierComponent implements OnInit {
 
     const nouvelleQuantite = ligne.quantite - 1;
 
-    // ✅ Mettre à jour directement le panier (pas besoin de vérifier la dispo pour décrémenter)
+    // Mettre à jour directement le panier (pas besoin de vérifier la dispo pour décrémenter)
     this.panierService.modifierQuantite(
       ligne.idProduit,
       ligne.dateDebut,
       ligne.dateFin,
       nouvelleQuantite
     );
-    //this.modifierQuantite(ligne, nouvelleQuantite);
   }
 
   /**
@@ -198,7 +187,7 @@ export class PanierComponent implements OnInit {
       );
     }
 
-    // ✅ CORRECTION: Mettre à jour via le service panier pour recalculer le prix
+    // Mettre à jour via le service panier pour recalculer le prix
     this.panierService.modifierQuantite(
       ligne.idProduit,
       ligne.dateDebut,
@@ -228,7 +217,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #8: Modifier la quantité avec vérification temps réel
+   *  Modifier la quantité avec vérification temps réel
    */
   modifierQuantite(ligne: LignePanier, nouvelleQuantite: number): void {
     if (nouvelleQuantite < 1) {
@@ -278,7 +267,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #9: Vérifier si le bouton + doit être désactivé
+   * Vérifier si le bouton + doit être désactivé
    */
   estQuantiteMaximale(ligne: LignePanier): boolean {
     const dispo = this.getDisponibiliteLigne(ligne);
@@ -354,7 +343,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ Valider le panier et créer un devis
+   *  Valider le panier et créer un devis
    */
   demanderDevis(): void {
     if (this.estVide()) {
@@ -362,7 +351,7 @@ export class PanierComponent implements OnInit {
       return;
     }
 
-    // ✅ Vérifier que toutes les lignes sont disponibles
+    // Vérifier que toutes les lignes sont disponibles
     const lignes = this.lignes();
     const toutesDisponibles = lignes.every(ligne => this.isLigneDisponible(ligne));
 
@@ -393,6 +382,7 @@ export class PanierComponent implements OnInit {
       next: (reservation) => {
         this.toastr.success('Votre demande de devis a été envoyée', '✅ Devis créé');
         this.panierService.viderPanier();
+        this.notificationPersist.refreshCount();
         this.router.navigate(['client/mes-devis']);
       },
       error: (error) => {
@@ -404,7 +394,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ Valider le panier et commander directement
+   * Valider le panier et commander directement
    */
   commanderDirectement(): void {
     if (this.estVide()) {
@@ -412,7 +402,7 @@ export class PanierComponent implements OnInit {
       return;
     }
 
-    // ✅ Vérifier que toutes les lignes sont disponibles
+    //  Vérifier que toutes les lignes sont disponibles
     const lignes = this.lignes();
     const toutesDisponibles = lignes.every(ligne => this.isLigneDisponible(ligne));
 
@@ -443,6 +433,7 @@ export class PanierComponent implements OnInit {
       next: (reservation) => {
         this.toastr.success('Votre commande a été Crée', ' Commande créé');
         this.panierService.viderPanier();
+        this.notificationPersist.refreshCount();
         this.router.navigate(['client/mes-commandes']);
       },
       error: (error) => {
@@ -462,7 +453,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #3: Obtenir l'URL complète de l'image du produit
+   * Obtenir l'URL complète de l'image du produit
    */
   getImageUrl(ligne: LignePanier): string {
     if (ligne.imageProduit) {
@@ -478,7 +469,7 @@ export class PanierComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #3: Gestion des erreurs d'image
+   *  Gestion des erreurs d'image
    */
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;

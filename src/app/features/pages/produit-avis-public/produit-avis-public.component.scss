@@ -1,0 +1,175 @@
+.produit-avis-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+h1 {
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.stats-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.note-globale {
+  text-align: center;
+  padding: 1rem;
+  border-right: 1px solid #eee;
+}
+
+.note-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.stars span {
+  font-size: 1.5rem;
+  color: #ddd;
+}
+
+.stars span.active {
+  color: #f39c12;
+}
+
+.total-avis {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.repartition {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 40px;
+  align-items: center;
+  gap: 1rem;
+}
+
+.etoile-label {
+  color: #555;
+  font-weight: 500;
+}
+
+.bar-container {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #C8A882, #f39c12);
+  transition: width 0.5s ease;
+}
+
+.count {
+  text-align: right;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.avis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.avis-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.client-info strong {
+  color: #333;
+}
+
+.client-info small {
+  color: #888;
+}
+
+.note {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.note .stars {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.note .stars span {
+  font-size: 1.25rem;
+}
+
+.note-value {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.commentaire {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.loading, .empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .stats-card {
+    grid-template-columns: 1fr;
+  }
+
+  .note-globale {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2rem;
+  }
+}

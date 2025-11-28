@@ -15,6 +15,7 @@ export interface MouvementStockResponse {
   motif: string;
   effectuePar: string;
   idReservation?: number;
+  referenceReservation?:string;
 
   idProduit: number;
   nomProduit: string;

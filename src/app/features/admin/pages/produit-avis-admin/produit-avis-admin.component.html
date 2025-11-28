@@ -1,0 +1,164 @@
+<div class="produit-avis-admin-container">
+  @if (produit()) {
+    <div class="header">
+      <button class="btn-back" (click)="goBack()">← Retour</button>
+      <div class="produit-title">
+        <h1>{{ produit()!.nomProduit }}</h1>
+        <span class="code">{{ produit()!.codeProduit }}</span>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading">Chargement...</div>
+  } @else {
+    <!-- Statistiques -->
+    @if (statistiques()) {
+      <div class="stats-section">
+        <div class="stat-card">
+          <div class="stat-value">{{ statistiques()!.moyenneNotes | number:'1.1-1' }}</div>
+          <div class="stat-label">Note moyenne</div>
+          <div class="stars">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <span [class.active]="star <= Math.round(statistiques()!.moyenneNotes)">★</span>
+            }
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-value">{{ statistiques()!.nombreAvisApprouves }}</div>
+          <div class="stat-label">Avis approuvés</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-value">{{ statistiques()!.nombreAvisEnAttente }}</div>
+          <div class="stat-label">En attente</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-value">{{ statistiques()!.nombreAvisRejetes }}</div>
+          <div class="stat-label">Rejetés</div>
+        </div>
+      </div>
+
+      <!-- Répartition -->
+      <div class="repartition-section">
+        <h2>📊 Répartition des notes</h2>
+        <div class="repartition-bars">
+          @for (etoile of [5, 4, 3, 2, 1]; track etoile) {
+            <div class="bar-row">
+              <span class="label">{{ etoile }} ★</span>
+              <div class="bar-container">
+                <div
+                  class="bar-fill"
+                  [style.width.%]="getPourcentage(etoile)">
+                </div>
+              </div>
+              <span class="count">{{ getNombre(etoile) }} ({{ getPourcentage(etoile) | number:'1.0-0' }}%)</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Filtres -->
+    <div class="filters">
+      <button
+        class="filter-btn"
+        [class.active]="filtreStatut() === 'TOUS'"
+        (click)="filtrerPar('TOUS')">
+        Tous ({{ avisList().length }})
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filtreStatut() === 'EN_ATTENTE'"
+        (click)="filtrerPar('EN_ATTENTE')">
+        En attente ({{ compterParStatut('EN_ATTENTE') }})
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filtreStatut() === 'APPROUVE'"
+        (click)="filtrerPar('APPROUVE')">
+        Approuvés ({{ compterParStatut('APPROUVE') }})
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filtreStatut() === 'REJETE'"
+        (click)="filtrerPar('REJETE')">
+        Rejetés ({{ compterParStatut('REJETE') }})
+      </button>
+    </div>
+
+    <!-- Liste des avis -->
+    @if (avisAffiches().length === 0) {
+      <div class="empty-state">Aucun avis pour ce filtre</div>
+    } @else {
+      <div class="avis-list">
+        @for (avis of avisAffiches(); track avis.idAvis) {
+          <div class="avis-card">
+            <div class="avis-header">
+              <div class="client-info">
+                <strong>{{ avis.prenomClient }} {{ avis.nomClient }}</strong>
+                <small>{{ avis.emailClient }}</small>
+              </div>
+              <div class="date-statut">
+                <small>{{ avis.dateAvis | date:'dd/MM/yyyy HH:mm' }}</small>
+                <span class="statut-badge" [class]="getStatutClass(avis.statut)">
+                      {{ getStatutLabel(avis.statut) }}
+                    </span>
+              </div>
+            </div>
+
+            <div class="note-section">
+              <div class="stars">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <span [class.active]="star <= avis.note">★</span>
+                }
+              </div>
+              <span class="note-value">{{ avis.note }}/5</span>
+            </div>
+
+            @if (avis.commentaire) {
+              <p class="commentaire">{{ avis.commentaire }}</p>
+            }
+
+            @if (avis.statut === StatutAvis.EN_ATTENTE) {
+              <div class="moderation-actions">
+                    <textarea
+                      [(ngModel)]="commentairesModeration[avis.idAvis]"
+                      placeholder="Commentaire de modération (optionnel)"
+                      rows="2">
+                    </textarea>
+                <div class="action-buttons">
+                  <button
+                    class="btn btn-success"
+                    (click)="approuverAvis(avis)">
+                    ✅ Approuver
+                  </button>
+                  <button
+                    class="btn btn-danger"
+                    (click)="rejeterAvis(avis)">
+                    ❌ Rejeter
+                  </button>
+                </div>
+              </div>
+            } @else {
+              @if (avis.commentaireModeration) {
+                <div class="moderation-info">
+                  <strong>Modéré le :</strong> {{ avis.dateModeration | date:'dd/MM/yyyy HH:mm' }}
+                  <br>
+                  <strong>Commentaire :</strong> {{ avis.commentaireModeration }}
+                </div>
+              }
+              <button
+                class="btn btn-delete"
+                (click)="supprimerDefinitivement(avis)">
+                🗑️ Supprimer définitivement
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

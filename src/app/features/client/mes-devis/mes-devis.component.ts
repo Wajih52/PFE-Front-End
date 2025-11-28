@@ -8,6 +8,7 @@ import { ReservationService } from '../../../services/reservation.service';
 import { ReservationResponseDto, ValidationDevisDto } from '../../../core/models/reservation.model';
 import {FormsModule} from '@angular/forms';
 import { FactureService } from '../../../services/facture.service';
+import {NotificationPersistantService} from '../../../services/notification-persistant.service';
 
 @Component({
   selector: 'app-mes-devis',
@@ -20,6 +21,7 @@ export class MesDevisComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
   private factureService = inject(FactureService);
+  private notificationPersist = inject(NotificationPersistantService)
 
 
 
@@ -116,7 +118,7 @@ export class MesDevisComponent implements OnInit {
         this.successMessage.set('✅ Devis accepté avec succès ! Votre réservation est maintenant confirmée.');
         this.showConfirmModal.set(false);
         this.chargerMesDevis(); // Recharger la liste
-
+        this.notificationPersist.refreshCount();
         // Rediriger vers mes commandes après 2 secondes
         setTimeout(() => {
           this.router.navigate(['/client/mes-commandes']);

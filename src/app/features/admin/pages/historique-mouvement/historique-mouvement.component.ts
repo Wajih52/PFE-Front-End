@@ -155,8 +155,7 @@ export class HistoriqueMouvementComponent implements OnInit {
       TypeMouvement.AJOUT_STOCK,
       TypeMouvement.AJOUT_INSTANCE,
       TypeMouvement.RETOUR_MAINTENANCE,
-      TypeMouvement.RETOUR,
-      TypeMouvement.ANNULATION_RESERVATION
+      TypeMouvement.RETOUR
     ];
 
     const typesSorties = [
@@ -164,7 +163,6 @@ export class HistoriqueMouvementComponent implements OnInit {
       TypeMouvement.SUPPRESSION_INSTANCE,
       TypeMouvement.MAINTENANCE,
       TypeMouvement.PRODUIT_ENDOMMAGE,
-      TypeMouvement.RESERVATION,
       TypeMouvement.LIVRAISON
     ];
 

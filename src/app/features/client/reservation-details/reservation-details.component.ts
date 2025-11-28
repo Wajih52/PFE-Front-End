@@ -6,13 +6,14 @@ import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReservationService } from '../../../services/reservation.service';
+import { AuthService } from '../../../core/services/auth.service';
 import {
   ReservationResponseDto,
   LigneReservationResponseDto,
   ModifierUneLigneRequestDto,
   DecalerToutesLignesRequestDto,
   ModificationDatesResponseDto,
-  StatutReservationLabels, LigneReservationRequestDto
+  StatutReservationLabels, LigneReservationRequestDto, StatutLivraisonLabels, StatutLivraison
 } from '../../../core/models/reservation.model';
 import {ProduitResponse} from '../../../core/models';
 import {LigneReservationService} from '../../../services/ligne-reservation.service';
@@ -20,6 +21,7 @@ import {ProduitService} from '../../../services/produit.service';
 import {StorageService} from '../../../core/services/storage.service';
 import { FactureService } from '../../../services/facture.service';
 import { FactureResponse } from '../../../core/models/facture.model';
+import {AvisService} from '../../../services/avis.service';
 
 
 @Component({
@@ -37,9 +39,12 @@ export class ReservationDetailsComponent implements OnInit {
   private router = inject(Router);
   private storage= inject(StorageService);
   private factureService = inject(FactureService);
+  private authService = inject(AuthService);
+  private avisService = inject(AvisService);
 
   // Signals
   reservation = signal<ReservationResponseDto | null>(null);
+  produitsAvecAvis = signal<Set<number>>(new Set());
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
@@ -49,7 +54,7 @@ export class ReservationDetailsComponent implements OnInit {
   showModifierLigneModal = signal<boolean>(false);
   showAnnulerModal = signal<boolean>(false);
 
-  // 🆕 NOUVEAUX MODALS pour gestion des lignes
+  //  pour gestion des lignes
   showAjouterLigneModal = signal<boolean>(false);
   showEditerLigneModal = signal<boolean>(false);
   showSupprimerLigneModal = signal<boolean>(false);
@@ -65,7 +70,7 @@ export class ReservationDetailsComponent implements OnInit {
   nouvelleDateFin = signal<string>('');
   motifModifLigne = signal<string>('');
 
-  // 🆕 NOUVEAUX FORMULAIRES pour ajouter/éditer une ligne
+  // FORMULAIRES pour ajouter/éditer une ligne
   produitsDisponibles = signal<ProduitResponse[]>([]);
   formulaireLigne = signal<LigneReservationRequestDto>({
     idProduit: 0,
@@ -77,16 +82,24 @@ export class ReservationDetailsComponent implements OnInit {
 
   // Labels
   readonly statutLabels = StatutReservationLabels;
+  readonly statutLivraisonLabels = StatutLivraisonLabels;
 
   factures = signal<FactureResponse[]>([]);
   loadingFactures = signal<boolean>(false);
 
+  idReservation!: number;
+
   ngOnInit(): void {
-    const idReservation = this.route.snapshot.params['id'];
-    if (idReservation) {
-      this.chargerReservation(+idReservation);
+     this.idReservation = this.route.snapshot.params['id'];
+    if (this.idReservation) {
+      this.chargerReservation(+this.idReservation);
       this.chargerProduitsDisponibles();
       this.chargerFactures();
+    }
+
+    // Si c'est un client, vérifier quels produits ont déjà un avis
+    if (this.isClient()) {
+      this.verifierAvisExistants();
     }
   }
 
@@ -379,7 +392,6 @@ export class ReservationDetailsComponent implements OnInit {
       next: (response) => {
         this.successMessage.set(` Dates décalées de ${request.nombreJours} jour(s) avec succès !`);
         this.showDecalageModal.set(false);
-        this.afficherRecapitulatif(response);
         // Recharger les données
         this.chargerReservation(reservation.idReservation);
       },
@@ -433,7 +445,6 @@ export class ReservationDetailsComponent implements OnInit {
       next: (response) => {
         this.successMessage.set(` Ligne "${ligne.nomProduit}" modifiée avec succès !`);
         this.showModifierLigneModal.set(false);
-        this.afficherRecapitulatif(response);
         // Recharger les données
         this.chargerReservation(reservation.idReservation);
       },
@@ -485,12 +496,30 @@ export class ReservationDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Afficher le récapitulatif des modifications
-   */
-  afficherRecapitulatif(response: ModificationDatesResponseDto): void {
-    console.log('📊 Récapitulatif des modifications:', response);
-    // Vous pouvez afficher un modal avec les détails des modifications
+  // partie Avis Produits
+
+  verifierAvisExistants(): void {
+    // Vérifier pour chaque produit si le client a déjà laissé un avis
+    this.avisService.getMesAvis().subscribe({
+      next: (avis) => {
+        const produitsAvecAvisSet = new Set(
+          avis
+            .filter(a => a.idReservation === this.idReservation)
+            .map(a => a.idProduit)
+        );
+        this.produitsAvecAvis.set(produitsAvecAvisSet);
+      }
+    });
+  }
+
+  isClient(): boolean|undefined {
+    // Vérifier si l'utilisateur connecté est un CLIENT
+    const user = this.authService.getCurrentUser();
+    return user?.roles.includes('CLIENT');
+  }
+
+  laisserAvis(idProduit: number): void {
+    this.router.navigate(['/client/avis/creer', this.idReservation, idProduit]);
   }
 
   // ============================================
@@ -578,5 +607,27 @@ export class ReservationDetailsComponent implements OnInit {
     }
     // Image placeholder si pas d'image
     return 'https://via.placeholder.com/300x250/C8A882/FFFFFF?text=' + encodeURIComponent(ligne.nomProduit);
+  }
+
+
+
+  /**
+   * Obtenir la classe CSS du badge de statut de livraison
+   */
+  getStatutLivraisonBadgeClass(statut: StatutLivraison | undefined): string {
+    if (!statut) return 'badge-secondary';
+
+    const badges: Record<StatutLivraison, string> = {
+      'NOT_TODAY': 'badge-secondary',
+      'EN_ATTENTE': 'badge-warning',
+      'EN_COURS': 'badge-info',
+      'LIVREE': 'badge-success',
+      'RETOUR': 'badge-primary',
+      'RETOUR_PARTIEL': 'badge-warning',
+      'RETOURNEE': 'badge-success',
+      'ANNULEE': 'badge-danger'
+    };
+
+    return badges[statut] || 'badge-secondary';
   }
 }

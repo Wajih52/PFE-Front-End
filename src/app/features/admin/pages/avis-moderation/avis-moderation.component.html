@@ -1,0 +1,110 @@
+<div class="moderation-container">
+  <h1>⚖️ Modération des Avis</h1>
+
+  <div class="filters">
+    <button
+      class="filter-btn"
+      [class.active]="filtreStatut() === 'EN_ATTENTE'"
+      (click)="filtrerPar('EN_ATTENTE')">
+      En attente ({{ compteurs().enAttente }})
+    </button>
+    <button
+      class="filter-btn"
+      [class.active]="filtreStatut() === 'TOUS'"
+      (click)="filtrerPar('TOUS')">
+      Tous les avis
+    </button>
+    <button
+      class="filter-btn"
+      [class.active]="filtreStatut() === 'APPROUVE'"
+      (click)="filtrerPar('APPROUVE')">
+      Approuvés
+    </button>
+    <button
+      class="filter-btn"
+      [class.active]="filtreStatut() === 'REJETE'"
+      (click)="filtrerPar('REJETE')">
+      Rejetés
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Chargement...</div>
+  } @else if (avisAffiches().length === 0) {
+    <div class="empty-state">Aucun avis à afficher.</div>
+  } @else {
+    <div class="avis-list">
+      @for (avis of avisAffiches(); track avis.idAvis) {
+        <div class="avis-card-moderation">
+          <div class="avis-content">
+            <div class="avis-meta">
+              <div class="client-info">
+                <strong>{{ avis.prenomClient }} {{ avis.nomClient }}</strong>
+                <small>{{ avis.emailClient }}</small>
+              </div>
+              <div class="produit-info">
+                <span class="produit-nom">{{ avis.nomProduit }}</span>
+                <small>{{ avis.codeProduit }}</small>
+              </div>
+              <div class="date-info">
+                <small>{{ avis.dateAvis | date:'dd/MM/yyyy HH:mm' }}</small>
+              </div>
+            </div>
+
+            <div class="note-section">
+              <div class="stars">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <span [class.active]="star <= avis.note">★</span>
+                }
+              </div>
+              <span class="note-value">{{ avis.note }}/5</span>
+            </div>
+
+            @if (avis.commentaire) {
+              <p class="commentaire">{{ avis.commentaire }}</p>
+            }
+
+            <div class="statut-badge" [class]="getStatutClass(avis.statut)">
+              {{ getStatutLabel(avis.statut) }}
+            </div>
+          </div>
+
+          @if (avis.statut === StatutAvis.EN_ATTENTE) {
+            <div class="moderation-actions">
+                  <textarea
+                    [(ngModel)]="commentairesModeration[avis.idAvis]"
+                    placeholder="Commentaire de modération (optionnel)"
+                    rows="2">
+                  </textarea>
+              <div class="action-buttons">
+                <button
+                  class="btn btn-success"
+                  (click)="approuverAvis(avis)">
+                  ✅ Approuver
+                </button>
+                <button
+                  class="btn btn-danger"
+                  (click)="rejeterAvis(avis)">
+                  ❌ Rejeter
+                </button>
+              </div>
+            </div>
+          } @else {
+            @if (avis.commentaireModeration) {
+              <div class="moderation-info">
+                <strong>Modéré le :</strong> {{ avis.dateModeration | date:'dd/MM/yyyy HH:mm' }}
+                <br>
+                <strong>Commentaire :</strong> {{ avis.commentaireModeration }}
+              </div>
+            }
+            <button
+              class="btn btn-delete"
+              (click)="supprimerDefinitivement(avis)">
+              🗑️ Supprimer définitivement
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

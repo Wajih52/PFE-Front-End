@@ -179,12 +179,12 @@
             <!-- Informations spécifiques pour les RESERVATIONS -->
             <ng-container *ngIf="mouvement.typeMouvement === TypeMouvement.RESERVATION">
               <div class="detail-row">
-                <span class="label">Réservation:</span>
-                <span class="value reservation-link">#{{ mouvement.idReservation }}</span>
+                <span class="label">Réservation</span>
+                <span class="value reservation-link">{{ mouvement.referenceReservation }}</span>
               </div>
 
               <div class="detail-row">
-                <span class="label">Quantité réservée:</span>
+                <span class="label">Quantité réservée  </span>
                 <span class="value quantite-reservee">
                     {{ mouvement.quantite }} unité(s)
                 </span>
@@ -192,24 +192,24 @@
             </ng-container>
 
             <div class="detail-row" *ngIf="mouvement.motif">
-              <span class="label">Motif:</span>
+              <span class="label">Motif</span>
               <span class="value">{{ mouvement.motif }}</span>
             </div>
 
             <div class="detail-row" *ngIf="mouvement.effectuePar">
-              <span class="label">Par:</span>
+              <span class="label">Par</span>
               <span class="value">👤 {{ mouvement.effectuePar }}</span>
             </div>
 
-            <div class="detail-row" *ngIf="mouvement.numeroSerie">
-              <span class="label">Instance:</span>
-              <span class="value instance">🏷️ {{ mouvement.numeroSerie }}</span>
+            <div class="detail-row" *ngIf="mouvement.codeInstance">
+              <span class="label">Instance</span>
+              <span class="value instance">🏷️ {{ mouvement.codeInstance }}</span>
             </div>
 
             <div class="detail-row"
                  *ngIf="mouvement.idReservation && mouvement.typeMouvement !== TypeMouvement.RESERVATION">
-              <span class="label">Réservation:</span>
-              <span class="value">#{{ mouvement.idReservation }}</span>
+              <span class="label">Réservation</span>
+              <span class="value">{{ mouvement.referenceReservation }}</span>
             </div>
           </div>
         </div>

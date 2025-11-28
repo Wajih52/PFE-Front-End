@@ -20,7 +20,7 @@ import {ScrollService} from '../../../../services/scroll.service';
 
 /**
  * Composant de formulaire pour créer ou modifier un produit
- * Sprint 3 : Gestion des produits et du stock
+ *
  */
 @Component({
   selector: 'app-produit-form',

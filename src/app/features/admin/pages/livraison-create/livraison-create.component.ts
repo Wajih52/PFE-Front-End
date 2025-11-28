@@ -13,6 +13,7 @@ import {
   ReservationResponseDto,
   LigneReservationResponseDto
 } from '../../../../core/models/reservation.model';
+import {NotificationPersistantService} from '../../../../services/notification-persistant.service';
 
 /**
  * Interface étendue pour ajouter la référence de réservation aux lignes
@@ -33,6 +34,7 @@ export class LivraisonCreateComponent implements OnInit {
   private livraisonService = inject(LivraisonService);
   private reservationService = inject(ReservationService);
   private router = inject(Router);
+  private notificationPersist = inject(NotificationPersistantService)
 
   // Formulaire
   livraisonForm!: FormGroup;
@@ -151,7 +153,7 @@ export class LivraisonCreateComponent implements OnInit {
   }
 
   /**
-   * ✅ CORRECTION : Obtenir les lignes filtrées
+   *  Obtenir les lignes filtrées
    */
   getLignesFiltrees(): LigneAvecReference[] {
     let lignes = this.lignesDisponibles();
@@ -160,7 +162,7 @@ export class LivraisonCreateComponent implements OnInit {
     if (this.filtreReservation()) {
       const recherche = this.filtreReservation().toLowerCase();
       lignes = lignes.filter(l =>
-        l.referenceReservation.toLowerCase().includes(recherche) // ✅ Maintenant ça existe !
+        l.referenceReservation.toLowerCase().includes(recherche)
       );
     }
 
@@ -218,7 +220,7 @@ export class LivraisonCreateComponent implements OnInit {
     this.livraisonService.creerLivraison(request).subscribe({
       next: (livraison) => {
         this.successMessage.set('Livraison créée avec succès !');
-
+        this.notificationPersist.refreshCount();
         // Rediriger vers les détails après 1 seconde
         setTimeout(() => {
           this.router.navigate(['/admin/livraisons', livraison.idLivraison]);
