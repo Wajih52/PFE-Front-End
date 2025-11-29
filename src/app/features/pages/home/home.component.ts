@@ -15,6 +15,7 @@ interface Service {
   icon: string;
   title: string;
   description: string;
+  image: string;
 }
 
 interface FeaturedProduct {
@@ -49,22 +50,26 @@ export class HomeComponent implements OnInit {
     {
       icon: '💍',
       title: 'Mariages',
-      description: 'Des célébrations inoubliables avec une décoration élégante et sur mesure'
+      description: 'Des célébrations inoubliables avec une décoration élégante et sur mesure',
+      image:'assets/images/image-mariage.jpg'
     },
     {
       icon: '🎂',
       title: 'Anniversaires',
-      description: 'Fêtez vos moments spéciaux avec style et créativité'
+      description: 'Fêtez vos moments spéciaux avec style et créativité',
+      image:'assets/images/image-anniversaire.jpg'
     },
     {
       icon: '💐',
       title: 'Fiançailles',
-      description: 'Marquez le début de votre histoire avec une soirée romantique'
+      description: 'Marquez le début de votre histoire avec une soirée romantique',
+      image:'assets/images/image-fiancaille.jpg'
     },
     {
       icon: '🎪',
       title: 'Événements Professionnels',
-      description: 'Des solutions complètes pour vos conférences et séminaires'
+      description: 'Des solutions complètes pour vos conférences et séminaires',
+      image:'assets/images/image-seminaire.jpg'
     }
   ];
 
@@ -81,7 +86,7 @@ export class HomeComponent implements OnInit {
       id: 2,
       name: 'Table Ronde Élégante',
       category: 'Mobilier',
-      image: 'assets/images/products/table-round.jpg',
+      image: 'assets/images/table-basse-ronde-plexiglass-transparent.jpg',
       price: '2 TND'
     },
     {
@@ -139,7 +144,7 @@ export class HomeComponent implements OnInit {
 
 
   constructor() {
-    // ✅ AJOUTÉ : Vérifier l'authentification UNIQUEMENT côté client après le rendu
+    //  Vérifier l'authentification UNIQUEMENT côté client après le rendu
     if (isPlatformBrowser(this.platformId)) {
       afterNextRender(() => {
         this.checkAuthentication();
@@ -288,13 +293,15 @@ export class HomeComponent implements OnInit {
     // Réinitialiser l'erreur globale
     this.submitError.set(null);
 
-    // Si un type de réclamation est sélectionné, créer une réclamation
-    if (this.formData.typeReclamation) {
-      this.submitReclamation();
-    } else {
-      // Sinon, c'est un simple message de contact
-      this.submitContactMessage();
-    }
+    this.submitReclamation();
+
+    // // Si un type de réclamation est sélectionné, créer une réclamation
+    // if (this.formData.typeReclamation) {
+    //   this.submitReclamation();
+    // } else {
+    //   // Sinon, c'est un simple message de contact
+    //   this.submitContactMessage();
+    // }
   }
 
   /**
@@ -320,7 +327,7 @@ export class HomeComponent implements OnInit {
       descriptionReclamation: this.formData.message,
       contactEmail: this.formData.email,
       contactTelephone: this.formData.telephone,
-      typeReclamation: this.formData.typeReclamation as TypeReclamation
+      typeReclamation: this.formData.typeReclamation as TypeReclamation || 'AUTRE'
     };
 
     this.reclamationService.creerReclamation(request).subscribe({
@@ -332,9 +339,9 @@ export class HomeComponent implements OnInit {
 
         // Cacher le message après 10 secondes
         setTimeout(() => {
-          this.submitSuccess.set(false);
+         // this.submitSuccess.set(false);
           this.codeReclamation.set(null);
-        }, 10000);
+        }, 20000);
       },
       error: (error) => {
         this.isSubmitting.set(false);
@@ -352,8 +359,6 @@ export class HomeComponent implements OnInit {
       this.submitError.set('Veuillez saisir votre message');
       return;
     }
-
-    // TODO: Implémenter l'envoi d'email de contact
     console.log('Message de contact:', this.formData);
 
     this.submitSuccess.set(true);

@@ -22,6 +22,7 @@ import {StorageService} from '../../../core/services/storage.service';
 import { FactureService } from '../../../services/facture.service';
 import { FactureResponse } from '../../../core/models/facture.model';
 import {AvisService} from '../../../services/avis.service';
+import {ScrollService} from '../../../services/scroll.service';
 
 
 @Component({
@@ -41,6 +42,7 @@ export class ReservationDetailsComponent implements OnInit {
   private factureService = inject(FactureService);
   private authService = inject(AuthService);
   private avisService = inject(AvisService);
+  private scrollService =inject(ScrollService);
 
   // Signals
   reservation = signal<ReservationResponseDto | null>(null);
@@ -246,16 +248,22 @@ export class ReservationDetailsComponent implements OnInit {
 
     if (!res || !formulaire.idProduit) {
       this.errorMessage.set('Veuillez sélectionner un produit.');
+      this.scrollService.scrollToFirstError();
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
     if (!formulaire.dateDebut || !formulaire.dateFin) {
       this.errorMessage.set('Les dates sont obligatoires.');
+      this.scrollService.scrollToFirstError();
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
     if (formulaire.quantite < 1) {
       this.errorMessage.set('La quantité doit être au moins 1.');
+      this.scrollService.scrollToFirstError();
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
@@ -267,12 +275,14 @@ export class ReservationDetailsComponent implements OnInit {
       next: (ligneCree) => {
         this.successMessage.set(` Ligne "${ligneCree.nomProduit}" ajoutée avec succès !`);
         this.showAjouterLigneModal.set(false);
+        setTimeout(() => this.successMessage.set(''), 3000);
         // Recharger la réservation pour voir les changements
         this.chargerReservation(res.idReservation);
       },
       error: (error) => {
         console.error('Erreur lors de l\'ajout:', error);
         this.errorMessage.set(error.error?.message || 'Impossible d\'ajouter la ligne. Vérifiez la disponibilité.');
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }
@@ -308,11 +318,15 @@ export class ReservationDetailsComponent implements OnInit {
 
     if (!formulaire.dateDebut || !formulaire.dateFin) {
       this.errorMessage.set('Les dates sont obligatoires.');
+      this.scrollService.scrollToFirstError();
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
     if (formulaire.quantite < 1) {
       this.errorMessage.set('La quantité doit être au moins 1.');
+      this.scrollService.scrollToFirstError();
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
@@ -327,10 +341,12 @@ export class ReservationDetailsComponent implements OnInit {
         // Recharger la réservation
         const res = this.reservation();
         if (res) this.chargerReservation(res.idReservation);
+        setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
         console.error('Erreur lors de la modification:', error);
         this.errorMessage.set(error.error?.message || 'Impossible de modifier la ligne. Vérifiez la disponibilité.');
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }
@@ -362,11 +378,13 @@ export class ReservationDetailsComponent implements OnInit {
         // Recharger la réservation
         const res = this.reservation();
         if (res) this.chargerReservation(res.idReservation);
+        setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
         console.error('Erreur lors de la suppression:', error);
         this.errorMessage.set(error.error?.message || 'Impossible de supprimer la ligne.');
         this.showSupprimerLigneModal.set(false);
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }
@@ -394,11 +412,13 @@ export class ReservationDetailsComponent implements OnInit {
 
     if (this.nombreJoursDecalage() === 0) {
       this.errorMessage.set('Veuillez indiquer un nombre de jours.');
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
     if (!this.motifDecalage().trim()) {
       this.errorMessage.set('Veuillez indiquer un motif.');
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
@@ -413,11 +433,13 @@ export class ReservationDetailsComponent implements OnInit {
         this.showDecalageModal.set(false);
         // Recharger les données
         this.chargerReservation(reservation.idReservation);
+        setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
         console.error('Erreur lors du décalage:', error);
         this.errorMessage.set(error.error?.message || 'Impossible de décaler les dates. Vérifiez la disponibilité.');
         this.showDecalageModal.set(false);
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }
@@ -447,6 +469,7 @@ export class ReservationDetailsComponent implements OnInit {
 
     if (!this.nouvelleDateDebut() || !this.nouvelleDateFin()) {
       this.errorMessage.set('Veuillez renseigner les deux dates.');
+      setTimeout(() => this.errorMessage.set(''), 3000);
       return;
     }
 
@@ -466,11 +489,15 @@ export class ReservationDetailsComponent implements OnInit {
         this.showModifierLigneModal.set(false);
         // Recharger les données
         this.chargerReservation(reservation.idReservation);
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.successMessage.set(''), 3000);
       },
       error: (error) => {
         console.error('Erreur lors de la modification:', error);
         this.errorMessage.set(error.error?.message || 'Impossible de modifier cette ligne. Vérifiez la disponibilité.');
         this.showModifierLigneModal.set(false);
+        this.scrollService.scrollToFirstError();
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }
@@ -511,6 +538,7 @@ export class ReservationDetailsComponent implements OnInit {
         console.error('Erreur lors de l\'annulation:', error);
         this.errorMessage.set(error.error?.message || 'Impossible d\'annuler la réservation.');
         this.showAnnulerModal.set(false);
+        setTimeout(() => this.errorMessage.set(''), 3000);
       }
     });
   }

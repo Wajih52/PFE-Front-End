@@ -60,15 +60,15 @@
     </div>
 
     <div class="services-grid">
-      @for (service of services; track service.title) {
-        <div class="service-card">
-          <div class="service-icon">{{ service.icon }}</div>
-          <h3 class="service-title">{{ service.title }}</h3>
-          <p class="service-description">{{ service.description }}</p>
-          <button class="btn-service-link">En savoir plus →</button>
+      <div class="service-card"
+           *ngFor="let service of services"
+           [style.background-image]="'url(' + service.image + ')'">
+        <div class="service-overlay">
+          <h3>{{ service.title }}</h3>
+          <p>{{ service.description }}</p>
         </div>
-      }
-    </div>
+      </div>
+  </div>
   </div>
 </section>
 
@@ -100,10 +100,6 @@
             <h3 class="product-name">{{ product.name }}</h3>
             <div class="product-footer">
               <span class="product-price">{{ product.price }}</span>
-              <button class="btn-add-cart">
-                <span>Ajouter</span>
-                <span class="icon">+</span>
-              </button>
             </div>
           </div>
         </div>
@@ -177,8 +173,6 @@
 </section>
 
 <!-- ========== CONTACT SECTION ========== -->
-<!-- SECTION CONTACT À REMPLACER DANS home.component.html -->
-<!-- Remplacer toute la section "contact-section" par ce code -->
 
 <section id="contact" class="contact-section">
   <div class="container">
@@ -211,39 +205,16 @@
       }
     </div>
 
-    <div class="contact-grid">
-      <div class="contact-info">
-        <div class="contact-item">
-          <div class="contact-icon">📍</div>
-          <div class="contact-details">
-            <h4>Adresse</h4>
-            <p>123 Avenue de l'Événement, Tunis, Tunisie</p>
-          </div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">📞</div>
-          <div class="contact-details">
-            <h4>Téléphone</h4>
-            <p>+216 XX XXX XXX</p>
-          </div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">✉️</div>
-          <div class="contact-details">
-            <h4>Email</h4>
-            <p>contact&#64;elegant-hive.tn</p>
-          </div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">⏰</div>
-          <div class="contact-details">
-            <h4>Horaires</h4>
-            <p>Lun - Sam: 9h00 - 18h00</p>
-          </div>
-        </div>
+    <div class="contact-grid-layout">
+
+      <div class="contact-image-col">
+        <img src="assets/images/image-contact-support.jpg"
+             alt="Contactez Elegant Hive"
+             class="contact-image">
       </div>
 
-      <div class="contact-form">
+      <div class="contact-form-col">
+        <div class="contact-form">
         <form (ngSubmit)="onSubmit()">
           <!-- Nom -->
           <div class="form-group">
@@ -357,6 +328,7 @@
             {{ isSubmitting() ? '⏳ Envoi en cours...' : ' Envoyer' }}
           </button>
         </form>
+      </div>
       </div>
     </div>
   </div>

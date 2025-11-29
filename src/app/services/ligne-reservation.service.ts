@@ -90,7 +90,7 @@ export class LigneReservationService {
   // ============================================
 
   /**
-   * ✏️ Modifier une ligne de réservation
+   *  Modifier une ligne de réservation
    * PUT /api/lignes-reservation/{id}
    * @requires ROLE: CLIENT, ADMIN, MANAGER
    */
@@ -104,26 +104,14 @@ export class LigneReservationService {
     );
   }
 
-  /**
-   * 🔄 Changer le statut de livraison d'une ligne
-   * PATCH /api/lignes-reservation/{id}/statut?statut={statut}
-   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
-   */
-  changerStatutLivraison(id: number, statut: string): Observable<LigneReservationResponseDto> {
-    const params = new HttpParams().set('statut', statut);
-    return this.http.patch<LigneReservationResponseDto>(
-      `${this.API_URL}/${id}/statut`,
-      null,
-      { params }
-    );
-  }
+
 
   // ============================================
   // SUPPRESSION
   // ============================================
 
   /**
-   * 🗑️ Supprimer une ligne de réservation
+   *  Supprimer une ligne de réservation
    * DELETE /api/lignes-reservation/{id}
    * @requires ROLE: CLIENT, ADMIN, MANAGER
    */
@@ -136,7 +124,7 @@ export class LigneReservationService {
   // ============================================
 
   /**
-   * 💰 Calculer le montant total des lignes d'une réservation
+   * Calculer le montant total des lignes d'une réservation
    * GET /api/lignes-reservation/reservation/{idReservation}/montant
    */
   getMontantTotal(idReservation: number): Observable<{ montantTotal: number }> {
@@ -146,7 +134,7 @@ export class LigneReservationService {
   }
 
   /**
-   * 📊 Obtenir les statistiques d'une réservation
+   *  Obtenir les statistiques d'une réservation
    * GET /api/lignes-reservation/reservation/{idReservation}/stats
    */
   getStatistiques(idReservation: number): Observable<any> {
@@ -156,7 +144,7 @@ export class LigneReservationService {
   }
 
   /**
-   * 📦 Obtenir les instances d'une ligne
+   * Obtenir les instances d'une ligne
    * GET /api/lignes-reservation/{id}/instances
    * @requires ROLE: ADMIN, MANAGER
    */
@@ -171,7 +159,7 @@ export class LigneReservationService {
   // ============================================
 
   /**
-   * ✅ Vérifier l'existence d'une ligne
+   * Vérifier l'existence d'une ligne
    * GET /api/lignes-reservation/{id}/exists
    */
   verifierExistence(id: number): Observable<{ exists: boolean }> {

@@ -608,7 +608,7 @@
   </div>
 }
 <!-- ============================================ -->
-<!-- 🆕 Modal Ajouter une Ligne -->
+<!-- Modal Ajouter une Ligne -->
 <!-- ============================================ -->
 @if (showAjouterLigneModal()) {
   <div class="modal-overlay" (click)="fermerModals()">
@@ -646,7 +646,6 @@
             @for (produit of produitsDisponibles(); track produit.idProduit) {
               <option [value]="produit.idProduit">
                 {{ produit.nomProduit }} - {{ produit.prixUnitaire }} TND/jour
-                  (Stock: {{ produit.quantiteDisponible }})
               </option>
             }
           </select>
@@ -667,7 +666,9 @@
               required
             />
           </div>
+        </div>
 
+        <div class="form-row">
           <div class="form-group">
             <label>Durée</label>
             <div class="info-box">
@@ -889,7 +890,7 @@
 }
 
 <!-- ============================================ -->
-<!-- 🆕 Modal Supprimer une Ligne -->
+<!--  Modal Supprimer une Ligne -->
 <!-- ============================================ -->
 @if (showSupprimerLigneModal()) {
   <div class="modal-overlay" (click)="fermerModals()">
