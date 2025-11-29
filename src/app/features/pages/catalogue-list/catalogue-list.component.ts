@@ -1,6 +1,6 @@
 // src/app/features/pages/catalogue-list/catalogue-list.component.ts
-// VERSION CORRIGÉE - Utilise les APIs avec dates
 
+import { ProduitAvisPublicComponent } from '../produit-avis-public/produit-avis-public.component';
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -13,7 +13,7 @@ import {ToastrService} from 'ngx-toastr';
 @Component({
   selector: 'app-catalogue-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ProduitAvisPublicComponent],
   templateUrl: './catalogue-list.component.html',
   styleUrls: ['./catalogue-list.component.scss']
 })
@@ -24,10 +24,10 @@ export class CatalogueListComponent implements OnInit {
   private toastr = inject(ToastrService);
 
   // ============================================
-  // 🎯 DATES DE LOCATION (CRITIQUES)
+  //  DATES DE LOCATION (CRITIQUES)
   // ============================================
 
-  // ✅ Dates par défaut : Demain et après-demain
+  // Dates par défaut : Demain et après-demain
   dateDebutLocation: string = '';
   dateFinLocation: string = '';
   minDate: string;
@@ -55,8 +55,8 @@ export class CatalogueListComponent implements OnInit {
   //  Map pour stocker les disponibilités par produit
   disponibilites = signal<Map<number, number>>(new Map());
 
-  // Computed pour filtrer les produits côté client (en plus du filtrage serveur)
-  // ✅1: Computed pour filtrer les produits
+
+  //  Computed pour filtrer les produits
   produitsFiltres = computed(() => {
     let liste = this.produits();
 
@@ -107,6 +107,10 @@ export class CatalogueListComponent implements OnInit {
   // Date minimale pour le sélecteur (aujourd'hui)
   dateMin = computed(() => this.formatDateForInput(new Date()));
 
+  // Dans la classe
+  showProduitModal = signal<boolean>(false);
+  produitSelectionne = signal<ProduitResponse | null>(null);
+
 
   constructor() {
     this.minDate = this.formatDateForInput(new Date());
@@ -139,7 +143,7 @@ export class CatalogueListComponent implements OnInit {
 
 
   /**
-   * ⭐ Trier la liste selon le tri sélectionné
+   *  Trier la liste selon le tri sélectionné
    */
   private trierListe(liste: ProduitResponse[]): ProduitResponse[] {
     const tri = this.triSelectionne();
@@ -167,7 +171,7 @@ export class CatalogueListComponent implements OnInit {
   }
 
   /**
-   * ✅ Sélectionner une catégorie
+   * Sélectionner une catégorie
    */
   selectionnerCategorie(categorie: Categorie | null): void {
     this.categorieSelectionnee.set(categorie);
@@ -190,7 +194,7 @@ export class CatalogueListComponent implements OnInit {
 
   }
   /**
-   * ✅ Charger le catalogue disponible pour la période sélectionnée
+   *  Charger le catalogue disponible pour la période sélectionnée
    */
   chargerCatalogue(): void {
     // Validation des dates
@@ -215,7 +219,7 @@ export class CatalogueListComponent implements OnInit {
     const dateDebut = this.formatToLocalDate(this.dateDebutLocation);
     const dateFin = this.formatToLocalDate(this.dateFinLocation);
 
-    // ✅ Utiliser l'API avec dates
+    //  Utiliser l'API avec dates
     if (this.categorieSelectionnee()) {
       // Recherche avec catégorie + dates
       this.produitService.searchProduitsAvecPeriode({
@@ -226,7 +230,7 @@ export class CatalogueListComponent implements OnInit {
         next: (produits) => {
           this.produits.set(produits);
 
-          // ⭐ Calculer disponibilités pour chaque produit
+          //  Calculer disponibilités pour chaque produit
           produits.forEach(produit => {
             this.calculerDisponibilite(produit);
           });
@@ -264,7 +268,7 @@ export class CatalogueListComponent implements OnInit {
   }
 
   /**
-   * ✅ Recharger le catalogue quand les dates changent
+   *  Recharger le catalogue quand les dates changent
    */
   onDatesChange(): void {
     console.log(`📅 Dates modifiées: ${this.dateDebutLocation} → ${this.dateFinLocation}`);
@@ -274,7 +278,7 @@ export class CatalogueListComponent implements OnInit {
   }
 
   /**
-   * ✅ FIX #1: Vérifier si la date de début est supérieure à la date de fin
+   * Vérifier si la date de début est supérieure à la date de fin
    */
   isDateDebutSuperieureDateFin(): boolean {
     if (!this.dateDebutLocation || !this.dateFinLocation) {
@@ -287,17 +291,15 @@ export class CatalogueListComponent implements OnInit {
    * Voir les détails d'un produit
    */
   voirDetails(idProduit: number): void {
-    // Passer les dates dans les query params
-    this.router.navigate(['/catalogue/produit', idProduit], {
-      queryParams: {
-        dateDebut: this.dateDebutLocation,
-        dateFin: this.dateFinLocation
-      }
-    });
+    const produit = this.produits().find(p => p.idProduit === idProduit);
+    if (produit) {
+      this.produitSelectionne.set(produit);
+      this.showProduitModal.set(true);
+    }
   }
 
   /**
-   * ✅ Ajouter au panier avec les dates sélectionnées
+   *  Ajouter au panier avec les dates sélectionnées
    */
   ajouterAuPanier(produit: ProduitResponse): void {
     // Validation des dates
@@ -306,7 +308,7 @@ export class CatalogueListComponent implements OnInit {
       return;
     }
 
-    // ✅ Récupérer la quantité disponible RÉELLE
+    //  Récupérer la quantité disponible RÉELLE
     const quantiteDisponible = this.getQuantiteDisponible(produit.idProduit);
 
     if (quantiteDisponible === null || quantiteDisponible === 0) {
@@ -314,14 +316,14 @@ export class CatalogueListComponent implements OnInit {
       return;
     }
 
-    // ✅ FIX #5: Vérifier la quantité déjà dans le panier
+    //  Vérifier la quantité déjà dans le panier
     const quantiteDansPanier = this.panierService.getQuantiteProduitDansPanier(
       produit.idProduit,
       this.dateDebutLocation,
       this.dateFinLocation
     );
 
-    // ✅ Vérifier si on peut encore ajouter
+    //  Vérifier si on peut encore ajouter
     if (quantiteDansPanier >= quantiteDisponible) {
       this.toastr.error(
         `Maximum atteint : ${quantiteDisponible} disponible(s), ${quantiteDansPanier} déjà dans le panier`,
@@ -431,7 +433,7 @@ export class CatalogueListComponent implements OnInit {
 
 
   /**
-   * ⭐  Calculer la disponibilité d'un produit sur la période
+   *   Calculer la disponibilité d'un produit sur la période
    */
   calculerDisponibilite(produit: ProduitResponse): void {
     if (!this.dateDebutLocation || !this.dateFinLocation) {
@@ -455,14 +457,14 @@ export class CatalogueListComponent implements OnInit {
   }
 
   /**
-   * ⭐  Obtenir la quantité disponible d'un produit
+   *   Obtenir la quantité disponible d'un produit
    */
   getQuantiteDisponible(idProduit: number): number | null {
     return this.disponibilites().get(idProduit) ?? null;
   }
 
   /**
-   * ✅ FIX #5: Vérifier si on peut encore ajouter ce produit au panier
+   *  Vérifier si on peut encore ajouter ce produit au panier
    */
   peutAjouterAuPanier(produit: ProduitResponse): boolean {
     const quantiteDisponible = this.getQuantiteDisponible(produit.idProduit);
@@ -479,5 +481,11 @@ export class CatalogueListComponent implements OnInit {
 
     return quantiteDansPanier < quantiteDisponible;
   }
+
+  fermerModal(): void {
+    this.showProduitModal.set(false);
+    this.produitSelectionne.set(null);
+  }
+
 
 }

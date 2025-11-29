@@ -1,6 +1,7 @@
 <div class="moderation-container">
   <h1>⚖️ Modération des Avis</h1>
 
+  <!-- Filtres de statut -->
   <div class="filters">
     <button
       class="filter-btn"
@@ -12,27 +13,100 @@
       class="filter-btn"
       [class.active]="filtreStatut() === 'TOUS'"
       (click)="filtrerPar('TOUS')">
-      Tous les avis
+      Tous les avis ({{ compteurs().tous }})
     </button>
     <button
       class="filter-btn"
       [class.active]="filtreStatut() === 'APPROUVE'"
       (click)="filtrerPar('APPROUVE')">
-      Approuvés
+      Approuvés ({{ compteurs().approuves }})
     </button>
     <button
       class="filter-btn"
       [class.active]="filtreStatut() === 'REJETE'"
       (click)="filtrerPar('REJETE')">
-      Rejetés
+      Rejetés ({{ compteurs().rejetes }})
     </button>
   </div>
 
+  <!-- Recherche et tri -->
+  <div class="search-filters">
+    <div class="search-group">
+      <div class="search-item">
+        <label>
+          <i class="fas fa-user"></i>
+          Rechercher par client
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="rechercheClient"
+          placeholder="Nom, prénom ou email du client..."
+          class="search-input"
+        />
+      </div>
+
+      <div class="search-item">
+        <label>
+          <i class="fas fa-box"></i>
+          Rechercher par produit
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="rechercheProduit"
+          placeholder="Nom ou code du produit..."
+          class="search-input"
+        />
+      </div>
+
+      <div class="search-item">
+        <label>
+          <i class="fas fa-star"></i>
+          Filtrer par note
+        </label>
+        <select [(ngModel)]="filtreNote" class="search-select">
+          <option [ngValue]="null">Toutes les notes</option>
+          <option [ngValue]="5">5 étoiles</option>
+          <option [ngValue]="4">4 étoiles</option>
+          <option [ngValue]="3">3 étoiles</option>
+          <option [ngValue]="2">2 étoiles</option>
+          <option [ngValue]="1">1 étoile</option>
+        </select>
+      </div>
+
+      <div class="search-item">
+        <label>
+          <i class="fas fa-sort"></i>
+          Trier par
+        </label>
+        <select [(ngModel)]="triSelectionne" class="search-select">
+          <option value="date-desc">Date (plus récent)</option>
+          <option value="date-asc">Date (plus ancien)</option>
+          <option value="note-desc">Note (plus élevée)</option>
+          <option value="note-asc">Note (plus faible)</option>
+          <option value="client-asc">Client (A-Z)</option>
+          <option value="produit-asc">Produit (A-Z)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-reset" (click)="reinitialiserFiltres()">
+      <i class="fas fa-undo"></i>
+      Réinitialiser
+    </button>
+  </div>
+
+  <!-- Résultats -->
   @if (loading()) {
     <div class="loading">Chargement...</div>
   } @else if (avisAffiches().length === 0) {
-    <div class="empty-state">Aucun avis à afficher.</div>
+    <div class="empty-state">
+      Aucun avis ne correspond aux critères de recherche.
+    </div>
   } @else {
+    <div class="results-info">
+      <span>{{ avisAffiches().length }} avis trouvé(s)</span>
+    </div>
+
     <div class="avis-list">
       @for (avis of avisAffiches(); track avis.idAvis) {
         <div class="avis-card-moderation">
@@ -64,45 +138,72 @@
               <p class="commentaire">{{ avis.commentaire }}</p>
             }
 
-            <div class="statut-badge" [class]="getStatutClass(avis.statut)">
-              {{ getStatutLabel(avis.statut) }}
+            <div class="status-badges">
+              <div class="statut-badge" [class]="getStatutClass(avis.statut)">
+                {{ getStatutLabel(avis.statut) }}
+              </div>
+
+              <div class="visibilite-badge" [class.visible]="avis.visible" [class.invisible]="!avis.visible">
+                <i [class]="avis.visible ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+                {{ avis.visible ? 'Visible' : 'Masqué' }}
+              </div>
             </div>
           </div>
 
-          @if (avis.statut === StatutAvis.EN_ATTENTE) {
-            <div class="moderation-actions">
-                  <textarea
-                    [(ngModel)]="commentairesModeration[avis.idAvis]"
-                    placeholder="Commentaire de modération (optionnel)"
-                    rows="2">
-                  </textarea>
-              <div class="action-buttons">
-                <button
-                  class="btn btn-success"
-                  (click)="approuverAvis(avis)">
-                  ✅ Approuver
-                </button>
-                <button
-                  class="btn btn-danger"
-                  (click)="rejeterAvis(avis)">
-                  ❌ Rejeter
-                </button>
-              </div>
-            </div>
-          } @else {
-            @if (avis.commentaireModeration) {
-              <div class="moderation-info">
-                <strong>Modéré le :</strong> {{ avis.dateModeration | date:'dd/MM/yyyy HH:mm' }}
-                <br>
-                <strong>Commentaire :</strong> {{ avis.commentaireModeration }}
+          <div class="avis-actions">
+            <!-- Actions de modération pour EN_ATTENTE -->
+            @if (avis.statut === StatutAvis.EN_ATTENTE) {
+              <div class="moderation-section">
+                <textarea
+                  [(ngModel)]="commentairesModeration[avis.idAvis]"
+                  placeholder="Commentaire de modération (optionnel)"
+                  rows="2"
+                ></textarea>
+
+                <div class="action-buttons">
+                  <button class="btn btn-success" (click)="approuverAvis(avis)">
+                    <i class="fas fa-check"></i>
+                    Approuver
+                  </button>
+                  <button class="btn btn-danger" (click)="rejeterAvis(avis)">
+                    <i class="fas fa-times"></i>
+                    Rejeter
+                  </button>
+                </div>
               </div>
             }
-            <button
-              class="btn btn-delete"
-              (click)="supprimerDefinitivement(avis)">
-              🗑️ Supprimer définitivement
+
+            <!-- Actions de visibilité (pour tous les statuts sauf EN_ATTENTE) -->
+            @if (avis.statut !== StatutAvis.EN_ATTENTE) {
+              <div class="visibility-section">
+                <button
+                  class="btn btn-visibility"
+                  [class.btn-show]="!avis.visible"
+                  [class.btn-hide]="avis.visible"
+                  (click)="toggleVisibilite(avis)">
+                  <i [class]="avis.visible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                  {{ avis.visible ? 'Masquer au public' : 'Afficher au public' }}
+                </button>
+              </div>
+            }
+
+            <!-- Commentaire de modération (si existe) -->
+            @if (avis.commentaireModeration) {
+              <div class="moderation-info">
+                <strong>Note de modération :</strong>
+                <p>{{ avis.commentaireModeration }}</p>
+                @if (avis.dateModeration) {
+                  <small>Modéré le {{ avis.dateModeration | date:'dd/MM/yyyy HH:mm' }}</small>
+                }
+              </div>
+            }
+
+            <!-- Suppression définitive -->
+            <button class="btn btn-delete" (click)="supprimerDefinitivement(avis)">
+              <i class="fas fa-trash"></i>
+              Supprimer définitivement
             </button>
-          }
+          </div>
         </div>
       }
     </div>

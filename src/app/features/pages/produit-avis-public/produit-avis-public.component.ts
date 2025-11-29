@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import {Component, OnInit, inject, signal, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { AvisService } from '../../../services/avis.service';
@@ -20,15 +20,33 @@ export class ProduitAvisPublicComponent implements OnInit {
   loading = signal(false);
   Math = Math;
 
-  idProduit!: number;
+
+  @Input() idProduit?: number;
 
   ngOnInit(): void {
-    this.idProduit = +this.route.snapshot.paramMap.get('id')!;
-    this.chargerAvis();
-    this.chargerStatistiques();
+    // Si pas d'@Input, récupérer depuis la route (mode page dédiée)
+    if (!this.idProduit) {
+      const routeId = this.route.snapshot.paramMap.get('id');
+      if (routeId) {
+        this.idProduit = +routeId;
+      }
+    }
+
+    // Vérifier que l'ID est valide avant de charger
+    if (this.idProduit && this.idProduit > 0) {
+      console.log(' Chargement des avis pour le produit ID:', this.idProduit);
+      this.chargerAvis();
+      this.chargerStatistiques();
+    } else {
+      console.error(' Aucun ID de produit valide fourni à produit-avis-public');
+    }
+
   }
 
   chargerAvis(): void {
+
+    if (!this.idProduit) return;
+
     this.loading.set(true);
     this.avisService.getAvisProduit(this.idProduit).subscribe({
       next: (avis) => {
@@ -42,6 +60,8 @@ export class ProduitAvisPublicComponent implements OnInit {
   }
 
   chargerStatistiques(): void {
+    if (!this.idProduit) return;
+
     this.avisService.getStatistiquesProduit(this.idProduit).subscribe({
       next: (stats) => {
         this.statistiques.set(stats);

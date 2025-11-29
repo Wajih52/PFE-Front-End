@@ -87,20 +87,34 @@ export class ReservationDetailsComponent implements OnInit {
   factures = signal<FactureResponse[]>([]);
   loadingFactures = signal<boolean>(false);
 
-  idReservation!: number;
+
+
+  idReservation?: number;
 
   ngOnInit(): void {
-     this.idReservation = this.route.snapshot.params['id'];
+
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.errorMessage.set('ID de réservation invalide');
+      this.isLoading.set(false);
+      return;
+    }
+
+    // Conversion  en number
+    this.idReservation = Number(id);
+
     if (this.idReservation) {
-      this.chargerReservation(+this.idReservation);
+      this.chargerReservation(this.idReservation);
       this.chargerProduitsDisponibles();
       this.chargerFactures();
     }
 
-    // Si c'est un client, vérifier quels produits ont déjà un avis
+
     if (this.isClient()) {
       this.verifierAvisExistants();
     }
+
   }
 
   /**
@@ -114,6 +128,11 @@ export class ReservationDetailsComponent implements OnInit {
       next: (data) => {
         this.reservation.set(data);
         this.isLoading.set(false);
+
+        // Si c'est un client, vérifier quels produits ont déjà un avis
+        if (this.isClient()) {
+          this.verifierAvisExistants();
+        }
 
       },
       error: (error) => {
@@ -197,7 +216,7 @@ export class ReservationDetailsComponent implements OnInit {
     }
   }
   // ============================================
-  // 🆕 GESTION DES LIGNES : AJOUTER
+  //  GESTION DES LIGNES : AJOUTER
   // ============================================
 
   /**
@@ -246,7 +265,7 @@ export class ReservationDetailsComponent implements OnInit {
       formulaire
     ).subscribe({
       next: (ligneCree) => {
-        this.successMessage.set(`✅ Ligne "${ligneCree.nomProduit}" ajoutée avec succès !`);
+        this.successMessage.set(` Ligne "${ligneCree.nomProduit}" ajoutée avec succès !`);
         this.showAjouterLigneModal.set(false);
         // Recharger la réservation pour voir les changements
         this.chargerReservation(res.idReservation);
@@ -259,7 +278,7 @@ export class ReservationDetailsComponent implements OnInit {
   }
 
   // ============================================
-  // 🆕 GESTION DES LIGNES : ÉDITER
+  // GESTION DES LIGNES : ÉDITER
   // ============================================
 
   /**
@@ -317,7 +336,7 @@ export class ReservationDetailsComponent implements OnInit {
   }
 
   // ============================================
-  // 🆕 GESTION DES LIGNES : SUPPRIMER
+  //  GESTION DES LIGNES : SUPPRIMER
   // ============================================
 
   /**
@@ -338,7 +357,7 @@ export class ReservationDetailsComponent implements OnInit {
 
     this.ligneReservationService.supprimerLigne(ligne.idLigneReservation).subscribe({
       next: (response) => {
-        this.successMessage.set(`✅ Ligne "${ligne.nomProduit}" supprimée avec succès !`);
+        this.successMessage.set(` Ligne "${ligne.nomProduit}" supprimée avec succès !`);
         this.showSupprimerLigneModal.set(false);
         // Recharger la réservation
         const res = this.reservation();
@@ -499,19 +518,22 @@ export class ReservationDetailsComponent implements OnInit {
   // partie Avis Produits
 
   verifierAvisExistants(): void {
-    // Vérifier pour chaque produit si le client a déjà laissé un avis
+    if (!this.idReservation) return;
+
     this.avisService.getMesAvis().subscribe({
       next: (avis) => {
-        const produitsAvecAvisSet = new Set(
-          avis
-            .filter(a => a.idReservation === this.idReservation)
-            .map(a => a.idProduit)
+        const avisCetteReservation = avis.filter(a =>
+          a.idReservation === this.idReservation
         );
+
+        const produitsAvecAvisSet = new Set(
+          avisCetteReservation.map(a => a.idProduit)
+        );
+
         this.produitsAvecAvis.set(produitsAvecAvisSet);
       }
     });
   }
-
   isClient(): boolean|undefined {
     // Vérifier si l'utilisateur connecté est un CLIENT
     const user = this.authService.getCurrentUser();

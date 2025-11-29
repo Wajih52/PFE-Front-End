@@ -88,12 +88,6 @@ export const routes: Routes = [
       .then(m => m.ProduitAvisPublicComponent),
     title: 'Avis du Produit'
   },
-/*  {
-    path: 'produits/:id/details',
-    loadComponent: () => import('./features/pages/produit-details/produit-details.component')
-      .then(m => m.ProduitDetailsComponent),
-    title: 'Détails du Produit'
-  },*/
   // Routes Avec Side Bar
   {
     path: '',

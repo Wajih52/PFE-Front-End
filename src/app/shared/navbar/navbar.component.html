@@ -12,7 +12,8 @@
       <div class="navbar-links">
         <a (click)="scrollToSection('hero')" class="nav-link">Accueil</a>
         <a (click)="scrollToSection('services')" class="nav-link">Nos Services</a>
-        <a (click)="goToCatalogue()" class="nav-link" >Catalogue</a>
+<!--        <a (click)="goToCatalogue()" class="nav-link" >Catalogue</a>-->
+        <a [routerLink]="['/client/catalogue']" class="nav-link" >Catalogue</a>
         <a (click)="scrollToSection('about')" class="nav-link">À propos</a>
         <a (click)="scrollToSection('contact')" class="nav-link">Contact</a>
       </div>

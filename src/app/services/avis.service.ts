@@ -115,4 +115,11 @@ export class AvisService {
       .set('fin', fin.toISOString());
     return this.http.get<AvisResponseDto[]>(`${this.apiUrl}/admin/periode`, { params });
   }
+
+  modifierVisibilite(idAvis: number, visible: boolean): Observable<AvisResponseDto> {
+    const params = new HttpParams().set('visible', visible);
+    return this.http.patch<AvisResponseDto>(`${this.apiUrl}/admin/${idAvis}/visibilite`, null, { params });
+  }
+
+
 }
