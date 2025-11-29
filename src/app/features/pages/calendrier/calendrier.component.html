@@ -1,0 +1,349 @@
+<!-- src/app/features/calendrier/calendrier.component.html -->
+
+<div class="calendrier-container">
+  <!-- ============================================ -->
+  <!-- EN-TÊTE AVEC STATISTIQUES -->
+  <!-- ============================================ -->
+  <div class="calendrier-header">
+    <h1 class="page-title">📅 Calendrier des Événements</h1>
+
+    @if (statistiques(); as stats) {
+      <div class="statistiques-cards">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-content">
+            <span class="stat-label">Réservations</span>
+            <span class="stat-value">{{ stats.nombreReservations }}</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🚚</div>
+          <div class="stat-content">
+            <span class="stat-label">Livraisons</span>
+            <span class="stat-value">{{ stats.nombreLivraisons }}</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-content">
+            <span class="stat-label">Montant Total</span>
+            <span class="stat-value">{{ stats.montantTotalPeriode | number:'1.2-2' }} DT</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <span class="stat-label">Taux Paiement</span>
+            <span class="stat-value">{{ stats.tauxPaiement | number:'1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ============================================ -->
+  <!-- LAYOUT PRINCIPAL: FILTRES + CALENDRIER -->
+  <!-- ============================================ -->
+  <div class="calendrier-layout">
+
+    <!-- ============================================ -->
+    <!-- PANNEAU DE FILTRES (gauche) -->
+    <!-- ============================================ -->
+    <aside class="filtres-panel" [class.collapsed]="!afficherFiltres()">
+      <div class="filtres-header">
+        <h2>🔍 Filtres</h2>
+        <button
+          class="btn-icon"
+          (click)="afficherFiltres.set(!afficherFiltres())"
+          title="Masquer les filtres">
+          {{ afficherFiltres() ? '❌' : '☰' }}
+        </button>
+      </div>
+
+      @if (afficherFiltres()) {
+        <div class="filtres-content">
+
+          <!-- Types d'événements -->
+          <div class="filtre-section">
+            <h3>Types d'événements</h3>
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="filtres.inclureReservations"
+                (change)="appliquerFiltres()">
+              <span>📅 Réservations</span>
+            </label>
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="filtres.inclureLivraisons"
+                (change)="appliquerFiltres()">
+              <span>🚚 Livraisons</span>
+            </label>
+          </div>
+
+          <!-- Statuts des réservations -->
+          @if (filtres.inclureReservations) {
+            <div class="filtre-section">
+              <h3>Statuts Réservations</h3>
+              @for (statut of statutsReservationOptions; track statut.value) {
+                <label class="checkbox-label">
+                  <input
+                    type="checkbox"
+                    (change)="onStatutReservationChange(statut.value, $any($event.target).checked)">
+                  <span>{{ statut.label }}</span>
+                </label>
+              }
+            </div>
+          }
+
+          <!-- Statuts des livraisons -->
+          @if (filtres.inclureLivraisons) {
+            <div class="filtre-section">
+              <h3>Statuts Livraisons</h3>
+              @for (statut of statutsLivraisonOptions; track statut.value) {
+                <label class="checkbox-label">
+                  <input
+                    type="checkbox"
+                    (change)="onStatutLivraisonChange(statut.value, $any($event.target).checked)">
+                  <span>{{ statut.label }}</span>
+                </label>
+              }
+            </div>
+          }
+
+          <!-- Filtre par client -->
+          <div class="filtre-section">
+            <h3>Client</h3>
+            <select
+              class="form-select"
+              [(ngModel)]="filtres.idClient"
+              (change)="appliquerFiltres()">
+              <option [value]="undefined">Tous les clients</option>
+              @for (client of clients(); track client.idUtilisateur) {
+                <option [value]="client.idUtilisateur">
+                  {{ client.prenom }} {{ client.nom }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Filtre par employé -->
+          <div class="filtre-section">
+            <h3>Employé</h3>
+            <select
+              class="form-select"
+              [(ngModel)]="filtres.idEmploye"
+              (change)="appliquerFiltres()">
+              <option [value]="undefined">Tous les employés</option>
+              @for (employe of employes(); track employe.idUtilisateur) {
+                <option [value]="employe.idUtilisateur">
+                  {{ employe.prenom }} {{ employe.nom }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Filtre par produit -->
+          <div class="filtre-section">
+            <h3>Produit</h3>
+            <select
+              class="form-select"
+              [(ngModel)]="filtres.idProduit"
+              (change)="appliquerFiltres()">
+              <option [value]="undefined">Tous les produits</option>
+              @for (produit of produits(); track produit.idProduit) {
+                <option [value]="produit.idProduit">
+                  {{ produit.nomProduit }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Actions -->
+          <div class="filtres-actions">
+            <button
+              class="btn btn-primary"
+              (click)="appliquerFiltres()">
+              Appliquer
+            </button>
+            <button
+              class="btn btn-secondary"
+              (click)="reinitialiserFiltres()">
+              Réinitialiser
+            </button>
+          </div>
+        </div>
+      }
+    </aside>
+
+    <!-- ============================================ -->
+    <!-- CALENDRIER PRINCIPAL -->
+    <!-- ============================================ -->
+    <main class="calendrier-main">
+      @if (loading()) {
+        <div class="loading-overlay">
+          <div class="spinner"></div>
+          <p>Chargement du calendrier...</p>
+        </div>
+      }
+
+      @if (error()) {
+        <div class="error-message">
+          <span class="error-icon">⚠️</span>
+          <p>{{ error() }}</p>
+          <button class="btn btn-primary" (click)="chargerEvenements()">
+            Réessayer
+          </button>
+        </div>
+      }
+
+      @if (!loading() && !error()) {
+        <div class="calendar-wrapper">
+          <full-calendar [options]="calendarOptions"></full-calendar>
+        </div>
+      }
+    </main>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- MODAL DÉTAILS ÉVÉNEMENT -->
+  <!-- ============================================ -->
+  @if (afficherModal() && evenementSelectionne(); as event) {
+    <div class="modal-overlay" (click)="fermerModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>
+            {{ event.type === 'RESERVATION' ? '📅' : '🚚' }}
+            {{ event.reference }}
+          </h2>
+          <button class="btn-close" (click)="fermerModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Informations générales -->
+          <div class="info-section">
+            <h3>Informations générales</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Type:</span>
+                <span class="value">
+                  {{ event.type === 'RESERVATION' ? 'Réservation' : 'Livraison' }}
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="label">Statut:</span>
+                <span class="value badge" [style.backgroundColor]="event.couleur">
+                  {{ event.statut }}
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date début:</span>
+                <span class="value">{{ event.dateDebut | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date fin:</span>
+                <span class="value">{{ event.dateFin | date:'dd/MM/yyyy' }}</span>
+              </div>
+              @if (event.heure) {
+                <div class="info-item">
+                  <span class="label">Heure:</span>
+                  <span class="value">{{ event.heure }}</span>
+                </div>
+              }
+              @if (event.adresse) {
+                <div class="info-item full-width">
+                  <span class="label">Adresse:</span>
+                  <span class="value">{{ event.adresse }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Client -->
+          @if (event.nomClient) {
+            <div class="info-section">
+              <h3>👤 Client</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Nom:</span>
+                  <span class="value">{{ event.prenomClient }} {{ event.nomClient }}</span>
+                </div>
+                @if (event.emailClient) {
+                  <div class="info-item">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ event.emailClient }}</span>
+                  </div>
+                }
+                @if (event.telephoneClient) {
+                  <div class="info-item">
+                    <span class="label">Téléphone:</span>
+                    <span class="value">{{ event.telephoneClient }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Employé (livraisons) -->
+          @if (event.nomEmploye) {
+            <div class="info-section">
+              <h3>👷 Employé</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Nom:</span>
+                  <span class="value">{{ event.prenomEmploye }} {{ event.nomEmploye }}</span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Produits -->
+          @if (event.produitsResume) {
+            <div class="info-section">
+              <h3>📦 Produits ({{ event.nombreProduits }})</h3>
+              <p>{{ event.produitsResume }}</p>
+            </div>
+          }
+
+          <!-- Financier (réservations) -->
+          @if (event.montantTotal) {
+            <div class="info-section">
+              <h3>💰 Informations financières</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Montant total:</span>
+                  <span class="value">{{ event.montantTotal | number:'1.2-2' }} DT</span>
+                </div>
+                @if (event.montantPaye !== undefined) {
+                  <div class="info-item">
+                    <span class="label">Montant payé:</span>
+                    <span class="value">{{ event.montantPaye | number:'1.2-2' }} DT</span>
+                  </div>
+                }
+                <div class="info-item">
+                  <span class="label">Paiement:</span>
+                  <span class="value" [class.complet]="event.paiementComplet">
+                    {{ event.paiementComplet ? '✅ Complet' : '⚠️ Incomplet' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="fermerModal()">
+            Fermer
+          </button>
+          <button class="btn btn-primary" (click)="ouvrirDetails()">
+            Voir les détails complets
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

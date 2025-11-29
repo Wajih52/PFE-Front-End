@@ -1,5 +1,8 @@
 // nouvelle-reclamation.component.scss - Design personnalisé
 
+// Import du module Sass pour les couleurs
+@use 'sass:color';
+
 // Variables
 $primary-gold: #C7A781;
 $dark-black: #000000;
@@ -269,7 +272,7 @@ $info-blue: #17a2b8;
   }
 
   &.selected .type-content {
-    background: linear-gradient(135deg, $primary-gold 0%, darken($primary-gold, 10%) 100%);
+    background: linear-gradient(135deg, $primary-gold 0%, color.adjust($primary-gold, $lightness: -10%) 100%);
     border-color: $primary-gold;
     color: $white;
 
@@ -488,7 +491,7 @@ $info-blue: #17a2b8;
     color: $white;
 
     &:hover:not(:disabled) {
-      background: darken($text-gray, 10%);
+      background: color.adjust($text-gray, $lightness: -10%);
     }
   }
 }

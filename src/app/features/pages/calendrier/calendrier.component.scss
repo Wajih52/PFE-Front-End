@@ -1,0 +1,610 @@
+// src/app/features/calendrier/calendrier.component.scss
+
+// Import du module Sass pour les couleurs
+@use 'sass:color';
+
+// ============================================
+// VARIABLES DE DESIGN (alignées avec le projet)
+// ============================================
+$color-primary: #C8A882; // Beige/Gold
+$color-dark: #000000; // Noir
+$color-white: #FFFFFF;
+$color-gray-light: #F5F5F5;
+$color-gray: #E0E0E0;
+$color-gray-dark: #757575;
+
+$color-success: #66BB6A;
+$color-warning: #FFA726;
+$color-danger: #EF5350;
+$color-info: #42A5F5;
+
+$border-radius: 8px;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+// ============================================
+// CONTENEUR PRINCIPAL
+// ============================================
+.calendrier-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: $color-gray-light;
+}
+
+// ============================================
+// EN-TÊTE
+// ============================================
+.calendrier-header {
+  margin-bottom: 2rem;
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $color-dark;
+    margin-bottom: 1.5rem;
+  }
+
+  .statistiques-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .stat-card {
+    background: $color-white;
+    border-radius: $border-radius;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: $box-shadow;
+    transition: $transition;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, $color-primary, color.adjust($color-primary, $lightness: -10%));
+      padding: 0.75rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: $color-gray-dark;
+        font-weight: 500;
+      }
+
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $color-dark;
+      }
+    }
+  }
+}
+
+// ============================================
+// LAYOUT PRINCIPAL
+// ============================================
+.calendrier-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================
+// PANNEAU DE FILTRES
+// ============================================
+.filtres-panel {
+  background: $color-white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+  transition: $transition;
+
+  &.collapsed {
+    width: 60px;
+
+    .filtres-content {
+      display: none;
+    }
+  }
+
+  .filtres-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid $color-primary;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $color-dark;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: $transition;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .filtres-content {
+    padding: 1.5rem;
+  }
+
+  .filtre-section {
+    margin-bottom: 1.5rem;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $color-dark;
+      margin-bottom: 0.75rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: $transition;
+
+      &:hover {
+        background-color: $color-gray-light;
+      }
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: $color-primary;
+      }
+
+      span {
+        font-size: 0.875rem;
+        color: $color-dark;
+      }
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid $color-gray;
+      border-radius: $border-radius;
+      font-size: 0.875rem;
+      background-color: $color-white;
+      transition: $transition;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      }
+    }
+  }
+
+  .filtres-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+}
+
+// ============================================
+// ZONE CALENDRIER PRINCIPALE
+// ============================================
+.calendrier-main {
+  background: $color-white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
+  position: relative;
+  min-height: 600px;
+}
+
+.calendar-wrapper {
+  // Personnalisation de FullCalendar
+  ::ng-deep {
+    .fc {
+      font-family: inherit;
+
+      // En-tête du calendrier
+      .fc-toolbar-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $color-dark;
+      }
+
+      // Boutons
+      .fc-button {
+        background-color: $color-primary;
+        border-color: $color-primary;
+        color: $color-dark;
+        font-weight: 600;
+        border-radius: $border-radius;
+        padding: 0.5rem 1rem;
+        transition: $transition;
+
+        &:hover {
+          background-color: color.adjust($color-primary, $lightness: -10%);
+          border-color: color.adjust($color-primary, $lightness: -10%);
+        }
+
+        &:focus {
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.3);
+        }
+
+        &.fc-button-active {
+          background-color: $color-dark;
+          border-color: $color-dark;
+          color: $color-white;
+        }
+      }
+
+      // En-têtes de jours
+      .fc-col-header-cell {
+        background-color: $color-gray-light;
+        border-color: $color-gray;
+        font-weight: 600;
+        padding: 0.75rem 0;
+      }
+
+      // Cellules des jours
+      .fc-daygrid-day {
+        &:hover {
+          background-color: rgba($color-primary, 0.05);
+        }
+
+        &.fc-day-today {
+          background-color: rgba($color-primary, 0.1);
+        }
+      }
+
+      // Numéros de jours
+      .fc-daygrid-day-number {
+        color: $color-dark;
+        font-weight: 600;
+        padding: 0.5rem;
+      }
+
+      // Événements
+      .fc-event {
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        margin-bottom: 2px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: $transition;
+
+        &:hover {
+          opacity: 0.9;
+          transform: scale(1.02);
+        }
+      }
+
+      // Lien "plus"
+      .fc-daygrid-more-link {
+        color: $color-primary;
+        font-weight: 600;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// ÉTATS DE CHARGEMENT ET ERREURS
+// ============================================
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius;
+  z-index: 10;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid $color-gray;
+    border-top-color: $color-primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    margin-top: 1rem;
+    color: $color-gray-dark;
+    font-weight: 500;
+  }
+}
+
+.error-message {
+  text-align: center;
+  padding: 3rem;
+
+  .error-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: $color-danger;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// MODAL DÉTAILS
+// ============================================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: $color-white;
+  border-radius: $border-radius;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid $color-primary;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-dark;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    color: $color-gray-dark;
+    transition: $transition;
+
+    &:hover {
+      color: $color-danger;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+
+  .info-section {
+    margin-bottom: 1.5rem;
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $color-dark;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid $color-gray;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .label {
+          font-size: 0.875rem;
+          color: $color-gray-dark;
+          font-weight: 500;
+        }
+
+        .value {
+          font-size: 1rem;
+          color: $color-dark;
+          font-weight: 600;
+
+          &.badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            color: $color-white;
+            font-size: 0.875rem;
+            width: fit-content;
+          }
+
+          &.complet {
+            color: $color-success;
+          }
+        }
+      }
+    }
+
+    p {
+      margin: 0;
+      color: $color-dark;
+    }
+  }
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid $color-gray;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+// ============================================
+// BOUTONS
+// ============================================
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: $border-radius;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  font-size: 0.875rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background-color: $color-primary;
+  color: $color-dark;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($color-primary, $lightness: -10%);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-secondary {
+  background-color: $color-gray;
+  color: $color-dark;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($color-gray, $lightness: -10%);
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+@media (max-width: 768px) {
+  .calendrier-container {
+    padding: 1rem;
+  }
+
+  .calendrier-header {
+    .page-title {
+      font-size: 1.5rem;
+    }
+
+    .statistiques-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .calendrier-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filtres-panel {
+    position: static;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .modal-body .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

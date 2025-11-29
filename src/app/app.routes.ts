@@ -30,6 +30,7 @@ import {ReclamationsListComponent} from './features/admin/pages/reclamations-lis
 import {MesReclamationsComponent} from './features/client/mes-reclamations/mes-reclamations.component';
 import {NouvelleReclamationComponent} from './features/pages/nouvelle-reclamation/nouvelle-reclamation.component';
 import {MesNotificationsComponent} from './features/pages/mes-notifications/mes-notifications.component';
+import {CalendrierComponent} from './features/pages/calendrier/calendrier.component';
 
 
 export const routes: Routes = [
@@ -264,6 +265,11 @@ export const routes: Routes = [
             loadComponent: () => import('./features/admin/pages/produit-avis-admin/produit-avis-admin.component')
               .then(m => m.ProduitAvisAdminComponent),
             title: 'Avis du Produit'
+          },
+          {
+            path: 'calendrier',
+            component: CalendrierComponent,
+            canActivate: [authGuard]
           }
         ]
       },

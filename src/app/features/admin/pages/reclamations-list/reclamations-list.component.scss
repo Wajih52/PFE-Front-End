@@ -1,5 +1,8 @@
 // gestion-reclamations.component.scss - SANS BOOTSTRAP
 
+// Import du module Sass pour les couleurs
+@use 'sass:color';
+
 // Variables
 $primary-gold: #C7A781;
 $dark-black: #000000;
@@ -420,7 +423,7 @@ $border-light: #e0e0e0;
       color: $white;
 
       &:hover {
-        background: darken($text-gray, 10%);
+        background: color.adjust($text-gray, $lightness: -10%);
       }
     }
   }
