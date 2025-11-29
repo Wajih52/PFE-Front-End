@@ -9,11 +9,12 @@ import {ProduitService} from '../../../services/produit.service';
 import {PanierService} from '../../../services/panier.service';
 import {Categorie, ProduitResponse} from '../../../core/models';
 import {ToastrService} from 'ngx-toastr';
+import {FooterComponent} from '../../../shared/footer/footer.component';
 
 @Component({
   selector: 'app-catalogue-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ProduitAvisPublicComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ProduitAvisPublicComponent, FooterComponent],
   templateUrl: './catalogue-list.component.html',
   styleUrls: ['./catalogue-list.component.scss']
 })

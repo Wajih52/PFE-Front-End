@@ -27,7 +27,7 @@ $transition: all 0.3s ease;
   z-index: 900;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 200px;
+  padding-bottom: 2rem;
 
   // État collapsed
   &.collapsed {
