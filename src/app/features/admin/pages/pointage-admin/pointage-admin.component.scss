@@ -1,0 +1,721 @@
+// src/app/features/admin/pointage-admin/pointage-admin.component.scss
+
+.pointage-admin-container {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+// ============================================
+// EN-TÊTE
+// ============================================
+
+.admin-header {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  h1 {
+    color: white;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+}
+
+// ============================================
+// BOUTONS D'ACTION
+// ============================================
+
+.btn-action {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #C8A882, #B8986F);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #B8986F, #A88860);
+  }
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+  }
+}
+
+// ============================================
+// NAVIGATION DES VUES
+// ============================================
+
+.views-navigation {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.view-tab {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: 2px solid #ecf0f1;
+  border-radius: 10px;
+  background: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #2c3e50;
+
+  &:hover {
+    border-color: #C8A882;
+    background: #fef9f3;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #C8A882, #B8986F);
+    color: white;
+    border-color: #C8A882;
+    box-shadow: 0 4px 12px rgba(200, 168, 130, 0.3);
+  }
+}
+
+// ============================================
+// CARTES STATISTIQUES
+// ============================================
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border-left: 4px solid;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-icon {
+    font-size: 2.5rem;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &.stat-presences {
+    border-left-color: #27ae60;
+  }
+
+  &.stat-retards {
+    border-left-color: #f39c12;
+  }
+
+  &.stat-absences {
+    border-left-color: #e74c3c;
+  }
+
+  &.stat-conges {
+    border-left-color: #3498db;
+  }
+}
+
+// ============================================
+// CARTES GÉNÉRIQUES
+// ============================================
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+// ============================================
+// FILTRES
+// ============================================
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  input, select {
+    padding: 0.75rem;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #C8A882;
+    }
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-filter {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #C8A882, #B8986F);
+  color: white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.btn-reset {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  }
+}
+
+// ============================================
+// TABLEAU
+// ============================================
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.pointages-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+
+  thead {
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    color: white;
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #ecf0f1;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+
+      &.retard-row {
+        background: #fff3cd;
+
+        &:hover {
+          background: #ffe69c;
+        }
+      }
+
+      td {
+        padding: 1rem;
+      }
+    }
+  }
+
+  .employe-col {
+    strong {
+      color: #2c3e50;
+    }
+
+    small {
+      color: #7f8c8d;
+    }
+  }
+
+  .hours-col {
+    color: #C8A882;
+    font-weight: 600;
+  }
+
+  .actions-col {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .text-muted {
+    color: #95a5a6;
+  }
+}
+
+// ============================================
+// BOUTONS ICÔNES
+// ============================================
+
+.btn-icon {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.btn-edit {
+    &:hover {
+      background: #3498db;
+    }
+  }
+
+  &.btn-delete {
+    &:hover {
+      background: #e74c3c;
+    }
+  }
+
+  &.btn-stats {
+    &:hover {
+      background: #9b59b6;
+    }
+  }
+}
+
+// ============================================
+// BADGES STATUT
+// ============================================
+
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+// ============================================
+// ÉTATS
+// ============================================
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+.no-data {
+  text-align: center;
+  padding: 3rem 2rem;
+
+  .no-data-icon {
+    font-size: 4rem;
+    opacity: 0.4;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+  }
+}
+
+// ============================================
+// STATISTIQUES EMPLOYÉ
+// ============================================
+
+.stats-employee-container {
+  .employee-header {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .btn-back {
+      padding: 0.5rem 1rem;
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      background: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: #C8A882;
+        background: #fef9f3;
+      }
+    }
+
+    .employee-info {
+      h2 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.5rem;
+      }
+
+      p {
+        margin: 0.25rem 0 0;
+        color: #7f8c8d;
+      }
+    }
+  }
+
+  .stats-grid-detailed {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card-detailed {
+    @extend .stat-card;
+  }
+
+  .periode-info {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// ============================================
+// MODALES
+// ============================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 16px 16px 0 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .btn-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.employee-info-modal {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  color: #2c3e50;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  input, select, textarea {
+    padding: 0.75rem;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #C8A882;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.modal-actions {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #ecf0f1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  background: #f8f9fa;
+  border-radius: 0 0 16px 16px;
+}
+
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #ecf0f1;
+  border-radius: 8px;
+  background: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #2c3e50;
+
+  &:hover {
+    border-color: #bdc3c7;
+    background: #ecf0f1;
+  }
+}
+
+.btn-save {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #C8A882, #B8986F);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #B8986F, #A88860);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (max-width: 768px) {
+  .pointage-admin-container {
+    padding: 1rem;
+  }
+
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pointages-table {
+    font-size: 0.85rem;
+
+    th, td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+
+  .actions-col {
+    flex-direction: column;
+  }
+}

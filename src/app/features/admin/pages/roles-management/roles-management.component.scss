@@ -226,7 +226,7 @@
 
 .spinner {
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #c6a783;
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -662,13 +662,13 @@
   padding: 20px;
   background: #f8f9fa;
   border-radius: 12px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #c6a783;
   transition: all 0.3s;
 
   &:hover {
     transform: scale(1.05);
-    border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    border-color: #c6a783;
+    box-shadow: 0 4px 12px rgb(107, 116, 124);
   }
 
   .user-avatar {
@@ -696,7 +696,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #c6a783 0%, #c6a783 100%);
       color: white;
       font-size: 28px;
     }

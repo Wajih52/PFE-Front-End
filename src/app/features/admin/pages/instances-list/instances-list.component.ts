@@ -13,7 +13,6 @@ import {
   StatutInstance,
   StatutInstanceLabels
 } from '../../../../core/models';
-import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
 import {NotificationService} from '../../../../services/notification.service';
 
 /**

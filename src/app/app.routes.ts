@@ -31,6 +31,8 @@ import {MesReclamationsComponent} from './features/client/mes-reclamations/mes-r
 import {NouvelleReclamationComponent} from './features/pages/nouvelle-reclamation/nouvelle-reclamation.component';
 import {MesNotificationsComponent} from './features/pages/mes-notifications/mes-notifications.component';
 import {CalendrierComponent} from './features/pages/calendrier/calendrier.component';
+import {PointageEmployeeComponent} from './features/employee/pointage-employee/pointage-employee.component';
+import {PointageAdminComponent} from './features/admin/pages/pointage-admin/pointage-admin.component';
 
 
 export const routes: Routes = [
@@ -270,6 +272,14 @@ export const routes: Routes = [
             path: 'calendrier',
             component: CalendrierComponent,
             canActivate: [authGuard]
+          },
+          {
+            path: 'pointages',
+            component: PointageAdminComponent,
+            data: {
+              roles: ['ADMIN', 'MANAGER'],
+              title: 'Gestion des Pointages'
+            }
           }
         ]
       },
@@ -352,6 +362,12 @@ export const routes: Routes = [
         data: { roles: ['CLIENT'] }
       },
     ]
+  },
+  {
+    path: 'pointage',
+    component: PointageEmployeeComponent,
+    canActivate: [authGuard],
+    data: { roles: ['EMPLOYE', 'MANAGER', 'ADMIN'] }
   },
   {
     path: 'client/catalogue',

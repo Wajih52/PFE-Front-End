@@ -140,11 +140,18 @@ export class SidebarMenuService {
             order: 2
           },
           {
+            id: 'pointages-employe',
+            label: 'Pointages',
+            icon: '📋',
+            route: '/pointage',
+            order: 3
+          },
+          {
             id: 'livraisons',
             label: 'Livraisons',
             icon: '🚚',
             route: '/admin/livraisons',
-            order: 3
+            order: 4
           },
           {
             id: 'stock-employe',
@@ -254,18 +261,25 @@ export class SidebarMenuService {
             order: 3
           },
           {
+            id: 'pointage-management',
+            label: 'Pointages',
+            icon: '🎯',
+            route: 'admin/pointages',
+            order: 4
+          },
+          {
             id: 'products-management',
             label: 'Gestion Produits',
             icon: '📦',
             route: '/admin/produits',
-            order: 4
+            order: 5
           },
           {
             id: 'instances-management',
             label: 'Gestion Instances',
             icon: '🔖',
             route: '/admin/instances',
-            order: 5
+            order: 6
           },
          /* {
             id: 'stock-historique',
@@ -284,28 +298,28 @@ export class SidebarMenuService {
             label: 'Toutes Réservations',
             icon: '📋',
             route: '/admin/reservations',
-            order: 6
+            order: 7
           },
           {
             id: 'devis-admin',
             label: 'Validation Devis',
             icon: '✅',
             route: '/admin/devis-validation',
-            order: 7
+            order: 8
           },
           {
             id: 'paiements-admin',
             label: 'Gestion Paiements',
             icon: '💳',
             route: '/admin/paiements',
-            order: 8
+            order: 9
           },
           {
             id: 'factures-admin',
             label: 'Toutes Factures',
             icon: '🧾',
             route: '/admin/factures',
-            order: 9
+            order: 10
           }
         ]
       },
@@ -317,15 +331,8 @@ export class SidebarMenuService {
             label: 'Gestion Livraisons',
             icon: '🚚',
             route: '/admin/livraisons',
-            order: 10
-          },
-          /*{
-            id: 'retours-admin',
-            label: 'Gestion Retours',
-            icon: '↩️',
-            route: '/admin/retours',
             order: 11
-          },*/
+          },
           {
             id: 'calendrier',
             label: 'Calendrier Global',

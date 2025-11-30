@@ -99,3 +99,26 @@ export interface UserPatchRequest {
   statutEmploye?: StatutEmp;
   bio?: string;
 }
+
+export interface UtilisateurRoleWithUserDto {
+
+  idUtilisateurRole : number;
+  dateAffectationRole: Date;
+    attribuePar : string;
+
+  // Infos du rôle
+    idRole:number;
+    nomRole:string;
+    descriptionRole : string ;
+
+  // Infos de l'utilisateur
+    idUtilisateur: number;
+    pseudo : string;
+    nom : string;
+    prenom:string;
+    email:string;
+    telephone:string;
+    codeUtilisateur:string;
+    image :string;
+    etatCompte:string;
+}

@@ -1,0 +1,500 @@
+<!-- src/app/features/admin/pointage-admin/pointage-admin.component.html -->
+
+<div class="pointage-admin-container">
+
+  <!-- En-tête avec navigation -->
+  <div class="admin-header">
+    <h1>📋 Gestion des Pointages</h1>
+
+    <div class="header-actions">
+      <button
+        class="btn-action btn-primary"
+        (click)="openCreateModal()">
+        ➕ Créer un pointage
+      </button>
+
+      <button
+        class="btn-action btn-warning"
+        (click)="marquerAbsents()">
+        🤖 Marquer les absents
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation des vues -->
+  <div class="views-navigation">
+    <button
+      class="view-tab"
+      [class.active]="activeView() === 'global'"
+      (click)="changerVue('global')">
+      🌍 Vue Globale
+    </button>
+
+    <button
+      class="view-tab"
+      [class.active]="activeView() === 'employe'"
+      (click)="changerVue('employe')">
+      👤 Par Employé
+    </button>
+
+    <button
+      class="view-tab"
+      [class.active]="activeView() === 'stats'"
+      (click)="changerVue('stats')">
+      📊 Statistiques
+    </button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- VUE GLOBALE -->
+  <!-- ============================================ -->
+
+  @if (activeView() === 'global') {
+
+    <!-- Statistiques du jour -->
+    <div class="stats-cards">
+      <div class="stat-card stat-presences">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ nombrePresents() }}</div>
+          <div class="stat-label">Présents</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-retards">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ nombreRetards() }}</div>
+          <div class="stat-label">En retard</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-absences">
+        <div class="stat-icon">❌</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ nombreAbsents() }}</div>
+          <div class="stat-label">Absents</div>
+        </div>
+      </div>
+
+      <div class="stat-card stat-conges">
+        <div class="stat-icon">🏖️</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ nombreConges() }}</div>
+          <div class="stat-label">En congé</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card filters-card">
+      <div class="card-header">
+        <h2>🔍 Filtres</h2>
+      </div>
+
+      <div class="card-body">
+        <div class="filters-grid">
+
+          <!-- Période -->
+          <div class="filter-item">
+            <label>Date début</label>
+            <input
+              type="date"
+              [value]="dateDebut()"
+              (change)="dateDebut.set($any($event.target).value)" />
+          </div>
+
+          <div class="filter-item">
+            <label>Date fin</label>
+            <input
+              type="date"
+              [value]="dateFin()"
+              (change)="dateFin.set($any($event.target).value)" />
+          </div>
+
+          <!-- Statut -->
+          <div class="filter-item">
+            <label>Statut</label>
+            <select
+              [value]="statutFiltre()"
+              (change)="statutFiltre.set($any($event.target).value)">
+              <option value="">Tous</option>
+              <option [value]="StatutPointage.PRESENT">Présent</option>
+              <option [value]="StatutPointage.ABSENT">Absent</option>
+              <option [value]="StatutPointage.EN_RETARD">En retard</option>
+              <option [value]="StatutPointage.EN_CONGE">En congé</option>
+            </select>
+          </div>
+
+          <!-- Actions -->
+          <div class="filter-actions">
+            <button class="btn-filter" (click)="appliquerFiltres()">
+              🔍 Rechercher
+            </button>
+            <button class="btn-filter btn-reset" (click)="reinitialiserFiltres()">
+              🔄 Réinitialiser
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des pointages -->
+    <div class="card table-card">
+      <div class="card-header">
+        <h2>📅 Pointages de la période</h2>
+        <span class="badge">{{ pointagesFiltres().length }} résultats</span>
+      </div>
+
+      <div class="card-body">
+        @if (isLoading()) {
+          <div class="loading">⏳ Chargement...</div>
+        } @else if (pointagesFiltres().length > 0) {
+          <div class="table-wrapper">
+            <table class="pointages-table">
+              <thead>
+              <tr>
+                <th>Date</th>
+                <th>Employé</th>
+                <th>Poste</th>
+                <th>Statut</th>
+                <th>Arrivée</th>
+                <th>Départ</th>
+                <th>Total heures</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (pointage of pointagesFiltres(); track pointage.idPointage) {
+                  <tr [class.retard-row]="pointage.estEnRetard">
+                    <td>{{ pointage.dateTravail | date: 'dd/MM/yyyy' }}</td>
+                    <td class="employe-col">
+                      <strong>{{ pointage.nomUtilisateur }} {{ pointage.prenomUtilisateur }}</strong>
+                      <br>
+                      <small>{{ pointage.pseudoUtilisateur }}</small>
+                    </td>
+                    <td>{{ pointage.poste || '-' }}</td>
+                    <td>
+                      <div
+                        class="statut-badge"
+                        [style.background-color]="getStatutColor(pointage.statutPointage)">
+                        {{ getStatutIcon(pointage.statutPointage) }}
+                        {{ getStatutLabel(pointage.statutPointage) }}
+                      </div>
+                    </td>
+                    <td>{{ pointage.heureDebut || '-' }}</td>
+                    <td>{{ pointage.heureFin || '-' }}</td>
+                    <td class="hours-col">
+                      @if (pointage.totalHeures) {
+                        <strong>{{ pointage.totalHeures.toFixed(2) }}h</strong>
+                      } @else {
+                        <span class="text-muted">-</span>
+                      }
+                    </td>
+                    <td class="actions-col">
+                      <button
+                        class="btn-icon btn-edit"
+                        (click)="openEditModal(pointage)"
+                        title="Modifier">
+                        ✏️
+                      </button>
+                      <button
+                        class="btn-icon btn-delete"
+                        (click)="supprimerPointage(pointage.idPointage)"
+                        title="Supprimer">
+                        🗑️
+                      </button>
+                      <button
+                        class="btn-icon btn-stats"
+                        (click)="voirDetailsEmploye(pointage.idUtilisateur)"
+                        title="Voir stats">
+                        📊
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="no-data">
+            <div class="no-data-icon">📭</div>
+            <p>Aucun pointage trouvé pour cette période</p>
+          </div>
+        }
+      </div>
+    </div>
+
+  }
+
+  <!-- ============================================ -->
+  <!-- VUE STATISTIQUES EMPLOYÉ -->
+  <!-- ============================================ -->
+
+  @if (activeView() === 'stats' && statistiquesEmploye(); as stats) {
+
+    <div class="stats-employee-container">
+
+      <!-- En-tête employé -->
+      <div class="employee-header">
+        <button class="btn-back" (click)="changerVue('global')">
+          ← Retour
+        </button>
+        <div class="employee-info">
+          <h2>{{ stats.nomComplet }}</h2>
+          <p>{{ stats.poste }}</p>
+        </div>
+      </div>
+
+      <!-- Statistiques détaillées -->
+      <div class="stats-grid-detailed">
+
+        <div class="stat-card-detailed stat-presences">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.joursPresents }}</div>
+            <div class="stat-label">Jours présent</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-retards">
+          <div class="stat-icon">⏰</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.joursEnRetard }}</div>
+            <div class="stat-label">Retards</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-absences">
+          <div class="stat-icon">❌</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.joursAbsents }}</div>
+            <div class="stat-label">Absences</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-conges">
+          <div class="stat-icon">🏖️</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.joursEnConge }}</div>
+            <div class="stat-label">Congés</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-hours">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.totalHeuresTravaillees.toFixed(1) }}h</div>
+            <div class="stat-label">Total heures</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-average">
+          <div class="stat-icon">📈</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.moyenneHeuresParJour.toFixed(1) }}h</div>
+            <div class="stat-label">Moy. par jour</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-taux">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.tauxPresence.toFixed(1) }}%</div>
+            <div class="stat-label">Taux présence</div>
+          </div>
+        </div>
+
+        <div class="stat-card-detailed stat-taux-retard">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.tauxRetard.toFixed(1) }}%</div>
+            <div class="stat-label">Taux retard</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Période -->
+      <div class="periode-info">
+        📅 Période : {{ stats.periodeDebut | date: 'dd/MM/yyyy' }}
+        → {{ stats.periodeFin | date: 'dd/MM/yyyy' }}
+      </div>
+
+    </div>
+
+  }
+
+</div>
+
+<!-- ============================================ -->
+<!-- MODAL CRÉATION -->
+<!-- ============================================ -->
+
+@if (showCreateModal()) {
+  <div class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2>➕ Créer un pointage</h2>
+        <button class="btn-close" (click)="closeCreateModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+
+          <div class="form-field">
+            <label>Employé *</label>
+            <select
+              [value]="createForm().idUtilisateur || ''"
+              (change)="updateCreateFormField('idUtilisateur', +$any($event.target).value)">
+              <option value="">Sélectionner un employé</option>
+              @for (emp of employes(); track emp.idUtilisateur) {
+                <option [value]="emp.idUtilisateur">
+                  {{ emp.nom }} {{ emp.prenom }} ({{ emp.poste }})
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Date *</label>
+            <input
+              type="date"
+              [value]="createForm().dateTravail"
+              (change)="updateCreateFormField('dateTravail', $any($event.target).value)" />
+          </div>
+
+          <div class="form-field">
+            <label>Heure début</label>
+            <input
+              type="time"
+              [value]="createForm().heureDebut || ''"
+              (change)="updateCreateFormField('heureDebut', $any($event.target).value || undefined)" />
+          </div>
+
+          <div class="form-field">
+            <label>Heure fin</label>
+            <input
+              type="time"
+              [value]="createForm().heureFin || ''"
+              (change)="updateCreateFormField('heureFin', $any($event.target).value || undefined)" />
+          </div>
+
+          <div class="form-field">
+            <label>Statut</label>
+            <select
+              [value]="createForm().statutPointage"
+              (change)="updateCreateFormField('statutPointage', $any($event.target).value)">
+              <option [value]="StatutPointage.PRESENT">Présent</option>
+              <option [value]="StatutPointage.ABSENT">Absent</option>
+              <option [value]="StatutPointage.EN_RETARD">En retard</option>
+              <option [value]="StatutPointage.EN_CONGE">En congé</option>
+            </select>
+          </div>
+
+          <div class="form-field full-width">
+            <label>Description</label>
+            <textarea
+              rows="3"
+              [value]="createForm().description || ''"
+              (input)="updateCreateFormField('description', $any($event.target).value)"
+              placeholder="Remarques..."></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeCreateModal()">
+          Annuler
+        </button>
+        <button
+          class="btn-save"
+          (click)="creerPointage()"
+          [disabled]="isLoading()">
+          {{ isLoading() ? 'Création...' : 'Créer' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ============================================ -->
+<!-- MODAL ÉDITION -->
+<!-- ============================================ -->
+
+@if (showEditModal() && selectedPointage(); as pointage) {
+  <div class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2>✏️ Modifier le pointage</h2>
+        <button class="btn-close" (click)="closeEditModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="employee-info-modal">
+          <strong>{{ pointage.nomUtilisateur }} {{ pointage.prenomUtilisateur }}</strong>
+          <span> - {{ pointage.dateTravail | date: 'dd/MM/yyyy' }}</span>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="form-field">
+            <label>Heure début</label>
+            <input
+              type="time"
+              [value]="editForm().heureDebut || ''"
+              (change)="updateEditFormField('heureDebut', $any($event.target).value || undefined)" />
+          </div>
+
+          <div class="form-field">
+            <label>Heure fin</label>
+            <input
+              type="time"
+              [value]="editForm().heureFin || ''"
+              (change)="updateEditFormField('heureFin', $any($event.target).value || undefined)" />
+          </div>
+
+          <div class="form-field">
+            <label>Statut</label>
+            <select
+              [value]="editForm().statutPointage"
+              (change)="updateEditFormField('statutPointage', $any($event.target).value)">
+              <option [value]="StatutPointage.PRESENT">Présent</option>
+              <option [value]="StatutPointage.ABSENT">Absent</option>
+              <option [value]="StatutPointage.EN_RETARD">En retard</option>
+              <option [value]="StatutPointage.EN_CONGE">En congé</option>
+            </select>
+          </div>
+
+          <div class="form-field full-width">
+            <label>Description</label>
+            <textarea
+              rows="3"
+              [value]="editForm().description || ''"
+              (input)="updateEditFormField('description', $any($event.target).value)"
+              placeholder="Remarques..."></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeEditModal()">
+          Annuler
+        </button>
+        <button
+          class="btn-save"
+          (click)="modifierPointage()"
+          [disabled]="isLoading()">
+          {{ isLoading() ? 'Modification...' : 'Modifier' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

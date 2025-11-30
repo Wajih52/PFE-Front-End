@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RoleService } from '../../../../services/role.service';
-import {RoleResponse, RoleRequest, UserResponse} from '../../../../core/models';
+import {RoleResponse, RoleRequest, UserResponse, UtilisateurRoleWithUserDto} from '../../../../core/models';
 import { ConfirmationService } from '../../../../core/services/confirmation.service';
 import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
 
@@ -20,7 +20,7 @@ export class RolesManagementComponent implements OnInit {
   roles: RoleResponse[] = [];
   filteredRoles: RoleResponse[] = [];
   selectedRole: RoleResponse | null = null;
-  usersForSelectedRole: any[] = [];
+  usersForSelectedRole: UtilisateurRoleWithUserDto[] = [];
 
   // Statistiques
   stats = {

@@ -1,0 +1,260 @@
+<!-- src/app/features/employee/pointage-employee/pointage-employee.component.html -->
+
+<div class="pointage-container">
+
+  <!-- En-tête avec horloge -->
+  <div class="pointage-header">
+    <div class="clock-section">
+      <div class="time">{{ heureActuelle() }}</div>
+      <div class="date">{{ dateActuelle() }}</div>
+    </div>
+
+    <div class="quick-actions">
+      @if (aPointerArrivee()) {
+        <button
+          class="btn-pointer btn-arrivee"
+          (click)="pointerArrivee()"
+          [disabled]="isLoading()">
+          <span class="icon">🟢</span>
+          <span class="text">Pointer l'arrivée</span>
+        </button>
+      }
+
+      @if (peutPointerDepart()) {
+        <button
+          class="btn-pointer btn-depart"
+          (click)="pointerDepart()"
+          [disabled]="isLoading()">
+          <span class="icon">🔴</span>
+          <span class="text">Pointer le départ</span>
+        </button>
+      }
+
+      @if (pointageDuJour() && pointageDuJour()!.estComplet) {
+        <div class="pointage-complet">
+          <span class="icon">✅</span>
+          <span class="text">Journée complétée</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Pointage du jour -->
+  <div class="card pointage-jour-card">
+    <div class="card-header">
+      <h2>📍 Mon pointage d'aujourd'hui</h2>
+    </div>
+
+    <div class="card-body">
+      @if (pointageDuJour(); as pointage) {
+        <div class="pointage-details">
+
+          <!-- Statut -->
+          <div class="detail-item statut-item">
+            <span class="label">Statut</span>
+            <div class="statut-badge" [style.background-color]="getStatutColor(pointage.statutPointage)">
+              {{ getStatutIcon(pointage.statutPointage) }} {{ getStatutLabel(pointage.statutPointage) }}
+            </div>
+          </div>
+
+          <!-- Heure arrivée -->
+          @if (pointage.heureDebut) {
+            <div class="detail-item">
+              <span class="label">Heure d'arrivée</span>
+              <span class="value">🕐 {{ pointage.heureDebut }}</span>
+            </div>
+          }
+
+          <!-- Heure départ -->
+          @if (pointage.heureFin) {
+            <div class="detail-item">
+              <span class="label">Heure de départ</span>
+              <span class="value">🕐 {{ pointage.heureFin }}</span>
+            </div>
+          }
+
+          <!-- Total heures -->
+          @if (pointage.totalHeures) {
+            <div class="detail-item">
+              <span class="label">Total heures</span>
+              <span class="value total-hours">⏱️ {{ pointage.totalHeures.toFixed(2) }}h</span>
+            </div>
+          }
+
+          <!-- Retard -->
+          @if (pointage.estEnRetard && pointage.minutesRetard) {
+            <div class="detail-item retard-item">
+              <span class="label">Retard</span>
+              <span class="value retard-value">⚠️ {{ pointage.minutesRetard }} minutes</span>
+            </div>
+          }
+
+          <!-- Description -->
+          @if (pointage.description) {
+            <div class="detail-item description-item">
+              <span class="label">Note</span>
+              <span class="value">{{ pointage.description }}</span>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="no-pointage">
+          <div class="no-pointage-icon">⏰</div>
+          <p>Vous n'avez pas encore pointé votre arrivée aujourd'hui</p>
+          <button class="btn-pointer btn-arrivee" (click)="pointerArrivee()">
+            Pointer maintenant
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Statistiques du mois -->
+  @if (statistiques(); as stats) {
+    <div class="card statistiques-card">
+      <div class="card-header">
+        <h2>📊 Mes statistiques du mois</h2>
+      </div>
+
+      <div class="card-body">
+        <div class="stats-grid">
+
+          <!-- Présences -->
+          <div class="stat-item stat-presences">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.joursPresents }}</div>
+              <div class="stat-label">Jours présent</div>
+            </div>
+          </div>
+
+          <!-- Retards -->
+          <div class="stat-item stat-retards">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.joursEnRetard }}</div>
+              <div class="stat-label">Retards</div>
+            </div>
+          </div>
+
+          <!-- Absences -->
+          <div class="stat-item stat-absences">
+            <div class="stat-icon">❌</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.joursAbsents }}</div>
+              <div class="stat-label">Absences</div>
+            </div>
+          </div>
+
+          <!-- Congés -->
+          <div class="stat-item stat-conges">
+            <div class="stat-icon">🏖️</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.joursEnConge }}</div>
+              <div class="stat-label">Congés</div>
+            </div>
+          </div>
+
+          <!-- Total heures -->
+          <div class="stat-item stat-hours">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.totalHeuresTravaillees.toFixed(1) }}h</div>
+              <div class="stat-label">Total heures</div>
+            </div>
+          </div>
+
+          <!-- Moyenne heures -->
+          <div class="stat-item stat-average">
+            <div class="stat-icon">📈</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.moyenneHeuresParJour.toFixed(1) }}h</div>
+              <div class="stat-label">Moy. par jour</div>
+            </div>
+          </div>
+
+          <!-- Taux présence -->
+          <div class="stat-item stat-taux">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.tauxPresence.toFixed(1) }}%</div>
+              <div class="stat-label">Taux présence</div>
+            </div>
+          </div>
+
+          <!-- Taux retard -->
+          <div class="stat-item stat-taux-retard">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stats.tauxRetard.toFixed(1) }}%</div>
+              <div class="stat-label">Taux retard</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Historique récent -->
+  <div class="card historique-card">
+    <div class="card-header">
+      <h2>📅 Historique récent (30 derniers jours)</h2>
+    </div>
+
+    <div class="card-body">
+      @if (historique().length > 0) {
+        <div class="historique-table-wrapper">
+          <table class="historique-table">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Arrivée</th>
+              <th>Départ</th>
+              <th>Total heures</th>
+              <th>Note</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (pointage of historique(); track pointage.idPointage) {
+                <tr [class.retard-row]="pointage.estEnRetard">
+                  <td class="date-col">{{ pointage.dateTravail | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    <div class="statut-badge" [style.background-color]="getStatutColor(pointage.statutPointage)">
+                      {{ getStatutIcon(pointage.statutPointage) }} {{ getStatutLabel(pointage.statutPointage) }}
+                    </div>
+                  </td>
+                  <td>{{ pointage.heureDebut || '-' }}</td>
+                  <td>{{ pointage.heureFin || '-' }}</td>
+                  <td class="hours-col">
+                    @if (pointage.totalHeures) {
+                      <strong>{{ pointage.totalHeures.toFixed(2) }}h</strong>
+                    } @else {
+                      <span class="text-muted">-</span>
+                    }
+                  </td>
+                  <td class="description-col">
+                    @if (pointage.estEnRetard && pointage.minutesRetard) {
+                      <span class="retard-badge">⏰ Retard: {{ pointage.minutesRetard }}min</span>
+                    } @else if (pointage.description) {
+                      {{ pointage.description }}
+                    } @else {
+                      -
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="no-data">
+          <div class="no-data-icon">📭</div>
+          <p>Aucun historique disponible</p>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>

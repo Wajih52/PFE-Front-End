@@ -5,7 +5,8 @@
   <!-- Header -->
   <header class="page-header">
     <div>
-      <h1>🎭 Gestion des Rôles</h1>
+      <h1>
+        Gestion des Rôles</h1>
       <p class="subtitle">Configuration et contrôle des rôles système</p>
     </div>
     <button class="btn-primary" (click)="openAddModal()">
@@ -328,20 +329,20 @@
           <div class="user-item" *ngFor="let userRole of usersForSelectedRole">
             <div class="user-avatar">
               <img
-                *ngIf="userRole.utilisateur.image"
-                [src]="getImageUrl(userRole.utilisateur.image)"
-                alt="Photo de {{ userRole.utilisateur?.prenom }} {{ userRole.utilisateur?.nom }}"
+                *ngIf="userRole.image"
+                [src]="getImageUrl(userRole.image)"
+                alt="Photo de {{ userRole?.prenom }} {{ userRole?.nom }}"
                 (error)="onImageError($event)"
-                (click)="openImageModal(userRole.utilisateur.image)"
+                (click)="openImageModal(userRole.image)"
               />
-              <div *ngIf="!userRole.utilisateur.image" class="avatar-placeholder">
-                {{ (userRole.utilisateur.prenom?.charAt(0) || '') + (userRole.utilisateur.nom?.charAt(0) || '')}}
+              <div *ngIf="!userRole.image" class="avatar-placeholder">
+                {{ (userRole.prenom?.charAt(0) || '') + (userRole.nom?.charAt(0) || '')}}
               </div>
             </div>
             <div class="user-info">
-              <h4>{{ userRole.utilisateur.nom }} {{ userRole.utilisateur.prenom }}</h4>
-              <p>📧 {{ userRole.utilisateur.email }}</p>
-              <p>📞 {{ userRole.utilisateur.telephone }}</p>
+              <h4>{{ userRole.nom }} {{ userRole.prenom }}</h4>
+              <p>📧 {{ userRole.email }}</p>
+              <p>📞 {{ userRole.telephone }}</p>
             </div>
             <div class="user-meta">
               <span class="date-badge">
