@@ -1,0 +1,331 @@
+<!-- src/app/features/admin/pages/dashboard-statistiques/dashboard-statistiques.component.html -->
+
+<div class="dashboard-statistiques-container">
+
+  <!-- ============ HEADER ============ -->
+  <header class="dashboard-header">
+    <div>
+      <h1>📊 Dashboard Analytique</h1>
+      <p class="subtitle">Vue d'ensemble des performances et statistiques</p>
+    </div>
+
+    <!-- Filtres de période -->
+    <div class="period-filters">
+      <button
+        class="filter-btn"
+        [class.active]="periodFilter() === 'moisActuel'"
+        (click)="periodFilter.set('moisActuel'); applyPeriodFilter()">
+        Mois actuel
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="periodFilter() === 'personnalise'"
+        (click)="periodFilter.set('personnalise')">
+        Période personnalisée
+      </button>
+    </div>
+  </header>
+
+  <!-- Filtre période personnalisée -->
+  <div *ngIf="periodFilter() === 'personnalise'" class="custom-period-filter">
+    <div class="date-inputs">
+      <div class="input-group">
+        <label>Date début</label>
+        <input
+          type="date"
+          [(ngModel)]="dateDebut"
+          class="date-input">
+      </div>
+      <div class="input-group">
+        <label>Date fin</label>
+        <input
+          type="date"
+          [(ngModel)]="dateFin"
+          class="date-input">
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyPeriodFilter()">
+        Appliquer
+      </button>
+      <button class="btn-reset" (click)="resetFilters()">
+        Réinitialiser
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ LOADING STATE ============ -->
+  <div *ngIf="loading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des statistiques...</p>
+  </div>
+
+  <!-- ============ ERROR STATE ============ -->
+  <div *ngIf="error()" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error() }}</p>
+    <button class="btn-retry" (click)="loadStatistiques()">Réessayer</button>
+  </div>
+
+  <!-- ============ DASHBOARD CONTENT ============ -->
+  <div *ngIf="!loading() && !error() && stats()" class="dashboard-content">
+
+    <!-- ============ SECTION: KPIs PRINCIPAUX ============ -->
+    <section class="kpis-section">
+      <h2>📈 Indicateurs clés</h2>
+
+      <div class="kpis-grid">
+        <!-- CA Total -->
+        <div class="kpi-card highlight">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-content">
+            <h3>{{ formatCurrency(stats()?.chiffreAffairesTotal) }}</h3>
+            <p>Chiffre d'affaires total</p>
+          </div>
+        </div>
+
+        <!-- CA Mois Actuel -->
+        <div class="kpi-card">
+          <div class="kpi-icon">📅</div>
+          <div class="kpi-content">
+            <h3>{{ formatCurrency(stats()?.chiffreAffairesMoisActuel) }}</h3>
+            <p>CA mois actuel</p>
+            <span
+              class="evolution-badge"
+              [ngClass]="getEvolutionClass(stats()?.evolutionCAMensuel)">
+              {{ formatPercentage(stats()?.evolutionCAMensuel) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Panier Moyen -->
+        <div class="kpi-card">
+          <div class="kpi-icon">🛒</div>
+          <div class="kpi-content">
+            <h3>{{ formatCurrency(stats()?.panierMoyen) }}</h3>
+            <p>Panier moyen</p>
+          </div>
+        </div>
+
+        <!-- Taux de Conversion -->
+        <div class="kpi-card">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-content">
+            <h3>{{ formatPercentage(stats()?.tauxConversion) }}</h3>
+            <p>Taux de conversion</p>
+          </div>
+        </div>
+
+        <!-- Total Réservations -->
+        <div class="kpi-card">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-content">
+            <h3>{{ formatNumber(stats()?.nombreTotalReservations) }}</h3>
+            <p>Total réservations</p>
+          </div>
+        </div>
+
+        <!-- Réservations Confirmées -->
+        <div class="kpi-card success">
+          <div class="kpi-icon">✓</div>
+          <div class="kpi-content">
+            <h3>{{ formatNumber(stats()?.nombreReservationsConfirmees) }}</h3>
+            <p>Réservations confirmées</p>
+          </div>
+        </div>
+
+        <!-- Devis en Attente -->
+        <div class="kpi-card warning">
+          <div class="kpi-icon">⏳</div>
+          <div class="kpi-content">
+            <h3>{{ formatNumber(stats()?.nombreDevisEnAttente) }}</h3>
+            <p>Devis en attente</p>
+          </div>
+        </div>
+
+        <!-- Clients -->
+        <div class="kpi-card">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-content">
+            <h3>{{ formatNumber(stats()?.nombreClients) }}</h3>
+            <p>Total clients</p>
+            <small>+{{ stats()?.nouveauxClientsMois }} ce mois</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION: ALERTES ============ -->
+    <section class="alerts-section">
+      <h2>🔔 Alertes & Notifications</h2>
+
+      <div class="alerts-grid">
+        <!-- Stock Critique -->
+        <div class="alert-card" [class.alert-danger]="stats()?.produitsStockCritique! > 0">
+          <div class="alert-icon">📦</div>
+          <div class="alert-content">
+            <h3>{{ formatNumber(stats()?.produitsStockCritique) }}</h3>
+            <p>Produits en stock critique</p>
+          </div>
+        </div>
+
+        <!-- Réclamations -->
+        <div class="alert-card" [class.alert-warning]="stats()?.reclamationsEnCours! > 0">
+          <div class="alert-icon">📢</div>
+          <div class="alert-content">
+            <h3>{{ formatNumber(stats()?.reclamationsEnCours) }}</h3>
+            <p>Réclamations en cours</p>
+          </div>
+        </div>
+
+        <!-- Paiements en Retard -->
+        <div class="alert-card" [class.alert-danger]="stats()?.paiementsEnRetard! > 0">
+          <div class="alert-icon">💳</div>
+          <div class="alert-content">
+            <h3>{{ formatNumber(stats()?.paiementsEnRetard) }}</h3>
+            <p>Paiements en retard</p>
+          </div>
+        </div>
+
+        <!-- Livraisons Aujourd'hui -->
+        <div class="alert-card alert-info">
+          <div class="alert-icon">🚚</div>
+          <div class="alert-content">
+            <h3>{{ formatNumber(stats()?.livraisonsAujourdhui) }}</h3>
+            <p>Livraisons aujourd'hui</p>
+          </div>
+        </div>
+
+        <!-- Retours Aujourd'hui -->
+        <div class="alert-card alert-info">
+          <div class="alert-icon">🔙</div>
+          <div class="alert-content">
+            <h3>{{ formatNumber(stats()?.retoursAujourdhui) }}</h3>
+            <p>Retours attendus</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION: GRAPHIQUES PRINCIPAUX ============ -->
+    <section class="charts-section">
+      <h2>📊 Analyses graphiques</h2>
+
+      <div class="charts-grid">
+        <!-- Évolution du CA -->
+        <div class="chart-card large">
+          <h3>📈 Évolution du CA (12 derniers mois)</h3>
+          <div class="chart-container">
+            <canvas #evolutionCAChart></canvas>
+          </div>
+        </div>
+
+        <!-- Répartition par statut -->
+        <div class="chart-card">
+          <h3>📊 Répartition des réservations</h3>
+          <div class="chart-container">
+            <canvas #repartitionStatutsChart></canvas>
+          </div>
+        </div>
+
+        <!-- Top produits loués -->
+        <div class="chart-card">
+          <h3>🏆 Top 10 produits loués</h3>
+          <div class="chart-container">
+            <canvas #topProduitsChart></canvas>
+          </div>
+        </div>
+
+        <!-- CA par catégorie -->
+        <div class="chart-card">
+          <h3>💰 CA par catégorie</h3>
+          <div class="chart-container">
+            <canvas #caParCategorieChart></canvas>
+          </div>
+        </div>
+
+        <!-- Évolution réservations -->
+        <div class="chart-card large">
+          <h3>📅 Évolution des réservations (12 mois)</h3>
+          <div class="chart-container">
+            <canvas #evolutionReservationsChart></canvas>
+          </div>
+        </div>
+
+        <!-- Notes par catégorie -->
+        <div class="chart-card">
+          <h3>⭐ Satisfaction par catégorie</h3>
+          <div class="chart-container">
+            <canvas #notesParCategorieChart></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION: TOP PRODUITS ============ -->
+    <section class="top-products-section">
+      <h2>🏆 Top Produits</h2>
+
+      <div class="top-products-grid">
+        <div *ngFor="let produit of stats()?.topProduitsLoues?.slice(0, 5)" class="product-card">
+          <img
+            [src]="produit.imageProduit ? 'http://localhost:8080' + produit.imageProduit : 'assets/images/default-product.png'"
+            [alt]="produit.nomProduit"
+            class="product-image">
+          <div class="product-info">
+            <h4>{{ produit.nomProduit }}</h4>
+            <p class="product-code">{{ produit.codeProduit }}</p>
+            <div class="product-stats">
+              <span class="stat">{{ produit.nombreLocations }} locations</span>
+              <span class="stat">{{ formatCurrency(produit.chiffreAffaires) }}</span>
+              <span class="stat">⭐ {{ produit.moyenneNotes }}/5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION: STATISTIQUES EMPLOYÉS ============ -->
+    <section class="employees-section">
+      <h2>👥 Performances Équipe</h2>
+
+      <div class="employees-stats">
+        <div class="employee-summary-card">
+          <div class="summary-icon">👨‍💼</div>
+          <div class="summary-content">
+            <h3>{{ formatNumber(stats()?.nombreEmployesActifs) }}</h3>
+            <p>Employés actifs</p>
+          </div>
+        </div>
+
+        <div class="employee-summary-card">
+          <div class="summary-icon">📊</div>
+          <div class="summary-content">
+            <h3>{{ formatPercentage(stats()?.tauxPresenceMoyen) }}</h3>
+            <p>Taux de présence moyen</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>🏅 Top 5 Employés (livraisons effectuées)</h3>
+      <div class="top-employees-list">
+        <div *ngFor="let employe of stats()?.topEmployesLivraisons" class="employee-card">
+          <img
+            [src]="employe.imageProfil ? 'http://localhost:8080' + employe.imageProfil : 'assets/images/default-avatar.png'"
+            [alt]="employe.nomComplet"
+            class="employee-avatar">
+          <div class="employee-info">
+            <h4>{{ employe.nomComplet }}</h4>
+            <p>{{ employe.email }}</p>
+            <div class="employee-stats">
+              <span class="badge">{{ employe.nombreLivraisons }} livraisons</span>
+              <span class="badge">{{ formatPercentage(employe.tauxPresence) }} présence</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</div>

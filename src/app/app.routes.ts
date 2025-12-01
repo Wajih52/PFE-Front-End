@@ -33,6 +33,9 @@ import {MesNotificationsComponent} from './features/pages/mes-notifications/mes-
 import {CalendrierComponent} from './features/pages/calendrier/calendrier.component';
 import {PointageEmployeeComponent} from './features/employee/pointage-employee/pointage-employee.component';
 import {PointageAdminComponent} from './features/admin/pages/pointage-admin/pointage-admin.component';
+import {
+  DashboardStatistiquesComponent
+} from './features/admin/pages/dashboard-statistiques/dashboard-statistiques.component';
 
 
 export const routes: Routes = [
@@ -280,6 +283,12 @@ export const routes: Routes = [
               roles: ['ADMIN', 'MANAGER'],
               title: 'Gestion des Pointages'
             }
+          },
+          {
+            path: 'statistiques',
+            component: DashboardStatistiquesComponent,
+            canActivate: [authGuard],
+            data: { requiredRoles: ['ADMIN', 'MANAGER'] }
           }
         ]
       },

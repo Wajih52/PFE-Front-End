@@ -336,7 +336,7 @@
                 (click)="openImageModal(userRole.image)"
               />
               <div *ngIf="!userRole.image" class="avatar-placeholder">
-                {{ (userRole.prenom?.charAt(0) || '') + (userRole.nom?.charAt(0) || '')}}
+                {{ (userRole.prenom.charAt(0) || '') + (userRole.nom.charAt(0) || '')}}
               </div>
             </div>
             <div class="user-info">
