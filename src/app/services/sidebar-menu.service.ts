@@ -52,13 +52,6 @@ export class SidebarMenuService {
             route: 'client/mes-devis',
             order: 3
           },
-        /*  {
-            id: 'favorites',
-            label: 'Mes Favoris',
-            icon: '❤️',
-            route: '/mes-favoris',
-            order: 4
-          },*/
           {
             id: 'cart',
             label: 'Mon Panier',
@@ -85,13 +78,7 @@ export class SidebarMenuService {
             route: 'client/mes-paiements',
             order: 7
           },
-          /*{
-            id: 'coupons',
-            label: 'Mes Coupons',
-            icon: '🎫',
-            route: '/mes-coupons',
-            order: 8
-          }*/
+
         ]
       },
       {
@@ -144,7 +131,7 @@ export class SidebarMenuService {
           {
             id: 'pointages-employe',
             label: 'Pointages',
-            icon: '📋',
+            icon: '⏱️',
             route: '/pointage',
             order: 3
           },
@@ -154,13 +141,6 @@ export class SidebarMenuService {
             icon: '🚚',
             route: '/admin/livraisons',
             order: 4
-          },
-          {
-            id: 'stock-employe',
-            label: 'Gestion Stock',
-            icon: '📦',
-            route: '/employe/stock',
-            order: 5
           }
         ]
       },
@@ -194,21 +174,21 @@ export class SidebarMenuService {
             id: 'dashboard-manager',
             label: 'Tableau de bord',
             icon: '📊',
-            route: '/manager/dashboard',
+            route: '/admin/statistiques',
             order: 1
           },
           {
             id: 'reservations-manager',
             label: 'Toutes Réservations',
             icon: '📋',
-            route: '/manager/reservations',
+            route: '/admin/reservations',
             order: 2
           },
           {
             id: 'devis-validation',
             label: 'Validation Devis',
             icon: '✅',
-            route: '/manager/devis',
+            route: '/admin/devis-validation',
             order: 3
           },
           {
@@ -222,7 +202,7 @@ export class SidebarMenuService {
             id: 'statistiques',
             label: 'Statistiques',
             icon: '📈',
-            route: '/manager/statistiques',
+            route: '/admin/statistiques',
             order: 5
           },
           {
@@ -231,7 +211,14 @@ export class SidebarMenuService {
             icon: '🔔',
             route: '/notifications',
             order: 6
-          }
+          },
+          {
+            id: 'pointages-manager',
+            label: 'Pointages',
+            icon: '⏱️',
+            route: '/pointage',
+            order: 7
+          },
         ]
       }
     ],
