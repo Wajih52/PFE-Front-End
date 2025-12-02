@@ -17,6 +17,8 @@ export class SidebarMenuService {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+
+
   // ==================== CONFIGURATION DES MENUS PAR RÔLE ====================
 
   /**
@@ -280,14 +282,7 @@ export class SidebarMenuService {
             icon: '🔖',
             route: '/admin/instances',
             order: 6
-          },
-         /* {
-            id: 'stock-historique',
-            label: 'Consultation Historique',
-            icon: '📊',
-            route: '/admin/stock',
-            order: 6
-          }*/
+          }
         ]
       },
       {
@@ -384,13 +379,6 @@ export class SidebarMenuService {
             icon: '📈',
             route: '/admin/statistiques',
             order: 17
-          },
-          {
-            id: 'rapports',
-            label: 'Rapports',
-            icon: '📑',
-            route: '/admin/rapports',
-            order: 18
           }
         ]
       }
@@ -483,7 +471,7 @@ export class SidebarMenuService {
         if (userRoles.includes('ADMIN')) {
           roleSpecificItems.push({
             id: 'admin-dashboard',
-            label: 'Dashboard Admin',
+            label: 'Tableau de bord',
             icon: '🎛️',
             route: '/admin/dashboard',
             order: 1
@@ -493,7 +481,7 @@ export class SidebarMenuService {
         if (userRoles.includes('MANAGER')) {
           roleSpecificItems.push({
             id: 'manager-dashboard',
-            label: 'Dashboard Manager',
+            label: 'Tableau de Bord',
             icon: '📊',
             route: '/manager/dashboard',
             order: 1
@@ -503,7 +491,7 @@ export class SidebarMenuService {
         if (userRoles.includes('EMPLOYE')) {
           roleSpecificItems.push({
             id: 'employe-dashboard',
-            label: 'Dashboard Employé',
+            label: 'Tableau de Bord ',
             icon: '📋',
             route: '/employe/dashboard',
             order: 1

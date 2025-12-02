@@ -25,7 +25,27 @@
       </button>
     </div>
   </header>
+  <!-- ============ SECTION TÉLÉCHARGEMENTS ============ -->
+  <section *ngIf="!loading() && !error() && stats()" class="download-section">
+    <h3>📥 Exporter les rapports</h3>
+    <div class="download-buttons">
+      <button
+        class="btn-download btn-pdf"
+        (click)="telechargerPDF()"
+        [disabled]="loading()">
+        <span class="icon">📄</span>
+        <span class="text">Télécharger PDF</span>
+      </button>
 
+      <button
+        class="btn-download btn-excel"
+        (click)="telechargerExcel()"
+        [disabled]="loading()">
+        <span class="icon">📊</span>
+        <span class="text">Télécharger Excel</span>
+      </button>
+    </div>
+  </section>
   <!-- Filtre période personnalisée -->
   <div *ngIf="periodFilter() === 'personnalise'" class="custom-period-filter">
     <div class="date-inputs">

@@ -48,4 +48,22 @@ export class StatistiquesService {
   healthCheck(): Observable<string> {
     return this.http.get(`${this.API_URL}/health`, { responseType: 'text' });
   }
+
+  /**
+   * Télécharger un rapport PDF
+   */
+  telechargerRapportPDF(): Observable<Blob> {
+    return this.http.get(`${this.API_URL}/rapports/pdf`, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger un rapport Excel
+   */
+  telechargerRapportExcel(): Observable<Blob> {
+    return this.http.get(`${this.API_URL}/rapports/excel`, {
+      responseType: 'blob'
+    });
+  }
 }

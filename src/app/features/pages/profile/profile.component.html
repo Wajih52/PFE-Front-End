@@ -226,8 +226,11 @@
           placeholder="Minimum 8 caractères"
           [class.error]="hasError('password', 'nouveauMotDePasse')"
         >
-        <span class="error-text" *ngIf="hasError('password', 'nouveauMotDePasse')">
+        <span class="error-text" *ngIf="getError('password', 'nouveauMotDePasse','minLength')">
           Minimum 8 caractères
+        </span>
+        <span class="error-text" *ngIf="getError('password', 'nouveauMotDePasse','pattern')">
+         Le mot de passe doit contenir: 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
         </span>
       </div>
 

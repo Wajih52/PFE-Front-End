@@ -138,6 +138,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
    */
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed;
-    this.collapsedChange.emit(this.isCollapsed); // ✅ Émettre l'événement
+    this.collapsedChange.emit(this.isCollapsed);
   }
 }

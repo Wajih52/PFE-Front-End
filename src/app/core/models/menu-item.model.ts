@@ -1,5 +1,7 @@
 // src/app/core/models/menu-item.model.ts
 
+import {LucideIconData} from 'lucide-angular';
+
 /**
  * Interface pour définir un élément de menu (sidebar ou dropdown)
  * Permet une configuration flexible et extensible
@@ -12,7 +14,7 @@ export interface MenuItem {
   label: string;
 
   /** Icône (classe Font Awesome, Material Icons, ou emoji) */
-  icon?: string;
+  icon?: LucideIconData | string;
 
   /** Route Angular vers laquelle naviguer */
   route?: string;

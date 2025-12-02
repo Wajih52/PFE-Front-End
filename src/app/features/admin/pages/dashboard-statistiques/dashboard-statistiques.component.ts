@@ -231,11 +231,11 @@ export class DashboardStatistiquesComponent implements OnInit {
     const data = Object.values(stats.repartitionReservationsParStatut);
 
     const colors = [
-      '#C8A882', // Beige principal
-      '#000000', // Noir
-      '#8B7355', // Marron
-      '#D4AF37', // Or
-      '#A0826D'  // Beige foncé
+      '#f38606', // Devis
+      '#166703', // Reservation confirmé
+      '#67625a', // Reservation Terminé
+      '#dc1010', // reservation annulée
+      '#67625a'  //
     ];
 
     const config: ChartConfiguration = {
@@ -376,7 +376,7 @@ export class DashboardStatistiquesComponent implements OnInit {
         datasets: [{
           label: 'CA (TND)',
           data: data,
-          backgroundColor: '#C8A882',
+          backgroundColor: '#686867',
           borderColor: '#000',
           borderWidth: 1
         }]
@@ -605,6 +605,59 @@ export class DashboardStatistiquesComponent implements OnInit {
   getEvolutionClass(value: number | undefined): string {
     if (value === undefined || value === null) return '';
     return value >= 0 ? 'positive' : 'negative';
+  }
+
+  /**
+   * Télécharger un rapport PDF
+   */
+  telechargerPDF(): void {
+    this.loading.set(true);
+
+    this.statistiquesService.telechargerRapportPDF().subscribe({
+      next: (blob) => {
+        const date = new Date().toISOString().split('T')[0];
+        this.downloadFile(blob, `rapport_statistiques_${date}.pdf`);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('❌ Erreur téléchargement PDF:', err);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Télécharger un rapport Excel
+   */
+  telechargerExcel(): void {
+    this.loading.set(true);
+
+    this.statistiquesService.telechargerRapportExcel().subscribe({
+      next: (blob) => {
+        const date = new Date().toISOString().split('T')[0];
+        this.downloadFile(blob, `rapport_statistiques_${date}.xlsx`);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('❌ Erreur téléchargement Excel:', err);
+        alert('Erreur lors du téléchargement du rapport Excel');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Utilitaire pour télécharger un fichier Blob
+   */
+  private downloadFile(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   /**

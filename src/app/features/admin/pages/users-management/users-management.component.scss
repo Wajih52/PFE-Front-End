@@ -8,6 +8,8 @@
   min-height: 100vh;
 }
 
+
+
 // ========== HEADER ==========
 .page-header {
   display: flex;
@@ -86,11 +88,11 @@
   }
 
   &.suspendu {
-    border-color: #ffc107;
+    border-color: #dc3545;
   }
 
   &.desactive {
-    border-color: #dc3545;
+    border-color: #ffc107;
   }
 
   .stat-icon {

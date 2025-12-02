@@ -9,6 +9,7 @@ import { ImageService } from '../../../core/services/image.service';
 import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {ConfirmationService} from '../../../core/services/confirmation.service';
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
   selector: 'app-profile',
@@ -25,6 +26,7 @@ export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
+  private scrollService =inject(ScrollService);
 
 
   // Formulaires
@@ -68,7 +70,8 @@ export class ProfileComponent implements OnInit {
     // Formulaire mot de passe
     this.passwordForm = this.fb.group({
       ancienMotDePasse: ['', Validators.required],
-      nouveauMotDePasse: ['', [Validators.required, Validators.minLength(8)]],
+      nouveauMotDePasse: ['', [Validators.required, Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-])[A-Za-z\d@$!%*?&.#_-]{8,}$/)]],
       confirmMotDePasse: ['', Validators.required]
     });
   }
@@ -178,7 +181,8 @@ export class ProfileComponent implements OnInit {
       image: this.previewImage
     }).subscribe({
       next: (response: any) => {
-        this.successMessage = '✅ Photo mise à jour';
+        this.successMessage = ' Photo mise à jour';
+        setTimeout(() => this.successMessage = '', 3000);
         this.user.image = response.image;
         if (response.image) {
           this.previewImage = `http://localhost:8080${response.image}`;
@@ -193,7 +197,9 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur lors de la sauvegarde de l\'image';
+        setTimeout(() => this.errorMessage = '', 3000);
         console.error(err);
+        this.isLoadingImage = false;
       },
       complete: () => {
         this.isLoadingImage = false;
@@ -219,7 +225,8 @@ export class ProfileComponent implements OnInit {
       image: null
     }).subscribe({
       next: () => {
-        this.successMessage = '✅ Photo supprimée';
+        this.successMessage = ' Photo supprimée';
+        setTimeout(() => this.successMessage = '', 3000);
         this.user.image = null;
         this.previewImage = '';
 
@@ -232,6 +239,8 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur lors de la suppression';
+        setTimeout(() => this.errorMessage = '', 3000);
+        this.isLoadingImage = false;
       },
       complete: () => {
         this.isLoadingImage = false;
@@ -256,8 +265,10 @@ export class ProfileComponent implements OnInit {
 
     this.http.patch(`${this.API_URL}/modifierPartiel/${this.user.idUtilisateur}`, data).subscribe({
       next: (response: any) => {
-        this.successMessage = '✅ Profil mis à jour';
+        this.successMessage = ' Profil mis à jour';
         this.isEditingProfile = false;
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.successMessage = '', 3000);
         this.user = { ...this.user, ...response };
 
         const currentUser = this.storage.getUser();
@@ -269,6 +280,8 @@ export class ProfileComponent implements OnInit {
         this.errorMessage = err.error?.message || 'Erreur lors de la mise à jour';
         console.error(err);
         this.isLoadingProfile = false;
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.errorMessage = '', 3000);
       },
       complete: () => {
         this.isLoadingProfile = false;
@@ -289,6 +302,8 @@ export class ProfileComponent implements OnInit {
 
     if (nouveauMotDePasse !== confirmMotDePasse) {
       this.errorMessage = '❌ Les mots de passe ne correspondent pas';
+      this.scrollService.scrollToTop();
+      setTimeout(() => this.errorMessage = '', 3000);
       return;
     }
 
@@ -303,13 +318,18 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/change-password`, data).subscribe({
       next: () => {
-        this.successMessage = '✅ Mot de passe modifié avec succès';
+        this.successMessage = ' Mot de passe modifié avec succès';
         this.passwordForm.reset();
         this.isEditingPassword = false;
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur lors du changement de mot de passe';
         console.error(err);
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.errorMessage = '', 3000);
+        this.isLoadingPassword = false;
       },
       complete: () => {
         this.isLoadingPassword = false;
@@ -340,6 +360,8 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur lors de la désactivation';
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
@@ -367,6 +389,8 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur lors de la Suppression';
+        this.scrollService.scrollToTop();
+        setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
@@ -394,6 +418,12 @@ export class ProfileComponent implements OnInit {
   hasError(formName: 'profile' | 'password', fieldName: string): boolean {
     const form = formName === 'profile' ? this.profileForm : this.passwordForm;
     const field = form.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    return !!(field && field.invalid && field.touched );
+  }
+
+  getError(formName: 'profile' | 'password', fieldName: string, errorType: string): boolean {
+    const form = formName === 'profile' ? this.profileForm : this.passwordForm;
+    const field = form.get(fieldName);
+    return !!(field && field.hasError(errorType) && field.touched);
   }
 }

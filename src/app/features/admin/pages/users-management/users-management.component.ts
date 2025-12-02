@@ -7,7 +7,18 @@ import { HttpClient } from '@angular/common/http';
 import { ConfirmationService } from '../../../../core/services/confirmation.service';
 import {ImageService} from '../../../../core/services/image.service';
 import {ManageUserRolesModalComponent} from '../manage-user-roles-modal/manage-user-roles-modal.component';
-import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
+import {
+  LucideAngularModule,
+  UsersRound,
+  UserPlus,
+  Search,
+  Filter,
+  ShieldX,
+  ShieldCheck,
+  ShieldMinus,
+  RotateCcw,
+  Eye, FileUser, Trash2, FilePenLine
+} from 'lucide-angular';
 
 interface User {
   idUtilisateur: number;
@@ -40,8 +51,8 @@ interface Stats {
 @Component({
   selector: 'app-users-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ManageUserRolesModalComponent],
-  providers: [DatePipe], // ✅ Ajout du DatePipe
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ManageUserRolesModalComponent, LucideAngularModule],
+  providers: [DatePipe],
   templateUrl: './users-management.component.html',
   styleUrl: './users-management.component.scss'
 })
@@ -52,10 +63,25 @@ export class UsersManagementComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private fb = inject(FormBuilder);
   private imageService = inject(ImageService);
-  private datePipe = inject(DatePipe); // ✅ Injection du DatePipe
+  private datePipe = inject(DatePipe);
 
   API_URL = 'http://localhost:8080/utilisateurs';
-  IMAGE_BASE_URL = 'http://localhost:8080'; // ✅ URL de base pour les images
+  IMAGE_BASE_URL = 'http://localhost:8080';
+
+  //icone lucide
+  readonly UsersRound = UsersRound;
+  readonly UserPlus = UserPlus;
+  readonly Search = Search;
+  readonly Filter = Filter;
+  readonly ShieldX = ShieldX;
+  readonly ShieldCheck = ShieldCheck;
+  readonly ShieldMinus = ShieldMinus;
+  readonly RotateCcw = RotateCcw
+  protected readonly Eye = Eye;
+  protected readonly FileUser = FileUser;
+  protected readonly Trash2 = Trash2;
+  protected readonly FilePenLine = FilePenLine;
+
 
   // Données
   allUsers: User[] = [];
@@ -257,7 +283,7 @@ export class UsersManagementComponent implements OnInit {
     this.selectedUser = null;
   }
 
-  // ✅ Méthode pour obtenir l'URL complète de l'image
+  //  Méthode pour obtenir l'URL complète de l'image
   getImageUrl(imagePath?: string): string {
 
     if (!imagePath) return 'assets/images/default-avatar.png';
@@ -312,7 +338,7 @@ export class UsersManagementComponent implements OnInit {
     document.body.removeChild(link);
   }
 //======================================================
-  // ✅ Méthode pour formater les dates
+  //  Méthode pour formater les dates
   formatDate(date?: string): string {
     if (!date) return 'N/A';
 
@@ -332,7 +358,7 @@ export class UsersManagementComponent implements OnInit {
       'ACTIVE': 'statut-actif',
       'SUSPENDU': 'statut-suspendu',
       'DESACTIVE': 'statut-desactive',
-      'ARCHIVE': 'statut-archive' // ✅ Ajout du statut ARCHIVE
+      'ARCHIVE': 'statut-archive'
     };
     return classes[statut] || '';
   }
@@ -345,7 +371,7 @@ export class UsersManagementComponent implements OnInit {
       'ACTIVE': '✅',
       'SUSPENDU': '⛔',
       'DESACTIVE': '🔒',
-      'ARCHIVE': '📦' // ✅ Ajout du statut ARCHIVE
+      'ARCHIVE': '📦'
     };
     return icons[statut] || '❓';
   }
@@ -387,7 +413,7 @@ export class UsersManagementComponent implements OnInit {
 
     this.http.patch(`${this.API_URL}/${user.idUtilisateur}/suspendre`, {}).subscribe({
       next: () => {
-        this.successMessage = `⛔ Compte de ${user.prenom} ${user.nom} suspendu`;
+        this.successMessage = ` Compte de ${user.prenom} ${user.nom} suspendu`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -403,7 +429,7 @@ export class UsersManagementComponent implements OnInit {
    */
   async deactivateAccount(user: User): Promise<void> {
     const confirmed = await this.confirmationService.confirm({
-      title: '🔒 Désactiver le compte',
+      title: ' Désactiver le compte',
       message: `Voulez-vous désactiver le compte de ${user.prenom} ${user.nom} ?`,
       confirmText: 'Désactiver',
       type: 'warning'
@@ -413,7 +439,7 @@ export class UsersManagementComponent implements OnInit {
 
     this.http.post(`${this.API_URL}/${user.idUtilisateur}/desactiver`, {}).subscribe({
       next: () => {
-        this.successMessage = `🔒 Compte de ${user.prenom} ${user.nom} désactivé`;
+        this.successMessage = ` Compte de ${user.prenom} ${user.nom} désactivé`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -429,7 +455,7 @@ export class UsersManagementComponent implements OnInit {
    */
   async activateAccount(user: User): Promise<void> {
     const confirmed = await this.confirmationService.confirm({
-      title: '✅ Activer le compte',
+      title: ' Activer le compte',
       message: `Voulez-vous activer le compte de ${user.prenom} ${user.nom} ?`,
       confirmText: 'Activer',
       type: 'info'
@@ -439,7 +465,7 @@ export class UsersManagementComponent implements OnInit {
 
     this.http.post(`${this.API_URL}/${user.idUtilisateur}/activer`, {}).subscribe({
       next: () => {
-        this.successMessage = `✅ Compte de ${user.prenom} ${user.nom} activé`;
+        this.successMessage = ` Compte de ${user.prenom} ${user.nom} activé`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -455,7 +481,7 @@ export class UsersManagementComponent implements OnInit {
    */
   async deleteUser(user: User): Promise<void> {
     const confirmed = await this.confirmationService.confirm({
-      title: '🗑️ Supprimer définitivement',
+      title: ' Supprimer définitivement',
       message: `ATTENTION : Voulez-vous supprimer définitivement ${user.prenom} ${user.nom} ? Cette action est irréversible.`,
       confirmText: 'Supprimer',
       type: 'danger'
@@ -467,7 +493,7 @@ export class UsersManagementComponent implements OnInit {
       responseType: 'text'
     }).subscribe({
       next: () => {
-        this.successMessage = `✅ Utilisateur ${user.prenom} ${user.nom} supprimé`;
+        this.successMessage = ` Utilisateur ${user.prenom} ${user.nom} supprimé`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -487,12 +513,12 @@ export class UsersManagementComponent implements OnInit {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      this.editErrorMessage = '❌ Veuillez sélectionner une image';
+      this.editErrorMessage = ' Veuillez sélectionner une image';
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      this.editErrorMessage = '❌ Image trop volumineuse (max 5MB)';
+      this.editErrorMessage = ' Image trop volumineuse (max 5MB)';
       return;
     }
 
@@ -502,7 +528,7 @@ export class UsersManagementComponent implements OnInit {
       this.editPreviewImage = await this.imageService.compressImage(file);
       this.editSelectedImageFile = file;
     } catch (error) {
-      this.editErrorMessage = '❌ Erreur lors du traitement de l\'image';
+      this.editErrorMessage = ' Erreur lors du traitement de l\'image';
       console.error(error);
     }
   }
@@ -520,7 +546,7 @@ export class UsersManagementComponent implements OnInit {
    */
   saveImage(): void {
     if (!this.editPreviewImage || !this.editForm.value.idUtilisateur) {
-      this.editErrorMessage = '❌ Aucune image sélectionnée';
+      this.editErrorMessage = ' Aucune image sélectionnée';
       return;
     }
 
@@ -528,22 +554,22 @@ export class UsersManagementComponent implements OnInit {
 
     this.http.patch(`${this.API_URL}/${userId}/image`, { image: this.editPreviewImage }).subscribe({
       next: (response : any) => {
-        this.editSuccessMessage = '✅ Image mise à jour avec succès';
+        this.editSuccessMessage = ' Image mise à jour avec succès';
 
-        // ✅ Mettre à jour dans la liste
+        //  Mettre à jour dans la liste
         const userIndex = this.allUsers.findIndex(u => u.idUtilisateur === userId);
         if (userIndex !== -1) {
           this.allUsers[userIndex] = { ...this.allUsers[userIndex], image: response.image };
         }
 
-        // ✅ Mettre à jour le formulaire d'édition (pour l'aperçu)
+        // Mettre à jour le formulaire d'édition (pour l'aperçu)
         this.editForm.patchValue({ image: response.image + '?t=' + new Date().getTime() });
 
-        // ✅ Réinitialiser la sélection
+        //  Réinitialiser la sélection
         this.editPreviewImage = '';
         this.editSelectedImageFile = null;
 
-        // ✅ Réappliquer les filtres pour mettre à jour la vue
+        //  Réappliquer les filtres pour mettre à jour la vue
         this.applyFilters();
 
         setTimeout(() => this.editSuccessMessage = '', 3000);
@@ -684,10 +710,10 @@ export class UsersManagementComponent implements OnInit {
   }
 
   /**
-   * ✅ CORRECTION : Vérifier si le rôle EMPLOYE ou ADMIN est sélectionné
+   * Vérifier si le rôle EMPLOYE ou ADMIN est sélectionné
    */
   isAddFormEmployeOrAdmin(): boolean {
-    const role = this.addForm?.get('role')?.value; // ✅ 'role' au lieu de 'roles'
+    const role = this.addForm?.get('role')?.value;
     return role === 'EMPLOYE' || role === 'ADMIN';
   }
 
@@ -697,7 +723,7 @@ export class UsersManagementComponent implements OnInit {
   saveNewUser(): void {
     if (this.addForm.invalid) {
       this.addForm.markAllAsTouched();
-      this.addErrorMessage = '⚠️ Veuillez corriger les erreurs dans le formulaire';
+      this.addErrorMessage = ' Veuillez corriger les erreurs dans le formulaire';
       setTimeout(() => this.addErrorMessage = '', 5000);
       return;
     }
@@ -725,19 +751,19 @@ export class UsersManagementComponent implements OnInit {
 
     this.http.post(`${this.API_URL}/ajouter`, newUser).subscribe({
       next: () => {
-        this.addSuccessMessage = '✅ Utilisateur créé avec succès';
+        this.addSuccessMessage = ' Utilisateur créé avec succès';
         this.loadUsers();
         this.isSubmittingAdd = false;
 
         setTimeout(() => {
           this.showAddModal = false;
           this.addSuccessMessage = '';
-          this.successMessage = '✅ Nouvel utilisateur créé avec succès';
+          this.successMessage = ' Nouvel utilisateur créé avec succès';
           setTimeout(() => this.successMessage = '', 3000);
         }, 1500);
       },
       error: (err) => {
-        this.addErrorMessage = err.error?.message || '❌ Erreur lors de la création';
+        this.addErrorMessage = err.error?.message || ' Erreur lors de la création';
         this.isSubmittingAdd = false;
         setTimeout(() => this.addErrorMessage = '', 5000);
       }
@@ -756,12 +782,12 @@ export class UsersManagementComponent implements OnInit {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      this.addErrorMessage = '❌ Veuillez sélectionner une image';
+      this.addErrorMessage = ' Veuillez sélectionner une image';
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      this.addErrorMessage = '❌ Image trop volumineuse (max 5MB)';
+      this.addErrorMessage = ' Image trop volumineuse (max 5MB)';
       return;
     }
 
@@ -774,7 +800,7 @@ export class UsersManagementComponent implements OnInit {
       // Mettre à jour le contrôle du formulaire
       this.addForm.patchValue({ image: this.previewImage });
     } catch (error) {
-      this.addErrorMessage = '❌ Erreur lors du traitement de l\'image';
+      this.addErrorMessage = ' Erreur lors du traitement de l\'image';
       console.error(error);
     }
   }
@@ -801,7 +827,7 @@ export class UsersManagementComponent implements OnInit {
     this.currentUserRoles = user.roles;
 
 
-    // ✅ Réinitialiser l'aperçu
+    // Réinitialiser l'aperçu
     this.editPreviewImage = '';
     this.editSelectedImageFile = null;
 
@@ -945,7 +971,7 @@ export class UsersManagementComponent implements OnInit {
   saveUserChanges(): void {
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
-      this.editErrorMessage = '⚠️ Veuillez remplir tous les champs obligatoires correctement';
+      this.editErrorMessage = ' Veuillez remplir tous les champs obligatoires correctement';
       setTimeout(() => this.editErrorMessage = '', 5000);
       return;
     }
@@ -959,7 +985,7 @@ export class UsersManagementComponent implements OnInit {
 
     this.http.patch(`${this.API_URL}/modifierPartiel/${updatedUser.idUtilisateur}`, updatedUser).subscribe({
       next: () => {
-        this.editSuccessMessage = '✅ Utilisateur modifié avec succès';
+        this.editSuccessMessage = ' Utilisateur modifié avec succès';
         this.loadUsers();
         this.isSubmitting = false;
 
@@ -968,7 +994,7 @@ export class UsersManagementComponent implements OnInit {
           this.showEditModal = false;
           this.editSuccessMessage = '';
           // Afficher le message dans le composant principal
-          this.successMessage = '✅ Utilisateur modifié avec succès';
+          this.successMessage = 'Utilisateur modifié avec succès';
           setTimeout(() => this.successMessage = '', 3000);
         }, 1500);
       },
@@ -979,4 +1005,7 @@ export class UsersManagementComponent implements OnInit {
       }
     });
   }
+
+
+
 }

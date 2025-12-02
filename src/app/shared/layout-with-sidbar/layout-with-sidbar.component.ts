@@ -9,7 +9,7 @@ import { FooterComponent } from '../footer/footer.component';
 @Component({
   selector: 'app-layout-with-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent, FooterComponent],
+  imports: [CommonModule, RouterModule, SidebarComponent],
   template: `
     <div class="layout-wrapper">
       <div class="layout-container">

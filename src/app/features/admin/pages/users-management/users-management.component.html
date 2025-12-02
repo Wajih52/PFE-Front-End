@@ -4,19 +4,19 @@
   <!-- Header -->
   <header class="page-header">
     <div>
-      <h1>👥 Gestion des Utilisateurs</h1>
+      <h1><lucide-icon [img]="UsersRound" [size]="28"></lucide-icon> Gestion des Utilisateurs</h1>
       <p class="subtitle">Administration et contrôle des comptes</p>
     </div>
     <!-- Bouton pour ouvrir le modal d'ajout -->
     <button class="btn-primary" (click)="openAddModal()">
-      + Nouvel utilisateur
+      <lucide-icon [img]="UserPlus" [size]="20"></lucide-icon> Nouvel utilisateur
     </button>
   </header>
 
   <!-- Statistiques -->
   <div class="stats-grid">
     <div class="stat-card total">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"><lucide-icon [img]="UsersRound" color="#161618" [size]="48" ></lucide-icon></div>
       <div class="stat-content">
         <h3>{{ stats.total }}</h3>
         <p>Total utilisateurs</p>
@@ -24,7 +24,7 @@
     </div>
 
     <div class="stat-card actif">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><lucide-icon [img]="ShieldCheck" [size]="48" color="#0ed825" [strokeWidth]="3" [absoluteStrokeWidth]="true"></lucide-icon></div>
       <div class="stat-content">
         <h3>{{ stats.actifs }}</h3>
         <p>Comptes actifs</p>
@@ -32,7 +32,7 @@
     </div>
 
     <div class="stat-card suspendu">
-      <div class="stat-icon">⛔</div>
+      <div class="stat-icon"><lucide-icon [img]="ShieldX" color="#DC1010FF"  [size]="48"></lucide-icon></div>
       <div class="stat-content">
         <h3>{{ stats.suspendus }}</h3>
         <p>Comptes suspendus</p>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="stat-card desactive">
-      <div class="stat-icon">🔒</div>
+      <div class="stat-icon"><lucide-icon [size]="48" [img]="ShieldMinus" color="#ffc107"></lucide-icon></div>
       <div class="stat-content">
         <h3>{{ stats.desactives }}</h3>
         <p>Comptes désactivés</p>
@@ -59,11 +59,12 @@
   <!-- Filtres et Recherche -->
   <div class="filters-card">
     <div class="search-bar">
+      <lucide-icon [img]="Search" [size]="20"></lucide-icon>
       <input
         type="text"
         [(ngModel)]="searchTerm"
         (input)="applyFilters()"
-        placeholder="🔍 Rechercher par nom, email, pseudo, code..."
+        placeholder=" Rechercher par nom, email, pseudo, code..."
         class="search-input"
       >
     </div>
@@ -88,7 +89,7 @@
       </select>
 
       <button class="btn-reset" (click)="resetFilters()">
-        🔄 Réinitialiser
+        <lucide-icon [img]="RotateCcw" color="#3855e5"></lucide-icon> Réinitialiser
       </button>
     </div>
 
@@ -180,7 +181,7 @@
                 (click)="showDetails(user)"
                 title="Voir détails"
               >
-                👁️
+                <lucide-icon [img]="Eye"></lucide-icon>
               </button>
               <button
                 class="btn-action btn-roles "
@@ -188,7 +189,7 @@
                 title="Gérer les rôles"
               >
 
-                🎭
+                <lucide-icon [img]="FileUser" color="#ffffff"></lucide-icon>
               </button>
 
               <button
@@ -197,7 +198,7 @@
                 (click)="suspendAccount(user)"
                 title="Suspendre"
               >
-                ⛔
+                <lucide-icon [img]="ShieldX" color="#000000"  ></lucide-icon>
               </button>
 
               <button
@@ -206,7 +207,7 @@
                 (click)="deactivateAccount(user)"
                 title="Désactiver"
               >
-                🔒
+                <lucide-icon [img]="ShieldMinus" color="#e2e538"></lucide-icon>
               </button>
 
               <button
@@ -215,7 +216,7 @@
                 (click)="activateAccount(user)"
                 title="Activer"
               >
-                ✅
+                <lucide-icon [img]="ShieldCheck" ></lucide-icon>
               </button>
 
               <button
@@ -223,7 +224,7 @@
                 (click)="deleteUser(user)"
                 title="Supprimer"
               >
-                🗑️
+                <lucide-icon [img]="Trash2"></lucide-icon>
               </button>
 
               <button
@@ -231,7 +232,7 @@
                 (click)="editUser(user)"
                 title="Modifier"
               >
-                ✏️
+                <lucide-icon [img]="FilePenLine"></lucide-icon>
               </button>
             </div>
           </td>
