@@ -1,0 +1,201 @@
+<!-- src/app/features/employee/livraisons-employe/livraisons-employe.component.html -->
+
+<div class="livraisons-employe">
+  <div class="page-header">
+    <h1>🚚 Mes Livraisons</h1>
+    <p class="subtitle">Gérez vos livraisons affectées</p>
+  </div>
+
+  <!-- Statistiques Rapides -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ stats().total }}</h3>
+        <p>Total livraisons</p>
+      </div>
+    </div>
+
+    <div class="stat-card highlight">
+      <div class="stat-icon">⏰</div>
+      <div class="stat-content">
+        <h3>{{ stats().aujourdhui }}</h3>
+        <p>Aujourd'hui</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-content">
+        <h3>{{ stats().aVenir }}</h3>
+        <p>À venir</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{ stats().terminees }}</h3>
+        <p>Terminées</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Période :</label>
+      <div class="filter-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'toutes'"
+          (click)="changerPeriode('toutes')">
+          Toutes
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'aujourdhui'"
+          (click)="changerPeriode('aujourdhui')">
+          Aujourd'hui
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'a-venir'"
+          (click)="changerPeriode('a-venir')">
+          À venir
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'passees'"
+          (click)="changerPeriode('passees')">
+          Passées
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === 'TOUS'"
+          (click)="changerStatut('TOUS')">
+          Tous
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutLivraison.EN_ATTENTE"
+          (click)="changerStatut(StatutLivraison.EN_ATTENTE)">
+          En attente
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutLivraison.EN_PREPARATION"
+          (click)="changerStatut(StatutLivraison.EN_ATTENTE)">
+          En préparation
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutLivraison.EN_COURS"
+          (click)="changerStatut(StatutLivraison.EN_COURS)">
+          En cours
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutLivraison.LIVREE"
+          (click)="changerStatut(StatutLivraison.LIVREE)">
+          Livrées
+        </button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Rechercher par titre ou adresse..."
+        [value]="filtreRecherche()"
+        (input)="changerRecherche($event)"
+        class="search-input">
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de vos livraisons...</p>
+  </div>
+
+  <!-- Liste des Livraisons -->
+  <div *ngIf="!isLoading()" class="livraisons-list">
+
+    <div *ngIf="livraisonsFiltrees().length === 0" class="empty-state">
+      <p>📭 Aucune livraison ne correspond à vos critères</p>
+    </div>
+
+    <div *ngFor="let livraison of livraisonsFiltrees()"
+         class="livraison-card"
+         [routerLink]="['/admin/livraisons', livraison.idLivraison]">
+
+      <div class="livraison-header">
+        <div class="livraison-info">
+          <span class="statut-icon">{{ getStatutIcon(livraison.statutLivraison) }}</span>
+          <div>
+            <h3>{{ livraison.titreLivraison }}</h3>
+            <span class="badge"
+                  [ngStyle]="{'background-color': getStatutColor(livraison.statutLivraison)}">
+              {{ getStatutLabel(livraison.statutLivraison) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="livraison-body">
+        <div class="info-row">
+          <div class="info-item">
+            <span class="icon">📅</span>
+            <div class="info-content">
+              <span class="label">Date</span>
+              <span class="value">{{ formatDate(livraison.dateLivraison) }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">🕒</span>
+            <div class="info-content">
+              <span class="label">Heure</span>
+              <span class="value">{{ formatHeure(livraison.heureLivraison) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item full-width">
+            <span class="icon">📍</span>
+            <div class="info-content">
+              <span class="label">Adresse</span>
+              <span class="value">{{ livraison.adresseLivraison }}</span>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="info-row" *ngIf="livraison.observations">
+          <div class="info-item full-width">
+            <span class="icon">💬</span>
+            <div class="info-content">
+              <span class="label">Observations</span>
+              <span class="value">{{ livraison.observations }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="livraison-footer">
+        <span class="footer-info">
+          Créée le {{ formatDate(livraison.dateCreation) }}
+        </span>
+        <span class="link-arrow">Voir détails →</span>
+      </div>
+    </div>
+  </div>
+</div>

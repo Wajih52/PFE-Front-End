@@ -279,6 +279,8 @@ export type StatutReservation =
   | 'ANNULE'
   | 'TERMINE';
 
+
+
 export type TypeProduit =
   | 'EN_QUANTITE'
   | 'AVEC_REFERENCE';
@@ -292,6 +294,7 @@ export type StatutLivraison =
   |'RETOUR_PARTIEL'
   | 'RETOURNEE'
   | 'ANNULEE';
+
 
 export type StatutPaiementRes =
   | 'EN_ATTENTE_PAIEMENT'
@@ -315,6 +318,13 @@ export const StatutReservationLabels: Record<StatutReservation, string> = {
   'CONFIRME': 'Confirmée',
   'ANNULE': 'Annulée',
   'TERMINE': 'Terminée'
+};
+
+export const StatutReservationBadgeClasses: Record<StatutReservation, string> = {
+  'EN_ATTENTE': 'badge-warning',
+  'CONFIRME': 'badge-success',
+  'ANNULE': 'badge-danger',
+  'TERMINE': 'badge-secondary'
 };
 
 export const StatutLivraisonLabels: Record<StatutLivraison, string> = {

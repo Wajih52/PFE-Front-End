@@ -1,0 +1,375 @@
+// src/app/features/employee/dashboard-employe/dashboard-employe.component.scss
+
+.dashboard-employe {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.dashboard-header {
+  margin-bottom: 2.5rem;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 0.5rem;
+  }
+
+  .welcome-text {
+    color: #6c757d;
+    font-size: 1rem;
+  }
+}
+
+// ============ LOADING STATE ============
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #C8A882;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ============ DASHBOARD CONTENT ============
+.dashboard-content {
+  display: grid;
+  gap: 2rem;
+}
+
+// ============ SECTIONS COMMUNES ============
+section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #C8A882;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+  }
+
+  .link-action {
+    color: #C8A882;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #a08660;
+    }
+  }
+
+  .badge-count {
+    background: #C8A882;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+}
+
+// ============ POINTAGE SECTION ============
+.pointage-card {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 8px;
+  border: 2px solid #C8A882;
+}
+
+.pointage-info {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.pointage-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .badge-success {
+    background: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+}
+
+.pointage-absent {
+  text-align: center;
+  padding: 1rem;
+
+  p {
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: #C8A882;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #a08660;
+    }
+  }
+}
+
+// ============ LIVRAISONS SECTIONS ============
+.livraisons-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.livraison-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem;
+  border-left: 4px solid #C8A882;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(200, 168, 130, 0.2);
+  }
+}
+
+.livraison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+  }
+
+  .badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+  }
+}
+
+.livraison-details {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  font-size: 0.95rem;
+
+  .icon {
+    font-size: 1.1rem;
+  }
+}
+
+// ============ LIVRAISONS COMPACTES ============
+.livraisons-list.compact {
+  gap: 0.75rem;
+}
+
+.livraison-card-compact {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.compact-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #C8A882;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 8px;
+  min-width: 60px;
+
+  .day {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .month {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+}
+
+.compact-info {
+  flex: 1;
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 0.25rem 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+  }
+}
+
+// ============ NOTIFICATIONS SECTION ============
+.notifications-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.notification-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &.non-lue {
+    background: #fff3e0;
+    border-left: 3px solid #C8A882;
+  }
+
+  &:hover {
+    background: #e9ecef;
+  }
+}
+
+.notif-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.notif-content {
+  flex: 1;
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #495057;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+  }
+
+  .notif-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+}
+
+// ============ EMPTY STATE ============
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+// ============ RESPONSIVE ============
+@media (max-width: 768px) {
+  .dashboard-employe {
+    padding: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .pointage-info {
+    gap: 1rem;
+  }
+
+  .livraison-card-compact {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

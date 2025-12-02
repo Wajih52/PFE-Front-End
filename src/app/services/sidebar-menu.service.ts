@@ -131,7 +131,7 @@ export class SidebarMenuService {
           {
             id: 'pointages-employe',
             label: 'Pointages',
-            icon: '⏱️',
+            icon: '📌',
             route: '/pointage',
             order: 3
           },
@@ -139,7 +139,7 @@ export class SidebarMenuService {
             id: 'livraisons',
             label: 'Livraisons',
             icon: '🚚',
-            route: '/admin/livraisons',
+            route: '/employe/livraisons',
             order: 4
           }
         ]
@@ -152,14 +152,14 @@ export class SidebarMenuService {
             label: 'Réclamations Clients',
             icon: '⚠️',
             route: '/employe/reclamations',
-            order: 6
+            order: 5
           },
           {
             id: 'notifications-employe',
             label: 'Centre Notifications',
             icon: '🔔',
             route: '/notifications',
-            order: 7
+            order: 6
           }
         ]
       }
@@ -178,46 +178,91 @@ export class SidebarMenuService {
             order: 1
           },
           {
+            id: 'gestion-equipe',
+            label: 'Gestion d\'Équipe',
+            icon: '👥',
+            route: '/manager/equipe',
+            order: 2
+          },
+          {
             id: 'reservations-manager',
-            label: 'Toutes Réservations',
+            label: 'Réservations',
             icon: '📋',
             route: '/admin/reservations',
-            order: 2
+            order: 3
           },
           {
             id: 'devis-validation',
             label: 'Validation Devis',
             icon: '✅',
             route: '/admin/devis-validation',
-            order: 3
-          },
-          {
-            id: 'equipe',
-            label: 'Gestion Équipe',
-            icon: '👥',
-            route: '/manager/equipe',
             order: 4
           },
           {
-            id: 'statistiques',
-            label: 'Statistiques',
-            icon: '📈',
-            route: '/admin/statistiques',
+            id: 'livraisons-manager',
+            label: 'Livraisons',
+            icon: '🚚',
+            route: '/admin/livraisons',
             order: 5
+          },
+          {
+            id: 'produits-manager',
+            label: 'Produits',
+            icon: '📦',
+            route: '/admin/produits',
+            order: 6
+          }
+        ]
+      },
+      {
+        title: 'Opérations',
+        items: [
+          {
+            id: 'paiements-manager',
+            label: 'Paiements',
+            icon: '💰',
+            route: '/admin/paiements',
+            order: 7
+          },
+          {
+            id: 'reclamations-manager',
+            label: 'Réclamations',
+            icon: '⚠️',
+            route: '/admin/reclamations',
+            order: 8
+          },
+          {
+            id: 'pointage-manager',
+            label: 'Pointages',
+            icon: '⏱️',
+            route: '/admin/pointage',
+            order: 9
+          }
+        ]
+      },
+      {
+        title: 'Support',
+        items: [
+          {
+            id: 'reclamations-manager',
+            label: 'Réclamations',
+            icon: '⚠️',
+            route: '/admin/reclamations',
+            order: 10
+          },
+          {
+            id: 'evaluations-admin',
+            label: 'Modération Avis',
+            icon: '⚖️',
+            route: '/admin/avis/moderation',
+            order: 11
           },
           {
             id: 'notifications-manager',
             label: 'Centre Notifications',
             icon: '🔔',
             route: '/notifications',
-            order: 6
-          },
-          {
-            id: 'pointages-manager',
-            label: 'Pointages',
-            icon: '⏱️',
-            route: '/pointage',
-            order: 7
+            order: 12
           },
         ]
       }
@@ -252,7 +297,7 @@ export class SidebarMenuService {
           {
             id: 'pointage-management',
             label: 'Pointages',
-            icon: '🎯',
+            icon: '⏱️',
             route: 'admin/pointages',
             order: 4
           },
@@ -383,6 +428,7 @@ export class SidebarMenuService {
       route: '/profile',
       order: 1
     },
+
     {
       id: 'profile-settings',
       label: 'Menu',
@@ -391,17 +437,24 @@ export class SidebarMenuService {
       order: 2
     },
     {
+      id: 'mark-pointage',
+      label: 'Pointage',
+      icon: '📌',
+      route: '/pointage',
+      order: 3
+    },
+    {
       id: 'divider-1',
       label: '---', // Séparateur visuel
       disabled: true,
-      order: 3
+      order: 4
     },
     {
       id: 'logout',
       label: 'Déconnexion',
-      icon: '🚪',
+      icon: '',
       action: () => this.handleLogout(),
-      order: 4,
+      order: 5,
       customClass: 'logout-item'
     }
   ];

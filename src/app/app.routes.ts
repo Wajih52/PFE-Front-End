@@ -36,6 +36,10 @@ import {PointageAdminComponent} from './features/admin/pages/pointage-admin/poin
 import {
   DashboardStatistiquesComponent
 } from './features/admin/pages/dashboard-statistiques/dashboard-statistiques.component';
+import {DashboardEmployeComponent} from './features/employee/dashboard-employe/dashboard-employe.component';
+import {ReservationsEmployeComponent} from './features/employee/reservations-employe/reservations-employe.component';
+import {LivraisonsEmployeComponent} from './features/employee/livraisons-employe/livraisons-employe.component';
+import {GestionEquipeComponent} from './features/manager/gestion-equipe/gestion-equipe.component';
 
 
 export const routes: Routes = [
@@ -370,6 +374,36 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { roles: ['CLIENT'] }
       },
+    ]
+  },
+  {
+    path: 'employe',
+    canActivate: [authGuard],
+    data: { roles: ['EMPLOYE', 'ADMIN', 'MANAGER'] },
+    children: [
+      {
+        path: 'dashboard',
+        component: DashboardEmployeComponent
+      },
+      {
+        path: 'reservations',
+        component: ReservationsEmployeComponent
+      },
+      {
+        path: 'livraisons',
+        component: LivraisonsEmployeComponent
+      }
+    ]
+  },
+  {
+    path: 'manager',
+    canActivate: [authGuard],
+    data: { roles: ['MANAGER', 'ADMIN'] },
+    children: [
+      {
+        path: 'equipe',
+        component: GestionEquipeComponent
+      }
     ]
   },
   {

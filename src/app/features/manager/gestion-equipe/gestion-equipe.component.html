@@ -1,0 +1,170 @@
+<!-- src/app/features/manager/gestion-equipe/gestion-equipe.component.html -->
+
+<div class="gestion-equipe">
+  <div class="page-header">
+    <h1>👥 Gestion d'Équipe</h1>
+    <p class="subtitle">Gérez votre équipe d'employés</p>
+  </div>
+
+  <!-- Statistiques Globales -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-icon">👨‍💼</div>
+      <div class="stat-content">
+        <h3>{{ statsGlobales().total }}</h3>
+        <p>Total employés</p>
+      </div>
+    </div>
+
+    <div class="stat-card highlight">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{ statsGlobales().actifs }}</h3>
+        <p>Employés actifs</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🚚</div>
+      <div class="stat-content">
+        <h3>{{ statsGlobales().totalLivraisons }}</h3>
+        <p>Total livraisons</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ formatPercentage(statsGlobales().moyennePresence) }}</h3>
+        <p>Taux présence moyen</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === 'TOUS'"
+          (click)="changerStatut('TOUS')">
+          Tous
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutCompte.ACTIVE"
+          (click)="changerStatut(StatutCompte.ACTIVE)">
+          Actifs
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutCompte.DESACTIVE"
+          (click)="changerStatut(StatutCompte.DESACTIVE)">
+          Inactifs
+        </button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Rechercher par nom ou email..."
+        [value]="filtreRecherche()"
+        (input)="changerRecherche($event)"
+        class="search-input">
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de l'équipe...</p>
+  </div>
+
+  <!-- Liste des Employés -->
+  <div *ngIf="!isLoading()" class="employes-grid">
+
+    <div *ngIf="employesFiltres().length === 0" class="empty-state">
+      <p>📭 Aucun employé ne correspond à vos critères</p>
+    </div>
+
+    <div *ngFor="let employe of employesFiltres()" class="employe-card">
+
+      <!-- Header avec photo et infos principales -->
+      <div class="employe-header">
+        <img
+          [src]="getImageUrl(employe.imageProfil)"
+          [alt]="employe.prenom + ' ' + employe.nom"
+          class="employe-avatar">
+
+        <div class="employe-info-header">
+          <h3>{{ employe.prenom }} {{ employe.nom }}</h3>
+          <span class="badge" [ngClass]="getStatutBadgeClass(employe.etatCompte)">
+            {{ getStatutLabel(employe.etatCompte) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Coordonnées -->
+      <div class="employe-contact">
+        <div class="contact-item">
+          <span class="icon">📧</span>
+          <a [href]="'mailto:' + employe.email">{{ employe.email }}</a>
+        </div>
+        <div class="contact-item" *ngIf="employe.telephone">
+          <span class="icon">📱</span>
+          <a [href]="'tel:' + employe.telephone">{{ employe.telephone }}</a>
+        </div>
+      </div>
+
+      <!-- Statistiques de performance -->
+      <div class="employe-stats">
+        <h4>📊 Performances</h4>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-label">Livraisons totales</span>
+            <span class="stat-value">{{ employe.nombreLivraisons }}</span>
+          </div>
+
+          <div class="stat-item">
+            <span class="stat-label">En cours</span>
+            <span class="stat-value highlight">{{ employe.livraisonsEnCours }}</span>
+          </div>
+        </div>
+
+        <div class="presence-bar">
+          <div class="presence-label">
+            <span>Taux de présence</span>
+            <span class="presence-value">{{ formatPercentage(employe.tauxPresence) }}</span>
+          </div>
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="employe.tauxPresence"
+              [class.good]="employe.tauxPresence >= 80"
+              [class.medium]="employe.tauxPresence >= 60 && employe.tauxPresence < 80"
+              [class.low]="employe.tauxPresence < 60">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="employe-actions">
+        <a
+          [routerLink]="['/admin/utilisateurs', employe.idUtilisateur]"
+          class="btn-action">
+          Voir profil
+        </a>
+        <a
+          [routerLink]="['/admin/pointage', employe.idUtilisateur]"
+          class="btn-action secondary">
+          Pointages
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

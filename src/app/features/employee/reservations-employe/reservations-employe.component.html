@@ -1,0 +1,202 @@
+<!-- src/app/features/employee/reservations-employe/reservations-employe.component.html -->
+
+<div class="reservations-employe">
+  <div class="page-header">
+    <h1>📋 Réservations</h1>
+    <p class="subtitle">Suivez toutes les réservations de l'agence</p>
+  </div>
+
+  <!-- Statistiques Rapides -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ stats().total }}</h3>
+        <p>Total réservations</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-content">
+        <h3>{{ stats().aVenir }}</h3>
+        <p>À venir</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3>{{ stats().enCours }}</h3>
+        <p>En cours</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Période :</label>
+      <div class="filter-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'toutes'"
+          (click)="changerPeriode('toutes')">
+          Toutes
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'a-venir'"
+          (click)="changerPeriode('a-venir')">
+          À venir
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'en-cours'"
+          (click)="changerPeriode('en-cours')">
+          En cours
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtrePeriode() === 'passees'"
+          (click)="changerPeriode('passees')">
+          Passées
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === 'TOUS'"
+          (click)="changerStatut('TOUS')">
+          Tous
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutReservation.EN_ATTENTE"
+          (click)="changerStatut(StatutReservation.EN_ATTENTE)">
+          En attente
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutReservation.CONFIRME"
+          (click)="changerStatut(StatutReservation.CONFIRME)">
+          Confirmées
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filtreStatut() === StatutReservation.ANNULE"
+          (click)="changerStatut(StatutReservation.ANNULE)">
+          Annulées
+        </button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Rechercher par référence ou client..."
+        [value]="filtreRecherche()"
+        (input)="changerRecherche($event)"
+        class="search-input">
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des réservations...</p>
+  </div>
+
+  <!-- Liste des Réservations -->
+  <div *ngIf="!isLoading()" class="reservations-list">
+
+    <div *ngIf="reservationsFiltrees().length === 0" class="empty-state">
+      <p>📭 Aucune réservation ne correspond à vos critères</p>
+    </div>
+
+    <div *ngFor="let reservation of reservationsFiltrees()"
+         class="reservation-card"
+         [routerLink]="['/client/reservation-details', reservation.idReservation]">
+
+      <div class="reservation-header">
+        <div class="reservation-ref">
+          <h3>{{ reservation.referenceReservation }}</h3>
+          <span class="badge" [ngClass]="getStatutClass(reservation.statutReservation)">
+            {{ getStatutLabel(reservation.statutReservation) }}
+          </span>
+        </div>
+
+        <div class="reservation-montant">
+          <span class="montant-label">Montant total</span>
+          <span class="montant-value">{{ formatMontant(reservation.montantTotal) }}</span>
+        </div>
+      </div>
+
+      <div class="reservation-body">
+        <div class="info-row">
+          <div class="info-item">
+            <span class="icon">👤</span>
+            <div class="info-content">
+              <span class="label">Client</span>
+              <span class="value">{{ reservation.prenomClient }} {{ reservation.nomClient }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">📧</span>
+            <div class="info-content">
+              <span class="label">Email</span>
+              <span class="value">{{ reservation.emailClient }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">📱</span>
+            <div class="info-content">
+              <span class="label">Téléphone</span>
+              <span class="value">{{ reservation.telephoneClient || 'Non renseigné' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <span class="icon">📅</span>
+            <div class="info-content">
+              <span class="label">Date début</span>
+              <span class="value">{{ formatDate(reservation.dateDebut) }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">🏁</span>
+            <div class="info-content">
+              <span class="label">Date fin</span>
+              <span class="value">{{ formatDate(reservation.dateFin) }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">⏱️</span>
+            <div class="info-content">
+              <span class="label">Durée</span>
+              <span class="value">{{ getNombreJours(reservation.dateDebut, reservation.dateFin) }} jour(s)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="reservation-footer">
+        <span class="footer-info">
+          Créée le {{ formatDate(reservation.dateCreation) }}
+        </span>
+        <span class="link-arrow">→</span>
+      </div>
+    </div>
+  </div>
+</div>

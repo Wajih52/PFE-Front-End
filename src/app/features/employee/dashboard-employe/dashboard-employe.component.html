@@ -1,0 +1,146 @@
+<!-- src/app/features/employee/dashboard-employe/dashboard-employe.component.html -->
+
+<div class="dashboard-employe">
+  <div class="dashboard-header">
+    <h1>📊 Mon Tableau de Bord</h1>
+    <p class="welcome-text">Bienvenue ! Voici votre activité du jour</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de vos données...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading()" class="dashboard-content">
+
+    <!-- Section: Pointage -->
+    <section class="pointage-section">
+      <div class="section-header">
+        <h2>⏱️ Mon Pointage</h2>
+        <a routerLink="/pointage" class="link-action">Voir détails →</a>
+      </div>
+
+      <div class="pointage-card">
+        <div *ngIf="pointageDuJour()" class="pointage-info">
+          <div class="pointage-item">
+            <span class="label">Arrivée :</span>
+            <span class="value">{{ formatHeure(pointageDuJour()!.heureDebut) }}</span>
+          </div>
+          <div class="pointage-item" *ngIf="pointageDuJour()!.heureFin">
+            <span class="label">Départ :</span>
+            <span class="value">{{ formatHeure(pointageDuJour()!.heureFin!) }}</span>
+          </div>
+          <div class="pointage-item" *ngIf="!pointageDuJour()!.heureFin">
+            <span class="badge badge-success">En cours de travail</span>
+          </div>
+        </div>
+
+        <div *ngIf="!pointageDuJour()" class="pointage-absent">
+          <p>❌ Vous n'avez pas encore pointé aujourd'hui</p>
+          <a routerLink="/pointage" class="btn-primary">Pointer maintenant</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Livraisons du Jour -->
+    <section class="livraisons-jour-section">
+      <div class="section-header">
+        <h2>🚚 Mes Livraisons Aujourd'hui</h2>
+        <span class="badge-count">{{ livraisonsAujourdhui().length }}</span>
+      </div>
+
+      <div *ngIf="livraisonsAujourdhui().length === 0" class="empty-state">
+        <p>✅ Aucune livraison prévue aujourd'hui</p>
+      </div>
+
+      <div *ngIf="livraisonsAujourdhui().length > 0" class="livraisons-list">
+        <div *ngFor="let livraison of livraisonsAujourdhui()"
+             class="livraison-card"
+             [routerLink]="['/admin/livraisons', livraison.idLivraison]">
+
+          <div class="livraison-header">
+            <h3>{{ livraison.titreLivraison }}</h3>
+            <span class="badge"
+                  [ngStyle]="{'background-color': getStatutColor(livraison.statutLivraison)}">
+              {{ getStatutLabel(livraison.statutLivraison) }}
+            </span>
+          </div>
+
+          <div class="livraison-details">
+            <div class="detail-item">
+              <span class="icon">🕒</span>
+              <span>{{ formatHeure(livraison.heureLivraison) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="icon">📍</span>
+              <span>{{ livraison.adresseLivraison }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Prochaines Livraisons -->
+    <section class="prochaines-livraisons-section">
+      <div class="section-header">
+        <h2>📅 Mes Prochaines Livraisons</h2>
+        <a routerLink="/employe/livraisons" class="link-action">Voir toutes →</a>
+      </div>
+
+      <div *ngIf="prochainesLivraisons().length === 0" class="empty-state">
+        <p>Aucune livraison à venir</p>
+      </div>
+
+      <div *ngIf="prochainesLivraisons().length > 0" class="livraisons-list compact">
+        <div *ngFor="let livraison of prochainesLivraisons()"
+             class="livraison-card-compact"
+             [routerLink]="['/admin/livraisons', livraison.idLivraison]">
+
+          <div class="compact-date">
+            <span class="day">{{ formatDate(livraison.dateLivraison).split(' ')[0] }}</span>
+            <span class="month">{{ formatDate(livraison.dateLivraison).split(' ')[1] }}</span>
+          </div>
+
+          <div class="compact-info">
+            <h4>{{ livraison.titreLivraison }}</h4>
+            <p>🕒 {{ formatHeure(livraison.heureLivraison) }} • 📍 {{ livraison.adresseLivraison }}</p>
+          </div>
+
+          <span class="badge"
+                [ngStyle]="{'background-color': getStatutColor(livraison.statutLivraison)}">
+            {{ getStatutLabel(livraison.statutLivraison) }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Notifications Récentes -->
+    <section class="notifications-section">
+      <div class="section-header">
+        <h2>🔔 Notifications Récentes</h2>
+        <a routerLink="/notifications" class="link-action">Voir toutes →</a>
+      </div>
+
+      <div *ngIf="notificationsRecentes().length === 0" class="empty-state">
+        <p>Aucune notification récente</p>
+      </div>
+
+      <div *ngIf="notificationsRecentes().length > 0" class="notifications-list">
+        <div *ngFor="let notif of notificationsRecentes()"
+             class="notification-item"
+             [class.non-lue]="!notif.lue">
+
+          <div class="notif-icon">🔔</div>
+          <div class="notif-content">
+            <h4>{{ notif.titre }}</h4>
+            <p>{{ notif.message }}</p>
+            <span class="notif-date">{{ formatDate(notif.dateCreation) }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
