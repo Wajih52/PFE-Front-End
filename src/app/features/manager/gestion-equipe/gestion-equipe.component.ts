@@ -195,7 +195,7 @@ export class GestionEquipeComponent implements OnInit {
   }
 
   // Méthodes d'affichage
-  getImageUrl(imagePath: string | null): string {
+  getImageUrl(imagePath: string | null| undefined): string {
     if (!imagePath) return 'assets/images/default-avatar.png';
     return `http://localhost:8080${imagePath}`;
   }

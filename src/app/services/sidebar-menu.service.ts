@@ -436,13 +436,7 @@ export class SidebarMenuService {
       route: '/profile',
       order: 2
     },
-    {
-      id: 'mark-pointage',
-      label: 'Pointage',
-      icon: '📌',
-      route: '/pointage',
-      order: 3
-    },
+
     {
       id: 'divider-1',
       label: '---', // Séparateur visuel
@@ -516,6 +510,15 @@ export class SidebarMenuService {
             route: '/admin/dashboard',
             order: 1
           });
+          roleSpecificItems.push(
+            {
+              id: 'mark-pointage',
+              label: 'Pointage',
+              icon: '📌',
+              route: '/pointage',
+              order: 2
+            },
+          );
         }
 
         if (userRoles.includes('MANAGER')) {
@@ -523,9 +526,18 @@ export class SidebarMenuService {
             id: 'manager-dashboard',
             label: 'Tableau de Bord',
             icon: '📊',
-            route: '/manager/dashboard',
+            route: '/admin/statistiques',
             order: 1
           });
+          roleSpecificItems.push(
+            {
+              id: 'mark-pointage',
+              label: 'Pointage',
+              icon: '📌',
+              route: '/pointage',
+              order: 2
+            },
+          );
         }
 
         if (userRoles.includes('EMPLOYE')) {
@@ -536,6 +548,16 @@ export class SidebarMenuService {
             route: '/employe/dashboard',
             order: 1
           });
+          roleSpecificItems.push(
+            {
+              id: 'mark-pointage',
+              label: 'Pointage',
+              icon: '📌',
+              route: '/pointage',
+              order: 2
+            },
+          );
+
         }
 
         // Fusionner et trier

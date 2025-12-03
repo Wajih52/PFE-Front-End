@@ -18,7 +18,6 @@ import {NotificationPersistantService} from '../../../services/notification-pers
 const StatutLivraison = {
   NOT_TODAY: 'NOT_TODAY' ,
   EN_ATTENTE: 'EN_ATTENTE' ,
-  EN_PREPARATION: 'EN_PREPARATION' ,
   EN_COURS: 'EN_COURS' ,
   LIVREE: 'LIVREE' ,
   RETOUR: 'RETOUR' ,

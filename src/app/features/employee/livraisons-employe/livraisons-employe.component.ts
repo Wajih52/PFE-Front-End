@@ -14,14 +14,14 @@ import {
 const StatutLivraison = {
   NOT_TODAY: 'NOT_TODAY' ,
   EN_ATTENTE: 'EN_ATTENTE' ,
-  EN_PREPARATION: 'EN_PREPARATION' ,
   EN_COURS: 'EN_COURS' ,
   LIVREE: 'LIVREE' ,
   RETOUR: 'RETOUR' ,
   RETOUR_PARTIEL: 'RETOUR_PARTIEL' ,
   RETOURNEE: 'RETOURNEE',
   ANNULEE: 'ANNULEE'
-};
+}as const;
+
 type StatutLivraisonn =
   |'NOT_TODAY'
   | 'EN_ATTENTE'

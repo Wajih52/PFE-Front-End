@@ -255,7 +255,7 @@ export const routes: Routes = [
           {
             path: 'reclamations',
             component: ReclamationsListComponent,
-            canActivate: [authGuard, roleGuard(['ADMIN'])]
+            canActivate: [authGuard, roleGuard(['ADMIN','MANAGER'])]
           },
           {
             path: 'avis/moderation',
@@ -291,7 +291,7 @@ export const routes: Routes = [
           {
             path: 'statistiques',
             component: DashboardStatistiquesComponent,
-            canActivate: [authGuard],
+            canActivate: [authGuard,roleGuard(['ADMIN','MANAGER'])],
             data: { requiredRoles: ['ADMIN', 'MANAGER'] }
           }
         ]

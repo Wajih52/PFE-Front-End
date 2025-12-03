@@ -90,12 +90,6 @@
         </button>
         <button
           class="filter-btn"
-          [class.active]="filtreStatut() === StatutLivraison.EN_PREPARATION"
-          (click)="changerStatut(StatutLivraison.EN_ATTENTE)">
-          En préparation
-        </button>
-        <button
-          class="filter-btn"
           [class.active]="filtreStatut() === StatutLivraison.EN_COURS"
           (click)="changerStatut(StatutLivraison.EN_COURS)">
           En cours

@@ -26,7 +26,8 @@
         <div *ngIf="pointageDuJour()" class="pointage-info">
           <div class="pointage-item">
             <span class="label">Arrivée :</span>
-            <span class="value">{{ formatHeure(pointageDuJour()!.heureDebut) }}</span>
+            <!-- Remplacer ligne 29 -->
+            <span class="value">{{ pointageDuJour()!.heureDebut ? formatHeure(pointageDuJour()!.heureDebut!) : 'N/A' }}</span>
           </div>
           <div class="pointage-item" *ngIf="pointageDuJour()!.heureFin">
             <span class="label">Départ :</span>

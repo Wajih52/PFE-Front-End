@@ -16,7 +16,7 @@ import {
   CONFIRME: 'CONFIRME',
   ANNULE: 'ANNULE',
   TERMINE: 'TERMINE'
-}
+} as const;
 
  type StatutReservationn =
   | 'EN_ATTENTE'
