@@ -171,7 +171,7 @@ export class NouvelleReclamationComponent implements OnInit {
 
         // Rediriger après 3 secondes
         setTimeout(() => {
-          this.router.navigate(['/client/mes-reclamations']);
+          this.router.navigate(['/reclamations/mes-reclamations']);
         }, 3000);
       },
       error: (error) => {
@@ -223,7 +223,7 @@ export class NouvelleReclamationComponent implements OnInit {
    * Annuler et retourner
    */
   onCancel(): void {
-    this.router.navigate(['/client/mes-reclamations']);
+    this.router.navigate(['/reclamations/mes-reclamations']);
   }
 
   /**
@@ -231,7 +231,7 @@ export class NouvelleReclamationComponent implements OnInit {
    */
   closeSuccess(): void {
     this.submitSuccess.set(false);
-    this.router.navigate(['/client/mes-reclamations']);
+    this.router.navigate(['/reclamations/mes-reclamations']);
   }
 
   /**

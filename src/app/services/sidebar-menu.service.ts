@@ -88,7 +88,7 @@ export class SidebarMenuService {
             id: 'reclamations',
             label: 'Mes Réclamations',
             icon: '⚠️',
-            route: 'client/mes-reclamations',
+            route: 'reclamations/mes-reclamations',
             order: 9
           },
           {
@@ -149,9 +149,9 @@ export class SidebarMenuService {
         items: [
           {
             id: 'reclamations-employe',
-            label: 'Réclamations Clients',
-            icon: '⚠️',
-            route: '/employe/reclamations',
+            label: 'Mes Réclamations',
+            icon: '📓',
+            route: '/reclamations/mes-reclamations',
             order: 5
           },
           {
@@ -226,16 +226,16 @@ export class SidebarMenuService {
           },
           {
             id: 'reclamations-manager',
-            label: 'Réclamations',
-            icon: '⚠️',
-            route: '/admin/reclamations',
+            label: 'Mes Réclamations',
+            icon: '📓',
+            route: '/reclamations/mes-reclamations',
             order: 8
           },
           {
             id: 'pointage-manager',
             label: 'Pointages',
             icon: '⏱️',
-            route: '/admin/pointage',
+            route: '/admin/pointages',
             order: 9
           }
         ]

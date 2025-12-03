@@ -6,9 +6,7 @@ import {Router, RouterLink} from '@angular/router';
   selector: 'app-access-denied',
   templateUrl: './access-denied.component.html',
   standalone: true,
-  imports: [
-    RouterLink
-  ],
+  imports: [],
   styleUrls: ['./access-denied.component.scss']
 })
 export class AccessDeniedComponent {
@@ -17,5 +15,9 @@ export class AccessDeniedComponent {
 
   navigateToHome() {
     this.router.navigate(['/home']);
+  }
+
+  navigateToRecalamtion() {
+    this.router.navigate(['/reclamations/nouvelle-reclamation']);
   }
 }

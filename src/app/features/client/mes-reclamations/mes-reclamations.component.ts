@@ -76,7 +76,7 @@ export class MesReclamationsComponent implements OnInit {
   }
 
   nouvelleReclamation(): void {
-    this.router.navigate(['client/nouvelle-reclamation']);
+    this.router.navigate(['reclamations/nouvelle-reclamation']);
   }
 
   /**

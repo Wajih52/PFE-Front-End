@@ -84,21 +84,19 @@ export const routes: Routes = [
       }
     ]
   },
+  // ==================== ROUTES PUBLIQUES - HOME & CONSULTATION AVIS ====================
   {
     path: 'home',
     loadComponent: () => import('./features/pages/home/home.component')
       .then(m => m.HomeComponent)
   },
-  // ============================================
-  // ROUTES PUBLIQUES - CONSULTATION AVIS
-  // ============================================
   {
     path: 'produits/:id/avis',
     loadComponent: () => import('./features/pages/produit-avis-public/produit-avis-public.component')
       .then(m => m.ProduitAvisPublicComponent),
     title: 'Avis du Produit'
   },
-  // Routes Avec Side Bar
+  // ==================== ROUTES AVEC SIDEBAR (PROTÉGÉES) ====================
   {
     path: '',
     component: LayoutWithSidebarComponent,
@@ -115,222 +113,230 @@ export const routes: Routes = [
         component: MesNotificationsComponent,
         canActivate: [authGuard]
       },
-      //Routes Admin
+      // ============ ROUTES ADMIN ============
       {
         path: 'admin',
-        canActivate: [authGuard, roleGuard(['ADMIN'])],
+        canActivate: [authGuard],
         resolve: { auth: authResolver },//  Vérifie token
         children: [
+          // Gestion des utilisateurs
           {
             path: 'users',
+            canActivate: [roleGuard(['ADMIN'])],
             loadComponent: () => import('./features/admin/pages/users-management/users-management.component')
               .then(m => m.UsersManagementComponent)
           },
           { path: 'roles',
+            canActivate: [roleGuard(['ADMIN'])],
             loadComponent: () => import('./features/admin/pages/roles-management/roles-management.component')
               .then(m => m.RolesManagementComponent),
             data: { role: 'ADMIN' }
           },
           {
             path: 'dashboard',
+            canActivate: [roleGuard(['ADMIN'])],
             loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component')
               .then(m => m.DashboardComponent)
           },
           // Liste des produits
           {
             path: 'produits',
+            canActivate: [roleGuard(['ADMIN','MANAGER'])],
             component: ProduitsListComponent,
-            data: { roles: ['ADMIN', 'MANAGER'] }
+
           },
           // Création d'un produit
           {
             path: 'produits/create',
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
             component: ProduitFormComponent,
-            data: { roles: ['ADMIN', 'MANAGER'] }
+
           },
           // Modification d'un produit
           {
             path: 'produits/edit/:id',
             component: ProduitFormComponent,
-            data: { roles: ['ADMIN', 'MANAGER'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },{
             path: 'produits/:id/historique',
             component: HistoriqueMouvementComponent,
-            data: { roles: ['ADMIN', 'MANAGER'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           }
           ,
           // Routes de gestion des instances
           {
             path: 'instances',
             component: InstancesListComponent,
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
           {
             path: 'instances/new',
             component: InstanceFormComponent,
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
           {
             path: 'instances/edit/:id',
             component: InstanceFormComponent,
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
           {
             path: 'instances/:id',
             component: InstanceDetailComponent,
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
           {
             path: 'instances/historique/:numeroSerie',
             component: InstanceHistoriqueComponent,
-            canActivate: [authGuard, roleGuard],
-            data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
+
           },
+          // ======== GESTION DES DEVIS & RÉSERVATIONS ========
           {
             path: 'devis-validation',
             component: DevisValidationComponent,
-            canActivate: [authGuard],
-            data: { roles: ['ADMIN', 'MANAGER'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
+
           },
           {
             path: 'reservations',
             component: ReservationsAdminComponent,
-            canActivate: [authGuard],
-            data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
           {
             path: 'reservation-details/:id',
             component: ReservationDetailsComponent,
-            canActivate: [authGuard],
-            data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
+          // ======== GESTION DES PAIEMENTS ========
           {
             path: 'paiements',
             component: ListePaiementsComponent,
-            canActivate: [authGuard],
-            data: { roles: ['ADMIN', 'MANAGER'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
+
           },
           // Routes factures
           {
             path: 'factures',
-            canActivate: [authGuard, roleGuard],
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
             children: [
               {
                 path: '',
                 component: ListeFacturesComponent,
-                data: { title: 'Liste des Factures' }
               },
               {
                 path: ':id',
                 component: DetailFactureComponent,
-                canActivate: [authGuard, roleGuard],
-                data: { title: 'Détail Facture' }
               }
             ]
           },
+          // ======== GESTION DES LIVRAISONS ========
           {
             path: 'livraisons',
-            canActivate: [authGuard, roleGuard],
             children: [
               {
                 path: '',
                 component: LivraisonsListComponent,
-                data: { title: 'Liste des Livraisons' }
+                canActivate:  [roleGuard(['ADMIN','MANAGER'])],
               },
               {
                 path: 'create',
                 component: LivraisonCreateComponent,
-                data: { title: 'Créer une Livraison' }
+                canActivate:  [roleGuard(['ADMIN','MANAGER'])],
               },
               {
                 path: ':id',
                 component: LivraisonDetailComponent,
-                data: { title: 'Détails Livraison' }
+                canActivate:  [roleGuard(['ADMIN','MANAGER'])],
               },
               {
                 path: ':id/edit',
                 component: LivraisonEditComponent,
-                canActivate: [authGuard, roleGuard],
-                data: { roles: ['ADMIN', 'MANAGER', 'EMPLOYE'] }
+                canActivate:  [roleGuard(['ADMIN','MANAGER'])],
               },
 
             ]
           },
+          // ======== GESTION DES RÉCLAMATIONS ========
           {
             path: 'reclamations',
             component: ReclamationsListComponent,
-            canActivate: [authGuard, roleGuard(['ADMIN','MANAGER'])]
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
+          // ======== GESTION DES AVIS ========
           {
             path: 'avis/moderation',
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
             loadComponent: () => import('./features/admin/pages/avis-moderation/avis-moderation.component')
               .then(m => m.AvisModerationComponent),
-            title: 'Modération des Avis'
           },
           {
             path: 'avis/statistiques',
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
             loadComponent: () => import('./features/admin/pages/avis-statistiques/avis-statistiques.component')
               .then(m => m.AvisStatistiquesComponent),
-            title: 'Statistiques des Avis'
+
           },
           {
             path: 'produits/:id/avis',
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
             loadComponent: () => import('./features/admin/pages/produit-avis-admin/produit-avis-admin.component')
               .then(m => m.ProduitAvisAdminComponent),
-            title: 'Avis du Produit'
           },
+          // ======== CALENDRIER ========
           {
             path: 'calendrier',
             component: CalendrierComponent,
-            canActivate: [authGuard]
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
+          // ======== GESTION DES POINTAGES ========
           {
             path: 'pointages',
             component: PointageAdminComponent,
-            data: {
-              roles: ['ADMIN', 'MANAGER'],
-              title: 'Gestion des Pointages'
-            }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
+          // ======== STATISTIQUES ========
           {
             path: 'statistiques',
             component: DashboardStatistiquesComponent,
-            canActivate: [authGuard,roleGuard(['ADMIN','MANAGER'])],
-            data: { requiredRoles: ['ADMIN', 'MANAGER'] }
+            canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           }
         ]
       },
+      // ============ ROUTES CLIENT ============
       {
         path: 'client',
+        canActivate: [authGuard],
         children: [
 
           {
             path: 'mes-commandes',
             component: MesCommandesComponent,
-            canActivate: [authGuard],
-            data: { role: 'CLIENT' }
+            canActivate: [roleGuard(['CLIENT'])]
           },
           {
             path: 'mes-devis',
             component: MesDevisComponent,
-            canActivate: [authGuard],
-            data: { role: 'CLIENT' }
+            canActivate: [roleGuard(['CLIENT'])]
           },
           {
             path: 'reservation-details/:id',
             component: ReservationDetailsComponent,
-            canActivate: [authGuard],
-            data: { role: 'CLIENT' }
+            canActivate: [roleGuard(['CLIENT'])]
           },
 
           {
             path: 'mes-paiements',
+            canActivate: [roleGuard(['CLIENT'])],
             loadComponent: () => import('./features/client/mes-paiements/mes-paiements.component')
               .then(m => m.MesPaiementsComponent)
           },
           {
             path: 'mes-factures',
+            canActivate: [roleGuard(['CLIENT'])],
             children: [
               {
                 path: '',
                 component: MesFacturesComponent,
-                canActivate: [authGuard ,roleGuard(['CLIENT'])]
               },
               {
                 path: ':id',
@@ -339,91 +345,100 @@ export const routes: Routes = [
             ]
           },
           {
-            path: 'mes-reclamations',
-            component: MesReclamationsComponent,
-            canActivate: [authGuard]
-          },
-          {
-            path: 'nouvelle-reclamation',
-            component: NouvelleReclamationComponent,
-            canActivate: [authGuard] // Uniquement utilisateurs connectés
-          },
-          {
             path: 'mes-avis',
+            canActivate: [roleGuard(['CLIENT'])],
             loadComponent: () => import('./features/client/mes-avis/mes-avis.component')
               .then(m => m.MesAvisComponent),
-            title: 'Mes Avis'
           },
           {
             path: 'avis/creer/:idReservation/:idProduit',
+            canActivate: [roleGuard(['CLIENT'])],
             loadComponent: () => import('./features/client/avis-create/avis-create.component')
               .then(m => m.AvisCreateComponent),
-            title: 'Créer un Avis'
+
           },
           {
             path: 'avis/modifier/:idAvis',
+            canActivate: [roleGuard(['CLIENT'])],
             loadComponent: () => import('./features/client/avis-edit/avis-edit.component')
               .then(m => m.AvisEditComponent),
-            title: 'Modifier mon Avis'
-          }
+
+          },
+          {
+            path: 'catalogue',
+            loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
+              .then(m => m.CatalogueListComponent),
+            canActivate: [roleGuard(['CLIENT'])]
+          },
+          {
+            path: 'panier',
+            loadComponent: () => import('./features/pages/panier/panier.component')
+              .then(m => m.PanierComponent),
+            canActivate: [roleGuard(['CLIENT'])]
+          },
         ]
       },
+      // ============ AJOUT PAIEMENT (CLIENT,Manager,ADMIN) ============
       {
         path: 'reservations/:idReservation/ajouter-paiement',
         component: AjouterPaiementComponent,
+        canActivate: [authGuard,roleGuard(['CLIENT','MANAGER','ADMIN'])],
+      },
+      // ==================== POINTAGE TOUTES EMPLOYÉ ====================
+      {
+        path: 'pointage',
+        component: PointageEmployeeComponent,
+        canActivate: [authGuard,roleGuard(['EMPLOYE','MANAGER','ADMIN'])],
+      },
+      // ==================== ROUTES EMPLOYÉ ====================
+      {
+        path: 'employe',
         canActivate: [authGuard],
-        data: { roles: ['CLIENT'] }
+        children: [
+          {
+            path: 'dashboard',
+            component: DashboardEmployeComponent,
+            canActivate: [roleGuard(['EMPLOYE'])],
+          },
+          {
+            path: 'reservations',
+            component: ReservationsEmployeComponent,
+            canActivate: [roleGuard(['EMPLOYE'])],
+          },
+          {
+            path: 'livraisons',
+            component: LivraisonsEmployeComponent,
+            canActivate: [roleGuard(['EMPLOYE'])],
+          },
+        ]
+      },
+      // ==================== ROUTES MANAGER ====================
+      {
+        path: 'manager',
+        canActivate: [authGuard],
+        children: [
+          {
+            path: 'equipe',
+            component: GestionEquipeComponent,
+            canActivate: [roleGuard(['MANAGER'])],
+          }
+        ]
+      },
+      // ==================== RECLAMATIONS TOUTES EMPLOYÉ ET CLIENT  ====================
+      {
+        path: 'reclamations/mes-reclamations',
+        component: MesReclamationsComponent,
+        canActivate: [authGuard,roleGuard(['EMPLOYE','MANAGER','CLIENT'])],
+      },
+      {
+        path: 'reclamations/nouvelle-reclamation',
+        component: NouvelleReclamationComponent,
+        canActivate: [authGuard,roleGuard(['EMPLOYE','MANAGER','CLIENT'])],
       },
     ]
   },
-  {
-    path: 'employe',
-    canActivate: [authGuard],
-    data: { roles: ['EMPLOYE', 'ADMIN', 'MANAGER'] },
-    children: [
-      {
-        path: 'dashboard',
-        component: DashboardEmployeComponent
-      },
-      {
-        path: 'reservations',
-        component: ReservationsEmployeComponent
-      },
-      {
-        path: 'livraisons',
-        component: LivraisonsEmployeComponent
-      }
-    ]
-  },
-  {
-    path: 'manager',
-    canActivate: [authGuard],
-    data: { roles: ['MANAGER', 'ADMIN'] },
-    children: [
-      {
-        path: 'equipe',
-        component: GestionEquipeComponent
-      }
-    ]
-  },
-  {
-    path: 'pointage',
-    component: PointageEmployeeComponent,
-    canActivate: [authGuard],
-    data: { roles: ['EMPLOYE', 'MANAGER', 'ADMIN'] }
-  },
-  {
-    path: 'client/catalogue',
-    loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
-      .then(m => m.CatalogueListComponent),
-    canActivate: [authGuard ,roleGuard(['CLIENT'])]
-  },
-  {
-    path: 'client/panier',
-    loadComponent: () => import('./features/pages/panier/panier.component')
-      .then(m => m.PanierComponent),
-    canActivate: [authGuard ,roleGuard(['CLIENT'])]
-  },
+
+  // ==================== ROUTES UTILITAIRES ====================
   {
     path: 'loading',
     loadComponent: () => import('./features/pages/loading/loading.component')
