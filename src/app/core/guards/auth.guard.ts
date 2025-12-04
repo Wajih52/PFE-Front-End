@@ -26,8 +26,8 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // CAS 1 : Pas de token
   if (!token) {
-   // console.warn('🔒 Accès refusé : Pas de token');
-    router.navigate(['/loading'], {
+
+    router.navigate(['/auth/login'], {
       queryParams: { returnUrl: state.url }
     });
     return false;

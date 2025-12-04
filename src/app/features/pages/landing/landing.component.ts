@@ -165,11 +165,11 @@ export class LandingComponent implements OnInit {
     private checkAuthAndRedirect(): void {
 
 
-      // Récupérer le token (getToken vérifie déjà l'expiration)
+      // Récupérer le token
       const token = this.storage.getToken();
 
       if (token) {
-        // ✅ Utilisateur connecté avec token valide
+        //  Utilisateur connecté avec token valide
         console.log('✅ Token valide trouvé, redirection vers dashboard');
         this.loadingMessage = 'Connexion réussie ! Redirection...';
 

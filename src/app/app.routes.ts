@@ -364,18 +364,6 @@ export const routes: Routes = [
               .then(m => m.AvisEditComponent),
 
           },
-          {
-            path: 'catalogue',
-            loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
-              .then(m => m.CatalogueListComponent),
-            canActivate: [roleGuard(['CLIENT'])]
-          },
-          {
-            path: 'panier',
-            loadComponent: () => import('./features/pages/panier/panier.component')
-              .then(m => m.PanierComponent),
-            canActivate: [roleGuard(['CLIENT'])]
-          },
         ]
       },
       // ============ AJOUT PAIEMENT (CLIENT,Manager,ADMIN) ============
@@ -437,7 +425,18 @@ export const routes: Routes = [
       },
     ]
   },
-
+  {
+    path: 'client/catalogue',
+    loadComponent: () => import('./features/pages/catalogue-list/catalogue-list.component')
+      .then(m => m.CatalogueListComponent),
+    canActivate: [authGuard,roleGuard(['CLIENT'])]
+  },
+  {
+    path: 'client/panier',
+    loadComponent: () => import('./features/pages/panier/panier.component')
+      .then(m => m.PanierComponent),
+    canActivate: [authGuard,roleGuard(['CLIENT'])]
+  },
   // ==================== ROUTES UTILITAIRES ====================
   {
     path: 'loading',

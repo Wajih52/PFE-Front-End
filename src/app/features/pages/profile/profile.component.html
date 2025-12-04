@@ -60,14 +60,14 @@
       <h2>📋 Informations personnelles</h2>
       <button
         class="btn-edit"
-        (click)="isEditingProfile = !isEditingProfile"
+        (click)="toggleEditProfile()"
         *ngIf="!isEditingProfile"
       >
         ✏️ Modifier
       </button>
       <button
         class="btn-cancel"
-        (click)="isEditingProfile = false; profileForm.patchValue(user)"
+        (click)="toggleEditProfile(); profileForm.patchValue(user)"
         *ngIf="isEditingProfile"
       >
         ✖️ Annuler
@@ -130,7 +130,7 @@
       </div>
       <div class="form-group">
         <label>Genre</label>
-        <select formControlName="genre"   [disabled]="!isEditingProfile">
+        <select formControlName="genre">
           <option value="">Non spécifié</option>
           <option value="Homme">Homme</option>
           <option value="Femme">Femme</option>

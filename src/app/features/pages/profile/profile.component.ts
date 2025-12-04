@@ -426,4 +426,17 @@ export class ProfileComponent implements OnInit {
     const field = form.get(fieldName);
     return !!(field && field.hasError(errorType) && field.touched);
   }
+
+  // Méthode pour activer le mode édition
+  toggleEditProfile(): void {
+    this.isEditingProfile = !this.isEditingProfile;
+
+    if (this.isEditingProfile) {
+      // Activer tous les champs
+      this.profileForm.enable();
+    } else {
+      // Désactiver tous les champs
+      this.profileForm.disable();
+    }
+  }
 }
