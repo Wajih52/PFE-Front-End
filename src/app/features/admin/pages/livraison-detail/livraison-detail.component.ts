@@ -20,6 +20,8 @@ import {
 import {StatutLivraison} from '../../../../core/models/reservation.model';
 import {StatutCompte, UserResponse} from '../../../../core/models';
 import {NotificationPersistantService} from '../../../../services/notification-persistant.service';
+import {AuthService} from '../../../../core/services/auth.service';
+import {StorageService} from '../../../../core/services/storage.service';
 
 @Component({
   selector: 'app-livraison-detail',
@@ -35,6 +37,7 @@ export class LivraisonDetailComponent implements OnInit {
   private utilisateurService = inject(UtilisateurService);
   private fb = inject(FormBuilder);
   private notificationPersist = inject(NotificationPersistantService)
+  private storage = inject(StorageService);
 
   // Données
   livraison = signal<LivraisonResponseDto | null>(null);
@@ -449,7 +452,7 @@ export class LivraisonDetailComponent implements OnInit {
 
       this.livraisonService.marquerLigneRetournee(idLigne).subscribe({
         next: (ligneUpdated) => {
-          this.successMessage.set('✅ Ligne retournée avec succès ! Stock réintégré.');
+          this.successMessage.set(' Ligne retournée avec succès ! Stock réintégré.');
           this.chargerLivraison();
           this.actionEnCours.set(null);
           this.notificationPersist.refreshCount();
@@ -462,6 +465,18 @@ export class LivraisonDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Vérifier si l'utilisateur est employé
+  isEmploye(): boolean {
+    return this.storage.hasRole('EMPLOYE') &&
+      !this.storage.isAdmin() &&
+      !this.storage.hasRole('MANAGER');
+  }
+
+  // Vérifier si on peut modifier
+  peutModifier(): boolean {
+    return !this.isEmploye();
   }
 
   /**

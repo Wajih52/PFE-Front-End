@@ -719,3 +719,99 @@
     flex-direction: column;
   }
 }
+
+// vue employe
+
+.employe-selection-container {
+  margin-top: 2rem;
+
+  .employes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+
+    .employe-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      border: 2px solid #ecf0f1;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #C8A882;
+        background: #faf8f5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .employe-info {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .employe-avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #C8A882, #d4b896);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 1.2rem;
+        }
+
+        .employe-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          strong {
+            color: #2c3e50;
+            font-size: 1rem;
+          }
+
+          small {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+          }
+
+          .badge-poste {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #e8f4f8;
+            color: #3498db;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+          }
+        }
+      }
+
+      .employe-action {
+        color: #C8A882;
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+
+.pointages-table {
+  thead {
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #C8A882;
+        color: white;
+      }
+    }
+  }
+}

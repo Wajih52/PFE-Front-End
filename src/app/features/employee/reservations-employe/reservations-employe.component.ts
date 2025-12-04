@@ -8,8 +8,10 @@ import { ReservationService } from '../../../services/reservation.service';
 import {
   ReservationResponseDto,
   StatutReservationLabels,
-  StatutReservationBadgeClasses
+  StatutReservationBadgeClasses, StatutLivraisonLabels
 } from '../../../core/models/reservation.model';
+import {StorageService} from '../../../core/services/storage.service';
+import {LivraisonService} from '../../../services/livraison.service';
 
  const StatutReservation = {
   EN_ATTENTE: 'EN_ATTENTE',
@@ -41,9 +43,15 @@ type FiltrePeriode = 'toutes' | 'a-venir' | 'en-cours' | 'passees';
 export class ReservationsEmployeComponent implements OnInit {
   private reservationService = inject(ReservationService);
 
+
   // Signals
   reservations = signal<ReservationResponseDto[]>([]);
   isLoading = signal(true);
+  errorMessage = signal<string>('');
+
+  //  Gestion du modal (détail reservation )
+  showModal = signal<boolean>(false);
+  reservationSelectionnee = signal<ReservationResponseDto | null>(null);
 
   // Filtres
   filtreStatut = signal<StatutReservationn | 'TOUS'>('TOUS');
@@ -116,22 +124,30 @@ export class ReservationsEmployeComponent implements OnInit {
   readonly StatutReservation = StatutReservation;
   readonly StatutReservationLabels = StatutReservationLabels;
   readonly StatutReservationBadgeClasses = StatutReservationBadgeClasses;
+  statutLivraisonLabels = StatutLivraisonLabels;
 
   ngOnInit(): void {
-    this.chargerReservations();
+    this.chargerMesReservations();
   }
 
-  private chargerReservations(): void {
+  /**
+   * Charger les réservations où l'employé est affecté - UN SEUL APPEL API ! ✅
+   */
+  chargerMesReservations(): void {
     this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    // Les employés peuvent voir toutes les réservations pour suivre l'activité
-    this.reservationService.getAllReservations().subscribe({
+    this.reservationService.getMesReservationsAffectees().subscribe({
       next: (reservations) => {
         this.reservations.set(reservations);
         this.isLoading.set(false);
+        console.log(`✅ ${reservations.length} réservations chargées`);
       },
-      error: (err) => {
-        console.error('Erreur chargement réservations:', err);
+      error: (error) => {
+        console.error('❌ Erreur chargement réservations:', error);
+        this.errorMessage.set(
+          error.error?.message || 'Erreur lors du chargement de vos réservations'
+        );
         this.isLoading.set(false);
       }
     });
@@ -150,6 +166,22 @@ export class ReservationsEmployeComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     this.filtreRecherche.set(input.value);
   }
+  //  Ouvrir le modal avec les détails
+  ouvrirModal(reservation: ReservationResponseDto): void {
+    this.reservationSelectionnee.set(reservation);
+    this.showModal.set(true);
+    // Empêcher le scroll du body
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Fermer le modal
+  fermerModal(): void {
+    this.showModal.set(false);
+    this.reservationSelectionnee.set(null);
+    // Réactiver le scroll du body
+    document.body.style.overflow = 'auto';
+  }
+
 
   // Méthodes d'affichage
   formatDate(date: string): string {
@@ -180,5 +212,25 @@ export class ReservationsEmployeComponent implements OnInit {
     const fin = new Date(dateFin);
     const diff = fin.getTime() - debut.getTime();
     return Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1;
+  }
+
+  // Obtenir la couleur du badge selon le statut de livraison
+  getStatutLivraisonColor(statut: string ): string {
+    const colors: Record<string, string> = {
+      'NOT_TODAY': '#95a5a6',
+      'EN_ATTENTE': '#f39c12',
+      'EN_COURS': '#3498db',
+      'LIVREE': '#27ae60',
+      'RETOUR': '#9b59b6',
+      'RETOUR_PARTIEL': '#e67e22',
+      'RETOURNEE': '#16a085',
+      'ANNULEE': '#e74c3c'
+    };
+    return colors[statut] || '#95a5a6';
+  }
+
+  // Helper pour obtenir le label du statut de livraison
+  getStatutLivraisonLabel(statut: string): string {
+    return this.statutLivraisonLabels[statut as keyof typeof this.statutLivraisonLabels] || statut;
   }
 }

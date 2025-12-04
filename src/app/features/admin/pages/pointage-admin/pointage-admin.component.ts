@@ -1,11 +1,13 @@
 // src/app/features/admin/pointage-admin/pointage-admin.component.ts
 
-import { Component, OnInit, signal, computed } from '@angular/core';
+import {Component, OnInit, signal, computed, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PointageService } from '../../../../services/pointage.service';
 import { PointageResponse, StatistiquesPointage, PointageRequest } from '../../../../core/models/pointage.model';
 import { StatutPointage, StatutPointageLabels, StatutPointageColors, StatutPointageIcons } from '../../../../core/models/pointage.enums';
+import {UtilisateurService} from '../../../../services/utilisateur.service';
+import {UserResponse} from '../../../../core/models';
 
 interface Utilisateur {
   idUtilisateur: number;
@@ -23,6 +25,8 @@ interface Utilisateur {
   styleUrl: './pointage-admin.component.scss'
 })
 export class PointageAdminComponent implements OnInit {
+
+  private utilisateurService=inject(UtilisateurService)
 
   // Signals pour la vue globale
   pointagesAujourdhui = signal<PointageResponse[]>([]);
@@ -60,7 +64,7 @@ export class PointageAdminComponent implements OnInit {
   });
 
   // Liste des employés (à charger depuis votre service utilisateur)
-  employes = signal<Utilisateur[]>([]);
+  employes = signal<UserResponse[]>([]);
 
   // Employé sélectionné pour statistiques
   employeStatsId = signal<number | null>(null);
@@ -99,6 +103,23 @@ export class PointageAdminComponent implements OnInit {
   nombreConges = computed(() =>
     this.pointagesAujourdhui().filter(p => p.statutPointage === StatutPointage.EN_CONGE).length
   );
+// Propriétés pour le tri
+  triColonne = signal<'date' | 'employe' | 'heures' | ''>('');
+  triOrdre = signal<'asc' | 'desc'>('asc');
+
+  // Méthode de tri
+  trierTableau(colonne: 'date' | 'employe' | 'heures'): void {
+    if (this.triColonne() === colonne) {
+      // Inverser l'ordre si on clique sur la même colonne
+      this.triOrdre.set(this.triOrdre() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.triColonne.set(colonne);
+      this.triOrdre.set('asc');
+    }
+
+    this.appliquerTri();
+  }
+
 
   // Helpers
   readonly statutLabels = StatutPointageLabels;
@@ -111,7 +132,46 @@ export class PointageAdminComponent implements OnInit {
   ngOnInit(): void {
     this.loadPointagesAujourdhui();
     this.loadPointagesPeriode();
-    // this.loadEmployes(); // À implémenter avec votre service utilisateur
+    this.loadEmployes();
+  }
+
+
+  // Appliquer le tri
+  appliquerTri(): void {
+    const pointages = [...this.pointagesFiltres()];
+    const colonne = this.triColonne();
+    const ordre = this.triOrdre();
+
+    if (!colonne) return;
+
+    pointages.sort((a, b) => {
+      let comparaison = 0;
+
+      switch (colonne) {
+        case 'date':
+          comparaison = new Date(a.dateTravail).getTime() - new Date(b.dateTravail).getTime();
+          break;
+        case 'employe':
+          const nomA = `${a.nomUtilisateur} ${a.prenomUtilisateur}`.toLowerCase();
+          const nomB = `${b.nomUtilisateur} ${b.prenomUtilisateur}`.toLowerCase();
+          comparaison = nomA.localeCompare(nomB);
+          break;
+        case 'heures':
+          comparaison = (a.totalHeures || 0) - (b.totalHeures || 0);
+          break;
+      }
+
+      return ordre === 'asc' ? comparaison : -comparaison;
+    });
+
+    // Mettre à jour le signal avec les données triées
+    this.pointagesPeriode.set(pointages);
+  }
+
+// Obtenir l'icône du tri
+  getTriIcon(colonne: 'date' | 'employe' | 'heures'): string {
+    if (this.triColonne() !== colonne) return '';
+    return this.triOrdre() === 'asc' ? '↑' : '↓';
   }
 
   // ============ CHARGEMENT DES DONNÉES ============
@@ -148,7 +208,23 @@ export class PointageAdminComponent implements OnInit {
       }
     });
   }
-
+  /**
+   * Charger la liste des employés disponibles
+   */
+  loadEmployes(): void {
+    this.utilisateurService.getAllUtilisateurs().subscribe({
+      next: (users) => {
+        // Filtrer uniquement les employés actifs avec rôle EMPLOYE
+        this.employes.set(users.filter(u =>
+          u.etatCompte === 'ACTIVE' &&
+          u.roles.some(r => r === 'EMPLOYE' || r === 'MANAGER' || r === 'ADMIN')
+        ));
+      },
+      error: (error) => {
+        console.error('Erreur chargement employés:', error);
+      }
+    });
+  }
   loadEmployesAbsents(): void {
     const today = this.getTodayString();
 

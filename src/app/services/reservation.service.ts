@@ -180,6 +180,13 @@ export class ReservationService {
     return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/statut/${statut}`);
   }
 
+  /**
+   * Récupérer les réservations de l'employé connecté
+   */
+  getMesReservationsAffectees(): Observable<ReservationResponseDto[]> {
+    return this.http.get<ReservationResponseDto[]>(`${this.API_URL}/mes-reservations-affectees`);
+  }
+
 
 
   // ============================================

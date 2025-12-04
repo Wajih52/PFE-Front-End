@@ -155,13 +155,19 @@
             <table class="pointages-table">
               <thead>
               <tr>
-                <th>Date</th>
-                <th>Employé</th>
+                <th (click)="trierTableau('date')" class="sortable">
+                  Date {{ getTriIcon('date') }}
+                </th>
+                <th (click)="trierTableau('employe')" class="sortable">
+                  Employé {{ getTriIcon('employe') }}
+                </th>
                 <th>Poste</th>
                 <th>Statut</th>
                 <th>Arrivée</th>
                 <th>Départ</th>
-                <th>Total heures</th>
+                <th (click)="trierTableau('heures')" class="sortable">
+                  Total heures {{ getTriIcon('heures') }}
+                </th>
                 <th>Actions</th>
               </tr>
               </thead>
@@ -327,6 +333,45 @@
   }
 
 </div>
+
+<!-- ============================================ -->
+<!-- VUE PAR EMPLOYÉ -->
+<!-- ============================================ -->
+
+@if (activeView() === 'employe') {
+  <div class="employe-selection-container">
+    <div class="card">
+      <div class="card-header">
+        <h2>👥 Sélectionner un employé</h2>
+      </div>
+      <div class="card-body">
+        <div class="employes-grid">
+          @for (employe of employes(); track employe.idUtilisateur) {
+            <div
+              class="employe-card"
+              (click)="voirDetailsEmploye(employe.idUtilisateur)">
+              <div class="employe-info">
+                <div class="employe-avatar">
+                  {{ employe.prenom.charAt(0) }}{{ employe.nom.charAt(0) }}
+                </div>
+                <div class="employe-details">
+                  <strong>{{ employe.prenom }} {{ employe.nom }}</strong>
+                  <small>{{ employe.pseudo }}</small>
+                  @if (employe.poste) {
+                    <span class="badge-poste">{{ employe.poste }}</span>
+                  }
+                </div>
+              </div>
+              <div class="employe-action">
+                <i class="bi bi-chevron-right"></i>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
 
 <!-- ============================================ -->
 <!-- MODAL CRÉATION -->

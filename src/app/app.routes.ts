@@ -241,12 +241,12 @@ export const routes: Routes = [
               {
                 path: 'create',
                 component: LivraisonCreateComponent,
-                canActivate:  [roleGuard(['ADMIN','MANAGER'])],
+                canActivate:  [roleGuard(['ADMIN','MANAGER','EMPLOYE'])],
               },
               {
                 path: ':id',
                 component: LivraisonDetailComponent,
-                canActivate:  [roleGuard(['ADMIN','MANAGER'])],
+                canActivate:  [roleGuard(['ADMIN','MANAGER','EMPLOYE'])],
               },
               {
                 path: ':id/edit',

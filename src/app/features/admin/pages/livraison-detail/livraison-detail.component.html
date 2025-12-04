@@ -3,21 +3,25 @@
 <div class="detail-container">
   <!-- En-tête -->
   <div class="page-header">
+    @if(peutModifier()){
     <button class="btn-back" (click)="retourListe()">
       <i class="bi bi-arrow-left"></i>
     </button>
+    }
     <div class="header-title">
       @if (livraison()) {
         <h2>🚚 {{ livraison()!.titreLivraison }}</h2>
         <p><i class="bi bi-hash"></i>Livraison #{{ livraison()!.idLivraison }}</p>
       }
     </div>
+    @if (peutModifier()){
     <button
       class="btn-edit"
-      [routerLink]="['/admin/livraisons', livraison()!.idLivraison, 'edit']">
+      [routerLink]="['/admin/livraisons', livraison()!.idLivraison, 'edit']" >
       <i class="bi bi-pencil-square me-2"></i>
       Modifier
     </button>
+      }
 
     @if (livraison()) {
       <div class="action-buttons">
@@ -171,12 +175,15 @@
               <i class="bi bi-people"></i>
               Employés Affectés
             </h5>
+
+            @if (peutModifier()) {
             <button
               class="btn-add"
               (click)="ouvrirModalAffectation()"
               [disabled]="livraison()!.statutLivraison === 'LIVREE' || livraison()!.statutLivraison === 'RETOURNEE'">
               <i class="bi bi-plus"></i>
             </button>
+            }
           </div>
         </div>
 
@@ -223,6 +230,7 @@
                       </div>
                     }
                   </div>
+                  @if (peutModifier()) {
                   <button
                     class="btn-remove"
                     (click)="retirerAffectation(affectation.idAffectation)"
@@ -230,6 +238,7 @@
                     title="Retirer l'affectation">
                     <i class="bi bi-trash"></i>
                   </button>
+                  }
                 </div>
               </div>
             }

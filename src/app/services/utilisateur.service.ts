@@ -143,15 +143,12 @@ export class UtilisateurService {
    * 📋 Obtenir tous les employés (ADMIN, MANAGER, EMPLOYE) actifs
    * Utile pour les affectations de livraisons
    *
-   * ✅ FILTRAGE CORRIGÉ :
-   * - Utilise roles: string[] (et non UserRole[])
-   * - Vérifie etatCompte === StatutCompte.ACTIF
    */
   getAllEmployes(): Observable<UserResponse[]> {
     return new Observable(observer => {
       this.getAllUtilisateurs().subscribe({
         next: (users) => {
-          // ✅ FILTRAGE CORRIGÉ selon votre vraie structure
+          // ✅ FILTRAGE
           const employes = users.filter(user => {
             // Vérifier que le compte est actif
             const isActif = user.etatCompte === StatutCompte.ACTIVE;

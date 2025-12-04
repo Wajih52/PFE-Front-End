@@ -657,3 +657,70 @@ textarea.form-control {
     }
   }
 }
+
+
+// QR Code container
+.qr-code-container {
+  margin: 1.5rem 0;
+
+  .qr-code-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 2px solid #C8A882;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(200, 168, 130, 0.15);
+
+    .qr-code-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+
+      i {
+        font-size: 1.5rem;
+        color: #C8A882;
+      }
+
+      h3 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+    }
+
+    .qr-code-image {
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      img {
+        max-width: 250px;
+        height: auto;
+        display: block;
+      }
+    }
+
+    .qr-code-info {
+      margin-top: 1.5rem;
+
+      p {
+        margin: 0.5rem 0;
+        color: #7f8c8d;
+
+        i {
+          color: #3498db;
+          margin-right: 0.5rem;
+        }
+
+        strong {
+          color: #e74c3c;
+        }
+      }
+    }
+  }
+}

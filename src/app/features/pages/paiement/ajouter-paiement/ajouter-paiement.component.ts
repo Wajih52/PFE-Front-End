@@ -31,6 +31,9 @@ export class AjouterPaiementComponent implements OnInit {
   erreur: string | null = null;
   succes: boolean = false;
 
+  showQRCode: boolean = false;
+  qrCodeImagePath: string = 'assets/images/d17-qr-code.jpg';
+
   readonly modesPaiement = Object.values(ModePaiement);
   readonly modePaiementLabels = ModePaiementLabels;
 
@@ -48,6 +51,11 @@ export class AjouterPaiementComponent implements OnInit {
   ngOnInit(): void {
     this.idReservation = +this.route.snapshot.params['idReservation'];
     this.initForm();
+
+    // Écouter les changements du mode de paiement
+    this.paiementForm.get('modePaiement')?.valueChanges.subscribe(mode => {
+      this.onModePaiementChange(mode);
+    });
     this.chargerReservation();
   }
 
@@ -58,6 +66,23 @@ export class AjouterPaiementComponent implements OnInit {
       descriptionPaiement: [''],
       referenceExterne: ['']
     });
+  }
+
+  // Gérer les changements de mode de paiement
+  onModePaiementChange(mode: ModePaiement): void {
+    const referenceControl = this.paiementForm.get('referenceExterne');
+
+    if (mode === ModePaiement.D17 || mode === ModePaiement.VIREMENT) {
+      // Rendre la référence obligatoire
+      referenceControl?.setValidators([Validators.required]);
+      this.showQRCode = (mode === ModePaiement.D17);
+    } else {
+      // Référence non obligatoire pour ESPECES
+      referenceControl?.clearValidators();
+      this.showQRCode = false;
+    }
+
+    referenceControl?.updateValueAndValidity();
   }
 
   chargerReservation(): void {
@@ -207,4 +232,7 @@ export class AjouterPaiementComponent implements OnInit {
     };
     return icons[mode as ModePaiement] || 'fas fa-wallet';
   }
+
+  protected readonly ModePaiement = ModePaiement;
+  protected readonly Validators = Validators;
 }

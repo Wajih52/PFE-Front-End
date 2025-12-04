@@ -206,7 +206,7 @@ export interface LigneReservationResponseDto {
   dateDebut: string;
   dateFin: string;
 
-  statutLivraisonLigne?: string;
+  statutLivraisonLigne: string;
   typeProduit: TypeProduit;
   observations?: string;
 

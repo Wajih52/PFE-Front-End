@@ -3,7 +3,7 @@
 <div class="reservations-employe">
   <div class="page-header">
     <h1>📋 Réservations</h1>
-    <p class="subtitle">Suivez toutes les réservations de l'agence</p>
+    <p class="subtitle">Réservations où vous êtes affecté en tant que livreur</p>
   </div>
 
   <!-- Statistiques Rapides -->
@@ -120,7 +120,7 @@
 
     <div *ngFor="let reservation of reservationsFiltrees()"
          class="reservation-card"
-         [routerLink]="['/client/reservation-details', reservation.idReservation]">
+         (click)="ouvrirModal(reservation)">
 
       <div class="reservation-header">
         <div class="reservation-ref">
@@ -173,7 +173,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">🏁</span>
+            <span class="icon">📅</span>
             <div class="info-content">
               <span class="label">Date fin</span>
               <span class="value">{{ formatDate(reservation.dateFin) }}</span>
@@ -185,6 +185,14 @@
             <div class="info-content">
               <span class="label">Durée</span>
               <span class="value">{{ getNombreJours(reservation.dateDebut, reservation.dateFin) }} jour(s)</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">⏱️</span>
+            <div class="info-content">
+              <span class="label">Produits :</span>
+              <span class="value"> {{ reservation.lignesReservation.length }} article(s)</span>
             </div>
           </div>
         </div>
@@ -200,3 +208,185 @@
     </div>
   </div>
 </div>
+
+<!-- ============================================ -->
+<!-- MODAL DES LIGNES DE RÉSERVATION -->
+<!-- ============================================ -->
+
+@if (showModal() && reservationSelectionnee()) {
+  <div class="modal-overlay" (click)="fermerModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+      <!-- En-tête du modal -->
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-list-alt"></i>
+          <h2>Détails de la réservation</h2>
+        </div>
+        <button class="btn-close" (click)="fermerModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Info réservation -->
+      <div class="reservation-info">
+        <div class="info-badge">
+          <i class="fas fa-hashtag"></i>
+          {{ reservationSelectionnee()!.referenceReservation }}
+        </div>
+        <div class="info-badge">
+          <i class="fas fa-user"></i>
+          {{ reservationSelectionnee()!.prenomClient }} {{ reservationSelectionnee()!.nomClient }}
+        </div>
+        <div class="info-badge">
+          <i class="fas fa-calendar"></i>
+          {{ formatDate(reservationSelectionnee()!.dateDebut) }}
+        </div>
+      </div>
+
+      <!-- Corps du modal - Liste des lignes -->
+      <div class="modal-body">
+        <h3 class="section-title">
+          <i class="fas fa-boxes"></i>
+          Produits réservés ({{ reservationSelectionnee()!.lignesReservation.length }})
+        </h3>
+
+        <div class="lignes-container">
+          @for (ligne of reservationSelectionnee()!.lignesReservation; track ligne.idLigneReservation) {
+            <div class="ligne-card">
+
+              <!-- En-tête de la ligne -->
+              <div class="ligne-header">
+                <div class="produit-info">
+                  <i class="fas fa-cube"></i>
+                  <strong>{{ ligne.nomProduit }}</strong>
+                </div>
+                <div
+                  class="statut-livraison-badge"
+                  [style.background-color]="getStatutLivraisonColor(ligne.statutLivraisonLigne)">
+                  {{ getStatutLivraisonLabel(ligne.statutLivraisonLigne) }}
+                </div>
+              </div>
+
+              <!-- Détails de la ligne -->
+              <div class="ligne-details">
+
+                <!-- Quantité -->
+                <div class="detail-item">
+                  <i class="fas fa-sort-numeric-up"></i>
+                  <span class="label">Quantité :</span>
+                  <span class="value">{{ ligne.quantite }}</span>
+                </div>
+
+                <!-- Prix unitaire -->
+                <div class="detail-item">
+                  <i class="fas fa-tag"></i>
+                  <span class="label">Prix unitaire :</span>
+                  <span class="value">{{ formatMontant(ligne.prixUnitaire) }}</span>
+                </div>
+
+                <!-- Sous-total -->
+                <div class="detail-item highlight">
+                  <i class="fas fa-calculator"></i>
+                  <span class="label">Sous-total :</span>
+                  <span class="value">{{ formatMontant(ligne.sousTotal) }}</span>
+                </div>
+
+                <!-- Période de location -->
+                <div class="detail-item period">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span class="label">Période :</span>
+                  <span class="value">
+                    Du {{ formatDate(ligne.dateDebut) }} au {{ formatDate(ligne.dateFin) }}
+                  </span>
+                </div>
+
+                <!-- Type de produit -->
+                <div class="detail-item">
+                  <i class="fas fa-info-circle"></i>
+                  <span class="label">Type :</span>
+                  <span class="value">
+                    @if (ligne.typeProduit === 'AVEC_REFERENCE') {
+                      <span class="badge-type badge-reference">Avec référence</span>
+                    } @else {
+                      <span class="badge-type badge-quantite">En quantité</span>
+                    }
+                  </span>
+                </div>
+
+                <!-- Instances (si produit avec référence) -->
+                @if (ligne.typeProduit === 'AVEC_REFERENCE' && ligne.numerosSeries && ligne.numerosSeries.length > 0) {
+                  <div class="detail-item instances">
+                    <i class="fas fa-barcode"></i>
+                    <span class="label">Références :</span>
+                    <div class="instances-list">
+                      @for (instance of ligne.numerosSeries; track instance) {
+                        <span class="instance-badge">{{ instance }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Statut détaillé -->
+                @if (ligne.statutLivraisonLigne === 'LIVREE' || ligne.statutLivraisonLigne === 'RETOURNEE') {
+                  <div class="detail-item success-info">
+                    <i class="fas fa-check-circle"></i>
+                    @if (ligne.statutLivraisonLigne === 'LIVREE') {
+                      <span>✅ Produit livré au client</span>
+                    } @else {
+                      <span>✅ Produit retourné par le client</span>
+                    }
+                  </div>
+                }
+
+                @if (ligne.statutLivraisonLigne === 'EN_COURS') {
+                  <div class="detail-item warning-info">
+                    <i class="fas fa-truck"></i>
+                    <span>🚚 Livraison en cours</span>
+                  </div>
+                }
+
+                @if (ligne.statutLivraisonLigne === 'EN_ATTENTE') {
+                  <div class="detail-item info-info">
+                    <i class="fas fa-clock"></i>
+                    <span>⏳ En attente de livraison</span>
+                  </div>
+                }
+
+              </div>
+
+            </div>
+          }
+        </div>
+
+        <!-- Résumé financier -->
+        <div class="resume-financier">
+          <div class="resume-item">
+            <span class="label">Montant total :</span>
+            <span class="value total">{{ formatMontant(reservationSelectionnee()!.montantTotal) }}</span>
+          </div>
+          <div class="resume-item">
+            <span class="label">Montant payé :</span>
+            <span class="value paye">{{ formatMontant(reservationSelectionnee()!.montantPaye || 0)}}</span>
+          </div>
+          <div class="resume-item">
+            <span class="label">Montant restant :</span>
+            <span class="value restant">{{ formatMontant(reservationSelectionnee()!.montantRestant||0) }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pied du modal -->
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary"
+          (click)="fermerModal()">
+          <i class="fas fa-check"></i>
+          Fermer
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

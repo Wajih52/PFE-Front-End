@@ -6,6 +6,8 @@ import { PointageService } from '../../../services/pointage.service';
 import { PointageResponse, StatistiquesPointage } from '../../../core/models/pointage.model';
 import { StatutPointageLabels, StatutPointageColors, StatutPointageIcons } from '../../../core/models/pointage.enums';
 import {NotificationService} from '../../../services/notification.service';
+import {UserResponse} from '../../../core/models';
+import {UtilisateurService} from '../../../services/utilisateur.service';
 
 @Component({
   selector: 'app-pointage-employee',
@@ -17,6 +19,7 @@ import {NotificationService} from '../../../services/notification.service';
 export class PointageEmployeeComponent implements OnInit, OnDestroy {
 
   private notificationService=inject(NotificationService)
+
 
   // Signals
   pointageDuJour = signal<PointageResponse | null>(null);
@@ -65,6 +68,7 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
     this.loadStatistiques();
     this.loadHistorique();
 
+
     // Mettre à jour l'heure chaque seconde
     this.timeInterval = setInterval(() => {
       this.currentTime.set(new Date());
@@ -76,6 +80,7 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
       clearInterval(this.timeInterval);
     }
   }
+
 
   /**
    * Charger le pointage du jour
@@ -101,7 +106,7 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
       next: (pointage) => {
         this.pointageDuJour.set(pointage);
         this.isLoading.set(false);
-        this.showSuccessMessage('Arrivée pointée avec succès ! ✅');
+        this.showSuccessMessage('Arrivée pointée avec succès !');
       },
       error: (error) => {
         this.isLoading.set(false);
