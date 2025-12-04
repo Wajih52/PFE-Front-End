@@ -65,7 +65,7 @@ export class UsersManagementComponent implements OnInit {
   private imageService = inject(ImageService);
   private datePipe = inject(DatePipe);
 
-  API_URL = 'http://localhost:8080/utilisateurs';
+  API_URL = 'http://localhost:8080/api/utilisateurs';
   IMAGE_BASE_URL = 'http://localhost:8080';
 
   //icone lucide

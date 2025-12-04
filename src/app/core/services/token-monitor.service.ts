@@ -11,7 +11,6 @@ import { JwtHelperService } from './jwt-helper.service';
  * Service de surveillance du token JWT
  * Vérifie périodiquement l'expiration et déconnecte automatiquement
  *
- * À activer dans app.component.ts au démarrage de l'application
  */
 @Injectable({
   providedIn: 'root'

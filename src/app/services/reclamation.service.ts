@@ -25,7 +25,7 @@ import {
 })
 export class ReclamationService {
   private http = inject(HttpClient);
-  private apiUrl = `${variables.apiUrl}/api/reclamations`;
+  private apiUrl = `${variables.apiUrl}/reclamations`;
 
   /**
    * Créer une réclamation (visiteur ou client connecté)

@@ -1,4 +1,4 @@
-// src/app/services/produit.service.ts - VERSION COMPLÈTE AVEC APIs DU BACKEND
+// src/app/services/produit.service.ts
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -8,7 +8,6 @@ import {
   MouvementStockResponse, ProduitDisponibiliteDto,
   ProduitRequest,
   ProduitResponse, StockStatistiques,
-  TypeMouvement,
   TypeProduit
 } from '../core/models';
 
@@ -33,7 +32,6 @@ export interface DisponibilitePeriodeResponse {
 
 /**
  * Service de gestion des produits
- * ✅ VERSION COMPLÈTE avec toutes les APIs du ProduitController
  */
 @Injectable({
   providedIn: 'root'
@@ -76,7 +74,6 @@ export class ProduitService {
   /**
    * Supprimer définitivement un produit de la base de données
    * DELETE /api/produits/{id}/supprimer-definitivement
-   * ⚠️ DANGER: Suppression permanente
    * @requires ROLE: ADMIN uniquement
    */
   supprimerProduitDefinitivement(id: number): Observable<{ message: string }> {
@@ -104,7 +101,7 @@ export class ProduitService {
   /**
    * Obtenir tous les produits (sans filtre de dates)
    * GET /api/produits
-   * ⚠️ NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
+   * NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
    */
   getAllProduits(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(this.API_URL);
@@ -117,7 +114,7 @@ export class ProduitService {
   /**
    * Obtenir les produits disponibles (stock global > 0)
    * GET /api/produits/disponibles
-   * ⚠️ NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
+   *  NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
    */
   getProduitsDisponibles(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/disponibles`);
@@ -166,18 +163,18 @@ export class ProduitService {
   /**
    * Filtrer par type de produit
    * GET /api/produits/type/{type}
-   * ⚠️ INUTILE POUR LE CLIENT - uniquement usage interne admin
+   *  INUTILE POUR LE CLIENT - uniquement usage interne admin
    */
   getProduitsByType(type: TypeProduit): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/type/${type}`);
   }
 
   // ============================================
-  // ✅ DISPONIBILITÉ AVEC PÉRIODE (APIs CRITIQUES)
+  // DISPONIBILITÉ AVEC PÉRIODE (APIs CRITIQUES)
   // ============================================
 
   /**
-   * ✅ Calculer la quantité disponible pour une période donnée
+   * Calculer la quantité disponible pour une période donnée
    * GET /api/produits/{id}/quantite-disponible?dateDebut={date}&dateFin={date}
    *
    * Retourne la quantité réellement disponible en tenant compte des réservations
@@ -194,7 +191,7 @@ export class ProduitService {
   }
 
   /**
-   * ✅ Vérifier la disponibilité d'un produit pour une période
+   *  Vérifier la disponibilité d'un produit pour une période
    * GET /api/produits/{id}/disponibilite-periode?quantite={qte}&dateDebut={date}&dateFin={date}
    *
    * Vérifie si une quantité spécifique est disponible
@@ -216,10 +213,10 @@ export class ProduitService {
   }
 
   /**
-   * ✅ Obtenir le catalogue disponible sur une période
+   *  Obtenir le catalogue disponible sur une période
    * GET /api/produits/catalogue-disponible?dateDebut={date}&dateFin={date}
    *
-   * 🎯 API PRINCIPALE POUR LE CATALOGUE CLIENT
+   * API PRINCIPALE POUR LE CATALOGUE CLIENT
    * Retourne uniquement les produits réellement disponibles pendant la période
    */
   getCatalogueDisponibleSurPeriode(
@@ -236,7 +233,7 @@ export class ProduitService {
   }
 
   /**
-   * ✅ Recherche multicritères avec période
+   *  Recherche multicritères avec période
    * GET /api/produits/search-periode
    *
    * Permet de filtrer les produits disponibles selon plusieurs critères
@@ -275,7 +272,7 @@ export class ProduitService {
   }
 
   /**
-   * ✅ NOUVEAU: Obtenir tous les produits avec leur disponibilité pour une période
+   *  Obtenir tous les produits avec leur disponibilité pour une période
    * GET /api/produits/disponibilite-periode?dateDebut={date}&dateFin={date}
    *
    * Cette méthode retourne TOUS les produits avec:

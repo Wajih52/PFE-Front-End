@@ -19,7 +19,7 @@ import { variables } from '../core/environement/variables';
 })
 export class CalendrierService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${variables.apiUrl}/api/calendrier`;
+  private readonly API_URL = `${variables.apiUrl}/calendrier`;
 
   // ============================================
   // RÉCUPÉRATION DES ÉVÉNEMENTS

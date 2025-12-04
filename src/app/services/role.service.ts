@@ -9,8 +9,8 @@ import { RoleRequest, RoleResponse } from '../core/models';
   providedIn: 'root'
 })
 export class RoleService {
-  private baseUrl = 'http://localhost:8080/roles';
-  private userRoleUrl = 'http://localhost:8080/utilisateur-roles';
+  private baseUrl = 'http://localhost:8080/api/roles';
+  private userRoleUrl = 'http://localhost:8080/api/utilisateur-roles';
 
   constructor(private http: HttpClient) {}
 

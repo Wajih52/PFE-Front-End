@@ -266,9 +266,9 @@ export class CalendrierComponent implements OnInit {
 
     // Rediriger vers la page de détails selon le type
     if (event.type === 'RESERVATION') {
-      window.open(`/reservations/${event.id}`, '_blank');
+      window.open(`admin/reservation-details/${event.id}`, '_blank');
     } else {
-      window.open(`/livraisons/${event.id}`, '_blank');
+      window.open(`admin/livraisons/${event.id}`, '_blank');
     }
   }
 }

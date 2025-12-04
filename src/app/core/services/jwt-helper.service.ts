@@ -65,7 +65,7 @@ export class JwtHelperService {
     const expirationDate = decoded.exp * 1000;
     const now = Date.now();
 
-    // ✅ Marge de sécurité de 30 secondes pour éviter les problèmes de timing
+    //  Marge de sécurité de 30 secondes pour éviter les problèmes de timing
     const bufferTime = 30000; // 30 secondes
     const isExpired = expirationDate < (now + bufferTime);
 
@@ -74,7 +74,7 @@ export class JwtHelperService {
       console.warn(`⏰ Token expiré le ${expirationDateFormatted}`);
     } else {
       const timeRemaining = Math.floor((expirationDate - now) / 60000);
-      console.debug(`✅ Token valide (expire dans ${timeRemaining} minutes)`);
+      console.debug(` Token valide (expire dans ${timeRemaining} minutes)`);
     }
 
     return isExpired;
@@ -136,23 +136,6 @@ export class JwtHelperService {
 
     // Le "sub" (subject) contient le username dans ton Spring Boot
     return decoded?.sub || null;
-  }
-
-  /**
-   * ⚠️ NOTE IMPORTANTE : Les rôles ne sont PAS dans le JWT
-   *
-   * Ton Spring Boot ne stocke PAS les rôles dans le token.
-   * Les rôles sont chargés depuis la base de données via CustomUserDetailsService.
-   *
-   * Pour obtenir les rôles, utilise StorageService.getUserRoles() qui lit
-   * les rôles depuis localStorage (stockés après /utilisateurs/me).
-   *
-   * Cette méthode retourne toujours un tableau vide.
-   */
-  getRolesFromToken(token: string): string[] {
-    // Ton JWT ne contient pas les rôles
-    // Les rôles sont récupérés via l'endpoint /utilisateurs/me
-    return [];
   }
 
   /**

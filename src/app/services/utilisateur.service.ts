@@ -11,7 +11,7 @@ import {StatutCompte, UserPatchRequest, UserRequest, UserResponse} from '../core
 
 /**
  * Service Angular pour gérer les utilisateurs
- * API: /utilisateurs
+ * API: api/utilisateurs
  */
 @Injectable({
   providedIn: 'root'

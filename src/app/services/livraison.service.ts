@@ -20,7 +20,7 @@ import {LigneReservationResponseDto, StatutLivraison} from '../core/models/reser
   providedIn: 'root'
 })
 export class LivraisonService {
-  private apiUrl = `${variables.apiUrl}/api/livraisons`;
+  private apiUrl = `${variables.apiUrl}/livraisons`;
 
   constructor(private http: HttpClient) {}
 

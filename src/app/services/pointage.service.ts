@@ -16,7 +16,7 @@ import { StatutPointage } from '../core/models/pointage.enums';
 })
 export class PointageService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${variables.apiUrl}/api/pointages`;
+  private readonly apiUrl = `${variables.apiUrl}/pointages`;
 
   // ============ ENDPOINTS EMPLOYÉ ============
 

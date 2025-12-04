@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit {
   isLoggingOut = false;
   isLoading = true;
 
-  API_URL = 'http://localhost:8080/utilisateurs';
+  API_URL = 'http://localhost:8080/api/utilisateurs';
 
   constructor() {
     // Formulaire profil (sans image, sans mot de passe)

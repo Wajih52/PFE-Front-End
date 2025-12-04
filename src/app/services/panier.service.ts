@@ -1,5 +1,4 @@
 // src/app/core/services/panier.service.ts
-// ✅ VERSION CORRIGÉE - Compatible SSR (Angular 19)
 
 import { Injectable, signal, computed, inject, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -8,9 +7,6 @@ import { ToastrService } from 'ngx-toastr';
 
 /**
  * Service de gestion du panier côté client
- * ✅ Compatible SSR Angular 19
- * Utilise localStorage pour la persistence (uniquement côté browser)
- * Utilise signals pour la réactivité
  */
 @Injectable({
   providedIn: 'root'
@@ -36,7 +32,7 @@ export class PanierService {
   estVide = computed(() => this.panierState().lignes.length === 0);
 
   constructor() {
-    // ✅ Charger depuis localStorage uniquement côté client après le premier rendu
+    // Charger depuis localStorage uniquement côté client après le premier rendu
     if (isPlatformBrowser(this.platformId)) {
       afterNextRender(() => {
         const stored = this.loadFromStorage();
@@ -196,7 +192,7 @@ export class PanierService {
    */
   private saveToStorage(): void {
     if (!isPlatformBrowser(this.platformId)) {
-      return; // ✅ Ne rien faire côté serveur
+      return; //  Ne rien faire côté serveur
     }
 
     try {
@@ -211,7 +207,7 @@ export class PanierService {
    */
   private loadFromStorage(): PanierState {
     if (!isPlatformBrowser(this.platformId)) {
-      // ✅ Retourner état vide côté serveur
+      //  Retourner état vide côté serveur
       return {
         lignes: [],
         totalArticles: 0,
@@ -238,7 +234,7 @@ export class PanierService {
   }
 
   /**
-   * ✅ FIX #5: Obtenir la quantité d'un produit déjà dans le panier pour une période donnée
+   *  Obtenir la quantité d'un produit déjà dans le panier pour une période donnée
    */
   getQuantiteProduitDansPanier(idProduit: number, dateDebut: string, dateFin: string): number {
     const lignes = this.panierState().lignes;

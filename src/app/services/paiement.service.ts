@@ -17,7 +17,7 @@ import {
 })
 export class PaiementService {
 
-  private readonly apiUrl = `${variables.apiUrl}/api/paiements`;
+  private readonly apiUrl = `${variables.apiUrl}/paiements`;
 
   constructor(private http: HttpClient) { }
 

@@ -27,7 +27,7 @@ export class AuthService {
   private storage = inject(StorageService);
   private tokenMonitor = inject(TokenMonitorService);
 
-  private readonly API_URL = 'http://localhost:8080';
+  private readonly API_URL = 'http://localhost:8080/api';
   private readonly AUTH_URL = `${this.API_URL}/auth`;
   private readonly INSCRIPTION_URL = `${this.API_URL}/inscriptions`;
 
@@ -65,7 +65,7 @@ export class AuthService {
    * Connexion d'un utilisateur
    * POST /auth/login
    *
-   * ⚠️ IMPORTANT : Cette méthode retourne un Observable qui ne se termine
+   *  Cette méthode retourne un Observable qui ne se termine
    * que lorsque l'utilisateur est complètement chargé.
    * Ne redirigez qu'après que cet Observable soit complete !
    */
@@ -77,18 +77,18 @@ export class AuthService {
         // Stocker le token
         this.storage.saveToken(response.token);
 
-        // ✅ Émettre seulement isAuthenticated (pas currentUser encore)
+        //  Émettre seulement isAuthenticated (pas currentUser encore)
         this.isAuthenticatedSubject.next(true);
 
-        // ✅ Charger le profil utilisateur
+        // Charger le profil utilisateur
         return this.loadCurrentUser().pipe(
           tap((user)=>{
-            // ✅ APRÈS avoir chargé l'utilisateur, émettre le currentUser
+            //  APRÈS avoir chargé l'utilisateur, émettre le currentUser
             this.currentUserSubject.next(user);
-            console.log('✅ CurrentUser émis:', user);
+            console.log(' CurrentUser émis:', user);
           }),
           map((user) => {
-            // ✅ Ajouter requirePasswordChange au user
+            //  Ajouter requirePasswordChange au user
             return { ...user, requirePasswordChange: response.requirePasswordChange };
           })
         );
@@ -146,7 +146,7 @@ export class AuthService {
         tap(user => {
           // Sauvegarder les infos utilisateur
           this.storage.saveUser(user);
-          console.log('✅ Utilisateur sauvegardé dans le storage');
+          console.log(' Utilisateur sauvegardé dans le storage');
         })
       );
   }
