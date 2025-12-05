@@ -102,7 +102,7 @@ export class OAuth2RedirectComponent implements OnInit {
   private storage = inject(StorageService);
   private authService = inject(AuthService);
 
-  // ✅ AJOUTÉ : Détecter si on est dans le navigateur
+  //  Détecter si on est dans le navigateur
   private platformId = inject(PLATFORM_ID);
   private isBrowser: boolean;
 
@@ -110,12 +110,12 @@ export class OAuth2RedirectComponent implements OnInit {
   errorMessage = '';
 
   constructor() {
-    // ✅ Vérifier si on est dans le navigateur
+    //  Vérifier si on est dans le navigateur
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit(): void {
-    // ✅ MODIFIÉ : N'exécuter que côté client
+    //  N'exécuter que côté client
     if (!this.isBrowser) {
       return; // Ne rien faire côté serveur
     }
@@ -150,21 +150,18 @@ export class OAuth2RedirectComponent implements OnInit {
   private handleSuccessfulAuth(token: string): void {
     console.log('✅ Token OAuth2 reçu');
 
-    // ✅ Sauvegarder le token (SYNCHRONE - pas besoin d'attendre)
+    //  Sauvegarder le token
     this.storage.saveToken(token);
 
-    // ✅ Démarrer la surveillance du token
-    // Note: On pourrait aussi laisser app.component.ts le faire,
-    // mais c'est mieux de le faire ici pour être cohérent avec login()
 
-    // ✅ Charger les informations utilisateur IMMÉDIATEMENT
-    // Pas besoin de setTimeout car localStorage est synchrone
+
+    //  Charger les informations utilisateur IMMÉDIATEMENT
     this.authService.loadCurrentUser().subscribe({
       next: (user) => {
-        console.log('✅ Utilisateur OAuth2 chargé:', user);
+        console.log(' Utilisateur OAuth2 chargé:', user);
 
         // Rediriger vers le dashboard
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/profile']);
       },
       error: (error) => {
         console.error('❌ Erreur lors du chargement de l\'utilisateur OAuth2:', error);
