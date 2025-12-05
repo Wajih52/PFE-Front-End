@@ -19,11 +19,11 @@ COPY . .
 # Build de l'application Angular en mode production avec SSR
 # Cela génère les fichiers dans dist/elegant-hive
 
-# Build avec la configuration Docker
-RUN npm run build --configuration=production
+# Build avec configuration optimisée pour Docker
+RUN npm run build -- --configuration=docker
 
 
-RUN npm run build
+
 
 # ===================================
 # ÉTAPE 2 : RUNTIME - Serveur Node.js pour SSR

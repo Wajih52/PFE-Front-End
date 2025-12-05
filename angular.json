@@ -76,8 +76,25 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "docker": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/core/environement/variables.ts",
+                  "with": "src/app/core/environement/variables.prod.ts"
+                }
+              ],
+              "budgets": [],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "outputMode": "server",
+              "ssr": {
+                "entry": "src/server.ts"
+              }
             }
           },
+
           "defaultConfiguration": "production"
         },
         "serve": {
