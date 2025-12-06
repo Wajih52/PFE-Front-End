@@ -54,7 +54,7 @@ ENV PORT=4000
 
 # Démarrer le serveur SSR
 # Le fichier server.mjs est généré par Angular SSR
-CMD ["node", "dist/elegant-hive/server/server.mjs"]
+CMD ["node", "dist/agence-evenementielle-front/server/server.mjs"]
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
