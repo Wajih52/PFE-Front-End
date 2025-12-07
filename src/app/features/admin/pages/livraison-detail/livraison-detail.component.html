@@ -10,8 +10,8 @@
     }
     <div class="header-title">
       @if (livraison()) {
-        <h2>🚚 {{ livraison()!.titreLivraison }}</h2>
-        <p><i class="bi bi-hash"></i>Livraison #{{ livraison()!.idLivraison }}</p>
+        <h2><span class="material-symbols-outlined md-48 cl-dark">local_shipping</span> {{ livraison()!.titreLivraison }}</h2>
+        <p><i class="bi bi-hash"></i>Livraison {{ livraison()!.idLivraison }}</p>
       }
     </div>
     @if (peutModifier()){

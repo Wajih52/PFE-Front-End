@@ -6,7 +6,6 @@ import {Router, RouterLink} from '@angular/router';
 import { StorageService } from '../../../../core/services/storage.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import {ConfirmationService} from '../../../../core/services/confirmation.service';
-import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,18 +53,18 @@ export class DashboardComponent implements OnInit {
       this.userPhone = user.telephone?.toString() || '';
       this.isLoading = false;
 
-      console.log('✅ Utilisateur chargé dans le dashboard:', this.userName);
+      console.log(' Utilisateur chargé dans le dashboard:', this.userName);
     } else {
       // Si pas d'utilisateur en localStorage, essayer de le recharger depuis l'API
-      console.warn('⚠️ Aucun utilisateur en localStorage, tentative de rechargement...');
+      console.warn(' Aucun utilisateur en localStorage, tentative de rechargement...');
 
       this.authService.loadCurrentUser().subscribe({
         next: (userData) => {
-          console.log('✅ Utilisateur rechargé depuis l\'API');
+          console.log(' Utilisateur rechargé depuis l\'API');
           this.loadUserData(); // Recharger après avoir récupéré l'utilisateur
         },
         error: (error) => {
-          console.error('❌ Impossible de charger l\'utilisateur', error);
+          console.error(' Impossible de charger l\'utilisateur', error);
 
           // Rediriger vers login
           this.router.navigate(['/auth/login'], {
@@ -81,7 +80,7 @@ export class DashboardComponent implements OnInit {
    */
   async logout() {
     const confirmed = await this.confirmationService.confirm({
-      title: '👋 Déconnexion',
+      title: ' Déconnexion',
       message: 'Voulez-vous vraiment vous déconnecter ?',
       confirmText: 'Oui, me déconnecter',
       type: 'info'
@@ -92,13 +91,13 @@ export class DashboardComponent implements OnInit {
 
       this.authService.logout().subscribe({
         next: () => {
-          console.log('✅ Déconnexion réussie');
+          console.log(' Déconnexion réussie');
           this.router.navigate(['/auth/login'], {
             queryParams: { logout: 'true' }
           });
         },
         error: (error) => {
-          console.error('❌ Erreur de déconnexion', error);
+          console.error(' Erreur de déconnexion', error);
           // Déconnecter quand même côté client
           this.storage.clear();
           this.router.navigate(['/auth/login']);

@@ -15,7 +15,6 @@ import {
   EtatPhysique,
   EtatPhysiqueLabels
 } from '../../../../core/models';
-import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
 import {NotificationService} from '../../../../services/notification.service';
 
 /**
@@ -25,7 +24,7 @@ import {NotificationService} from '../../../../services/notification.service';
 @Component({
   selector: 'app-instance-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MenuNavigationComponent, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './instance-form.component.html',
   styleUrls: ['./instance-form.component.scss']
 })

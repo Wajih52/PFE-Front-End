@@ -34,7 +34,7 @@ export class SidebarMenuService {
           {
             id: 'profile',
             label: 'Mon Profil',
-            icon: '👤',
+            icon: '',
             route: '/profile',
             order: 1
           },

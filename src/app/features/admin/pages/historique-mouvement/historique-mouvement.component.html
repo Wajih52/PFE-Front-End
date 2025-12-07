@@ -2,10 +2,10 @@
   <!-- En-tête -->
   <div class="header">
     <button class="btn-back" (click)="goBack()">
-      <span>←</span> Retour
+      <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong>
     </button>
     <div class="header-content">
-      <h1>📊 Historique des mouvements</h1>
+      <h1><span class="material-symbols-outlined md-48 cl-dark">view_timeline</span> Historique des mouvements</h1>
       <div class="produit-info" *ngIf="produit">
         <span class="code">{{ produit.codeProduit }}</span>
         <span class="nom">{{ produit.nomProduit }}</span>
@@ -16,28 +16,28 @@
   <!-- Statistiques -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon">📈</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">insert_chart</span></div>
       <div class="stat-content">
         <div class="stat-label">Total mouvements</div>
         <div class="stat-value">{{ stats.totalMouvements }}</div>
       </div>
     </div>
     <div class="stat-card entree">
-      <div class="stat-icon">⬆️</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">arrow_downward</span></div>
       <div class="stat-content">
         <div class="stat-label">Entrées</div>
         <div class="stat-value">{{ stats.totalEntrees }}</div>
       </div>
     </div>
     <div class="stat-card sortie">
-      <div class="stat-icon">⬇️</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">arrow_upward</span></div>
       <div class="stat-content">
         <div class="stat-label">Sorties</div>
         <div class="stat-value">{{ stats.totalSorties }}</div>
       </div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon">⏱️</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">alarm</span></div>
       <div class="stat-content">
         <div class="stat-label">Dernier mouvement</div>
         <div class="stat-value-small" *ngIf="stats.dernierMouvement">
@@ -52,7 +52,7 @@
 
   <!-- Filtres -->
   <div class="filters-section">
-    <h3>🔍 Filtres</h3>
+    <h3><span class="material-symbols-outlined  cl-dark">search</span> Filtres</h3>
     <div class="filters-grid">
       <div class="filter-item full-width">
         <label>Recherche</label>
@@ -105,17 +105,17 @@
 
     <div class="filter-actions">
       <button class="btn-reset" (click)="resetFilters()">
-        🔄 Réinitialiser
+        <span class="material-symbols-outlined  cl-dark">restart_alt</span> Réinitialiser
       </button>
       <button class="btn-export" (click)="exportToCSV()">
-        📥 Exporter CSV
+        <span class="material-symbols-outlined  cl-dark">assignment</span> Exporter CSV
       </button>
     </div>
   </div>
 
   <!-- Messages -->
   <div class="alert alert-danger" *ngIf="errorMessage">
-    ❌ {{ errorMessage }}
+    <span class="material-symbols-outlined md-48 cl-dark">error</span> {{ errorMessage }}
   </div>
 
   <!-- Loader -->
@@ -127,7 +127,7 @@
   <!-- Liste des mouvements -->
   <div class="mouvements-section" *ngIf="!isLoading">
     <div class="section-header">
-      <h3>📋 Mouvements ({{ filteredMouvements.length }})</h3>
+      <h3><span class="material-symbols-outlined md-48 cl-dark">assignment</span> Mouvements ({{ filteredMouvements.length }})</h3>
     </div>
 
     <div class="empty-state" *ngIf="filteredMouvements.length === 0">
@@ -198,12 +198,11 @@
 
             <div class="detail-row" *ngIf="mouvement.effectuePar">
               <span class="label">Par</span>
-              <span class="value">👤 {{ mouvement.effectuePar }}</span>
+              <span class="value"><span class="material-symbols-outlined  cl-dark">person</span> {{ mouvement.effectuePar }}</span>
             </div>
-
             <div class="detail-row" *ngIf="mouvement.codeInstance">
               <span class="label">Instance</span>
-              <span class="value instance">🏷️ {{ mouvement.codeInstance }}</span>
+              <span class="value instance"><span class="material-symbols-outlined  cl-dark">shoppingmode</span> {{ mouvement.codeInstance }}</span>
             </div>
 
             <div class="detail-row"

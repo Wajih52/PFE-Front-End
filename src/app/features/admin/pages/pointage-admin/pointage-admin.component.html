@@ -4,19 +4,19 @@
 
   <!-- En-tête avec navigation -->
   <div class="admin-header">
-    <h1>📋 Gestion des Pointages</h1>
+    <h1><span class="material-symbols-outlined md-48 cl-white">ads_click</span> Gestion des Pointages</h1>
 
     <div class="header-actions">
       <button
         class="btn-action btn-primary"
         (click)="openCreateModal()">
-        ➕ Créer un pointage
+        <span class="material-symbols-outlined md-36 cl-dark">add</span> Créer un pointage
       </button>
 
       <button
         class="btn-action btn-warning"
         (click)="marquerAbsents()">
-         Marquer les absents
+        <span class="material-symbols-outlined md-36 cl-dark">person_alert</span> Marquer les absents
       </button>
     </div>
   </div>
@@ -27,21 +27,21 @@
       class="view-tab"
       [class.active]="activeView() === 'global'"
       (click)="changerVue('global')">
-       Vue Globale
+      <span class="material-symbols-outlined md-36 cl-dark">view_apps</span> Vue Globale
     </button>
 
     <button
       class="view-tab"
       [class.active]="activeView() === 'employe'"
       (click)="changerVue('employe')">
-      👤 Par Employé
+      <span class="material-symbols-outlined md-36 cl-dark">account_circle</span> Par Employé
     </button>
 
     <button
       class="view-tab"
       [class.active]="activeView() === 'stats'"
       (click)="changerVue('stats')">
-      📊 Statistiques
+      <span class="material-symbols-outlined md-36 cl-dark">bar_chart_4_bars</span> Statistiques
     </button>
   </div>
 
@@ -54,7 +54,7 @@
     <!-- Statistiques du jour -->
     <div class="stats-cards">
       <div class="stat-card stat-presences">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-success">check_box</span></div>
         <div class="stat-content">
           <div class="stat-value">{{ nombrePresents() }}</div>
           <div class="stat-label">Présents</div>
@@ -62,7 +62,7 @@
       </div>
 
       <div class="stat-card stat-retards">
-        <div class="stat-icon">⏰</div>
+        <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-warning">timer</span></div>
         <div class="stat-content">
           <div class="stat-value">{{ nombreRetards() }}</div>
           <div class="stat-label">En retard</div>
@@ -70,7 +70,7 @@
       </div>
 
       <div class="stat-card stat-absences">
-        <div class="stat-icon">❌</div>
+        <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-danger">person_alert</span></div>
         <div class="stat-content">
           <div class="stat-value">{{ nombreAbsents() }}</div>
           <div class="stat-label">Absents</div>
@@ -78,7 +78,7 @@
       </div>
 
       <div class="stat-card stat-conges">
-        <div class="stat-icon">🏖️</div>
+        <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-info">partly_cloudy_day</span></div>
         <div class="stat-content">
           <div class="stat-value">{{ nombreConges() }}</div>
           <div class="stat-label">En congé</div>
@@ -89,7 +89,7 @@
     <!-- Filtres -->
     <div class="card filters-card">
       <div class="card-header">
-        <h2>🔍 Filtres</h2>
+        <h2><span class="material-symbols-outlined md-48 cl-white">filter_alt</span> Filtres</h2>
       </div>
 
       <div class="card-body">
@@ -129,10 +129,10 @@
           <!-- Actions -->
           <div class="filter-actions">
             <button class="btn-filter" (click)="appliquerFiltres()">
-              🔍 Rechercher
+              <span class="material-symbols-outlined md-36 cl-dark">search</span> Rechercher
             </button>
             <button class="btn-filter btn-reset" (click)="reinitialiserFiltres()">
-              🔄 Réinitialiser
+              <span class="material-symbols-outlined md-36 cl-white">autorenew</span> Réinitialiser
             </button>
           </div>
 
@@ -143,13 +143,13 @@
     <!-- Tableau des pointages -->
     <div class="card table-card">
       <div class="card-header">
-        <h2>📅 Pointages de la période</h2>
+        <h2><span class="material-symbols-outlined md-48 cl-white">calendar_month</span> Pointages de la période</h2>
         <span class="badge">{{ pointagesFiltres().length }} résultats</span>
       </div>
 
       <div class="card-body">
         @if (isLoading()) {
-          <div class="loading">⏳ Chargement...</div>
+          <div class="loading"><span class="material-symbols-outlined md-48 cl-dark">autorenew</span> Chargement...</div>
         } @else if (pointagesFiltres().length > 0) {
           <div class="table-wrapper">
             <table class="pointages-table">

@@ -15,7 +15,6 @@ import {
   CategorieLabels,
   TypeProduitLabels
 } from '../../../../core/models';
-import {MenuNavigationComponent} from '../menu-navigation/menu-navigation.component';
 import {ScrollService} from '../../../../services/scroll.service';
 
 /**
@@ -25,7 +24,7 @@ import {ScrollService} from '../../../../services/scroll.service';
 @Component({
   selector: 'app-produit-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MenuNavigationComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './produit-form.component.html',
   styleUrls: ['./produit-form.component.scss']
 })

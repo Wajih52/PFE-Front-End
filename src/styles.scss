@@ -1,3 +1,41 @@
 /* Bootstrap */
 //import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
+.material-icons,
+.material-symbols-outlined{
+  vertical-align: middle;
+
+  // Tailles
+  &.md-18 { font-size: 18px; }
+  &.md-24 { font-size: 24px; } // Taille par défaut
+  &.md-36 { font-size: 36px; }
+  &.md-48 { font-size: 48px; }
+  &.md-60 { font-size: 60px; }
+
+  // Couleurs
+  &.cl-primary { color: #007bff; }
+  &.cl-success { color: #28a745; }
+  &.cl-danger { color: #dc3545; }
+  &.cl-warning { color: #ffc107; }
+  &.cl-info { color: #17a2b8; }
+  &.cl-secondary { color: #6c757d; }
+  &.cl-white { color: #ffffff; }
+  &.cl-dark { color: #343a40; }
+  &.cl-beige { color: #a98662; }
+
+  // Effet au survol
+  &:hover {
+    opacity: 0.8;
+  }
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+  .material-icons {
+    margin-right: 10px;
+  }
+}
+
+

@@ -1,5 +1,5 @@
-<!-- livraison-edit.component.html - SANS BOOTSTRAP -->
-<!-- ✏️ Template - Modifier une livraison -->
+<!-- livraison-edit.component.html  -->
+<!--  Modifier une livraison -->
 
 <div class="edit-container">
   <!-- En-tête -->
@@ -8,9 +8,9 @@
       <i class="bi bi-arrow-left"></i>
     </button>
     <div class="header-content">
-      <h2>✏️ Modifier la Livraison</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">edit_square</span> Modifier la Livraison</h2>
       @if (livraison()) {
-        <p>Livraison #{{ livraison()!.idLivraison }}</p>
+        <p>Livraison {{ livraison()!.idLivraison }}</p>
       }
     </div>
   </div>

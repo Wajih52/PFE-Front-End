@@ -437,7 +437,7 @@ async  retourDeMaintenance(): Promise<void> {
     const message = `Êtes-vous sûr de vouloir supprimer l'instance ${instance.numeroSerie} ?\n\nCette action est irréversible.`;
 
     const confirmed = await this.confirmationService.confirm({
-      title: '⚠️ Suppression Instance',
+      title: ' Suppression Instance',
       message: message,
       confirmText: 'Supprimer',
       type: 'danger'

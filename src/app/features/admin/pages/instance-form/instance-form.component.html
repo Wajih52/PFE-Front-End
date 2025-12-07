@@ -1,14 +1,19 @@
 <!-- src/app/features/admin/pages/instance-form/instance-form.component.html -->
 
-<app-menu-navigation></app-menu-navigation>
-
 <div class="instance-form-container">
   <div class="form-header">
-    <h1>
-      {{ isEditMode ? '✏️ Modifier une instance' : '➕ Créer une instance' }}
-    </h1>
+    @if (isEditMode){
+      <h1>
+        <span class="material-symbols-outlined md-48 cl-dark">edit_square</span> Modifier une instance
+      </h1>
+    } @else {
+      <h1>
+        <span class="material-symbols-outlined md-48 cl-dark">add</span> Créer une instance
+      </h1>
+    }
+
     <button class="btn btn-secondary" (click)="onCancel()">
-      ← Retour
+      <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong>
     </button>
   </div>
 
@@ -32,14 +37,14 @@
         [class.active]="!showBatchCreation"
         (click)="showBatchCreation = false"
       >
-        📝 Création simple
+        <span class="material-symbols-outlined  cl-dark">add_notes</span> Création simple
       </button>
       <button
         class="toggle-btn"
         [class.active]="showBatchCreation"
         (click)="showBatchCreation = true"
       >
-        📦 Création en lot
+        <span class="material-symbols-outlined cl-dark">deployed_code_update</span> Création en lot
       </button>
     </div>
 
@@ -68,7 +73,7 @@
 
       <!-- Informations du produit sélectionné -->
       <div *ngIf="selectedProduit" class="product-info">
-        <h3>📦 Informations du produit</h3>
+        <h3><span class="material-symbols-outlined md-48 cl-dark">package_2</span> Informations du produit</h3>
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Nom :</span>
@@ -168,14 +173,20 @@
           Annuler
         </button>
         <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || instanceForm.invalid">
-          {{ isSubmitting ? '⏳ Enregistrement...' : (isEditMode ? '✅ Modifier' : '➕ Créer') }}
+          @if (isSubmitting){
+            <span class="material-symbols-outlined  cl-dark">autorenew</span> Enregistrement...
+          } @else if (isEditMode){
+            <span class="material-symbols-outlined  cl-dark">edit_square</span> Modifier
+          } @else {
+            <span class="material-symbols-outlined  cl-dark">save</span> Créer
+          }
         </button>
       </div>
     </form>
 
     <!-- CRÉATION EN LOT -->
     <div *ngIf="showBatchCreation && !isEditMode" class="batch-creation">
-      <h2>📦 Création d'instances en lot</h2>
+      <h2><span class="material-symbols-outlined md-36 cl-dark">package_2</span> Création d'instances en lot</h2>
       <p class="description">
         Créez plusieurs instances d'un même produit en une seule opération.
         Les numéros de série seront générés automatiquement avec une numérotation séquentielle.
@@ -199,7 +210,7 @@
 
       <!-- Informations du produit -->
       <div *ngIf="selectedProduit" class="product-info">
-        <h3>📦 {{ selectedProduit.nomProduit }}</h3>
+        <h3><span class="material-symbols-outlined  cl-dark">package_2</span> {{ selectedProduit.nomProduit }}</h3>
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Stock actuel :</span>
@@ -247,7 +258,7 @@
 
       <!-- Aperçu -->
       <div *ngIf="selectedProduit && batchQuantity > 0" class="batch-preview">
-        <h4>📋 Aperçu de la création</h4>
+        <h4><span class="material-symbols-outlined  cl-dark">assignment</span> Aperçu de la création</h4>
         <p>
           <strong>{{ batchQuantity }}</strong> instance(s) du produit
           <strong>{{ selectedProduit.nomProduit }}</strong> seront créées avec les numéros de série suivants :
@@ -273,7 +284,11 @@
           (click)="onBatchCreate()"
           [disabled]="isSubmitting || !selectedProduit || batchQuantity < 1"
         >
-          {{ isSubmitting ? '⏳ Création...' : '📦 Créer ' + batchQuantity + ' instance(s)' }}
+          @if(isSubmitting){
+            <span class="material-symbols-outlined  cl-dark">autorenew</span> Création ...
+          } @else {
+            <span class="material-symbols-outlined cl-dark">package_2</span> <strong>{{batchQuantity}}</strong> instance(s)
+          }
         </button>
       </div>
     </div>

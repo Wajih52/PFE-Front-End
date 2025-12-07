@@ -1,13 +1,6 @@
 <!-- src/app/features/dashboard/dashboard.component.html -->
 
 <div class="dashboard-container">
-  <!-- Header -->
-  <!--<header class="dashboard-header">
-    <div class="logo">
-      <h2>Elegant Hive</h2>
-    </div>
-  </header>
--->
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
     <div class="spinner"></div>
@@ -26,7 +19,7 @@
         </div>
       </div>
       <div class="welcome-text">
-        <h1>🎉 Bienvenue, {{ userName }} !</h1>
+        <h1> Bienvenue, {{ userName }} !</h1>
         <p>Vous êtes connecté avec succès à votre espace.</p>
       </div>
     </section>
@@ -34,7 +27,7 @@
     <!-- User Info Card -->
     <section class="info-section">
       <div class="info-card">
-        <h2>📋 Informations du compte</h2>
+        <h2><span class="material-symbols-outlined md-48 cl-dark">article_person</span> Informations du compte</h2>
 
         <div class="info-grid">
           <div class="info-item">
@@ -72,7 +65,7 @@
 
     <!-- Quick Actions -->
     <section class="actions-section">
-      <h2>⚡ Actions rapides</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">drag_indicator</span> Actions rapides</h2>
 
       <div class="actions-grid">
         <div class="action-card" *ngIf="hasRole('CLIENT')">
@@ -82,19 +75,19 @@
         </div>
 
         <div class="action-card" *ngIf="hasRole('CLIENT')">
-          <h3>📦 Catalogue</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">box</span> Catalogue</h3>
           <p>Parcourir les produits</p>
           <button class="btn-action">Explorer</button>
         </div>
 
         <div class="action-card" *ngIf="hasRole('ADMIN')">
-          <h3>👥 Utilisateurs</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">supervised_user_circle</span> Utilisateurs</h3>
           <p>Gérer les utilisateurs</p>
           <button class="btn-action" routerLink="/admin/users">Gérer</button>
         </div>
 
         <div class="action-card">
-          <h3>⚙️ Mon Profil</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">settings</span> Mon Profil</h3>
           <p>Modifier mes informations</p>
           <button class="btn-action" routerLink="/profile">Éditer</button>
         </div>

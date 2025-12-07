@@ -5,17 +5,17 @@
   <div class="header">
     <div class="header-content">
       <h1>
-        🔖 Gestion des Instances
+        <span class="material-symbols-outlined md-48 cl-dark">shoppingmode</span> Gestion des Instances
         <span *ngIf="nomProduitFilter" class="product-filter-badge">
           {{ nomProduitFilter }}
         </span>
       </h1>
       <div class="header-actions">
         <button *ngIf="idProduitFilter" class="btn btn-secondary" (click)="goToProducts()">
-          ← Retour aux produits
+          <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour aux produits</strong>
         </button>
         <button class="btn btn-primary" (click)="goToCreate()">
-          ➕ Nouvelle Instance
+          <span class="material-symbols-outlined  cl-dark">add</span> Nouvelle Instance
         </button>
       </div>
     </div>
@@ -24,7 +24,7 @@
   <!-- Statistiques -->
   <div class="stats-cards">
     <div class="stat-card stat-total">
-      <div class="stat-icon">📦</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">package_2</span></div>
       <div class="stat-info">
         <div class="stat-value">{{ stats.total }}</div>
         <div class="stat-label">Total instances</div>
@@ -32,7 +32,7 @@
     </div>
 
     <div class="stat-card stat-disponible">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">check_box</span></div>
       <div class="stat-info">
         <div class="stat-value">{{ stats.disponibles }}</div>
         <div class="stat-label">Disponibles</div>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="stat-card stat-reserve">
-      <div class="stat-icon">🔒</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">progress_activity</span></div>
       <div class="stat-info">
         <div class="stat-value">{{ stats.reserves }}</div>
         <div class="stat-label">En Utilisation</div>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="stat-card stat-maintenance">
-      <div class="stat-icon">🔧</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">build</span></div>
       <div class="stat-info">
         <div class="stat-value">{{ stats.enMaintenance }}</div>
         <div class="stat-label">En maintenance</div>
@@ -56,7 +56,7 @@
     </div>
 
     <div class="stat-card stat-hors-service">
-      <div class="stat-icon">❌</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">cancel</span></div>
       <div class="stat-info">
         <div class="stat-value">{{ stats.horsService }}</div>
         <div class="stat-label">Hors service</div>
@@ -66,7 +66,7 @@
 
   <!-- Message d'erreur -->
   <div *ngIf="errorMessage" class="alert alert-error">
-    ⚠️ {{ errorMessage }}
+    <span class="material-symbols-outlined cl-warning">warning</span> {{ errorMessage }}
   </div>
 
   <!-- Filtres et recherche -->
@@ -102,7 +102,7 @@
       />
 
       <button class="btn btn-secondary" (click)="resetFilters()">
-        🔄 Réinitialiser
+        <span class="material-symbols-outlined  cl-info">autorenew</span> Réinitialiser
       </button>
     </div>
   </div>
@@ -201,7 +201,7 @@
         </td>
         <td>
           <div *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE" class="maintenance-info">
-            <span class="maintenance-badge">🔧 En maintenance</span>
+            <span class="maintenance-badge"><span class="material-symbols-outlined  cl-dark">build</span> En maintenance</span>
             <small *ngIf="instance.dateDerniereMaintenance">
               Sortie Le : {{ instance.dateDerniereMaintenance | date:'dd/MM/yyyy' }}
             </small>
@@ -213,7 +213,7 @@
             <!-- Menu déroulant pour changement de statut -->
             <div class="dropdown">
               <button class="btn btn-sm btn-secondary dropdown-toggle">
-                🔄 Statut
+                <span class="material-symbols-outlined  cl-info">autorenew</span> Statut
               </button>
               <div class="dropdown-menu">
                 <button
@@ -234,7 +234,7 @@
               (click)="openMaintenanceModal(instance)"
               title="Envoyer en maintenance"
             >
-              🔧
+              <span class="material-symbols-outlined  cl-dark">build</span>
             </button>
 
             <!-- Bouton retour de maintenance -->
@@ -253,7 +253,7 @@
               (click)="goToEdit(instance)"
               title="Modifier"
             >
-              ✏️
+              <span class="material-symbols-outlined cl-dark">edit</span>
             </button>
 
             <button
@@ -261,7 +261,7 @@
               (click)="goToHistoriqueInstance(instance)"
               title="Historique des mouvements"
             >
-              📊
+              <span class="material-symbols-outlined  cl-dark">book_5</span>
             </button>
 
             <!-- Bouton supprimer -->
@@ -270,7 +270,7 @@
               (click)="deleteInstance(instance)"
               title="Supprimer"
             >
-              🗑️
+              <span class="material-symbols-outlined  cl-dark">delete</span>
             </button>
           </div>
         </td>
@@ -279,10 +279,10 @@
       <tr *ngIf="paginatedInstances.length === 0">
         <td colspan="7" class="no-data">
           <div class="empty-state">
-            <div class="empty-icon">📦</div>
+            <div class="empty-icon"><span class="material-symbols-outlined md-48 cl-dark">package_2</span></div>
             <p>Aucune instance trouvée</p>
             <button class="btn btn-primary" (click)="goToCreate()">
-              ➕ Créer la première instance
+              <span class="material-symbols-outlined  cl-dark">add</span> Créer la première instance
             </button>
           </div>
         </td>
@@ -298,7 +298,7 @@
       [disabled]="currentPage === 1"
       (click)="previousPage()"
     >
-      ← Précédent
+      <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong> Précédent
     </button>
 
     <div class="page-numbers">
@@ -317,7 +317,7 @@
       [disabled]="currentPage === totalPages"
       (click)="nextPage()"
     >
-      Suivant →
+      Suivant   <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong>
     </button>
   </div>
 </div>
@@ -326,7 +326,7 @@
 <div *ngIf="showMaintenanceModal" class="modal-overlay" (click)="closeMaintenanceModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>🔧 Envoyer en maintenance</h3>
+      <h3><span class="material-symbols-outlined md-48 cl-dark">build</span> Envoyer en maintenance</h3>
       <button class="close-btn" (click)="closeMaintenanceModal()">✖</button>
     </div>
     <div class="modal-body">
@@ -358,7 +358,7 @@
         [disabled]="!maintenanceForm.valid"
         (click)="envoyerEnMaintenance(maintenanceData.motif)"
       >
-        🔧 Envoyer en maintenance
+        <span class="material-symbols-outlined  cl-dark">build</span> Envoyer en maintenance
       </button>
     </div>
   </div>
@@ -368,8 +368,10 @@
 <div *ngIf="showRetourMaintenanceModal" class="modal-overlay" (click)="closeRetourMaintenanceModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>🔧✅ Retour De la maintenance</h3>
-      <button class="close-btn" (click)="closeRetourMaintenanceModal()">✖</button>
+      <h3><span class="material-symbols-outlined cl-dark">build</span>
+        <span class="material-symbols-outlined  cl-dark">undo</span> Retour De la maintenance</h3>
+      <button class="close-btn" (click)="closeRetourMaintenanceModal()">
+        <span class="material-symbols-outlined cl-dark">tab_close</span></button>
     </div>
     <div class="modal-body">
       <p><strong>Instance :</strong> {{ instanceForRetourMaintenance?.numeroSerie }}</p>
@@ -399,7 +401,7 @@
         [disabled]="!maintenanceForm.valid"
         (click)="retourDeMaintenance()"
       >
-        ✅ Retour De la maintenance
+        <span class="material-symbols-outlined  cl-dark">undo</span> Retour De la maintenance
       </button>
     </div>
   </div>

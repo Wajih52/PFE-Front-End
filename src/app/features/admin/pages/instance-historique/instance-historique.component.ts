@@ -8,7 +8,7 @@ import {
   MouvementStockResponse, TypeMouvement,
   TypeMouvementLabels
 } from '../../../../core/models';
-import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
+
 
 @Component({
   selector: 'app-instance-historique',

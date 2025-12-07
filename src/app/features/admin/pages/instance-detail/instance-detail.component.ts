@@ -12,7 +12,6 @@ import {
   EtatPhysique,
   EtatPhysiqueLabels
 } from '../../../../core/models';
-import { MenuNavigationComponent } from '../menu-navigation/menu-navigation.component';
 import {NotificationService} from '../../../../services/notification.service';
 
 /**
@@ -22,7 +21,7 @@ import {NotificationService} from '../../../../services/notification.service';
 @Component({
   selector: 'app-instance-detail',
   standalone: true,
-  imports: [CommonModule, MenuNavigationComponent],
+  imports: [CommonModule],
   templateUrl: './instance-detail.component.html',
   styleUrls: ['./instance-detail.component.scss']
 })

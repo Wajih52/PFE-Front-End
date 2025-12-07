@@ -1,11 +1,11 @@
-<!-- livraisons-list.component.html - SANS BOOTSTRAP -->
-<!-- 🚚 Template - Liste des livraisons -->
+<!-- livraisons-list.component.html  -->
+<!--  Liste des livraisons -->
 
 <div class="livraisons-container">
   <!-- En-tête avec titre et bouton création -->
   <div class="page-header">
     <div class="header-content">
-      <h2>🚚 Gestion des Livraisons</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">local_shipping</span> Gestion des Livraisons</h2>
       <p>Gérez les livraisons de matériel pour vos événements</p>
     </div>
     <button class="create-button" (click)="creerLivraison()">
@@ -224,7 +224,7 @@
                       class="action-btn btn-view"
                       (click)="voirDetails(livraison.idLivraison)"
                       title="Voir les détails">
-                      <i class="bi bi-eye"></i>
+                      <span class="material-symbols-outlined  cl-dark">view_compact_alt</span>
                     </button>
 
                     <!-- Modifier -->

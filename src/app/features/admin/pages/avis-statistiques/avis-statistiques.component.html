@@ -1,5 +1,5 @@
 <div class="stats-container">
-  <h1>📊 Statistiques des Évaluations</h1>
+  <h1><span class="material-icons md-48 "  >insert_chart</span> Statistiques des Évaluations</h1>
 
   @if (loading()) {
     <div class="loading">Chargement...</div>
@@ -7,25 +7,25 @@
     <!-- Cartes de résumé -->
     <div class="summary-cards">
       <div class="stat-card">
-        <div class="icon">⏳</div>
+        <div class="icon"><span class="material-icons md-48 cl-info"  >pause_circle</span></div>
         <div class="value">{{ nombreEnAttente() }}</div>
         <div class="label">En attente de modération</div>
       </div>
 
       <div class="stat-card">
-        <div class="icon">✅</div>
+        <div class="icon"><i class="material-icons md-48 cl-success"  >check_circle</i></div>
         <div class="value">{{ totalApprouves() }}</div>
         <div class="label">Avis approuvés</div>
       </div>
 
       <div class="stat-card">
-        <div class="icon">⭐</div>
+        <div class="icon"><span class="material-icons md-48 cl-warning"  >stars</span></div>
         <div class="value">{{ moyenneGlobale() | number:'1.1-1' }}</div>
         <div class="label">Note moyenne globale</div>
       </div>
 
       <div class="stat-card">
-        <div class="icon">📦</div>
+        <div class="icon"><i class="material-icons md-48 cl-secondary" >widgets</i></div>
         <div class="value">{{ produitsAvecAvis() }}</div>
         <div class="label">Produits avec avis</div>
       </div>
@@ -33,7 +33,9 @@
 
     <!-- Top produits -->
     <div class="top-produits-section">
-      <h2>🏆 Produits les mieux notés</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">
+hotel_class
+</span> Produits les mieux notés</h2>
       @if (topProduits().length === 0) {
         <div class="empty">Aucune donnée disponible</div>
       } @else {

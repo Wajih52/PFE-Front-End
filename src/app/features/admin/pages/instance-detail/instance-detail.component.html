@@ -1,18 +1,16 @@
 <!-- src/app/features/admin/pages/instance-detail/instance-detail.component.html -->
 
-<app-menu-navigation></app-menu-navigation>
-
 <div class="instance-detail-container">
   <!-- En-tête -->
   <div class="header">
     <div class="header-content">
-      <h1>🔖 Détails de l'instance</h1>
+      <h1><span class="material-symbols-outlined md-48 cl-dark">shoppingmode</span> Détails de l'instance</h1>
       <div class="header-actions">
         <button class="btn btn-secondary" (click)="goBack()">
-          ← Retour
+          <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong>
         </button>
         <button *ngIf="instance" class="btn btn-primary" (click)="goToEdit()">
-          ✏️ Modifier
+          <span class="material-symbols-outlined cl-dark">edit_square</span> Modifier
         </button>
       </div>
     </div>
@@ -45,7 +43,7 @@
       <div class="card-body">
         <!-- Informations principales -->
         <section class="info-section">
-          <h3>📦 Informations générales</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">package_2</span> Informations générales</h3>
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Numéro de série</span>
@@ -96,7 +94,7 @@
 
         <!-- Commentaires -->
         <section class="info-section" *ngIf="instance.observation">
-          <h3>💬 Commentaire</h3>
+          <h3><span class="material-symbols-outlined comment cl-dark">celebration</span> Commentaire</h3>
           <div class="comment-box">
             {{ instance.observation }}
           </div>
@@ -105,7 +103,7 @@
         <!-- Informations de maintenance -->
         <section class="info-section" *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE
         ||instance.joursAvantMaintenance<5">
-          <h3>🔧 Informations Maintenance</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">build</span> Informations Maintenance</h3>
           <div class="maintenance-card">
             <div class="info-grid">
               <div class="info-item" *ngIf="instance.dateDerniereMaintenance">
@@ -127,7 +125,7 @@
 
         <!-- Informations de réservation -->
         <section class="info-section" *ngIf="instance.idLigneReservation">
-          <h3>📅 Réservation en cours</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">calendar_month</span> Réservation en cours</h3>
           <div class="reservation-card">
             <div class="info-grid">
               <div class="info-item" *ngIf="instance.numeroReservation">
@@ -148,7 +146,7 @@
 
     <!-- Carte d'actions -->
     <div class="actions-card">
-      <h3>⚙️ Actions</h3>
+      <h3><span class="material-symbols-outlined  cl-dark">more_vert</span> Actions</h3>
 
       <!-- Changement de statut -->
       <div class="action-section">
@@ -176,19 +174,19 @@
         <h4>Actions principales</h4>
         <div class="action-buttons">
           <button class="btn btn-primary btn-block" (click)="goToEdit()">
-            ✏️ Modifier l'instance
+            <span class="material-symbols-outlined  cl-dark">edit_square</span> Modifier l'instance
           </button>
           <button class="btn btn-secondary btn-block" (click)="goToProduct()">
-            🏷️ Voir le produit
+            <span class="material-symbols-outlined  cl-dark">shoppingmode</span> Voir le produit
           </button>
         </div>
       </div>
 
       <!-- Zone danger -->
       <div class="action-section danger-zone">
-        <h4>⚠️ Zone Critique</h4>
+        <h4> Zone Critique</h4>
         <button class="btn btn-danger btn-block" (click)="deleteInstance()">
-          🗑️ Supprimer l'instance
+          <span class="material-symbols-outlined  cl-dark">delete</span> Supprimer l'instance
         </button>
       </div>
     </div>

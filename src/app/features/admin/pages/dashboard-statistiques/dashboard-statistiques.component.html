@@ -5,7 +5,7 @@
   <!-- ============ HEADER ============ -->
   <header class="dashboard-header">
     <div>
-      <h1>📊 Dashboard Analytique</h1>
+      <h1><span class="material-symbols-outlined md-48 cl-dark">dashboard</span> Dashboard Analytique</h1>
       <p class="subtitle">Vue d'ensemble des performances et statistiques</p>
     </div>
 
@@ -27,13 +27,13 @@
   </header>
   <!-- ============ SECTION TÉLÉCHARGEMENTS ============ -->
   <section *ngIf="!loading() && !error() && stats()" class="download-section">
-    <h3>📥 Exporter les rapports</h3>
+    <h3><span class="material-symbols-outlined md-48 cl-dark">upload</span> Exporter les rapports</h3>
     <div class="download-buttons">
       <button
         class="btn-download btn-pdf"
         (click)="telechargerPDF()"
         [disabled]="loading()">
-        <span class="icon">📄</span>
+        <span class="icon"><span class="material-symbols-outlined md-48 cl-dark">description</span></span>
         <span class="text">Télécharger PDF</span>
       </button>
 
@@ -41,7 +41,7 @@
         class="btn-download btn-excel"
         (click)="telechargerExcel()"
         [disabled]="loading()">
-        <span class="icon">📊</span>
+        <span class="icon"><span class="material-symbols-outlined md-48 cl-dark">table</span></span>
         <span class="text">Télécharger Excel</span>
       </button>
     </div>
@@ -92,12 +92,12 @@
 
     <!-- ============ SECTION: KPIs PRINCIPAUX ============ -->
     <section class="kpis-section">
-      <h2>📈 Indicateurs clés</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">bid_landscape</span> Indicateurs clés</h2>
 
       <div class="kpis-grid">
         <!-- CA Total -->
         <div class="kpi-card highlight">
-          <div class="kpi-icon">💰</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">account_balance_wallet</span></div>
           <div class="kpi-content">
             <h3>{{ formatCurrency(stats()?.chiffreAffairesTotal) }}</h3>
             <p>Chiffre d'affaires total</p>
@@ -106,7 +106,7 @@
 
         <!-- CA Mois Actuel -->
         <div class="kpi-card">
-          <div class="kpi-icon">📅</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">calendar_month</span></div>
           <div class="kpi-content">
             <h3>{{ formatCurrency(stats()?.chiffreAffairesMoisActuel) }}</h3>
             <p>CA mois actuel</p>
@@ -120,7 +120,7 @@
 
         <!-- Panier Moyen -->
         <div class="kpi-card">
-          <div class="kpi-icon">🛒</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">shopping_cart</span></div>
           <div class="kpi-content">
             <h3>{{ formatCurrency(stats()?.panierMoyen) }}</h3>
             <p>Panier moyen</p>
@@ -129,7 +129,7 @@
 
         <!-- Taux de Conversion -->
         <div class="kpi-card">
-          <div class="kpi-icon">✅</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">check_circle</span></div>
           <div class="kpi-content">
             <h3>{{ formatPercentage(stats()?.tauxConversion) }}</h3>
             <p>Taux de conversion</p>
@@ -138,7 +138,7 @@
 
         <!-- Total Réservations -->
         <div class="kpi-card">
-          <div class="kpi-icon">📋</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">assignment</span></div>
           <div class="kpi-content">
             <h3>{{ formatNumber(stats()?.nombreTotalReservations) }}</h3>
             <p>Total réservations</p>
@@ -147,7 +147,7 @@
 
         <!-- Réservations Confirmées -->
         <div class="kpi-card success">
-          <div class="kpi-icon">✓</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">assignment_turned_in</span></div>
           <div class="kpi-content">
             <h3>{{ formatNumber(stats()?.nombreReservationsConfirmees) }}</h3>
             <p>Réservations confirmées</p>
@@ -156,7 +156,7 @@
 
         <!-- Devis en Attente -->
         <div class="kpi-card warning">
-          <div class="kpi-icon">⏳</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">clock_loader_90</span></div>
           <div class="kpi-content">
             <h3>{{ formatNumber(stats()?.nombreDevisEnAttente) }}</h3>
             <p>Devis en attente</p>
@@ -165,7 +165,7 @@
 
         <!-- Clients -->
         <div class="kpi-card">
-          <div class="kpi-icon">👥</div>
+          <div class="kpi-icon"><span class="material-symbols-outlined md-48 cl-dark">contacts_product</span></div>
           <div class="kpi-content">
             <h3>{{ formatNumber(stats()?.nombreClients) }}</h3>
             <p>Total clients</p>
@@ -177,12 +177,12 @@
 
     <!-- ============ SECTION: ALERTES ============ -->
     <section class="alerts-section">
-      <h2>🔔 Alertes & Notifications</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">notifications</span> Alertes & Notifications</h2>
 
       <div class="alerts-grid">
         <!-- Stock Critique -->
         <div class="alert-card" [class.alert-danger]="stats()?.produitsStockCritique! > 0">
-          <div class="alert-icon">📦</div>
+          <div class="alert-icon"><span class="material-symbols-outlined md-48 cl-dark">box</span></div>
           <div class="alert-content">
             <h3>{{ formatNumber(stats()?.produitsStockCritique) }}</h3>
             <p>Produits en stock critique</p>
@@ -191,7 +191,7 @@
 
         <!-- Réclamations -->
         <div class="alert-card" [class.alert-warning]="stats()?.reclamationsEnCours! > 0">
-          <div class="alert-icon">📢</div>
+          <div class="alert-icon"><span class="material-symbols-outlined md-48 cl-dark">feedback</span></div>
           <div class="alert-content">
             <h3>{{ formatNumber(stats()?.reclamationsEnCours) }}</h3>
             <p>Réclamations en cours</p>
@@ -200,7 +200,7 @@
 
         <!-- Paiements en Retard -->
         <div class="alert-card" [class.alert-danger]="stats()?.paiementsEnRetard! > 0">
-          <div class="alert-icon">💳</div>
+          <div class="alert-icon"><span class="material-symbols-outlined md-48 cl-dark">credit_card</span></div>
           <div class="alert-content">
             <h3>{{ formatNumber(stats()?.paiementsEnRetard) }}</h3>
             <p>Paiements en retard</p>
@@ -209,7 +209,7 @@
 
         <!-- Livraisons Aujourd'hui -->
         <div class="alert-card alert-info">
-          <div class="alert-icon">🚚</div>
+          <div class="alert-icon"><span class="material-symbols-outlined md-48 cl-dark">delivery_truck_speed</span></div>
           <div class="alert-content">
             <h3>{{ formatNumber(stats()?.livraisonsAujourdhui) }}</h3>
             <p>Livraisons aujourd'hui</p>
@@ -218,7 +218,7 @@
 
         <!-- Retours Aujourd'hui -->
         <div class="alert-card alert-info">
-          <div class="alert-icon">🔙</div>
+          <div class="alert-icon"><span class="material-symbols-outlined md-48 cl-dark">replay</span></div>
           <div class="alert-content">
             <h3>{{ formatNumber(stats()?.retoursAujourdhui) }}</h3>
             <p>Retours attendus</p>
@@ -229,12 +229,12 @@
 
     <!-- ============ SECTION: GRAPHIQUES PRINCIPAUX ============ -->
     <section class="charts-section">
-      <h2>📊 Analyses graphiques</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">insert_chart</span> Analyses graphiques</h2>
 
       <div class="charts-grid">
         <!-- Évolution du CA -->
         <div class="chart-card large">
-          <h3>📈 Évolution du CA (12 derniers mois)</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">finance_mode</span> Évolution du CA (12 derniers mois)</h3>
           <div class="chart-container">
             <canvas #evolutionCAChart></canvas>
           </div>
@@ -242,7 +242,7 @@
 
         <!-- Répartition par statut -->
         <div class="chart-card">
-          <h3>📊 Répartition des réservations</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">pie_chart</span> Répartition des réservations</h3>
           <div class="chart-container">
             <canvas #repartitionStatutsChart></canvas>
           </div>
@@ -250,7 +250,7 @@
 
         <!-- Top produits loués -->
         <div class="chart-card">
-          <h3>🏆 Top 10 produits loués</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">package_2</span> Top 10 produits loués</h3>
           <div class="chart-container">
             <canvas #topProduitsChart></canvas>
           </div>
@@ -258,7 +258,7 @@
 
         <!-- CA par catégorie -->
         <div class="chart-card">
-          <h3>💰 CA par catégorie</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">stacked_bar_chart</span> CA par catégorie</h3>
           <div class="chart-container">
             <canvas #caParCategorieChart></canvas>
           </div>
@@ -266,7 +266,7 @@
 
         <!-- Évolution réservations -->
         <div class="chart-card large">
-          <h3>📅 Évolution des réservations (12 mois)</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">finance_mode</span> Évolution des réservations (12 mois)</h3>
           <div class="chart-container">
             <canvas #evolutionReservationsChart></canvas>
           </div>
@@ -274,7 +274,7 @@
 
         <!-- Notes par catégorie -->
         <div class="chart-card">
-          <h3>⭐ Satisfaction par catégorie</h3>
+          <h3><span class="material-symbols-outlined md-48 cl-dark">star</span> Satisfaction par catégorie</h3>
           <div class="chart-container">
             <canvas #notesParCategorieChart></canvas>
           </div>
@@ -284,7 +284,7 @@
 
     <!-- ============ SECTION: TOP PRODUITS ============ -->
     <section class="top-products-section">
-      <h2>🏆 Top Produits</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">package_2</span> Top Produits</h2>
 
       <div class="top-products-grid">
         <div *ngFor="let produit of stats()?.topProduitsLoues?.slice(0, 5)" class="product-card">
@@ -307,11 +307,11 @@
 
     <!-- ============ SECTION: STATISTIQUES EMPLOYÉS ============ -->
     <section class="employees-section">
-      <h2>👥 Performances Équipe</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">groups_3</span> Performances Équipe</h2>
 
       <div class="employees-stats">
         <div class="employee-summary-card">
-          <div class="summary-icon">👨‍💼</div>
+          <div class="summary-icon"><span class="material-symbols-outlined md-48 cl-dark">person</span></div>
           <div class="summary-content">
             <h3>{{ formatNumber(stats()?.nombreEmployesActifs) }}</h3>
             <p>Employés actifs</p>
@@ -319,7 +319,7 @@
         </div>
 
         <div class="employee-summary-card">
-          <div class="summary-icon">📊</div>
+          <div class="summary-icon"><span class="material-symbols-outlined md-48 cl-dark">person_raised_hand</span></div>
           <div class="summary-content">
             <h3>{{ formatPercentage(stats()?.tauxPresenceMoyen) }}</h3>
             <p>Taux de présence moyen</p>
@@ -327,7 +327,7 @@
         </div>
       </div>
 
-      <h3>🏅 Top 5 Employés (livraisons effectuées)</h3>
+      <h3><span class="material-symbols-outlined md-48 cl-dark">social_leaderboard</span> Top 5 Employés (livraisons effectuées)</h3>
       <div class="top-employees-list">
         <div *ngFor="let employe of stats()?.topEmployesLivraisons" class="employee-card">
           <img
