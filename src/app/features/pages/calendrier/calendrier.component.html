@@ -5,12 +5,12 @@
   <!-- EN-TÊTE AVEC STATISTIQUES -->
   <!-- ============================================ -->
   <div class="calendrier-header">
-    <h1 class="page-title">📅 Calendrier des Événements</h1>
+    <h1 class="page-title">  <span class="material-symbols-outlined md-48 cl-dark">calendar_month</span>  Calendrier des Événements</h1>
 
     @if (statistiques(); as stats) {
       <div class="statistiques-cards">
         <div class="stat-card">
-          <div class="stat-icon">📅</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">event_note</span></div>
           <div class="stat-content">
             <span class="stat-label">Réservations</span>
             <span class="stat-value">{{ stats.nombreReservations }}</span>
@@ -18,7 +18,7 @@
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">🚚</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">local_shipping</span></div>
           <div class="stat-content">
             <span class="stat-label">Livraisons</span>
             <span class="stat-value">{{ stats.nombreLivraisons }}</span>
@@ -26,7 +26,7 @@
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">💰</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">payments</span></div>
           <div class="stat-content">
             <span class="stat-label">Montant Total</span>
             <span class="stat-value">{{ stats.montantTotalPeriode | number:'1.2-2' }} DT</span>
@@ -34,7 +34,7 @@
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">✅</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">percent_discount</span></div>
           <div class="stat-content">
             <span class="stat-label">Taux Paiement</span>
             <span class="stat-value">{{ stats.tauxPaiement | number:'1.0-0' }}%</span>
@@ -54,7 +54,7 @@
     <!-- ============================================ -->
     <aside class="filtres-panel" [class.collapsed]="!afficherFiltres()">
       <div class="filtres-header">
-        <h2>🔍 Filtres</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-dark">search</span> Filtres</h2>
         <button
           class="btn-icon"
           (click)="afficherFiltres.set(!afficherFiltres())"
@@ -74,14 +74,14 @@
                 type="checkbox"
                 [(ngModel)]="filtres.inclureReservations"
                 (change)="appliquerFiltres()">
-              <span>📅 Réservations</span>
+              <span><span class="material-symbols-outlined md-24  cl-dark">event_note</span> Réservations</span>
             </label>
             <label class="checkbox-label">
               <input
                 type="checkbox"
                 [(ngModel)]="filtres.inclureLivraisons"
                 (change)="appliquerFiltres()">
-              <span>🚚 Livraisons</span>
+              <span><span class="material-symbols-outlined md-24  cl-dark">local_shipping</span> Livraisons</span>
             </label>
           </div>
 
@@ -193,7 +193,7 @@
 
       @if (error()) {
         <div class="error-message">
-          <span class="error-icon">⚠️</span>
+          <span class="error-icon"><span class="material-symbols-outlined  cl-dark">warning</span></span>
           <p>{{ error() }}</p>
           <button class="btn btn-primary" (click)="chargerEvenements()">
             Réessayer
@@ -217,8 +217,11 @@
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <h2>
-            {{ event.type === 'RESERVATION' ? '📅' : '🚚' }}
-            {{ event.reference }}
+            @if (event.type === 'RESERVATION'){
+              <span class="material-symbols-outlined md-48 cl-dark">event_note</span> {{ event.reference }}
+            } @else {
+              <span class="material-symbols-outlined md-48 cl-dark">local_shipping</span> {{ event.reference }}
+            }
           </h2>
           <button class="btn-close" (click)="fermerModal()">✕</button>
         </div>
@@ -266,7 +269,7 @@
           <!-- Client -->
           @if (event.nomClient) {
             <div class="info-section">
-              <h3>👤 Client</h3>
+              <h3><span class="material-symbols-outlined  cl-dark">person</span> Client</h3>
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Nom:</span>
@@ -291,7 +294,7 @@
           <!-- Employé (livraisons) -->
           @if (event.nomEmploye) {
             <div class="info-section">
-              <h3>👷 Employé</h3>
+              <h3><span class="material-symbols-outlined  cl-dark">person</span> Employé</h3>
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Nom:</span>
@@ -304,7 +307,7 @@
           <!-- Produits -->
           @if (event.produitsResume) {
             <div class="info-section">
-              <h3>📦 Produits ({{ event.nombreProduits }})</h3>
+              <h3><span class="material-symbols-outlined cl-dark">package_2</span> Produits ({{ event.nombreProduits }})</h3>
               <p>{{ event.produitsResume }}</p>
             </div>
           }
@@ -312,7 +315,7 @@
           <!-- Financier (réservations) -->
           @if (event.montantTotal) {
             <div class="info-section">
-              <h3>💰 Informations financières</h3>
+              <h3><span class="material-symbols-outlined  cl-dark">payments</span> Informations financières</h3>
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Montant total:</span>
@@ -327,7 +330,12 @@
                 <div class="info-item">
                   <span class="label">Paiement:</span>
                   <span class="value" [class.complet]="event.paiementComplet">
-                    {{ event.paiementComplet ? '✅ Complet' : '⚠️ Incomplet' }}
+                    @if(event.paiementComplet){
+                      <span class="material-symbols-outlined  cl-success">check_box</span> Complet
+                    } @else {
+                      <span class="material-symbols-outlined cl-warning">warning</span> Incomplet
+                    }
+
                   </span>
                 </div>
               </div>

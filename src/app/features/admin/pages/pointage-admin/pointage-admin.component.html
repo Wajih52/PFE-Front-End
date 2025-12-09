@@ -10,7 +10,7 @@
       <button
         class="btn-action btn-primary"
         (click)="openCreateModal()">
-        <span class="material-symbols-outlined md-36 cl-dark">add</span> Créer un pointage
+        <span class="material-symbols-outlined md-36 cl-white">add</span> Créer un pointage
       </button>
 
       <button
@@ -185,7 +185,7 @@
                       <div
                         class="statut-badge"
                         [style.background-color]="getStatutColor(pointage.statutPointage)">
-                        {{ getStatutIcon(pointage.statutPointage) }}
+                        <span class="material-symbols-outlined  cl-white">{{ getStatutIcon(pointage.statutPointage) }}</span>
                         {{ getStatutLabel(pointage.statutPointage) }}
                       </div>
                     </td>
@@ -203,19 +203,19 @@
                         class="btn-icon btn-edit"
                         (click)="openEditModal(pointage)"
                         title="Modifier">
-                        ✏️
+                        <span class="material-symbols-outlined cl-dark">edit</span>
                       </button>
                       <button
                         class="btn-icon btn-delete"
                         (click)="supprimerPointage(pointage.idPointage)"
                         title="Supprimer">
-                        🗑️
+                        <span class="material-symbols-outlined cl-dark">delete</span>
                       </button>
                       <button
                         class="btn-icon btn-stats"
                         (click)="voirDetailsEmploye(pointage.idUtilisateur)"
                         title="Voir stats">
-                        📊
+                        <span class="material-symbols-outlined cl-dark">format_list_bulleted</span>
                       </button>
                     </td>
                   </tr>
@@ -225,7 +225,7 @@
           </div>
         } @else {
           <div class="no-data">
-            <div class="no-data-icon">📭</div>
+            <div class="no-data-icon"><span class="material-symbols-outlined md-36 cl-dark">inbox</span></div>
             <p>Aucun pointage trouvé pour cette période</p>
           </div>
         }
@@ -245,7 +245,7 @@
       <!-- En-tête employé -->
       <div class="employee-header">
         <button class="btn-back" (click)="changerVue('global')">
-          ← Retour
+          <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong>
         </button>
         <div class="employee-info">
           <h2>{{ stats.nomComplet }}</h2>
@@ -257,7 +257,7 @@
       <div class="stats-grid-detailed">
 
         <div class="stat-card-detailed stat-presences">
-          <div class="stat-icon">✅</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-success">check_box</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.joursPresents }}</div>
             <div class="stat-label">Jours présent</div>
@@ -265,7 +265,7 @@
         </div>
 
         <div class="stat-card-detailed stat-retards">
-          <div class="stat-icon">⏰</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-warning">timer</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.joursEnRetard }}</div>
             <div class="stat-label">Retards</div>
@@ -273,7 +273,7 @@
         </div>
 
         <div class="stat-card-detailed stat-absences">
-          <div class="stat-icon">❌</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-danger">close</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.joursAbsents }}</div>
             <div class="stat-label">Absences</div>
@@ -281,7 +281,7 @@
         </div>
 
         <div class="stat-card-detailed stat-conges">
-          <div class="stat-icon">🏖️</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-info">partly_cloudy_day</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.joursEnConge }}</div>
             <div class="stat-label">Congés</div>
@@ -289,7 +289,7 @@
         </div>
 
         <div class="stat-card-detailed stat-hours">
-          <div class="stat-icon">⏱️</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-beige">clock_loader_40</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.totalHeuresTravaillees.toFixed(1) }}h</div>
             <div class="stat-label">Total heures</div>
@@ -297,7 +297,7 @@
         </div>
 
         <div class="stat-card-detailed stat-average">
-          <div class="stat-icon">📈</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-beige">show_chart</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.moyenneHeuresParJour.toFixed(1) }}h</div>
             <div class="stat-label">Moy. par jour</div>
@@ -305,7 +305,7 @@
         </div>
 
         <div class="stat-card-detailed stat-taux">
-          <div class="stat-icon">📊</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">person_raised_hand</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.tauxPresence.toFixed(1) }}%</div>
             <div class="stat-label">Taux présence</div>
@@ -313,7 +313,7 @@
         </div>
 
         <div class="stat-card-detailed stat-taux-retard">
-          <div class="stat-icon">⚠️</div>
+          <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-warning">assignment_late</span></div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.tauxRetard.toFixed(1) }}%</div>
             <div class="stat-label">Taux retard</div>
@@ -324,7 +324,7 @@
 
       <!-- Période -->
       <div class="periode-info">
-        📅 Période : {{ stats.periodeDebut | date: 'dd/MM/yyyy' }}
+        <span class="material-symbols-outlined md-36 cl-dark">calendar_month</span> Période : {{ stats.periodeDebut | date: 'dd/MM/yyyy' }}
         → {{ stats.periodeFin | date: 'dd/MM/yyyy' }}
       </div>
 
@@ -342,7 +342,7 @@
   <div class="employe-selection-container">
     <div class="card">
       <div class="card-header">
-        <h2>👥 Sélectionner un employé</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-white">groups</span> Sélectionner un employé</h2>
       </div>
       <div class="card-body">
         <div class="employes-grid">
@@ -382,7 +382,7 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
 
       <div class="modal-header">
-        <h2>➕ Créer un pointage</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-dark">add</span> Créer un pointage</h2>
         <button class="btn-close" (click)="closeCreateModal()">✕</button>
       </div>
 
@@ -476,7 +476,7 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
 
       <div class="modal-header">
-        <h2>✏️ Modifier le pointage</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-white">edit</span> Modifier le pointage</h2>
         <button class="btn-close" (click)="closeEditModal()">✕</button>
       </div>
 

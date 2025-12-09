@@ -10,12 +10,12 @@
 
     <!-- Message de succès -->
     <div class="success-message" *ngIf="successMessage">
-      ✅ {{ successMessage }}
+       {{ successMessage }}
     </div>
 
     <!-- Message d'erreur -->
     <div class="error-message" *ngIf="errorMessage">
-      ⚠️ {{ errorMessage }}
+       {{ errorMessage }}
     </div>
 
     <!-- Formulaire -->
@@ -150,7 +150,12 @@
             class="toggle-password"
             (click)="togglePasswordVisibility()"
           >
-            {{ showPassword ? '🙈' : '👁️' }}
+            @if (showPassword){
+              <span class="material-symbols-outlined  cl-dark">visibility_off</span>
+            } @else {
+              <span class="material-symbols-outlined  cl-dark">visibility</span>
+            }
+
           </button>
         </div>
         <span class="error-text" *ngIf="hasError('motDePasse')">

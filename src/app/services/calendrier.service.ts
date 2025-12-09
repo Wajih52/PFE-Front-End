@@ -37,7 +37,7 @@ export class CalendrierService {
   }
 
   /**
-   * 📅 Raccourci: Événements d'un mois spécifique
+   *  Événements d'un mois spécifique
    * GET /api/calendrier/mois?annee=2025&mois=6
    */
   getEvenementsMois(annee: number, mois: number): Observable<CalendrierEvent[]> {
@@ -52,7 +52,7 @@ export class CalendrierService {
   }
 
   /**
-   * 📊 Obtenir les statistiques pour une période
+   *  Obtenir les statistiques pour une période
    * GET /api/calendrier/statistiques?dateDebut=2025-01-01&dateFin=2025-01-31
    */
   getStatistiques(dateDebut: string, dateFin: string): Observable<CalendrierStatistiques> {

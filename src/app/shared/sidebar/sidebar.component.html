@@ -5,7 +5,9 @@
   <div class="sidebar-header">
     <!-- Bouton pour collapse/expand -->
     <button class="toggle-btn" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-      <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+      <span class="material-symbols-outlined toggle-icon">
+        {{ isCollapsed ? 'chevron_right' : 'chevron_left' }}
+      </span>
     </button>
   </div>
 
@@ -15,7 +17,7 @@
     <div *ngFor="let section of menuSections" class="menu-section">
       <!-- Titre de la section -->
       <div class="section-title" *ngIf="section.title && !isCollapsed">
-        <span class="section-icon" *ngIf="section.icon">{{ section.icon }}</span>
+        <span class="material-symbols-outlined section-icon" *ngIf="section.icon">{{ section.icon }}</span>
         <span class="section-text">{{ section.title }}</span>
       </div>
 
@@ -32,8 +34,8 @@
              [class.disabled]="item.disabled"
              (click)="onMenuItemClick(item)">
 
-            <!-- Icône -->
-            <span class="menu-icon" *ngIf="item.icon">{{ item.icon }}</span>
+            <!-- Icône Material Icons -->
+            <span class="material-symbols-outlined menu-icon" *ngIf="item.icon">{{ item.icon }}</span>
 
             <!-- Label -->
             <span class="menu-label" *ngIf="!isCollapsed">{{ item.label }}</span>

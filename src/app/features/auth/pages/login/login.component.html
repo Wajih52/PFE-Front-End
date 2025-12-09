@@ -15,7 +15,7 @@
 
     <!-- Message d'erreur -->
     <div class="error-message" *ngIf="errorMessage">
-      ⚠️ {{ errorMessage }}
+      <span class="material-symbols-outlined  cl-dark">warning</span> {{ errorMessage }}
 
       <!-- Bouton pour renvoyer l'email d'activation -->
       <button
@@ -25,7 +25,7 @@
         (click)="resendActivationEmail()"
         [disabled]="isResending"
       >
-        <span *ngIf="!isResending">📧 Renvoyer l'email d'activation</span>
+        <span *ngIf="!isResending"><span class="material-symbols-outlined  cl-dark">mail</span> Renvoyer l'email d'activation</span>
         <span *ngIf="isResending">Envoi en cours...</span>
       </button>
     </div>
@@ -64,7 +64,11 @@
             class="toggle-password"
             (click)="togglePasswordVisibility()"
           >
-            {{ showPassword ? '🙈' : '👁️' }}
+            @if(showPassword){
+              <span class="material-symbols-outlined  cl-dark">visibility_off</span>
+            } @else {
+              <span class="material-symbols-outlined  cl-dark">visibility</span>
+            }
           </button>
         </div>
         <span class="error-text" *ngIf="hasError('motDePasse')">

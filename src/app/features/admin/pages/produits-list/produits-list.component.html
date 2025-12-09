@@ -3,26 +3,26 @@
   <!-- En-tête -->
   <div class="page-header">
     <div class="header-content">
-      <h1>📦 Gestion des Produits</h1>
+      <h1><span class="material-symbols-outlined md-48 cl-dark">package_2</span> Gestion des Produits</h1>
       <p class="subtitle">Gestion des produits et du stock</p>
     </div>
     <button class="btn btn-primary" (click)="goToCreate()">
-      <span>➕</span> Nouveau produit
+      <span class="material-symbols-outlined md-48 cl-white">add</span> Nouveau produit
     </button>
   </div>
 
   <!-- Messages -->
   <div *ngIf="successMessage" class="alert alert-success">
-    ✅ {{ successMessage }}
+    <span class="material-symbols-outlined  cl-success">check</span> {{ successMessage }}
   </div>
   <div *ngIf="errorMessage" class="alert alert-danger">
-    ❌ {{ errorMessage }}
+    <span class="material-symbols-outlined cl-dark">close</span> {{ errorMessage }}
   </div>
 
   <!-- Statistiques -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon">📦</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-dark">package_2</span></div>
       <div class="stat-content">
         <span class="stat-value">{{ stats.total }}</span>
         <span class="stat-label">Total produits</span>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="stat-card stat-success">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-success">check_box</span></div>
       <div class="stat-content">
         <span class="stat-value">{{ stats.disponibles }}</span>
         <span class="stat-label">Disponibles</span>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="stat-card stat-warning">
-      <div class="stat-icon">⚠️</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-warning">warning</span></div>
       <div class="stat-content">
         <span class="stat-value">{{ stats.critique }}</span>
         <span class="stat-label">Stock critique</span>
@@ -46,7 +46,7 @@
     </div>
 
     <div class="stat-card stat-danger">
-      <div class="stat-icon">❌</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-danger">close</span></div>
       <div class="stat-content">
         <span class="stat-value">{{ stats.rupture }}</span>
         <span class="stat-label">En rupture</span>
@@ -101,14 +101,14 @@
       </select>
 
       <button class="btn btn-secondary" (click)="resetFilters()">
-        🔄 Réinitialiser
+        <span class="material-symbols-outlined cl-dark">autorenew</span> Réinitialiser
       </button>
     </div>
 <br>
     <!-- Zone filtre date -->
     <div class="date-filter-zone">
       <div class="date-filter-header">
-        <h3>📅 Filtrer par période de disponibilité</h3>
+        <h3><span class="material-symbols-outlined cl-dark">calendar_month</span> Filtrer par période de disponibilité</h3>
         <p class="subtitle">Voir la disponibilité réelle des produits sur une période donnée</p>
       </div>
 
@@ -226,7 +226,9 @@
               [src]="'http://localhost:8080' + produit.imageProduit"
               [alt]="produit.nomProduit"
             />
-            <div *ngIf="!produit.imageProduit" class="no-image">📦</div>
+            <div *ngIf="!produit.imageProduit" class="no-image">
+              <span class="material-symbols-outlined cl-dark">image</span>
+            </div>
           </div>
         </td>
         <td>
@@ -280,7 +282,7 @@
             </div>
           </ng-template>
           <div *ngIf="produit.maintenanceRequise" class="maintenance-badge">
-            🔧 Maintenance
+            <span class="material-symbols-outlined cl-dark">build</span> Maintenance
           </div>
         </td>
         <td>
@@ -298,14 +300,14 @@
               (click)="showDetails(produit)"
               title="Détails"
             >
-              👁️
+              <span class="material-symbols-outlined  cl-dark">menu_open</span>
             </button>
             <button
               class="btn btn-sm btn-primary"
               (click)="goToEdit(produit.idProduit)"
               title="Modifier"
             >
-              ✏️
+              <span class="material-symbols-outlined  cl-white">edit</span>
             </button>
             <button
               *ngIf="produit.typeProduit === TypeProduit.AVEC_REFERENCE"
@@ -313,7 +315,7 @@
               (click)="goToInstances(produit)"
               title="Gérer les instances"
             >
-              🔢
+              <span class="material-symbols-outlined cl-white">view_module</span>
             </button>
             <button
               class="btn btn-sm btn-primary"
@@ -321,14 +323,14 @@
               title="Ajuster le stock"
               *ngIf="produit.typeProduit === 'EN_QUANTITE'"
             >
-              📉
+              <span class="material-symbols-outlined  cl-white">contrast_circle</span>
             </button>
             <button
               class="btn btn-sm btn-normal"
               (click)="goToMouvements(produit.idProduit)"
               title="Historique"
             >
-              📊
+              <span class="material-symbols-outlined  cl-dark">bar_chart_4_bars</span>
             </button>
             <!-- Boutons selon l'état du produit -->
             <ng-container *ngIf="produit.quantiteDisponible > 0">
@@ -338,7 +340,7 @@
                 (click)="desactiverProduit(produit)"
                 title="Désactiver"
               >
-                ⏸️
+                <span class="material-symbols-outlined cl-dark">toggle_off</span>
               </button>
             </ng-container>
 
@@ -349,7 +351,7 @@
                 (click)="openReactivationModal(produit)"
                 title="Réactiver"
               >
-                ▶️
+                <span class="material-symbols-outlined cl-dark">toggle_on</span>
               </button>
             </ng-container>
             <button
@@ -357,7 +359,7 @@
               (click)="deleteProduit(produit)"
               title="Supprimer"
             >
-              🗑️
+              <span class="material-symbols-outlined cl-dark">delete</span>
             </button>
           </div>
         </td>
@@ -401,7 +403,7 @@
 <div *ngIf="showDetailsModal && selectedProduit" class="modal-overlay" (click)="closeDetailsModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>📦 Détails du produit</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">package_2</span> Détails du produit</h2>
       <button class="btn-close" (click)="closeDetailsModal()">✕</button>
     </div>
 
@@ -497,17 +499,17 @@
 
     <div class="modal-footer">
       <button class="btn btn-primary" (click)="goToEdit(selectedProduit.idProduit)">
-        ✏️ Modifier
+        <span class="material-symbols-outlined cl-white">edit</span> Modifier
       </button>
       <button
         *ngIf="selectedProduit.typeProduit === TypeProduit.AVEC_REFERENCE"
         class="btn btn-secondary"
         (click)="goToInstances(selectedProduit)"
       >
-        🔢 Gérer les instances
+        <span class="material-symbols-outlined cl-dark">view_module</span> Gérer les instances
       </button>
       <button class="btn btn-warning" (click)="goToMouvements(selectedProduit.idProduit)">
-        📊 Historique
+        <span class="material-symbols-outlined cl-dark">receipt_long</span> Historique
       </button>
       <button class="btn btn-secondary" (click)="closeDetailsModal()">
         Fermer
@@ -520,7 +522,7 @@
 <div *ngIf="showAjustementModal && produitAjustement" class="modal-overlay" (click)="closeAjustementModal()">
   <div class="modal-content modal-ajustement" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>📊 Ajuster le stock</h2>
+      <h2><span class="material-symbols-outlined cl-dark">contrast_circle</span> Ajuster le stock</h2>
       <button class="btn-close" (click)="closeAjustementModal()">✕</button>
     </div>
 
@@ -569,7 +571,7 @@
         (click)="submitAjustementStock()"
         [disabled]="!motifAjustement.trim()"
       >
-        ✅ Ajuster le stock
+        <span class="material-symbols-outlined cl-dark">edit</span> Ajuster le stock
       </button>
     </div>
   </div>

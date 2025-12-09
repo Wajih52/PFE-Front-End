@@ -6,7 +6,7 @@
   <div class="page-header">
     <div class="header-content">
       <h1>
-        <i class="fas fa-file-invoice"></i>
+        <span class="material-symbols-outlined md-48 cl-beige">receipt_long</span>
         Mes Factures
       </h1>
       <p class="subtitle">Consultez et téléchargez toutes vos factures</p>
@@ -28,7 +28,7 @@
 
       <div class="stat-card">
         <div class="stat-icon montant">
-          <i class="fas fa-euro-sign"></i>
+          <span class="material-symbols-outlined md-36 cl-white">payments</span>
         </div>
         <div class="stat-content">
           <span class="stat-value">{{ formatMontant(montantTotal) }}</span>
@@ -202,7 +202,7 @@
 
             <div class="info-row montant-row">
               <span class="label">
-                <i class="fas fa-euro-sign"></i>
+                <span class="material-symbols-outlined cl-secondary">payments</span>
                 Montant TTC
               </span>
               <span class="value montant" >{{ formatMontant(facture.montantTTC-(facture.montantRemise ||0)) }}</span>
@@ -224,14 +224,14 @@
               class="btn btn-primary"
             >
               <i class="fas fa-download"></i>
-              Télécharger PDF
+               PDF
             </button>
             <button
               [routerLink]="['/client/mes-factures', facture.idFacture]"
               class="btn btn-secondary"
             >
               <i class="fas fa-eye"></i>
-              Voir détails
+            Détails
             </button>
           </div>
         </div>

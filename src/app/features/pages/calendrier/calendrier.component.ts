@@ -24,7 +24,6 @@ import { UserResponse, ProduitResponse } from '../../../core/models';
 /**
  * Composant de gestion du calendrier
  * Affiche les réservations et livraisons
- * Sprint 7 - Gestion du calendrier
  */
 @Component({
   selector: 'app-calendrier',

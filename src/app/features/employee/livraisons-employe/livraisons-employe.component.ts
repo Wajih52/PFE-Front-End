@@ -214,15 +214,15 @@ export class LivraisonsEmployeComponent implements OnInit {
 
   getStatutIcon(statut: StatutLivraisonn): string {
     const icons: Record<StatutLivraisonn, string> = {
-      'NOT_TODAY': '🕐',
-      'EN_ATTENTE': '⏳',
-      'EN_COURS': '🚚',
-      'LIVREE': '✅',
-      'RETOUR': '🔙',
-      'RETOUR_PARTIEL': '✅',
-      'RETOURNEE': '✅',
-      'ANNULEE': '❌',
+      'NOT_TODAY': 'timer',
+      'EN_ATTENTE': 'pace',
+      'EN_COURS': 'delivery_truck_speed',
+      'LIVREE': 'check',
+      'RETOUR': 'undo',
+      'RETOUR_PARTIEL': 'undo',
+      'RETOURNEE': 'assignment_returned',
+      'ANNULEE': 'close',
     };
-    return icons[statut] || '📋';
+    return icons[statut] || 'assignment';
   }
 }

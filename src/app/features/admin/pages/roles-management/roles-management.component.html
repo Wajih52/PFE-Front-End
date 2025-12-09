@@ -10,14 +10,14 @@
       <p class="subtitle">Configuration et contrôle des rôles système</p>
     </div>
     <button class="btn-primary" (click)="openAddModal()">
-      + Nouveau rôle
+      <span class="material-symbols-outlined cl-dark">add</span> Nouveau rôle
     </button>
   </header>
 
   <!-- Statistiques -->
   <div class="stats-grid">
     <div class="stat-card total">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"> <span class="material-symbols-outlined md-48 cl-dark">supervised_user_circle</span></div>
       <div class="stat-content">
         <h3>{{ stats.total }}</h3>
         <p>Total rôles</p>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="stat-card actif">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-success">check_box</span></div>
       <div class="stat-content">
         <h3>{{ stats.actifs }}</h3>
         <p>Rôles actifs</p>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="stat-card inactif">
-      <div class="stat-icon">🔒</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-danger">block</span></div>
       <div class="stat-content">
         <h3>{{ stats.inactifs }}</h3>
         <p>Rôles inactifs</p>
@@ -41,7 +41,7 @@
     </div>
 
     <div class="stat-card recent">
-      <div class="stat-icon">🆕</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-48 cl-warning">fiber_new</span></div>
       <div class="stat-content">
         <h3>{{ stats.recentlyAdded }}</h3>
         <p>Ajoutés récemment</p>
@@ -71,7 +71,7 @@
 
     <div class="filters-row">
       <button class="btn-reset" (click)="resetFilters()">
-        🔄 Réinitialiser
+        <span class="material-symbols-outlined  cl-info">autorenew</span> Réinitialiser
       </button>
     </div>
 
@@ -147,7 +147,7 @@
           </td>
           <td>
             <span class="statut-badge" [class.active]="role.active" [class.inactive]="!role.active">
-              {{ role.active ? '✅ Actif' : '🔒 Inactif' }}
+              {{ role.active ? ' Actif' : ' Inactif' }}
             </span>
           </td>
           <td class="actions-cell">
@@ -157,21 +157,21 @@
                 (click)="showUsersForRole(role)"
                 title="Voir les utilisateurs"
               >
-                👥
+                <span class="material-symbols-outlined cl-dark">supervised_user_circle</span>
               </button>
               <button
                 class="btn-action btn-edit"
                 (click)="openEditModal(role)"
                 title="Modifier"
               >
-                ✏️
+                <span class="material-symbols-outlined cl-dark">edit</span>
               </button>
               <button
                 class="btn-action btn-delete"
                 (click)="deleteRole(role)"
                 title="Supprimer"
               >
-                🗑️
+                <span class="material-symbols-outlined cl-dark">delete</span>
               </button>
             </div>
           </td>
@@ -217,7 +217,7 @@
       <button class="modal-close" (click)="closeAddModal()">✖</button>
 
       <div class="modal-header">
-        <h2>➕ Ajouter un nouveau rôle</h2>
+        <h2><span class="material-symbols-outlined cl-dark">add</span> Ajouter un nouveau rôle</h2>
       </div>
 
       <div class="modal-content">
@@ -267,7 +267,7 @@
       <button class="modal-close" (click)="closeEditModal()">✖</button>
 
       <div class="modal-header">
-        <h2>✏️ Modifier le rôle</h2>
+        <h2><span class="material-symbols-outlined cl-dark">edit</span> Modifier le rôle</h2>
       </div>
 
       <div class="modal-content">
@@ -317,7 +317,7 @@
       <button class="modal-close" (click)="closeUsersModal()">✖</button>
 
       <div class="modal-header">
-        <h2>👥 Utilisateurs avec le rôle "{{ selectedRole?.nom }}"</h2>
+        <h2><span class="material-symbols-outlined cl-dark">supervised_user_circle</span> Utilisateurs avec le rôle "{{ selectedRole?.nom }}"</h2>
       </div>
 
       <div class="modal-content">
@@ -341,8 +341,8 @@
             </div>
             <div class="user-info">
               <h4>{{ userRole.nom }} {{ userRole.prenom }}</h4>
-              <p>📧 {{ userRole.email }}</p>
-              <p>📞 {{ userRole.telephone }}</p>
+              <p><span class="material-symbols-outlined  cl-dark">alternate_email</span> {{ userRole.email }}</p>
+              <p><span class="material-symbols-outlined  cl-dark">mobile</span> {{ userRole.telephone }}</p>
             </div>
             <div class="user-meta">
               <span class="date-badge">
@@ -372,7 +372,7 @@
 
       <div class="image-modal-actions">
         <button class="btn-download" (click)="downloadImage(selectedImage)">
-          📥 Télécharger
+          <span class="material-symbols-outlined cl-dark">upload</span> Télécharger
         </button>
         <button class="btn-close" (click)="closeImageModal()">
           Fermer

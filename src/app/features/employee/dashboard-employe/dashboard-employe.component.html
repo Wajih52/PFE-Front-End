@@ -2,7 +2,7 @@
 
 <div class="dashboard-employe">
   <div class="dashboard-header">
-    <h1>📊 Mon Tableau de Bord</h1>
+    <h1><span class="material-symbols-outlined md-48 cl-dark">dashboard</span> Mon Tableau de Bord</h1>
     <p class="welcome-text">Bienvenue ! Voici votre activité du jour</p>
   </div>
 
@@ -18,7 +18,7 @@
     <!-- Section: Pointage -->
     <section class="pointage-section">
       <div class="section-header">
-        <h2>⏱️ Mon Pointage</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-dark">ads_click</span> Mon Pointage</h2>
         <a routerLink="/pointage" class="link-action">Voir détails →</a>
       </div>
 
@@ -26,7 +26,6 @@
         <div *ngIf="pointageDuJour()" class="pointage-info">
           <div class="pointage-item">
             <span class="label">Arrivée :</span>
-            <!-- Remplacer ligne 29 -->
             <span class="value">{{ pointageDuJour()!.heureDebut ? formatHeure(pointageDuJour()!.heureDebut!) : 'N/A' }}</span>
           </div>
           <div class="pointage-item" *ngIf="pointageDuJour()!.heureFin">
@@ -39,7 +38,7 @@
         </div>
 
         <div *ngIf="!pointageDuJour()" class="pointage-absent">
-          <p>❌ Vous n'avez pas encore pointé aujourd'hui</p>
+          <p><span class="material-symbols-outlined md-36 cl-danger">close</span> Vous n'avez pas encore pointé aujourd'hui</p>
           <a routerLink="/pointage" class="btn-primary">Pointer maintenant</a>
         </div>
       </div>
@@ -48,12 +47,12 @@
     <!-- Section: Livraisons du Jour -->
     <section class="livraisons-jour-section">
       <div class="section-header">
-        <h2>🚚 Mes Livraisons Aujourd'hui</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-dark">local_shipping</span> Mes Livraisons Aujourd'hui</h2>
         <span class="badge-count">{{ livraisonsAujourdhui().length }}</span>
       </div>
 
       <div *ngIf="livraisonsAujourdhui().length === 0" class="empty-state">
-        <p>✅ Aucune livraison prévue aujourd'hui</p>
+        <p><span class="material-symbols-outlined cl-success">check_box</span> Aucune livraison prévue aujourd'hui</p>
       </div>
 
       <div *ngIf="livraisonsAujourdhui().length > 0" class="livraisons-list">
@@ -71,11 +70,11 @@
 
           <div class="livraison-details">
             <div class="detail-item">
-              <span class="icon">🕒</span>
+              <span class="icon"><span class="material-symbols-outlined cl-dark">timer</span></span>
               <span>{{ formatHeure(livraison.heureLivraison) }}</span>
             </div>
             <div class="detail-item">
-              <span class="icon">📍</span>
+              <span class="icon"><span class="material-symbols-outlined  cl-dark">location_on</span></span>
               <span>{{ livraison.adresseLivraison }}</span>
             </div>
           </div>
@@ -86,7 +85,7 @@
     <!-- Section: Prochaines Livraisons -->
     <section class="prochaines-livraisons-section">
       <div class="section-header">
-        <h2>📅 Mes Prochaines Livraisons</h2>
+        <h2><span class="material-symbols-outlined cl-dark">calendar_month</span> Mes Prochaines Livraisons</h2>
         <a routerLink="/employe/livraisons" class="link-action">Voir toutes →</a>
       </div>
 
@@ -106,7 +105,7 @@
 
           <div class="compact-info">
             <h4>{{ livraison.titreLivraison }}</h4>
-            <p>🕒 {{ formatHeure(livraison.heureLivraison) }} • 📍 {{ livraison.adresseLivraison }}</p>
+            <p><span class="material-symbols-outlined  cl-dark">timer</span> {{ formatHeure(livraison.heureLivraison) }} • <span class="material-symbols-outlined cl-dark">location_on</span> {{ livraison.adresseLivraison }}</p>
           </div>
 
           <span class="badge"
@@ -120,7 +119,7 @@
     <!-- Section: Notifications Récentes -->
     <section class="notifications-section">
       <div class="section-header">
-        <h2>🔔 Notifications Récentes</h2>
+        <h2><span class="material-symbols-outlined md-36 cl-dark">notifications</span> Notifications Récentes</h2>
         <a routerLink="/notifications" class="link-action">Voir toutes →</a>
       </div>
 
@@ -133,7 +132,7 @@
              class="notification-item"
              [class.non-lue]="!notif.lue">
 
-          <div class="notif-icon">🔔</div>
+          <div class="notif-icon"><span class="material-symbols-outlined  cl-dark">notifications</span></div>
           <div class="notif-content">
             <h4>{{ notif.titre }}</h4>
             <p>{{ notif.message }}</p>

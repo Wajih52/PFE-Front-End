@@ -3,11 +3,15 @@
   <!-- En-tête -->
   <div class="page-header">
     <div class="header-content">
-      <h1>{{ pageTitle }}</h1>
+      @if(isEditMode){
+        <h1><span class="material-symbols-outlined md-48 cl-dark">edit</span> Modifier le produit</h1>
+      } @else {
+        <h1><span class="material-symbols-outlined md-48 cl-dark">add</span> Créer un nouveau produit</h1>
+      }
       <p class="subtitle">Gestion des produits et du stock</p>
     </div>
     <button class="btn btn-secondary" (click)="onCancel()">
-      ← Retour à la liste
+      <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour à la liste</strong>
     </button>
   </div>
 
@@ -30,7 +34,8 @@
 
     <!-- Section : Informations de base -->
     <div class="form-section">
-      <h2 class="section-title">📝 Informations de base</h2>
+      <h2 class="section-title"><span class="material-symbols-outlined md-36 cl-dark">assignment</span>
+        Informations de base</h2>
 
       <div class="form-row">
         <!-- Nom du produit -->
@@ -91,7 +96,7 @@
 
     <!-- Section : Type et Stock -->
     <div class="form-section">
-      <h2 class="section-title">📦 Type et Stock</h2>
+      <h2 class="section-title"><span class="material-symbols-outlined md-36 cl-dark">package_2</span> Type et Stock</h2>
 
       <div class="form-row">
         <!-- Type de produit -->
@@ -202,7 +207,7 @@
 
     <!-- Section : Image -->
     <div class="form-section">
-      <h2 class="section-title">🖼️ Image du produit</h2>
+      <h2 class="section-title"><span class="material-symbols-outlined md-36 cl-dark">image</span> Image du produit</h2>
 
       <div class="image-upload-section">
         <!-- Prévisualisation -->
@@ -214,13 +219,13 @@
             (click)="removeImage()"
             title="Supprimer l'image"
           >
-            ✕
+            <span class="material-symbols-outlined cl-dark">close</span>
           </button>
         </div>
 
         <!-- Zone d'upload -->
         <div class="upload-zone" *ngIf="!previewImage">
-          <div class="upload-icon">📷</div>
+          <div class="upload-icon"><span class="material-symbols-outlined  cl-white">photo_library</span></div>
           <p>Cliquez pour sélectionner une image</p>
           <p class="upload-hint">JPG, PNG ou GIF - Max 5MB</p>
         </div>
@@ -242,8 +247,8 @@
             (click)="fileInput.click()"
             [disabled]="isLoadingImage"
           >
-            <span *ngIf="!isLoadingImage">📁 {{ previewImage ? 'Changer l\'image' : 'Sélectionner une image' }}</span>
-            <span *ngIf="isLoadingImage">⏳ Traitement...</span>
+            <span *ngIf="!isLoadingImage"><span class="material-symbols-outlined cl-dark">folder_open</span> {{ previewImage ? 'Changer l\'image' : 'Sélectionner une image' }}</span>
+            <span *ngIf="isLoadingImage"><span class="material-symbols-outlined cl-dark">autorenew</span> Traitement...</span>
           </button>
           <button
             *ngIf="previewImage"
@@ -251,7 +256,7 @@
             class="btn btn-danger"
             (click)="removeImage()"
           >
-            🗑️ Supprimer
+            <span class="material-symbols-outlined cl-dark">delete</span> Supprimer
           </button>
         </div>
       </div>

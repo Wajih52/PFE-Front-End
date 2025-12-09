@@ -2,14 +2,14 @@
 
 <div class="reservations-employe">
   <div class="page-header">
-    <h1>📋 Réservations</h1>
+    <h1><span class="material-symbols-outlined md-48 cl-dark">event_note</span> Réservations</h1>
     <p class="subtitle">Réservations où vous êtes affecté en tant que livreur</p>
   </div>
 
   <!-- Statistiques Rapides -->
   <div class="stats-cards">
     <div class="stat-card">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">numbers</span></div>
       <div class="stat-content">
         <h3>{{ stats().total }}</h3>
         <p>Total réservations</p>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon">📅</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">calendar_month</span></div>
       <div class="stat-content">
         <h3>{{ stats().aVenir }}</h3>
         <p>À venir</p>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon">⏳</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">schedule</span></div>
       <div class="stat-content">
         <h3>{{ stats().enCours }}</h3>
         <p>En cours</p>
@@ -115,7 +115,7 @@
   <div *ngIf="!isLoading()" class="reservations-list">
 
     <div *ngIf="reservationsFiltrees().length === 0" class="empty-state">
-      <p>📭 Aucune réservation ne correspond à vos critères</p>
+      <p><span class="material-symbols-outlined md-36 cl-dark">inbox</span> Aucune réservation ne correspond à vos critères</p>
     </div>
 
     <div *ngFor="let reservation of reservationsFiltrees()"
@@ -139,7 +139,7 @@
       <div class="reservation-body">
         <div class="info-row">
           <div class="info-item">
-            <span class="icon">👤</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">person</span></span>
             <div class="info-content">
               <span class="label">Client</span>
               <span class="value">{{ reservation.prenomClient }} {{ reservation.nomClient }}</span>
@@ -147,7 +147,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">📧</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">mail</span></span>
             <div class="info-content">
               <span class="label">Email</span>
               <span class="value">{{ reservation.emailClient }}</span>
@@ -155,7 +155,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">📱</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">mobile</span></span>
             <div class="info-content">
               <span class="label">Téléphone</span>
               <span class="value">{{ reservation.telephoneClient || 'Non renseigné' }}</span>
@@ -165,7 +165,7 @@
 
         <div class="info-row">
           <div class="info-item">
-            <span class="icon">📅</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">calendar_month</span></span>
             <div class="info-content">
               <span class="label">Date début</span>
               <span class="value">{{ formatDate(reservation.dateDebut) }}</span>
@@ -173,7 +173,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">📅</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">calendar_month</span></span>
             <div class="info-content">
               <span class="label">Date fin</span>
               <span class="value">{{ formatDate(reservation.dateFin) }}</span>
@@ -181,7 +181,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">⏱️</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">timer</span></span>
             <div class="info-content">
               <span class="label">Durée</span>
               <span class="value">{{ getNombreJours(reservation.dateDebut, reservation.dateFin) }} jour(s)</span>
@@ -189,7 +189,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">⏱️</span>
+            <span class="icon"><span class="material-symbols-outlined cl-dark">timer</span></span>
             <div class="info-content">
               <span class="label">Produits :</span>
               <span class="value"> {{ reservation.lignesReservation.length }} article(s)</span>
@@ -332,9 +332,9 @@
                   <div class="detail-item success-info">
                     <i class="fas fa-check-circle"></i>
                     @if (ligne.statutLivraisonLigne === 'LIVREE') {
-                      <span>✅ Produit livré au client</span>
+                      <span> Produit livré au client</span>
                     } @else {
-                      <span>✅ Produit retourné par le client</span>
+                      <span> Produit retourné par le client</span>
                     }
                   </div>
                 }
@@ -342,14 +342,14 @@
                 @if (ligne.statutLivraisonLigne === 'EN_COURS') {
                   <div class="detail-item warning-info">
                     <i class="fas fa-truck"></i>
-                    <span>🚚 Livraison en cours</span>
+                    <span><span class="material-symbols-outlined cl-dark">local_shipping</span> Livraison en cours</span>
                   </div>
                 }
 
                 @if (ligne.statutLivraisonLigne === 'EN_ATTENTE') {
                   <div class="detail-item info-info">
                     <i class="fas fa-clock"></i>
-                    <span>⏳ En attente de livraison</span>
+                    <span><span class="material-symbols-outlined cl-dark">schedule</span> En attente de livraison</span>
                   </div>
                 }
 

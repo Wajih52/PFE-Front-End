@@ -369,7 +369,7 @@ export class ProduitFormComponent implements OnInit {
    * Obtenir le titre de la page
    */
   get pageTitle(): string {
-    return this.isEditMode ? '✏️ Modifier le produit' : '➕ Créer un nouveau produit';
+    return this.isEditMode ? 'Modifier le produit' : 'Créer un nouveau produit';
   }
 
   /**

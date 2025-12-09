@@ -4,11 +4,11 @@
   <!-- Header -->
   <div class="page-header">
     <div class="header-content">
-      <h1 class="page-title">📋 Mes Réclamations</h1>
+      <h1 class="page-title"><span class="material-symbols-outlined md-48 cl-dark">assignment</span> Mes Réclamations</h1>
       <p class="page-description">Consultez l'état de toutes vos réclamations</p>
     </div>
     <button class="btn-nouvelle-reclamation" (click)="nouvelleReclamation()">
-      ➕ Nouvelle réclamation
+      <span class="material-symbols-outlined  cl-white">add</span> Nouvelle réclamation
     </button>
 
   </div>
@@ -23,7 +23,7 @@
   <!-- Error -->
   @if (error()) {
     <div class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon"><span class="material-symbols-outlined  cl-warning">warning</span></span>
       <p>{{ error() }}</p>
       <button class="btn-retry" (click)="loadReclamations()">Réessayer</button>
     </div>
@@ -34,7 +34,7 @@
     @if (sortedReclamations().length === 0) {
       <!-- Aucune réclamation -->
       <div class="empty-state">
-        <div class="empty-icon">📭</div>
+        <div class="empty-icon"><span class="material-symbols-outlined md-48 cl-dark">inbox</span></div>
         <h3>Aucune réclamation</h3>
         <p>Vous n'avez pas encore soumis de réclamation</p>
       </div>
@@ -102,7 +102,7 @@
               @if (reclamation.reponse) {
                 <div class="reponse-section">
                   <div class="reponse-header">
-                    <span class="reponse-icon">💬</span>
+                    <span class="reponse-icon"><span class="material-symbols-outlined  cl-dark">chat</span></span>
                     <h5>Réponse de l'administration</h5>
                   </div>
                   <p class="reponse-text">{{ reclamation.reponse }}</p>
@@ -118,7 +118,7 @@
               <!-- Info réservation -->
               @if (reclamation.codeReservation) {
                 <div class="reservation-info">
-                  <span class="reservation-icon">📦</span>
+                  <span class="reservation-icon"><span class="material-symbols-outlined  cl-dark">package_2</span></span>
                   <span>Liée à la réservation: <strong>{{ reclamation.codeReservation }}</strong></span>
                 </div>
               }

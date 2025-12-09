@@ -28,10 +28,10 @@ export const StatutPointageLabels: Record<StatutPointage, string> = {
  * Icônes pour les statuts
  */
 export const StatutPointageIcons: Record<StatutPointage, string> = {
-  [StatutPointage.PRESENT]: '✅',
-  [StatutPointage.ABSENT]: '❌',
-  [StatutPointage.EN_RETARD]: '⏰',
-  [StatutPointage.EN_CONGE]: '🏖️'
+  [StatutPointage.PRESENT]: 'check_box',
+  [StatutPointage.ABSENT]: 'close',
+  [StatutPointage.EN_RETARD]: 'timer',
+  [StatutPointage.EN_CONGE]: 'partly_cloudy_day'
 };
 
 /**

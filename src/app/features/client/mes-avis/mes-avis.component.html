@@ -1,5 +1,5 @@
 <div class="mes-avis-container">
-  <h1>📝 Mes Avis</h1>
+  <h1><span class="material-symbols-outlined md-48 cl-dark">cards_stack</span> Mes Avis</h1>
 
   @if (loading()) {
     <div class="loading">Chargement...</div>
@@ -43,12 +43,12 @@
 
             @if (avis.peutEtreModifie) {
               <button class="btn btn-sm btn-edit" (click)="modifierAvis(avis)">
-                ✏️ Modifier
+                <span class="material-symbols-outlined  cl-dark">edit</span> Modifier
               </button>
             }
 
             <button class="btn btn-sm btn-delete" (click)="supprimerAvis(avis)">
-              🗑️ Supprimer
+              <span class="material-symbols-outlined  cl-dark">delete</span> Supprimer
             </button>
           </div>
 

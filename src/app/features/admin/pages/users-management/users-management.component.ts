@@ -9,16 +9,7 @@ import {ImageService} from '../../../../core/services/image.service';
 import {ManageUserRolesModalComponent} from '../manage-user-roles-modal/manage-user-roles-modal.component';
 import {
   LucideAngularModule,
-  UsersRound,
-  UserPlus,
-  Search,
-  Filter,
-  ShieldX,
-  ShieldCheck,
-  ShieldMinus,
-  RotateCcw,
-  Eye, FileUser, Trash2, FilePenLine
-} from 'lucide-angular';
+  UsersRound, UserPlus, ShieldX, ShieldCheck, ShieldMinus, Eye, FileUser, Trash2, FilePenLine} from 'lucide-angular';
 
 interface User {
   idUtilisateur: number;
@@ -71,16 +62,13 @@ export class UsersManagementComponent implements OnInit {
   //icone lucide
   readonly UsersRound = UsersRound;
   readonly UserPlus = UserPlus;
-  readonly Search = Search;
-  readonly Filter = Filter;
   readonly ShieldX = ShieldX;
   readonly ShieldCheck = ShieldCheck;
   readonly ShieldMinus = ShieldMinus;
-  readonly RotateCcw = RotateCcw
-  protected readonly Eye = Eye;
-  protected readonly FileUser = FileUser;
-  protected readonly Trash2 = Trash2;
-  protected readonly FilePenLine = FilePenLine;
+  readonly Eye = Eye;
+  readonly FileUser = FileUser;
+  readonly Trash2 = Trash2;
+  readonly FilePenLine = FilePenLine;
 
 
   // Données
@@ -368,10 +356,10 @@ export class UsersManagementComponent implements OnInit {
    */
   getStatutIcon(statut: string): string {
     const icons: { [key: string]: string } = {
-      'ACTIVE': '✅',
-      'SUSPENDU': '⛔',
-      'DESACTIVE': '🔒',
-      'ARCHIVE': '📦'
+      'ACTIVE': 'check_box',
+      'SUSPENDU': 'block',
+      'DESACTIVE': 'disabled_by_default',
+      'ARCHIVE': 'archive'
     };
     return icons[statut] || '❓';
   }

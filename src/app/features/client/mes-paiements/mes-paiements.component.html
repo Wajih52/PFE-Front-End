@@ -1,7 +1,7 @@
 <!-- src/app/features/client/mes-paiements/mes-paiements.component.html -->
 <div class="mes-paiements-container">
 
-  <!-- 📌 HEADER -->
+  <!-- HEADER -->
   <div class="page-header">
     <div class="header-content">
       <h1><i class="fas fa-wallet"></i> Mes Paiements</h1>
@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <!-- 📊 STATISTIQUES -->
+  <!--  STATISTIQUES -->
   @if (!isLoading() && !errorMessage()) {
     <div class="stats-grid">
       <div class="stat-card stat-total">
@@ -58,15 +58,15 @@
     </div>
   }
 
-  <!-- 🎯 FILTRES -->
+  <!-- FILTRES -->
   <div class="filtres-section">
     <div class="filtre-groupe">
       <label><i class="fas fa-filter"></i> Statut</label>
       <select [(ngModel)]="filtreStatut" (ngModelChange)="onFiltreChange()" class="form-select">
         <option value="TOUS">Tous les statuts</option>
-        <option [value]="StatutPaiement.EN_ATTENTE">⏳ En attente</option>
-        <option [value]="StatutPaiement.VALIDE">✅ Validés</option>
-        <option [value]="StatutPaiement.REFUSE">❌ Refusés</option>
+        <option [value]="StatutPaiement.EN_ATTENTE"> En attente</option>
+        <option [value]="StatutPaiement.VALIDE"> Validés</option>
+        <option [value]="StatutPaiement.REFUSE"> Refusés</option>
       </select>
     </div>
 
@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <!-- ⏳ LOADING -->
+  <!--  LOADING -->
   @if (isLoading()) {
     <div class="loading-container">
       <div class="spinner"></div>
@@ -90,7 +90,7 @@
     </div>
   }
 
-  <!-- ❌ ERREUR -->
+  <!--  ERREUR -->
   @if (errorMessage()) {
     <div class="alert alert-danger">
       <i class="fas fa-exclamation-triangle"></i>
@@ -98,7 +98,7 @@
     </div>
   }
 
-  <!-- 📋 LISTE DES PAIEMENTS -->
+  <!--  LISTE DES PAIEMENTS -->
   @if (!isLoading() && !errorMessage()) {
     <div class="paiements-list">
       @if (paiementsFiltres().length === 0) {
@@ -178,7 +178,7 @@
   }
 </div>
 
-<!-- 🔍 MODAL DÉTAILS -->
+<!--  MODAL DÉTAILS -->
 @if (showModalDetails()) {
   <div class="modal-overlay" (click)="fermerModalDetails()">
     <div class="modal-content" (click)="$event.stopPropagation()">

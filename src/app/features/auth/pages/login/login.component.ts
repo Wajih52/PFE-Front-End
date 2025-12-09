@@ -41,16 +41,16 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // ✅ Si déjà connecté, rediriger vers dashboard
+    // Si déjà connecté, rediriger vers dashboard
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/profile']);
       return;
     }
 
     this.route.queryParams.subscribe(params => {
       // CAS 1 : Vient de s'inscrire
       if (params['registered'] === 'true') {
-        this.successMessage = '✅ Inscription réussie ! Un email d\'activation vous a été envoyé. Vérifiez votre boîte email.';
+        this.successMessage = ' Inscription réussie ! Un email d\'activation vous a été envoyé. Vérifiez votre boîte email.';
 
         if (params['email']) {
           this.loginForm.patchValue({
@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
 
       // CAS 2 : Vient de l'activation du compte
       else if (params['activated'] === 'true') {
-        this.successMessage = '✅ Compte activé avec succès ! Vous pouvez maintenant vous connecter.';
+        this.successMessage = ' Compte activé avec succès ! Vous pouvez maintenant vous connecter.';
 
         if (params['email']) {
           this.loginForm.patchValue({
@@ -85,7 +85,7 @@ export class LoginComponent implements OnInit {
 
       //  CAS 5 : Déconnecté (optionnel)
       else if (params['logout'] === 'true') {
-        this.successMessage = '✅ Vous avez été déconnecté avec succès.';
+        this.successMessage = ' Vous avez été déconnecté avec succès.';
         setTimeout(()=>this.successMessage='',3000)
         console.log('🧹 Token expiré nettoyé , déconnexion réussi ');
       }
@@ -130,7 +130,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(credentials).subscribe({
       next: (user) => {
-        console.log('✅ Connexion réussie', user);
+        console.log(' Connexion réussie', user);
 
         if (user.requirePasswordChange) {
           // Rediriger vers page de changement de mot de passe
@@ -173,7 +173,7 @@ export class LoginComponent implements OnInit {
     this.authService.resendActivationEmail(this.userEmail).subscribe({
       next: (response: any) => {
         console.log('✅ Email renvoyé', response);
-        this.successMessage = '✅ Email d\'activation renvoyé ! Vérifiez votre boîte email.';
+        this.successMessage = ' Email d\'activation renvoyé ! Vérifiez votre boîte email.';
         this.showResendButton = false;
         this.isResending = false;
       },

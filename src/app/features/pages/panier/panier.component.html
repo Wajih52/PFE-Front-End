@@ -1,5 +1,5 @@
 <!-- src/app/features/pages/panier/panier.component.html -->
-<!-- ✅ VERSION CORRIGÉE - Problèmes 6-10 résolus -->
+
 
 <div class="panier-container">
 
@@ -59,12 +59,12 @@
       <!-- Colonne gauche : Liste des produits -->
       <div class="panier-liste">
 
-        <!-- ✅ FIX #10: Pas de bouton de vérification, validation automatique -->
+
         <div class="lignes-container">
           @for (ligne of lignes(); track getCleUnique(ligne)) {
             <div class="ligne-panier" [class.indisponible]="!isLigneDisponible(ligne)">
 
-              <!-- ✅ NOUVEAU CODE - Utiliser la méthode getImageUrl() -->
+
               <div class="ligne-image">
                 <img
                   [src]="getImageUrl(ligne)"
@@ -72,7 +72,7 @@
                   (error)="onImageError($event)"
                 />
 
-                <!-- ✅ Badge indisponible si nécessaire -->
+
                 @if (!isLigneDisponible(ligne)) {
                   <div class="badge-indisponible">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -102,7 +102,7 @@
                   </div>
                 </div>
 
-                <!-- ✅ Message d'alerte pour stock limité -->
+                <!--  Message d'alerte pour stock limité -->
                 @if (getDisponibiliteLigne(ligne); as dispo) {
                   @if (dispo.disponible && dispo.quantiteMax <= 5 && dispo.quantiteMax > 0) {
                     <div class="alerte-stock">
@@ -123,7 +123,7 @@
                   <label>Quantité :</label>
 
                   <div class="quantite-buttons">
-                    <!-- ✅ FIX #8: Bouton décrémenter fonctionnel -->
+
                     <button
                       class="btn-quantite"
                       (click)="decrementerQuantite(ligne)"
@@ -133,7 +133,7 @@
                       <i class="fas fa-minus"></i>
                     </button>
 
-                    <!-- ✅ Remplacer le <span> par ceci -->
+
                     <input
                       type="number"
                       class="quantite-input"
@@ -145,7 +145,7 @@
                       title="Saisir la quantité"
                     />
 
-                    <!-- ✅ FIX #8 & #9: Bouton incrémenter fonctionnel et désactivé à la limite -->
+
                     <button
                       class="btn-quantite"
                       (click)="incrementerQuantite(ligne)"
@@ -241,7 +241,7 @@
 
           <!-- Actions de validation -->
           <div class="actions-validation">
-            <!-- ✅ NOUVEAU BOUTON: Commander directement (noir) -->
+
             <button
               class="btn-commander-direct"
               (click)="commanderDirectement()"

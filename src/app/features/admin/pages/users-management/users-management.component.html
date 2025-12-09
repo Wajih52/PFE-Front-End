@@ -59,12 +59,11 @@
   <!-- Filtres et Recherche -->
   <div class="filters-card">
     <div class="search-bar">
-      <lucide-icon [img]="Search" [size]="20"></lucide-icon>
       <input
         type="text"
         [(ngModel)]="searchTerm"
         (input)="applyFilters()"
-        placeholder=" Rechercher par nom, email, pseudo, code..."
+        placeholder=" 🔍 Rechercher par nom, email, pseudo, code..."
         class="search-input"
       >
     </div>
@@ -89,7 +88,7 @@
       </select>
 
       <button class="btn-reset" (click)="resetFilters()">
-        <lucide-icon [img]="RotateCcw" color="#3855e5"></lucide-icon> Réinitialiser
+        <span class="material-symbols-outlined cl-white">autorenew</span> Réinitialiser
       </button>
     </div>
 
@@ -171,7 +170,7 @@
           </td>
           <td>
               <span class="statut-badge" [class]="getStatutClass(user.etatCompte)">
-                {{ getStatutIcon(user.etatCompte) }} {{ user.etatCompte }}
+               <span class="material-symbols-outlined  cl-dark">{{ getStatutIcon(user.etatCompte) }}</span> {{ user.etatCompte }}
               </span>
           </td>
           <td class="actions-cell">
@@ -207,7 +206,7 @@
                 (click)="deactivateAccount(user)"
                 title="Désactiver"
               >
-                <lucide-icon [img]="ShieldMinus" color="#e2e538"></lucide-icon>
+                <lucide-icon [img]="ShieldMinus" color="#000000"></lucide-icon>
               </button>
 
               <button
@@ -216,7 +215,7 @@
                 (click)="activateAccount(user)"
                 title="Activer"
               >
-                <lucide-icon [img]="ShieldCheck" ></lucide-icon>
+                <lucide-icon [img]="ShieldCheck" color="#000000"></lucide-icon>
               </button>
 
               <button
@@ -295,7 +294,7 @@
 
       <div class="modal-body">
         <div class="detail-section">
-          <h3>📋 Informations générales</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">assignment</span> Informations générales</h3>
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">Code utilisateur</span>
@@ -325,17 +324,17 @@
         </div>
 
         <div class="detail-section" *ngIf="selectedUser.bio">
-          <h3>💬 Biographie</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">chat</span> Biographie</h3>
           <p class="bio-text">{{ selectedUser.bio }}</p>
         </div>
 
         <div class="detail-section">
-          <h3>🔐 Statut et rôles</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">rule</span> Statut et rôles</h3>
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">État du compte</span>
               <span class="statut-badge" [class]="getStatutClass(selectedUser.etatCompte)">
-                {{ getStatutIcon(selectedUser.etatCompte) }} {{ selectedUser.etatCompte }}
+                <span class="material-symbols-outlined  cl-dark">{{ getStatutIcon(selectedUser.etatCompte) }} </span>{{ selectedUser.etatCompte }}
               </span>
             </div>
             <div class="detail-item">
@@ -350,7 +349,7 @@
         </div>
 
         <div class="detail-section" *ngIf="selectedUser.poste || selectedUser.dateEmbauche">
-          <h3>💼 Informations d'emploi</h3>
+          <h3><span class="material-symbols-outlined  cl-dark">work</span> Informations d'emploi</h3>
           <div class="detail-grid">
             <div class="detail-item" *ngIf="selectedUser.poste">
               <span class="detail-label">Poste</span>
@@ -379,7 +378,7 @@
     <div class="modal-edit" (click)="$event.stopPropagation()">
       <button class="modal-close" (click)="closeEditModal()">✖</button>
 
-      <h2>✏️ Modifier un utilisateur</h2>
+      <h2><span class="material-symbols-outlined md-48 cl-dark">edit</span> Modifier un utilisateur</h2>
 
       <!-- Messages d'alerte dans le modal -->
       <div *ngIf="editSuccessMessage" class="alert alert-success">{{ editSuccessMessage }}</div>
@@ -412,7 +411,7 @@
             type="button"
             class="btn btn-secondary"
             (click)="editImageInput.click()">
-            📷 Choisir une image
+            <span class="material-symbols-outlined  cl-dark">image</span> Choisir une image
           </button>
 
           <button
@@ -420,7 +419,7 @@
             type="button"
             class="btn btn-danger"
             (click)="clearEditImage()">
-            🗑️ Annuler
+            <span class="material-symbols-outlined  cl-dark">delete</span> Annuler
           </button>
 
           <button
@@ -428,7 +427,7 @@
             type="button"
             class="btn btn-primary"
             (click)="saveImage()">
-            💾 Enregistrer l'image
+            <span class="material-symbols-outlined  cl-dark">save</span> Enregistrer l'image
           </button>
         </div>
 
@@ -515,10 +514,10 @@
           <div class="form-field">
             <label>État du compte *</label>
             <select formControlName="etatCompte">
-              <option value="ACTIVE">✅ Actif</option>
-              <option value="SUSPENDU">⛔ Suspendu</option>
-              <option value="DESACTIVE">🔒 Désactivé</option>
-              <option value="ARCHIVE">📦 Archivé</option>
+              <option value="ACTIVE"> Actif</option>
+              <option value="SUSPENDU"> Suspendu</option>
+              <option value="DESACTIVE"> Désactivé</option>
+              <option value="ARCHIVE"> Archivé</option>
             </select>
             <span class="error-message" *ngIf="getErrorMessage('etatCompte')">
               {{ getErrorMessage('etatCompte') }}
@@ -580,29 +579,29 @@
     <div class="modal-add-container" (click)="$event.stopPropagation()">
       <button class="modal-close" (click)="closeAddModal()">✖</button>
 
-      <!-- ✅ Header sticky -->
+      <!-- Header sticky -->
       <div class="modal-header-add">
-        <h2>➕ Ajouter un nouvel utilisateur</h2>
+        <h2><span class="material-symbols-outlined md-48  cl-dark">add</span> Ajouter un nouvel utilisateur</h2>
       </div>
 
-      <!-- ✅ Messages STICKY en haut (toujours visibles) -->
+      <!--  Messages STICKY en haut (toujours visibles) -->
       <div class="modal-messages-sticky">
         <div *ngIf="addSuccessMessage" class="alert alert-success">{{ addSuccessMessage }}</div>
         <div *ngIf="addErrorMessage" class="alert alert-error">{{ addErrorMessage }}</div>
       </div>
 
-      <!-- ✅ Contenu scrollable -->
+      <!-- Contenu scrollable -->
       <div class="modal-add-content">
         <form [formGroup]="addForm" (ngSubmit)="saveNewUser()">
 
-          <!-- ✅ Section image SÉPARÉE (en haut, avant le formulaire) -->
+          <!--  Section image SÉPARÉE (en haut, avant le formulaire) -->
           <div class="image-section-top">
-            <h3 class="section-title">📷 Photo de profil</h3>
+            <h3 class="section-title"><span class="material-symbols-outlined  cl-dark">image</span> Photo de profil</h3>
             <div class="avatar-upload-section">
               <div class="avatar-preview">
                 <img *ngIf="previewImage" [src]="previewImage" alt="Aperçu de l'image" class="image-preview">
                 <div *ngIf="!previewImage" class="avatar-placeholder">
-                  👤 Aucune image
+                  <span class="material-symbols-outlined md-48  cl-dark">person</span> Aucune image
                 </div>
               </div>
               <div class="avatar-actions">
@@ -614,7 +613,7 @@
                   hidden
                 >
                 <button type="button" class="btn-upload" (click)="fileInput.click()">
-                  📷 Choisir une image
+                  <span class="material-symbols-outlined  cl-dark">image</span> Choisir une image
                 </button>
                 <button
                   *ngIf="previewImage"
@@ -622,7 +621,7 @@
                   class="btn-delete-image"
                   (click)="clearAddImage()"
                 >
-                  🗑️ Supprimer
+                  <span class="material-symbols-outlined  cl-dark">delete</span> Supprimer
                 </button>
               </div>
               <small style="color: #7f8c8d; font-style: italic; text-align: center; display: block; margin-top: 8px;">
@@ -631,7 +630,7 @@
             </div>
           </div>
 
-          <!-- ✅ Grille du formulaire SANS l'image -->
+          <!--  Grille du formulaire SANS l'image -->
           <div class="form-grid">
             <!-- Nom -->
             <div class="form-field">
@@ -720,9 +719,9 @@
             <div class="form-field">
               <label>État du compte *</label>
               <select formControlName="etatCompte">
-                <option value="ACTIVE">✅ Actif</option>
-                <option value="SUSPENDU">⛔ Suspendu</option>
-                <option value="DESACTIVE">🔒 Désactivé</option>
+                <option value="ACTIVE"><span class="material-symbols-outlined  cl-success">check_box</span> Actif</option>
+                <option value="SUSPENDU"><span class="material-symbols-outlined  cl-danger">block</span> Suspendu</option>
+                <option value="DESACTIVE"><span class="material-symbols-outlined  cl-warning">disabled_by_default</span> Désactivé</option>
               </select>
               <span class="error-message" *ngIf="getErrorMessage('etatCompte', addForm)">
                 {{ getErrorMessage('etatCompte', addForm) }}
@@ -804,7 +803,7 @@
 
       <div class="image-modal-actions">
         <button class="btn-download" (click)="downloadImage(selectedImage)">
-          📥 Télécharger
+          <span class="material-symbols-outlined  cl-dark">upload</span> Télécharger
         </button>
         <button class="btn-close" (click)="closeImageModal()">
           Fermer

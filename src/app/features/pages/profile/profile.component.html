@@ -21,7 +21,7 @@
 
       <div class="avatar-buttons">
         <button class="btn-upload" (click)="fileInput.click()" [disabled]="isLoadingImage">
-          📷 {{ previewImage ? 'Changer' : 'Ajouter' }} photo
+          <span class="material-symbols-outlined  cl-dark">image</span> {{ previewImage ? 'Changer' : 'Ajouter' }} photo
         </button>
         <button
           *ngIf="previewImage"
@@ -29,7 +29,7 @@
           (click)="deleteImage()"
           [disabled]="isLoadingImage"
         >
-          🗑️ Supprimer
+          <span class="material-symbols-outlined  cl-white">delete</span> Supprimer
         </button>
       </div>
 
@@ -57,20 +57,20 @@
   <!-- Card Informations -->
   <div class="card">
     <div class="card-header">
-      <h2>📋 Informations personnelles</h2>
+      <h2><span class="material-symbols-outlined  cl-dark">assignment</span> Informations personnelles</h2>
       <button
         class="btn-edit"
         (click)="toggleEditProfile()"
         *ngIf="!isEditingProfile"
       >
-        ✏️ Modifier
+        <span class="material-symbols-outlined  cl-white">edit</span> Modifier
       </button>
       <button
         class="btn-cancel"
         (click)="toggleEditProfile(); profileForm.patchValue(user)"
         *ngIf="isEditingProfile"
       >
-        ✖️ Annuler
+        <span class="material-symbols-outlined  cl-white">close</span> Annuler
       </button>
     </div>
 
@@ -179,7 +179,7 @@
         class="btn-save"
         [disabled]="isLoadingProfile || profileForm.invalid"
       >
-        {{ isLoadingProfile ? '💾 Enregistrement...' : '💾 Enregistrer' }}
+        {{ isLoadingProfile ? '💾 Enregistrement...' : ' Enregistrer' }}
       </button>
     </form>
   </div>
@@ -187,20 +187,20 @@
   <!-- Card Sécurité -->
   <div class="card">
     <div class="card-header">
-      <h2>🔐 Sécurité</h2>
+      <h2><span class="material-symbols-outlined  cl-dark">security</span> Sécurité</h2>
       <button
         class="btn-edit"
         (click)="isEditingPassword = !isEditingPassword"
         *ngIf="!isEditingPassword"
       >
-        🔑 Changer mot de passe
+        <span class="material-symbols-outlined  cl-white">key</span> Changer mot de passe
       </button>
       <button
         class="btn-cancel"
         (click)="isEditingPassword = false; passwordForm.reset()"
         *ngIf="isEditingPassword"
       >
-        ✖️ Annuler
+        <span class="material-symbols-outlined  cl-white">close</span> Annuler
       </button>
     </div>
 
@@ -261,28 +261,28 @@
         class="btn-save"
         [disabled]="isLoadingPassword || passwordForm.invalid"
       >
-        {{ isLoadingPassword ? '🔄 Modification...' : '✅ Modifier le mot de passe' }}
+        {{ isLoadingPassword ? '🔄 Modification...' : 'Modifier ' }}
       </button>
     </form>
 
     <p *ngIf="!isEditingPassword" class="info-text">
-      💡 Changez régulièrement votre mot de passe pour plus de sécurité
+      <span class="material-symbols-outlined  cl-dark">lightbulb</span> Changez régulièrement votre mot de passe pour plus de sécurité
     </p>
   </div>
 
   <div class="danger-zone">
-    <h3>⚠️ Zone Critique</h3>
+    <h3> Zone Critique</h3>
     <p>La désactivation de votre compte vous déconnectera immédiatement.</p>
     <div>
     <button class="btn-info" (click)="deactivateAccount()">
-      🔒 Désactiver mon compte
+      <span class="material-symbols-outlined  cl-white">block</span> Désactiver mon compte
     </button>
     </div>
     <br>
 
     <div>
     <button class="btn-danger" (click)="supprimerAccount()">
-      🗑️ Supprimer mon compte
+      <span class="material-symbols-outlined  cl-white">delete</span> Supprimer mon compte
     </button>
     </div>
   </div>

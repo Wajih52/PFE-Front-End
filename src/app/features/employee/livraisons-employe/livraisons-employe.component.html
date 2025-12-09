@@ -2,14 +2,14 @@
 
 <div class="livraisons-employe">
   <div class="page-header">
-    <h1>🚚 Mes Livraisons</h1>
+    <h1><span class="material-symbols-outlined md-48 cl-dark">local_shipping</span> Mes Livraisons</h1>
     <p class="subtitle">Gérez vos livraisons affectées</p>
   </div>
 
   <!-- Statistiques Rapides -->
   <div class="stats-cards">
     <div class="stat-card">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">numbers</span></div>
       <div class="stat-content">
         <h3>{{ stats().total }}</h3>
         <p>Total livraisons</p>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="stat-card highlight">
-      <div class="stat-icon">⏰</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-white">timer</span></div>
       <div class="stat-content">
         <h3>{{ stats().aujourdhui }}</h3>
         <p>Aujourd'hui</p>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon">📅</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">calendar_month</span></div>
       <div class="stat-content">
         <h3>{{ stats().aVenir }}</h3>
         <p>À venir</p>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><span class="material-symbols-outlined md-36 cl-dark">check_box</span></div>
       <div class="stat-content">
         <h3>{{ stats().terminees }}</h3>
         <p>Terminées</p>
@@ -123,7 +123,7 @@
   <div *ngIf="!isLoading()" class="livraisons-list">
 
     <div *ngIf="livraisonsFiltrees().length === 0" class="empty-state">
-      <p>📭 Aucune livraison ne correspond à vos critères</p>
+      <p><span class="material-symbols-outlined md-36 cl-dark">inbox</span> Aucune livraison ne correspond à vos critères</p>
     </div>
 
     <div *ngFor="let livraison of livraisonsFiltrees()"
@@ -132,7 +132,7 @@
 
       <div class="livraison-header">
         <div class="livraison-info">
-          <span class="statut-icon">{{ getStatutIcon(livraison.statutLivraison) }}</span>
+          <span class="statut-icon"><span class="material-symbols-outlined md-36 cl-dark">{{ getStatutIcon(livraison.statutLivraison) }}</span></span>
           <div>
             <h3>{{ livraison.titreLivraison }}</h3>
             <span class="badge"
@@ -146,7 +146,7 @@
       <div class="livraison-body">
         <div class="info-row">
           <div class="info-item">
-            <span class="icon">📅</span>
+            <span class="icon"><span class="material-symbols-outlined  cl-dark">calendar_month</span></span>
             <div class="info-content">
               <span class="label">Date</span>
               <span class="value">{{ formatDate(livraison.dateLivraison) }}</span>
@@ -154,7 +154,7 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">🕒</span>
+            <span class="icon"><span class="material-symbols-outlined  cl-dark">timer</span></span>
             <div class="info-content">
               <span class="label">Heure</span>
               <span class="value">{{ formatHeure(livraison.heureLivraison) }}</span>
@@ -164,7 +164,7 @@
 
         <div class="info-row">
           <div class="info-item full-width">
-            <span class="icon">📍</span>
+            <span class="icon"><span class="material-symbols-outlined  cl-dark">location_on</span></span>
             <div class="info-content">
               <span class="label">Adresse</span>
               <span class="value">{{ livraison.adresseLivraison }}</span>
@@ -175,7 +175,7 @@
 
         <div class="info-row" *ngIf="livraison.observations">
           <div class="info-item full-width">
-            <span class="icon">💬</span>
+            <span class="icon"><span class="material-symbols-outlined  cl-dark">chat</span></span>
             <div class="info-content">
               <span class="label">Observations</span>
               <span class="value">{{ livraison.observations }}</span>

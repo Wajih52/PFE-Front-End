@@ -3,7 +3,7 @@
   <div class="page-header">
     <div class="header-content">
       <h1>
-        <span class="icon">🔔</span>
+        <span class="icon"><span class="material-symbols-outlined md-48 cl-white">notifications</span></span>
        Centre Notifications
       </h1>
       <p class="subtitle">Consultez toutes vos notifications</p>
@@ -77,7 +77,7 @@
           (click)="changerTri('date_desc')"
           title="Plus récent d'abord"
         >
-          ⬇️ Récent
+          <span class="material-symbols-outlined md-18  cl-white">arrow_downward_alt</span> Récent
         </button>
         <button
           class="filter-btn icon-btn"
@@ -85,7 +85,7 @@
           (click)="changerTri('date_asc')"
           title="Plus ancien d'abord"
         >
-          ⬆️ Ancien
+          <span class="material-symbols-outlined md-18  cl-white">arrow_upward_alt</span> Ancien
         </button>
       </div>
 
@@ -96,7 +96,7 @@
         (click)="toggleAffichageGroupe()"
         title="Grouper par type"
       >
-        📁 {{ affichageGroupe() ? 'Liste' : 'Grouper' }}
+        <span class="material-symbols-outlined md-18  cl-white">folder</span> {{ affichageGroupe() ? 'Liste' : 'Grouper' }}
       </button>
 
       <!-- Action globale -->
@@ -105,7 +105,7 @@
           class="btn-action primary"
           (click)="marquerToutesCommeLues()"
         >
-          ✓ Tout marquer comme lu
+          <span class="material-symbols-outlined md-18  cl-white">check</span> Tout marquer comme lu
         </button>
       }
     </div>

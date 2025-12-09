@@ -20,7 +20,7 @@
     @if (submitSuccess()) {
       <div class="alert alert-success">
         <div class="alert-header">
-          <span class="alert-icon">✅</span>
+          <span class="alert-icon"><span class="material-symbols-outlined  cl-success">check_box</span></span>
           <h3>Réclamation créée avec succès!</h3>
         </div>
         <div class="alert-body">
@@ -36,7 +36,7 @@
     @if (submitError()) {
       <div class="alert alert-error">
         <div class="alert-header">
-          <span class="alert-icon">⚠️</span>
+          <span class="alert-icon"><span class="material-symbols-outlined  cl-white">warning</span></span>
           <h3>Erreur</h3>
         </div>
         <div class="alert-body">
@@ -205,7 +205,7 @@
 
       <!-- Note légale -->
       <div class="legal-note">
-        <span class="note-icon">🔒</span>
+        <span class="note-icon"><span class="material-symbols-outlined  cl-dark">security</span></span>
         <p>
           Vos informations sont traitées de manière confidentielle.
           Nous nous engageons à vous répondre dans les 48 heures ouvrées.
