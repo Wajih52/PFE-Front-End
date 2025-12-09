@@ -11,7 +11,7 @@
 
     <!-- Avatar ou initiales -->
     <div class="user-avatar">
-      <img *ngIf="userImage" [src]="userImage" [alt]="userName" class="avatar-img">
+      <img *ngIf="userImage" [src]="getImageUrl(userImage)" [alt]="userName" class="avatar-img">
       <span *ngIf="!userImage" class="avatar-initials">{{ getUserInitials() }}</span>
     </div>
 
@@ -33,7 +33,7 @@
     <!-- En-tête du dropdown avec infos utilisateur -->
     <div class="dropdown-header">
       <div class="header-avatar">
-        <img *ngIf="userImage" [src]="userImage" [alt]="userName" class="header-avatar-img">
+        <img *ngIf="userImage" [src]="getImageUrl(userImage)" [alt]="userName" class="header-avatar-img">
         <span *ngIf="!userImage" class="header-avatar-initials">{{ getUserInitials() }}</span>
       </div>
       <div class="header-info">

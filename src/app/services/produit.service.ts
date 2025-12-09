@@ -10,6 +10,7 @@ import {
   ProduitResponse, StockStatistiques,
   TypeProduit
 } from '../core/models';
+import{variables} from '../core/environement/variables';
 
 // ==================== INTERFACES ===================
 
@@ -38,7 +39,7 @@ export interface DisponibilitePeriodeResponse {
 })
 export class ProduitService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/produits';
+  private readonly API_URL =`${variables.apiUrl}/produits`;
 
   // ============================================
   // GESTION DES PRODUITS (CRUD)

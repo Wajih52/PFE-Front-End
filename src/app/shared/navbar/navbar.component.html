@@ -20,7 +20,7 @@
 
       <!-- Auth Buttons -->
       <div class="navbar-actions">
-        <!-- ✅ Utiliser async pipe pour la réactivité automatique -->
+        <!--  Utiliser async pipe pour la réactivité automatique -->
         <ng-container *ngIf="isAuthenticated$ | async; else notAuthenticated">
           <div class="user-menu">
             <app-profile-dropdown></app-profile-dropdown>

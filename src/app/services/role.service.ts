@@ -4,13 +4,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoleRequest, RoleResponse } from '../core/models';
+import{variables} from '../core/environement/variables';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoleService {
-  private baseUrl = 'http://localhost:8080/api/roles';
-  private userRoleUrl = 'http://localhost:8080/api/utilisateur-roles';
+  private baseUrl = `${variables.apiUrl}/roles`;
+  private userRoleUrl = `${variables.apiUrl}/utilisateur-roles`;
 
   constructor(private http: HttpClient) {}
 

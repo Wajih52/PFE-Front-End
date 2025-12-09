@@ -7,6 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { SidebarMenuService } from '../../../services/sidebar-menu.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MenuItem } from '../../../core/models/menu-item.model';
+import{variables} from '../../../core/environement/variables';
 
 /**
  * Composant Dropdown du profil utilisateur
@@ -40,6 +41,8 @@ export class ProfileDropdownComponent implements OnInit, OnDestroy {
 
   /** État du dropdown (ouvert/fermé) */
   isOpen: boolean = false;
+
+  IMAGE_BASE_URL = 'http://localhost:8080';
 
   private destroy$ = new Subject<void>();
 
@@ -88,9 +91,23 @@ export class ProfileDropdownComponent implements OnInit, OnDestroy {
         if (user) {
           this.userName = `${user.prenom} ${user.nom}`;
           this.userEmail = user.email;
-          this.userImage = user.image ? `http://localhost:8080${user.image}` : null;
+          this.userImage = user.image ;
         }
       });
+  }
+
+  //  Méthode pour obtenir l'URL complète de l'image
+  getImageUrl(imagePath?: string): string {
+
+    if (!imagePath) return 'assets/images/default-avatar.png';
+
+    // Si l'image commence déjà par http, la retourner telle quelle
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+
+    // Sinon, construire l'URL complète
+    return `${this.IMAGE_BASE_URL}${imagePath}`;
   }
 
   /**

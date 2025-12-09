@@ -2,13 +2,14 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, interval, switchMap, tap, catchError, of } from 'rxjs';
 import { NotificationResponse, NotificationCount } from '../core/models/notification.model';
+import{variables} from '../core/environement/variables';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationPersistantService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/notifications';
+  private readonly API_URL = `${variables.apiUrl}/notifications`;
 
   // Signals pour state management réactif
   notificationsNonLues = signal<NotificationResponse[]>([]);

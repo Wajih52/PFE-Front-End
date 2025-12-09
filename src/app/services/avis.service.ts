@@ -9,13 +9,14 @@ import {
   StatistiquesAvisDto,
   StatutAvis
 } from '../core/models/avis.model';
+import{variables} from '../core/environement/variables';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AvisService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/avis';
+  private apiUrl =`${variables.apiUrl}/avis`;
 
   // ============================================
   // CLIENT

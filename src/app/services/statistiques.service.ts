@@ -4,6 +4,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DashboardStatistiques } from '../core/models/statistiques.model';
+import{variables} from '../core/environement/variables';
 
 /**
  * Service pour gérer les statistiques et analytics
@@ -13,7 +14,7 @@ import { DashboardStatistiques } from '../core/models/statistiques.model';
 })
 export class StatistiquesService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/statistiques';
+  private readonly API_URL = `${variables.apiUrl}/statistiques`;
 
   /**
    * Obtenir toutes les statistiques du dashboard

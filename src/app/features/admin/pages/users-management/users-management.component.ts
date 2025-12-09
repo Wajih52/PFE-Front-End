@@ -10,6 +10,7 @@ import {ManageUserRolesModalComponent} from '../manage-user-roles-modal/manage-u
 import {
   LucideAngularModule,
   UsersRound, UserPlus, ShieldX, ShieldCheck, ShieldMinus, Eye, FileUser, Trash2, FilePenLine} from 'lucide-angular';
+import{variables} from '../../../../core/environement/variables';
 
 interface User {
   idUtilisateur: number;
@@ -56,7 +57,7 @@ export class UsersManagementComponent implements OnInit {
   private imageService = inject(ImageService);
   private datePipe = inject(DatePipe);
 
-  API_URL = 'http://localhost:8080/api/utilisateurs';
+  API_URL = `${variables.apiUrl}/utilisateurs`;
   IMAGE_BASE_URL = 'http://localhost:8080';
 
   //icone lucide

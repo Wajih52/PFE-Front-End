@@ -1,6 +1,5 @@
 // src/app/services/ligne-reservation.service.ts
-// 🛒 Service de gestion des lignes de réservation
-// Correspond aux endpoints du LigneReservationController
+
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -11,6 +10,8 @@ import {
 } from '../core/models/reservation.model';
 import { InstanceProduitResponse } from '../core/models';
 
+import{variables} from '../core/environement/variables';
+
 /**
  * Service pour gérer les lignes de réservation (produits dans le panier)
  * API: /api/lignes-reservation
@@ -20,7 +21,7 @@ import { InstanceProduitResponse } from '../core/models';
 })
 export class LigneReservationService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/lignes-reservation';
+  private readonly API_URL = `${variables.apiUrl}/lignes-reservation`;
 
   // ============================================
   // CRÉATION ET AJOUT

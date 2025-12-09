@@ -16,16 +16,17 @@ import {
   VerificationModificationDatesDto
 } from '../core/models/reservation.model';
 
+import{variables} from '../core/environement/variables';
+
 /**
  * Service de gestion des réservations et devis
- * Sprint 4 - Gestion des réservations
  */
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/reservations';
+  private readonly API_URL = `${variables.apiUrl}/reservations`;
 
   // ============================================
   //  VÉRIFICATION DISPONIBILITÉ

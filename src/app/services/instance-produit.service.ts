@@ -8,6 +8,7 @@ import {
   InstanceProduitResponse, MouvementStockResponse,
   StatutInstance
 } from '../core/models';
+import{variables} from '../core/environement/variables';
 
 /**
  * Service de gestion des instances de produits
@@ -20,7 +21,7 @@ import {
 })
 export class InstanceProduitService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/instances';
+  private readonly API_URL = `${variables.apiUrl}/instances`;
 
   // ============ CRUD DE BASE ============
 
