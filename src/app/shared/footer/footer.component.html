@@ -30,7 +30,7 @@
               rel="noopener noreferrer"
               [title]="social.name"
               class="social-link">
-              {{ social.icon }}
+              <i [class]="social.icon"   [ngStyle]="{'color': social.color, 'font-size.px': 24}"></i>
             </a>
           </div>
         </div>
@@ -64,28 +64,28 @@
           <h4 class="footer-title">Contact</h4>
           <ul class="footer-contact">
             <li class="contact-item">
-              <span class="contact-icon">📍</span>
+              <span class="contact-icon"><span class="material-symbols-outlined cl-white">location_on</span></span>
               <div class="contact-info">
                 <p>Avenue Habib Bourguiba</p>
                 <p>Mahdia, Tunisie</p>
               </div>
             </li>
             <li class="contact-item">
-              <span class="contact-icon">📞</span>
+              <span class="contact-icon"><span class="material-symbols-outlined cl-white">mobile</span></span>
               <div class="contact-info">
                 <p>+216 98 661 402</p>
                 <p>+216 98 701 757</p>
               </div>
             </li>
             <li class="contact-item">
-              <span class="contact-icon">✉️</span>
+              <span class="contact-icon"><span class="material-symbols-outlined cl-white">mail</span></span>
               <div class="contact-info">
                 <p>contact&#64;eleganthive.tn</p>
                 <p>info&#64;eleganthive.tn</p>
               </div>
             </li>
             <li class="contact-item">
-              <span class="contact-icon">🕒</span>
+              <span class="contact-icon"><span class="material-symbols-outlined cl-white">timer</span></span>
               <div class="contact-info">
                 <p>Lun - Sam: 9h - 18h</p>
                 <p>Dimanche: Fermé</p>

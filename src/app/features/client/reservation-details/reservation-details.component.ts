@@ -1,5 +1,4 @@
 // src/app/features/client/reservation-details/reservation-details.component.ts
-// 📋 Composant détails réservation/devis avec modification dates et annulation
 
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';

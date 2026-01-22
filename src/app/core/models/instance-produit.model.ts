@@ -2,20 +2,16 @@
 
 import {EtatPhysique, StatutInstance} from './produit.enums';
 
-/**
- * Requête de création/modification d'instance (InstanceProduitRequestDto.java)
- */
+
 export interface InstanceProduitRequest {
   idProduit: number;
-  numeroSerie?: string;         // Auto-généré si non fourni
+  numeroSerie?: string;
   observation?: string;
   statut?: StatutInstance;      // DISPONIBLE par défaut
   etatPhysique?: EtatPhysique
 }
 
-/**
- * Réponse instance produit (InstanceProduitResponseDto.java)
- */
+
 export interface InstanceProduitResponse {
   idInstance: number;
   numeroSerie: string;

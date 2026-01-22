@@ -2,7 +2,6 @@
 
 /**
  * Modèles pour les statistiques du dashboard
- * Correspondant aux DTOs Java du backend
  */
 
 export interface DashboardStatistiques {

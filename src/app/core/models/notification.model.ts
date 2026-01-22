@@ -44,6 +44,7 @@ export enum TypeNotification {
   // Notifications système
   SYSTEME_INFO = 'SYSTEME_INFO',
   SYSTEME_ALERTE = 'SYSTEME_ALERTE'
+
 }
 
 export interface NotificationCount {

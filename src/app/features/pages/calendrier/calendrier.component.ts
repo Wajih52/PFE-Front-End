@@ -57,9 +57,9 @@ export class CalendrierComponent implements OnInit {
   evenementSelectionne = signal<CalendrierEvent | null>(null);
   afficherModal = signal(false);
 
-  // ============================================
+
   // FILTRES
-  // ============================================
+
   filtres: CalendrierFiltre = {
     inclureReservations: true,
     inclureLivraisons: true,
@@ -84,9 +84,9 @@ export class CalendrierComponent implements OnInit {
     { value: 'RETOURNEE', label: 'Retournée' }
   ];
 
-  // ============================================
+
   // CONFIGURATION FULLCALENDAR
-  // ============================================
+
   calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
     initialView: 'dayGridMonth', // On peut changer Par : 'timeGridWeek', 'timeGridDay', 'listWeek'
@@ -120,9 +120,9 @@ export class CalendrierComponent implements OnInit {
     this.chargerEvenements();
   }
 
-  // ============================================
+
   // CHARGEMENT DES DONNÉES
-  // ============================================
+
   private chargerDonneesInitiales(): void {
     // Charger les clients
     this.utilisateurService.getAllUtilisateurs().subscribe({
@@ -179,9 +179,9 @@ export class CalendrierComponent implements OnInit {
     });
   }
 
-  // ============================================
+
   // GESTION DES ÉVÉNEMENTS FULLCALENDAR
-  // ============================================
+
   handleEventClick(clickInfo: EventClickArg): void {
     const eventData = clickInfo.event.extendedProps['eventData'] as CalendrierEvent;
     this.evenementSelectionne.set(eventData);
@@ -201,9 +201,9 @@ export class CalendrierComponent implements OnInit {
     });
   }
 
-  // ============================================
+
   // GESTION DES FILTRES
-  // ============================================
+
   appliquerFiltres(): void {
     this.chargerEvenements();
   }
@@ -251,9 +251,9 @@ export class CalendrierComponent implements OnInit {
     }
   }
 
-  // ============================================
+
   // MODAL
-  // ============================================
+
   fermerModal(): void {
     this.afficherModal.set(false);
     this.evenementSelectionne.set(null);

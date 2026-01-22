@@ -12,10 +12,7 @@ import {
 } from '../core/models/livraison.model';
 import {LigneReservationResponseDto, StatutLivraison} from '../core/models/reservation.model';
 
-/**
- * Service pour gérer les livraisons
- * Sprint 6 - Gestion des livraisons
- */
+
 @Injectable({
   providedIn: 'root'
 })
@@ -219,29 +216,8 @@ export class LivraisonService {
   }
 
   // ============================================
-  // STATISTIQUES
-  // ============================================
-
-  /**
-   * Compter les livraisons par statut
-   */
-  countByStatut(statut: StatutLivraison): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/statistiques/statut/${statut}`);
-  }
-
-  // ============================================
   // MÉTHODES UTILITAIRES
   // ============================================
-
-  /**
-   * Formatter la date pour l'API (YYYY-MM-DD)
-   */
-  formatDateForApi(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
 
   /**
    * Formatter l'heure pour l'API (HH:mm:ss)

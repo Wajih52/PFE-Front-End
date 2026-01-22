@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { StorageService } from '../services/storage.service';
 import { TokenMonitorService } from '../services/token-monitor.service';
+import {NotificationService} from '../../services/notification.service';
 
 /**
  * Intercepteur de gestion des erreurs HTTP
@@ -32,14 +33,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           req.url.includes('/inscriptions');
 
         if (isAuthRequest) {
-          // ✅ Si c'est une tentative de connexion/inscription ratée
+          //  Si c'est une tentative de connexion/inscription ratée
           // → On ne redirige PAS, on laisse le composant gérer l'erreur
-          console.warn('❌ Échec d\'authentification : identifiants incorrects');
+          console.warn('Échec d\'authentification : identifiants incorrects');
 
         } else {
-          // ✅ Si c'est une requête authentifiée qui a échoué
+          //  Si c'est une requête authentifiée qui a échoué
           // → C'est un token expiré/invalide, on redirige
-          console.error('🔒 Erreur 401 : Token expiré ou invalide');
+          console.error(' Erreur 401 : Token expiré ou invalide');
 
           // Arrêter la surveillance du token
           tokenMonitor.stopMonitoring();
@@ -56,14 +57,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       // 403 Forbidden - Pas les permissions nécessaires
       if (error.status === 403) {
-        console.error('⛔ Erreur 403 : Accès interdit', error.error);
+        console.error('Erreur 403 : Accès interdit', error.error);
 
         //  Vérifier si c'est l'erreur de connexion Google avec compte classique
         const errorMessage = error.error?.message || '';
         if (errorMessage.includes('déjà utilisé avec une connexion classique') ||
           errorMessage.includes('Cet email est déjà utilisé')) {
 
-          console.error('🔐 Connexion Google refusée - Compte classique existant');
+          console.error(' Connexion Google refusée - Compte classique existant');
           router.navigate(['/auth/login'], {
             queryParams: {
               access: 'false',
@@ -72,25 +73,20 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           });
         } else {
           // Autres erreurs 403
-          console.error('⛔ Erreur 403 : Permissions insuffisantes');
+          console.error('Erreur 403 : Permissions insuffisantes');
           router.navigate(['/access-denied']);
         }
       }
 
       // 500 Internal Server Error
       if (error.status === 500) {
-        console.error('💥 Erreur 500 : Erreur serveur', error.message);
+        console.error('Erreur 500 : Erreur serveur', error.message);
 
-        // Optionnel : Afficher une notification à l'utilisateur
-        // this.notificationService.error('Erreur serveur, veuillez réessayer');
       }
 
       // 0 - Pas de connexion au serveur
       if (error.status === 0) {
-        console.error('🌐 Erreur réseau : Impossible de contacter le serveur');
-
-        // Optionnel : Afficher une notification
-        // this.notificationService.error('Impossible de contacter le serveur');
+        console.error('Erreur réseau : Impossible de contacter le serveur');
       }
 
       // Propager l'erreur pour que le service puisse la gérer

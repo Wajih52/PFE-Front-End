@@ -4,7 +4,6 @@ import {LucideIconData} from 'lucide-angular';
 
 /**
  * Interface pour définir un élément de menu (sidebar ou dropdown)
- * Permet une configuration flexible et extensible
  */
 export interface MenuItem {
   /** Identifiant unique de l'élément */

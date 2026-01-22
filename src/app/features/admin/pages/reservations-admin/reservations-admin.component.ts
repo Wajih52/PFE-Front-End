@@ -1,5 +1,4 @@
 // src/app/features/admin/reservations-admin/reservations-admin.component.ts
-// 👑 Composant ADMIN - Liste complète des réservations avec filtres avancés
 
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -302,7 +301,7 @@ export class ReservationsAdminComponent implements OnInit {
     ).subscribe({
       next: (facture) => {
         this.successMessage.set(
-          `✅ Facture ${typeLabels[typeFacture]} ${facture.numeroFacture} générée !`
+          `Facture ${typeLabels[typeFacture]} ${facture.numeroFacture} générée !`
         );
         this.generatingFacture.set(null);
 

@@ -1,7 +1,7 @@
 
 
 /**
- * Énumérations correspondant aux enums Java
+ * Énumérations
  */
 export enum StatutCompte {
   ACTIVE = 'ACTIVE',

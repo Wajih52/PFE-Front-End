@@ -24,9 +24,9 @@ export class CatalogueListComponent implements OnInit {
   private router = inject(Router);
   private toastr = inject(ToastrService);
 
-  // ============================================
+
   //  DATES DE LOCATION (CRITIQUES)
-  // ============================================
+
 
   // Dates par défaut : Demain et après-demain
   dateDebutLocation: string = '';
@@ -34,9 +34,9 @@ export class CatalogueListComponent implements OnInit {
   minDate: string;
 
 
-  // ============================================
+
   // État du catalogue
-  // ============================================
+
 
   produits = signal<ProduitResponse[]>([]);
   isLoading = signal<boolean>(true);
@@ -238,7 +238,7 @@ export class CatalogueListComponent implements OnInit {
           this.isLoading.set(false);
         },
         error: (error) => {
-          console.error('❌ Erreur chargement catalogue:', error);
+          console.error('Erreur chargement catalogue:', error);
           this.errorMessage.set('Impossible de charger le catalogue');
           this.isLoading.set(false);
         }
@@ -257,10 +257,10 @@ export class CatalogueListComponent implements OnInit {
           });
 
           this.isLoading.set(false);
-          console.log(`✅ ${produits.length} produits disponibles du ${this.dateDebutLocation} au ${this.dateFinLocation}`);
+          console.log(`${produits.length} produits disponibles du ${this.dateDebutLocation} au ${this.dateFinLocation}`);
         },
         error: (error) => {
-          console.error('❌ Erreur chargement catalogue:', error);
+          console.error('Erreur chargement catalogue:', error);
           this.errorMessage.set('Impossible de charger le catalogue');
           this.isLoading.set(false);
         }
@@ -272,7 +272,7 @@ export class CatalogueListComponent implements OnInit {
    *  Recharger le catalogue quand les dates changent
    */
   onDatesChange(): void {
-    console.log(`📅 Dates modifiées: ${this.dateDebutLocation} → ${this.dateFinLocation}`);
+    console.log(`Dates modifiées: ${this.dateDebutLocation} → ${this.dateFinLocation}`);
       if (this.dateDebutLocation && this.dateFinLocation) {
       this.chargerCatalogue(); // Recharge tout + recalcule disponibilités
       }
@@ -305,7 +305,7 @@ export class CatalogueListComponent implements OnInit {
   ajouterAuPanier(produit: ProduitResponse): void {
     // Validation des dates
     if (!this.dateDebutLocation || !this.dateFinLocation) {
-      this.toastr.warning('⚠️ Veuillez sélectionner des dates de location');
+      this.toastr.warning('Veuillez sélectionner des dates de location');
       return;
     }
 
@@ -352,14 +352,14 @@ export class CatalogueListComponent implements OnInit {
             imageProduit: produit.imageProduit || ''
           });
 
-          console.log(`✅ ${produit.nomProduit} ajouté au panier`);
+          console.log(`${produit.nomProduit} ajouté au panier`);
           this.toastr.success(`${produit.nomProduit} ajouté au panier`, ' Succès');
         } else {
           this.toastr.error(disponibilite.message || 'Produit indisponible', ' Stock insuffisant');
         }
       },
       error: (error) => {
-        console.error('❌ Erreur vérification disponibilité:', error);
+        console.error('Erreur vérification disponibilité:', error);
         this.toastr.error('Impossible de vérifier la disponibilité du produit');
       }
     });

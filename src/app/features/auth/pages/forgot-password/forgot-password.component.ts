@@ -48,10 +48,10 @@ export class ForgotPasswordComponent {
 
     this.authService.requestPasswordReset(data).subscribe({
       next: (response) => {
-        console.log('✅ Email de réinitialisation envoyé', response);
+        console.log('Email de réinitialisation envoyé', response);
 
         this.successMessage = response.message ||
-          '✅ Un email de réinitialisation vous a été envoyé. Vérifiez votre boîte mail.';
+          'Un email de réinitialisation vous a été envoyé. Vérifiez votre boîte mail.';
 
         // Désactiver le formulaire après succès
         this.forgotPasswordForm.disable();
@@ -66,9 +66,8 @@ export class ForgotPasswordComponent {
         }, 10000);
       },
       error: (error) => {
-        console.error('❌ Erreur', error);
+        console.error('Erreur', error);
 
-        // ✅ Ajouter ceci en premier
         this.errorMessage = error.error?.message || error.error || 'Erreur lors de l\'envoi';
         this.isLoading = false;
       },

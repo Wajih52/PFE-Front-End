@@ -131,7 +131,7 @@ export class AjouterPaiementComponent implements OnInit {
         this.succes = true;
         this.loading = false;
 
-        this.toastr.success(`✅ Paiement enregistré avec succès !\n\nCode: ${response.codePaiement}\nMontant: ${formatMontantTND(response.montantPaiement)}\n\nVotre paiement est en attente de validation par un administrateur.`);
+        this.toastr.success(`Paiement enregistré avec succès !\n\nCode: ${response.codePaiement}\nMontant: ${formatMontantTND(response.montantPaiement)}\n\nVotre paiement est en attente de validation par un administrateur.`);
         this.notificationPersist.refreshCount();
         if (this.storage.isClient()) {
           this.router.navigate(['client/mes-paiements']);

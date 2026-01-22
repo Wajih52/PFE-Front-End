@@ -12,9 +12,7 @@ import{variables} from '../core/environement/variables';
 
 /**
  * Service de gestion des instances de produits
- * Communique avec le InstanceProduitController Spring Boot
- *
- * Concerne uniquement les produits AVEC_REFERENCE
+ * Concerne les produits AVEC_REFERENCE
  */
 @Injectable({
   providedIn: 'root'
@@ -28,7 +26,6 @@ export class InstanceProduitService {
   /**
    * Créer une nouvelle instance
    * POST /api/instances
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   creerInstance(dto: InstanceProduitRequest): Observable<InstanceProduitResponse> {
     return this.http.post<InstanceProduitResponse>(this.API_URL, dto);
@@ -36,8 +33,6 @@ export class InstanceProduitService {
 
   /**
    * Créer des instances en lot
-   * POST /api/instances/lot?idProduit={id}&quantite={quantite}&prefixeNumeroSerie={prefixe}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   creerInstancesEnLot(
     idProduit: number,
@@ -54,7 +49,6 @@ export class InstanceProduitService {
   /**
    * Modifier une instance
    * PUT /api/instances/{id}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   modifierInstance(id: number, dto: InstanceProduitRequest): Observable<InstanceProduitResponse> {
     return this.http.put<InstanceProduitResponse>(`${this.API_URL}/${id}`, dto);
@@ -63,7 +57,6 @@ export class InstanceProduitService {
   /**
    * Supprimer une instance
    * DELETE /api/instances/{id}
-   * @requires ROLE: ADMIN
    */
   supprimerInstance(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`);
@@ -125,7 +118,6 @@ export class InstanceProduitService {
   /**
    * Instances d'une ligne de réservation
    * GET /api/instances/ligne-reservation/{idLigneReservation}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getInstancesByLigneReservation(idLigneReservation: number): Observable<InstanceProduitResponse[]> {
     return this.http.get<InstanceProduitResponse[]>(`${this.API_URL}/ligne-reservation/${idLigneReservation}`);
@@ -136,7 +128,6 @@ export class InstanceProduitService {
   /**
    * Changer le statut d'une instance
    * PATCH /api/instances/{id}/statut?statut={statut}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   changerStatut(id: number, statut: StatutInstance): Observable<InstanceProduitResponse> {
     const params = new HttpParams().set('statut', statut);
@@ -148,7 +139,6 @@ export class InstanceProduitService {
   /**
    * Envoyer en maintenance
    * POST /api/instances/{id}/maintenance
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   envoyerEnMaintenance(id: number, motif: string): Observable<InstanceProduitResponse> {
     const params = new HttpParams().set('motif',motif)
@@ -158,7 +148,6 @@ export class InstanceProduitService {
   /**
    * Retourner de maintenance
    * POST /api/instances/{id}/retour-maintenance
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   retournerDeMaintenance(id: number,dateProchainMaintenance:any): Observable<InstanceProduitResponse> {
     const params = new HttpParams().set('dateProchainMaintenance', dateProchainMaintenance);
@@ -168,7 +157,6 @@ export class InstanceProduitService {
   /**
    * Lister les instances en maintenance
    * GET /api/instances/maintenance
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getInstancesEnMaintenance(): Observable<InstanceProduitResponse[]> {
     return this.http.get<InstanceProduitResponse[]>(`${this.API_URL}/maintenance`);
@@ -177,7 +165,6 @@ export class InstanceProduitService {
   /**
    * Maintenances qui vont expirer
    * GET /api/instances/maintenance/expiration?jours={jours}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getMaintenancesExpiration(jours: number): Observable<InstanceProduitResponse[]> {
     const params = new HttpParams().set('jours', jours.toString());
@@ -209,7 +196,6 @@ export class InstanceProduitService {
   /**
    * Affecter une instance à une ligne de réservation
    * POST /api/instances/{id}/affecter?idLigneReservation={idLigne}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   affecterAReservation(id: number, idLigneReservation: number): Observable<InstanceProduitResponse> {
     const params = new HttpParams().set('idLigneReservation', idLigneReservation.toString());
@@ -219,7 +205,6 @@ export class InstanceProduitService {
   /**
    * Libérer une instance d'une réservation
    * POST /api/instances/{id}/liberer
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   libererDeReservation(id: number): Observable<InstanceProduitResponse> {
     return this.http.post<InstanceProduitResponse>(`${this.API_URL}/${id}/liberer`, null);
@@ -227,7 +212,6 @@ export class InstanceProduitService {
 
   /**
    * Obtenir l'historique des mouvements d'une instance spécifique
-   * Utilise le repository MouvementStock avec findByCodeInstanceOrderByDateMouvementDesc
    */
   getHistoriqueMouvementsInstance(numeroSerie: string): Observable<MouvementStockResponse[]> {
     return this.http.get<MouvementStockResponse[]>(

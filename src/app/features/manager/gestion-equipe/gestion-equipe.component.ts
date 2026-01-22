@@ -24,7 +24,7 @@ interface EmployeStatistiques {
 
 /**
  * Gestion d'équipe pour les managers
- * Affiche la liste des employés avec statistiques et gestion
+ * Affiche la liste des employés avec statistiques
  */
 @Component({
   selector: 'app-gestion-equipe',

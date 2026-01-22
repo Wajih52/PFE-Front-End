@@ -161,13 +161,13 @@ export class PanierComponent implements OnInit {
   /**
    * méthode utile pouur linput quantité souhaité dans le panier
    */
-// 1️⃣ Obtenir le max
+// 1- Obtenir le max
   getQuantiteMax(ligne: LignePanier): number {
     const dispo = this.getDisponibiliteLigne(ligne);
     return dispo ? dispo.quantiteMax : 1;
   }
 
-// 2️⃣ Saisie en temps réel (avec validation)
+// 2- Saisie en temps réel (avec validation)
   onQuantiteInputChange(ligne: LignePanier, event: Event): void {
     const input = event.target as HTMLInputElement;
     let nouvelleQuantite = parseInt(input.value, 10);
@@ -183,7 +183,7 @@ export class PanierComponent implements OnInit {
       input.value = quantiteMax.toString();
       this.toastr.info(
         `Quantité ajustée au maximum disponible (${quantiteMax})`,
-        '📊 Stock limité'
+        'Stock limité'
       );
     }
 
@@ -196,7 +196,7 @@ export class PanierComponent implements OnInit {
     );
   }
 
-// 3️⃣ Validation finale (au blur)
+// 3- Validation finale (quand on quitte le chamop)
   validerQuantite(ligne: LignePanier, event: Event): void {
     const input = event.target as HTMLInputElement;
     let nouvelleQuantite = parseInt(input.value, 10);
@@ -221,7 +221,7 @@ export class PanierComponent implements OnInit {
    */
   modifierQuantite(ligne: LignePanier, nouvelleQuantite: number): void {
     if (nouvelleQuantite < 1) {
-      this.toastr.warning('La quantité doit être au moins 1', '⚠️ Quantité invalide');
+      this.toastr.warning('La quantité doit être au moins 1', 'Quantité invalide');
       return;
     }
 
@@ -251,17 +251,17 @@ export class PanierComponent implements OnInit {
           });
           this.disponibilitesParLigne.set(dispos);
 
-          this.toastr.success('Quantité mise à jour', '✅ Panier');
+          this.toastr.success('Quantité mise à jour', 'Panier');
         } else {
           this.toastr.error(
             disponibilite.message || 'Quantité non disponible',
-            '❌ Stock insuffisant'
+            'Stock insuffisant'
           );
         }
       },
       error: (error) => {
         console.error('Erreur vérification disponibilité:', error);
-        this.toastr.error('Impossible de vérifier la disponibilité', '❌ Erreur');
+        this.toastr.error('Impossible de vérifier la disponibilité', 'Erreur');
       }
     });
   }
@@ -339,7 +339,7 @@ export class PanierComponent implements OnInit {
    */
   sauvegarderObservations(): void {
     this.panierService.setObservations(this.observations());
-   // this.toastr.info('Observations enregistrées', 'ℹ️ Panier');
+   // this.toastr.info('Observations enregistrées', 'Panier');
   }
 
   /**
@@ -347,7 +347,7 @@ export class PanierComponent implements OnInit {
    */
   demanderDevis(): void {
     if (this.estVide()) {
-      this.toastr.warning('Votre panier est vide', '⚠️ Panier vide');
+      this.toastr.warning('Votre panier est vide', 'Panier vide');
       return;
     }
 
@@ -358,7 +358,7 @@ export class PanierComponent implements OnInit {
     if (!toutesDisponibles) {
       this.toastr.error(
         'Certains produits ne sont plus disponibles. Veuillez retirer les lignes indisponibles.',
-        '❌ Produits indisponibles'
+        'Produits indisponibles'
       );
       return;
     }
@@ -380,14 +380,14 @@ export class PanierComponent implements OnInit {
 
     this.reservationService.creerDevis(devisRequest).subscribe({
       next: (reservation) => {
-        this.toastr.success('Votre demande de devis a été envoyée', '✅ Devis créé');
+        this.toastr.success('Votre demande de devis a été envoyée', 'Devis créé');
         this.panierService.viderPanier();
         this.notificationPersist.refreshCount();
         this.router.navigate(['client/mes-devis']);
       },
       error: (error) => {
         console.error('Erreur création devis:', error);
-        this.toastr.error('Impossible de créer le devis', '❌ Erreur');
+        this.toastr.error('Impossible de créer le devis', 'Erreur');
         this.isCreatingDevis.set(false);
       }
     });
@@ -398,7 +398,7 @@ export class PanierComponent implements OnInit {
    */
   commanderDirectement(): void {
     if (this.estVide()) {
-      this.toastr.warning('Votre panier est vide', '⚠️ Panier vide');
+      this.toastr.warning('Votre panier est vide', 'Panier vide');
       return;
     }
 
@@ -409,7 +409,7 @@ export class PanierComponent implements OnInit {
     if (!toutesDisponibles) {
       this.toastr.error(
         'Certains produits ne sont plus disponibles. Veuillez retirer les lignes indisponibles.',
-        '❌ Produits indisponibles'
+        'Produits indisponibles'
       );
       return;
     }

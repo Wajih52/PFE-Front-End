@@ -82,7 +82,7 @@ export class ChangePasswordComponent implements OnInit {
 
     this.http.post(`http://localhost:8080/utilisateurs/${this.userId}/change-password`, data).subscribe({
       next: () => {
-        this.successMessage = '✅ Mot de passe modifié avec succès !';
+        this.successMessage = 'Mot de passe modifié avec succès !';
         this.isLoading = false;
 
         // Rediriger vers le profil après 2 secondes
@@ -91,7 +91,7 @@ export class ChangePasswordComponent implements OnInit {
         }, 2000);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || '❌ Erreur lors du changement de mot de passe';
+        this.errorMessage = err.error?.message || 'Erreur lors du changement de mot de passe';
         this.isLoading = false;
       }
     });

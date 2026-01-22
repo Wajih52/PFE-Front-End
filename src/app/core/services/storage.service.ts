@@ -8,7 +8,6 @@ import { JwtHelperService } from './jwt-helper.service';
 /**
  * Service de gestion du stockage local (localStorage)
  * Gère le token JWT et les informations utilisateur
- * Compatible SSR (Server-Side Rendering)
  */
 @Injectable({
   providedIn: 'root'
@@ -57,7 +56,7 @@ export class StorageService {
 
     //  Vérifier si le token est expiré
     if (this.jwtHelper.isTokenExpired(token)) {
-      console.warn('⏰ Token expiré détecté, nettoyage automatique');
+      console.warn('Token expiré détecté, nettoyage automatique');
       this.clear(); // Nettoyer automatiquement
       return null;
     }

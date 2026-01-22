@@ -1,5 +1,4 @@
 // src/app/features/admin/devis-validation/devis-validation.component.ts
-// 👑 Composant ADMIN - Validation et modification des devis
 
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -157,7 +156,6 @@ export class DevisValidationComponent implements OnInit {
 
   /**
    * Calculer le sous-total d'une ligne AVEC les modifications
-   * (pour affichage en temps réel dans le tableau)
    */
   calculerSousTotalLigne(ligne: any): number {
     // Vérifier s'il y a des modifications pour cette ligne
@@ -209,7 +207,7 @@ export class DevisValidationComponent implements OnInit {
       next: () => {
         this.successMessage.set(` Devis ${devis.referenceReservation} validé avec succès ! Le client sera notifié.`);
         this.showModifModal.set(false);
-        this.chargerDevisEnAttente();// Recharger la liste
+        this.chargerDevisEnAttente();     // Recharger la liste
         /*setTimeout(() => {
           this.genererFactureDevis(devis);
         }, 1000);*/
@@ -271,7 +269,7 @@ export class DevisValidationComponent implements OnInit {
       TypeFacture.DEVIS
     ).subscribe({
       next: (facture) => {
-        this.successMessage.set(`✅ Facture ${facture.numeroFacture} générée !`);
+        this.successMessage.set(`Facture ${facture.numeroFacture} générée !`);
         this.generatingFacture.set(null);
 
         // Télécharger automatiquement

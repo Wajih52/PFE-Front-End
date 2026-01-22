@@ -10,10 +10,7 @@ import {
 } from '../core/models/calendrier.model';
 import { variables } from '../core/environement/variables';
 
-/**
- * Service Angular pour gérer le calendrier
- * API: /api/calendrier
- */
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +23,7 @@ export class CalendrierService {
   // ============================================
 
   /**
-   * 📅 Récupérer les événements avec filtres
+   * Récupérer les événements avec filtres
    * POST /api/calendrier/evenements
    */
   getEvenements(filtres: CalendrierFiltre): Observable<CalendrierEvent[]> {

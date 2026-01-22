@@ -16,29 +16,24 @@ export class FirstLoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-    console.log('🔄 FirstLoginComponent: Starting 4-second countdown...');
-
-    // Rediriger automatiquement vers change-password après 2 secondes
+    // Rediriger automatiquement vers change-password après 4 secondes
     setTimeout(() => {
-
-      console.log('🔄 FirstLoginComponent: Timeout completed, attempting navigation...');
-
 
       this.router.navigate(['/auth/change-password']).then(success => {
         if (success) {
 
-          console.log('✅ Navigation to /auth/change-password successful');
+          console.log('redirection vers /auth/change-password terminé avec succées');
 
         } else {
 
-          console.error('❌ Navigation to /auth/change-password failed');
+          console.error('redirection vers /auth/change-password est echoué');
           // Fallback: try alternative navigation
           this.router.navigate(['/auth/change-password'], {
             replaceUrl: true
           });
         }
       }).catch(error => {
-        console.error('❌ Navigation error:', error);
+        console.error('Navigation error:', error);
       });
 
     }, 4000);

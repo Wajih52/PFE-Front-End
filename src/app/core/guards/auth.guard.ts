@@ -11,8 +11,6 @@ import { JwtHelperService } from '../services/jwt-helper.service';
  * Protège les routes qui nécessitent une authentification
  * Vérifie que l'utilisateur est connecté ET que son token n'est pas expiré
  *
- * Utilisation :
- * { path: 'dashboard', canActivate: [authGuard], component: DashboardComponent }
  */
 export const authGuard: CanActivateFn = (route, state) => {
 
@@ -35,7 +33,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // CAS 2 : Token expiré
   if (jwtHelper.isTokenExpired(token)) {
-    console.warn('⏰ Accès refusé : Token expiré');
+    console.warn('Accès refusé : Token expiré');
 
     // Nettoyer le storage
     storage.clear();
@@ -51,7 +49,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   // CAS 3 : Token valide
-  console.log('✅ Token valide, accès autorisé');
+  console.log('Token valide, accès autorisé');
   return true;
 };
 
@@ -59,23 +57,8 @@ export const authGuard: CanActivateFn = (route, state) => {
  * Guard 2 : Vérifier les rôles
  * Protège les routes qui nécessitent des rôles spécifiques
  *
- * ⚠️ IMPORTANT : Utiliser APRÈS authGuard pour garantir que l'utilisateur est connecté
+ * On l'utilise APRÈS authGuard pour garantir que l'utilisateur est connecté
  *
- * Utilisation :
- * {
- *   path: 'admin',
- *   canActivate: [authGuard, roleGuard(['ADMIN'])],
- *   component: AdminComponent
- * }
- *
- * {
- *   path: 'client',
- *   canActivate: [authGuard, roleGuard(['CLIENT', 'ADMIN'])], // CLIENT OU ADMIN
- *   component: ClientComponent
- * }
- *
- * @param allowedRoles Liste des rôles autorisés (un seul suffit)
- * @returns CanActivateFn
  */
 export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
   return (route, state) => {
@@ -89,7 +72,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     const hasRole = allowedRoles.some(role => userRoles.includes(role));
 
     if (!hasRole) {
-      console.warn(`⛔ Accès refusé : Rôle insuffisant`);
+      console.warn(`   Accès refusé : Rôle insuffisant`);
       console.warn(`   Rôles requis: ${allowedRoles.join(', ')}`);
       console.warn(`   Rôles utilisateur: ${userRoles.join(', ')}`);
 
@@ -98,7 +81,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
       return false;
     }
 
-    console.log(`✅ Rôle valide (${allowedRoles.join(' ou ')}), accès autorisé`);
+    console.log(`Rôle valide (${allowedRoles.join(' ou ')}), accès autorisé`);
     return true;
   };
 };

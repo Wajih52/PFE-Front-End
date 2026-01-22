@@ -4,9 +4,8 @@ import { Injectable } from '@angular/core';
 
 /**
  * Service utilitaire pour manipuler les tokens JWT
- * Adapté pour le backend Spring Boot avec JwtUtil.java
  *
- * Structure du JWT généré par Spring Boot :
+ * Structure du JWT généré par notre Back end (Spring Boot):
  * {
  *   "sub": "username",     // Le username/email de l'utilisateur
  *   "iat": 1703001234,     // Issued At (date création en secondes)
@@ -20,7 +19,6 @@ export class JwtHelperService {
 
   /**
    * Décoder un token JWT sans vérification de signature
-   * La signature est vérifiée côté Spring Boot uniquement
    */
   decodeToken(token: string): any {
     try {
@@ -28,7 +26,7 @@ export class JwtHelperService {
       const parts = token.split('.');
 
       if (parts.length !== 3) {
-        console.error('❌ Token JWT invalide : format incorrect');
+        console.error('Token JWT invalide : format incorrect');
         return null;
       }
 
@@ -38,7 +36,7 @@ export class JwtHelperService {
 
       return JSON.parse(decodedPayload);
     } catch (error) {
-      console.error('❌ Erreur lors du décodage du token:', error);
+      console.error('Erreur lors du décodage du token:', error);
       return null;
     }
   }
@@ -56,7 +54,7 @@ export class JwtHelperService {
     const decoded = this.decodeToken(token);
 
     if (!decoded || !decoded.exp) {
-      console.warn('⚠️ Token sans date d\'expiration');
+      console.warn('Token sans date d\'expiration');
       return true; // Token invalide = expiré
     }
 
@@ -71,7 +69,7 @@ export class JwtHelperService {
 
     if (isExpired) {
       const expirationDateFormatted = new Date(expirationDate).toLocaleString();
-      console.warn(`⏰ Token expiré le ${expirationDateFormatted}`);
+      console.warn(`Token expiré le ${expirationDateFormatted}`);
     } else {
       const timeRemaining = Math.floor((expirationDate - now) / 60000);
       console.debug(` Token valide (expire dans ${timeRemaining} minutes)`);
@@ -81,8 +79,7 @@ export class JwtHelperService {
   }
 
   /**
-   * Obtenir la date d'expiration du token
-   * @returns Date d'expiration ou null si invalide
+   * Obtenir la date d'expiration du token ou null si invalide
    */
   getTokenExpirationDate(token: string): Date | null {
     const decoded = this.decodeToken(token);
@@ -96,8 +93,7 @@ export class JwtHelperService {
   }
 
   /**
-   * Obtenir la date de création du token
-   * @returns Date de création ou null si invalide
+   * Obtenir la date de création du token ou null si invalide
    */
   getTokenIssuedAt(token: string): Date | null {
     const decoded = this.decodeToken(token);
@@ -111,8 +107,7 @@ export class JwtHelperService {
   }
 
   /**
-   * Obtenir le temps restant avant expiration (en millisecondes)
-   * @returns Millisecondes restantes, ou 0 si expiré/invalide
+   * Obtenir le temps restant avant expiration (en millisecondes) ou 0 si expiré ou invalide
    */
   getTimeUntilExpiration(token: string): number {
     const expirationDate = this.getTokenExpirationDate(token);

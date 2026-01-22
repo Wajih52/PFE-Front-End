@@ -4,7 +4,6 @@ import { Categorie, TypeProduit } from './produit.enums';
 
 /**
  * Requête de création/modification de produit (ProduitRequestDto.java)
- * ⚠️ Les noms des champs correspondent EXACTEMENT au backend
  */
 export interface ProduitRequest {
   nomProduit: string;
@@ -13,14 +12,13 @@ export interface ProduitRequest {
   prixUnitaire: number;
   quantiteInitial: number;
   typeProduit: TypeProduit;
-  maintenanceRequise?: boolean;      // Optionnel, défaut: false
-  imageProduit?: string;             // Base64
-  seuilCritique?: number;            // Optionnel
+  maintenanceRequise?: boolean;
+  imageProduit?: string;
+  seuilCritique?: number;
 }
 
 /**
  * Réponse produit (ProduitResponseDto.java)
- * ⚠️ Correspondance EXACTE avec le backend
  */
 export interface ProduitResponse {
   // Champs principaux

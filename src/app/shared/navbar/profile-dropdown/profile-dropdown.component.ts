@@ -7,11 +7,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { SidebarMenuService } from '../../../services/sidebar-menu.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MenuItem } from '../../../core/models/menu-item.model';
-import{variables} from '../../../core/environement/variables';
 
 /**
  * Composant Dropdown du profil utilisateur
- * S'affiche au survol ou clic du bouton profil
  */
 @Component({
   selector: 'app-profile-dropdown',

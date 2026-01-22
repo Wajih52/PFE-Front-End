@@ -131,7 +131,7 @@ export class ReservationsEmployeComponent implements OnInit {
   }
 
   /**
-   * Charger les réservations où l'employé est affecté - UN SEUL APPEL API ! ✅
+   * Charger les réservations où l'employé est affecté
    */
   chargerMesReservations(): void {
     this.isLoading.set(true);
@@ -141,10 +141,10 @@ export class ReservationsEmployeComponent implements OnInit {
       next: (reservations) => {
         this.reservations.set(reservations);
         this.isLoading.set(false);
-        console.log(`✅ ${reservations.length} réservations chargées`);
+        console.log(`${reservations.length} réservations chargées`);
       },
       error: (error) => {
-        console.error('❌ Erreur chargement réservations:', error);
+        console.error('Erreur chargement réservations:', error);
         this.errorMessage.set(
           error.error?.message || 'Erreur lors du chargement de vos réservations'
         );

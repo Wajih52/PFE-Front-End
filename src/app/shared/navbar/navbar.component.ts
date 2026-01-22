@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
 
-  // ✅ Observable pour la réactivité automatique
+  // Observable pour la réactivité automatique
   isAuthenticated$ = this.authService.isAuthenticated$;
   currentUser$ = this.authService.currentUser$;
 
@@ -31,7 +31,7 @@ userName : string | null = null;
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    // ✅ S'abonner aux changements d'authentification pour logger
+    // S'abonner aux changements d'authentification pour logger
     this.currentUser$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(user => {
@@ -42,29 +42,6 @@ userName : string | null = null;
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  /**
-   * Naviguer vers le profil
-   */
-  /*goToProfile(): void {
-    this.router.navigate(['/profile']);
-
-  }*/
-
-  /**
-   * Naviguer vers le dashboard (admin/employé)
-   */
-  goToDashboard(): void {
-    this.router.navigate(['/admin/dashboard']);
-
-  }
-
-  /**
-   * Naviguer vers le panier
-   */
-  goToCart(): void {
-    this.router.navigate(['/panier']);
   }
 
   /**
@@ -83,42 +60,8 @@ userName : string | null = null;
 
   }
 
-  /**
-   * Naviguer vers le catalogue
-   */
-  goToCatalogue(): void {
-    this.router.navigate(['client/catalogue']);
-
-  }
-
-  /**
-   * Naviguer vers l'accueil
-   */
-  goToHome(): void {
-    this.router.navigate(['/home']);
-
-  }
-
-
-  /**
-   * Déconnexion
-   */
- /* logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        console.log('✅ Déconnexion réussie depuis navbar');
-        this.router.navigate(['/auth/login'], {
-          queryParams: { logout: 'true' }
-        });
-      },
-      error: (error) => {
-        console.error('❌ Erreur lors de la déconnexion:', error);
-      }
-    });
-  }*/
-
   scrollToSection(sectionId: string): void {
-    // ✅ SÉCURISÉ : Vérifier que nous sommes côté client
+    // Vérifier que nous sommes côté client
     if (isPlatformBrowser(this.platformId)) {
       const element = document.getElementById(sectionId);
       if (element) {

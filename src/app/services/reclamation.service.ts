@@ -17,9 +17,7 @@ import {
   PrioriteReclamation
 } from '../core/models/reclamation.enums';
 
-/**
- * Service de gestion des réclamations
- */
+
 @Injectable({
   providedIn: 'root'
 })

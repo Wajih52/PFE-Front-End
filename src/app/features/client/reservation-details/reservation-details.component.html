@@ -293,13 +293,13 @@
                   @if (isClient() && reservation()!.statutReservation === 'TERMINE') {
                     @if (produitsAvecAvis().has(ligne.idProduit)) {
                       <div class="avis-deja-donne">
-                        <span class="badge-avis">✅ Avis donné</span>
+                        <span class="badge-avis"> Avis donné</span>
                       </div>
                     } @else {
                       <button
                         class="btn-avis"
                         (click)="laisserAvis(ligne.idProduit)">
-                        ⭐ Laisser un avis
+                        <span class="material-symbols-outlined md-24 cl-dark">star</span> Laisser un avis
                       </button>
                     }
                   }
@@ -747,9 +747,9 @@
   </div>
 }
 
-<!-- ============================================ -->
-<!-- 🆕 Modal Éditer une Ligne (Quantité/Dates/Obs) -->
-<!-- ============================================ -->
+
+<!-- Modal Éditer une Ligne (Quantité/Dates/Obs) -->
+
 @if (showEditerLigneModal()) {
   <div class="modal-overlay" (click)="fermerModals()">
     <div class="modal-content large" (click)="$event.stopPropagation()">
@@ -772,7 +772,7 @@
         }
 
         <div class="current-info">
-          <h4>📦 Informations actuelles</h4>
+          <h4><span class="material-symbols-outlined md-24 cl-dark">package_2</span> Informations actuelles</h4>
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Quantité:</span>
@@ -795,7 +795,7 @@
           </div>
         </div>
 
-        <h4>✏️ Nouvelles valeurs</h4>
+        <h4><span class="material-symbols-outlined md-24 cl-dark">edit</span> Nouvelles valeurs</h4>
 
         <div class="form-row">
           <div class="form-group">
@@ -889,9 +889,8 @@
   </div>
 }
 
-<!-- ============================================ -->
 <!--  Modal Supprimer une Ligne -->
-<!-- ============================================ -->
+
 @if (showSupprimerLigneModal()) {
   <div class="modal-overlay" (click)="fermerModals()">
     <div class="modal-content" (click)="$event.stopPropagation()">

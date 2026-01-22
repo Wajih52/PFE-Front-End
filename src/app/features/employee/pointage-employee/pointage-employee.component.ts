@@ -125,7 +125,7 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
       next: (pointage) => {
         this.pointageDuJour.set(pointage);
         this.isLoading.set(false);
-        this.showSuccessMessage('Départ pointé avec succès ! 👋');
+        this.showSuccessMessage('Départ pointé avec succès !');
         this.loadStatistiques(); // Recharger les stats
       },
       error: (error) => {
@@ -220,6 +220,6 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
    */
   private showErrorMessage(message: string): void {
     this.notificationService.error(message,3000)
-    console.error('❌ Error:', message);
+    console.error('Error:', message);
   }
 }

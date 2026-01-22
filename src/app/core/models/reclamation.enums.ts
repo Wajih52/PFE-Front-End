@@ -1,9 +1,5 @@
 // src/app/core/models/reclamation.enums.ts
 
-/**
- * Énumérations pour la gestion des réclamations
- * Correspondant aux enums Java du backend
- */
 
 /**
  * Statut d'une réclamation

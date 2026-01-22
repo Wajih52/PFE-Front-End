@@ -1,5 +1,4 @@
 // src/app/test-jwt.component.ts
-// ⚠️ Composant de TEST uniquement - À supprimer après vérification
 
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -12,10 +11,10 @@ import { StorageService } from '../core/services/storage.service';
   imports: [CommonModule],
   template: `
     <div class="test-container">
-      <h2>🧪 Test JWT Decoder</h2>
+      <h2>Test JWT Decoder</h2>
 
       <div class="section" *ngIf="token">
-        <h3>✅ Token trouvé</h3>
+        <h3>Token trouvé</h3>
         <p class="token">{{ tokenPreview }}</p>
         <button (click)="toggleFullToken()">
           {{ showFullToken ? 'Masquer' : 'Afficher' }} token complet
@@ -24,12 +23,12 @@ import { StorageService } from '../core/services/storage.service';
       </div>
 
       <div class="section" *ngIf="!token">
-        <h3>❌ Aucun token</h3>
+        <h3>Aucun token</h3>
         <p>Connectez-vous d'abord pour voir les informations du token</p>
       </div>
 
       <div class="section" *ngIf="tokenInfo">
-        <h3>📊 Informations du Token</h3>
+        <h3>Informations du Token</h3>
         <table>
           <tr>
             <td><strong>Username (sub):</strong></td>
@@ -46,7 +45,7 @@ import { StorageService } from '../core/services/storage.service';
           <tr>
             <td><strong>Est expiré:</strong></td>
             <td [class.expired]="tokenInfo.isExpired">
-              {{ tokenInfo.isExpired ? '❌ OUI' : '✅ NON' }}
+              {{ tokenInfo.isExpired ? ' OUI' : ' NON' }}
             </td>
           </tr>
           <tr *ngIf="!tokenInfo.isExpired">
@@ -57,24 +56,24 @@ import { StorageService } from '../core/services/storage.service';
       </div>
 
       <div class="section" *ngIf="tokenInfo">
-        <h3>🔍 Payload JWT complet</h3>
+        <h3>Payload JWT complet</h3>
         <pre>{{ tokenInfo.raw | json }}</pre>
       </div>
 
       <div class="section">
-        <h3>📋 Informations Utilisateur (localStorage)</h3>
+        <h3>Informations Utilisateur (localStorage)</h3>
         <div *ngIf="user">
           <p><strong>Nom:</strong> {{ user.nom }} {{ user.prenom }}</p>
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Rôles:</strong> {{ user.roles.join(', ') }}</p>
-          <p class="info">ℹ️ Les rôles viennent de /utilisateurs/me, pas du JWT</p>
+          <p class="info">Les rôles viennent de /utilisateurs/me, pas du JWT</p>
         </div>
         <p *ngIf="!user">Aucun utilisateur connecté</p>
       </div>
 
       <div class="actions">
-        <button (click)="testExpiration()">🧪 Tester expiration</button>
-        <button (click)="refreshInfo()">🔄 Actualiser</button>
+        <button (click)="testExpiration()">Tester expiration</button>
+        <button (click)="refreshInfo()">Actualiser</button>
       </div>
     </div>
   `,
@@ -249,8 +248,8 @@ export class TestJwtComponent implements OnInit {
 
     alert(
       `Test d'expiration:\n\n` +
-      `Token expiré: ${isExpired ? 'OUI ❌' : 'NON ✅'}\n` +
-      `Token valide: ${isValid ? 'OUI ✅' : 'NON ❌'}\n\n` +
+      `Token expiré: ${isExpired ? 'OUI ' : 'NON '}\n` +
+      `Token valide: ${isValid ? 'OUI ' : 'NON '}\n\n` +
       `Vérifiez la console pour plus de détails.`
     );
 

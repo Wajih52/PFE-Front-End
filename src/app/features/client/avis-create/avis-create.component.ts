@@ -82,7 +82,7 @@ export class AvisCreateComponent implements OnInit {
 
     this.avisService.creerAvis(dto).subscribe({
       next: () => {
-        this.successMessage.set('✅ Votre avis a été publié avec succès !');
+        this.successMessage.set('Votre avis a été publié avec succès !');
         setTimeout(() => this.router.navigate(['/client/mes-avis']), 2000);
       },
       error: (err) => {

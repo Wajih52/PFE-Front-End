@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 /**
  * Service de compression d'images côté frontend
  *
- * Rôle : Réduire la taille de l'image AVANT l'envoi au backend
+ * On va Réduire la taille de l'image AVANT l'envoi au backend
  *
  * Fonctionnement :
  * 1. Utilisateur sélectionne un fichier (ex: photo 5Mo)
@@ -20,27 +20,25 @@ import { Injectable } from '@angular/core';
 export class ImageService {
 
   /**
-   * Compresse une image et retourne le Base64
+   * Compresse une image (file : image sélectionné) et retourne le Base64 de l'image compressée
    *
-   * @param file Fichier image sélectionné par l'utilisateur
-   * @returns Promise<string> Base64 de l'image compressée
    */
   compressImage(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
 
-      // 1️⃣ Lire le fichier
+      // 1- Lire le fichier
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
       reader.onload = (event: any) => {
 
-        // 2️⃣ Créer un élément Image
+        // 2- Créer un élément Image
         const img = new Image();
         img.src = event.target.result;
 
         img.onload = () => {
 
-          // 3️⃣ Créer un canvas pour le redimensionnement
+          // 3- Créer un canvas pour le redimensionnement
           const canvas = document.createElement('canvas');
           const MAX_WIDTH = 800;
           const MAX_HEIGHT = 800;
@@ -48,7 +46,7 @@ export class ImageService {
           let width = img.width;
           let height = img.height;
 
-          // 4️⃣ Calculer les nouvelles dimensions (garder le ratio)
+          // 4- Calculer les nouvelles dimensions (garder le ratio)
           if (width > height) {
             if (width > MAX_WIDTH) {
               height *= MAX_WIDTH / width;
@@ -61,16 +59,16 @@ export class ImageService {
             }
           }
 
-          // 5️⃣ Redimensionner
+          // 5- Redimensionner
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d')!;
           ctx.drawImage(img, 0, 0, width, height);
 
-          // 6️⃣ Convertir en Base64 avec compression JPEG 80%
+          // 6- Convertir en Base64 avec compression JPEG 80%
           const base64 = canvas.toDataURL('image/jpeg', 0.8);
 
-          // 7️⃣ Retourner le résultat
+          // 7- Retourner le résultat
           resolve(base64);
         };
 

@@ -2,9 +2,7 @@
 
 import { StatutPointage } from './pointage.enums';
 
-/**
- * DTO de requête pour créer/modifier un pointage
- */
+
 export interface PointageRequest {
   dateTravail: string; // Format: YYYY-MM-DD
   heureDebut?: string; // Format: HH:mm:ss
@@ -14,9 +12,7 @@ export interface PointageRequest {
   idUtilisateur?: number; // Pour admin/manager qui crée pour un employé
 }
 
-/**
- * DTO de réponse pour un pointage
- */
+
 export interface PointageResponse {
   idPointage: number;
   dateTravail: string;

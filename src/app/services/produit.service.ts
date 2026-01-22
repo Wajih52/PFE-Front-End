@@ -14,8 +14,6 @@ import{variables} from '../core/environement/variables';
 
 // ==================== INTERFACES ===================
 
-
-
 /**
  * Response de disponibilité sur une période
  */
@@ -29,11 +27,7 @@ export interface DisponibilitePeriodeResponse {
   message: string;
 }
 
-// ==================== SERVICE ====================
 
-/**
- * Service de gestion des produits
- */
 @Injectable({
   providedIn: 'root'
 })
@@ -47,8 +41,6 @@ export class ProduitService {
 
   /**
    * Créer un nouveau produit
-   * POST /api/produits
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   creerProduit(produit: ProduitRequest): Observable<ProduitResponse> {
     return this.http.post<ProduitResponse>(this.API_URL, produit);
@@ -56,8 +48,6 @@ export class ProduitService {
 
   /**
    * Modifier un produit
-   * PUT /api/produits/{id}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   modifierProduit(id: number, produit: ProduitRequest): Observable<ProduitResponse> {
     return this.http.put<ProduitResponse>(`${this.API_URL}/${id}`, produit);
@@ -65,8 +55,6 @@ export class ProduitService {
 
   /**
    * Supprimer (désactiver) un produit
-   * DELETE /api/produits/{id}
-   * @requires ROLE: ADMIN
    */
   supprimerProduit(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`);
@@ -74,8 +62,6 @@ export class ProduitService {
 
   /**
    * Supprimer définitivement un produit de la base de données
-   * DELETE /api/produits/{id}/supprimer-definitivement
-   * @requires ROLE: ADMIN uniquement
    */
   supprimerProduitDefinitivement(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(
@@ -84,8 +70,6 @@ export class ProduitService {
   }
   /**
    * Réactiver un produit désactivé
-   * POST /api/produits/{id}/reactiver?quantite={qte}
-   * @requires ROLE: ADMIN, MANAGER
    */
   reactiverProduit(id: number, quantite: number): Observable<ProduitResponse> {
     const params = new HttpParams().set('quantite', quantite.toString());
@@ -93,7 +77,6 @@ export class ProduitService {
   }
   /**
    * Obtenir un produit par ID
-   * GET /api/produits/{id}
    */
   getProduitById(id: number): Observable<ProduitResponse> {
     return this.http.get<ProduitResponse>(`${this.API_URL}/${id}`);
@@ -101,8 +84,7 @@ export class ProduitService {
 
   /**
    * Obtenir tous les produits (sans filtre de dates)
-   * GET /api/produits
-   * NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
+   *  ON NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
    */
   getAllProduits(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(this.API_URL);
@@ -114,8 +96,7 @@ export class ProduitService {
 
   /**
    * Obtenir les produits disponibles (stock global > 0)
-   * GET /api/produits/disponibles
-   *  NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
+   *  ON NE PREND PAS EN COMPTE LES PÉRIODES - pour usage admin uniquement
    */
   getProduitsDisponibles(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/disponibles`);
@@ -123,8 +104,6 @@ export class ProduitService {
 
   /**
    * Obtenir les produits en rupture de stock
-   * GET /api/produits/rupture
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getProduitsEnRupture(): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/rupture`);
@@ -132,8 +111,6 @@ export class ProduitService {
 
   /**
    * Obtenir les produits avec stock critique
-   * GET /api/produits/stock-critique?seuil={seuil}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getProduitsStockCritique(seuil?: number): Observable<ProduitResponse[]> {
     let params = new HttpParams();
@@ -145,7 +122,6 @@ export class ProduitService {
 
   /**
    * Rechercher des produits par nom
-   * GET /api/produits/search?nom={nom}
    */
   searchProduitsByNom(nom: string): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/search`, {
@@ -155,7 +131,6 @@ export class ProduitService {
 
   /**
    * Filtrer par catégorie
-   * GET /api/produits/categorie/{categorie}
    */
   getProduitsByCategorie(categorie: Categorie): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/categorie/${categorie}`);
@@ -163,20 +138,17 @@ export class ProduitService {
 
   /**
    * Filtrer par type de produit
-   * GET /api/produits/type/{type}
-   *  INUTILE POUR LE CLIENT - uniquement usage interne admin
    */
   getProduitsByType(type: TypeProduit): Observable<ProduitResponse[]> {
     return this.http.get<ProduitResponse[]>(`${this.API_URL}/type/${type}`);
   }
 
   // ============================================
-  // DISPONIBILITÉ AVEC PÉRIODE (APIs CRITIQUES)
+  // DISPONIBILITÉ AVEC PÉRIODE
   // ============================================
 
   /**
    * Calculer la quantité disponible pour une période donnée
-   * GET /api/produits/{id}/quantite-disponible?dateDebut={date}&dateFin={date}
    *
    * Retourne la quantité réellement disponible en tenant compte des réservations
    */
@@ -193,7 +165,6 @@ export class ProduitService {
 
   /**
    *  Vérifier la disponibilité d'un produit pour une période
-   * GET /api/produits/{id}/disponibilite-periode?quantite={qte}&dateDebut={date}&dateFin={date}
    *
    * Vérifie si une quantité spécifique est disponible
    */
@@ -215,7 +186,6 @@ export class ProduitService {
 
   /**
    *  Obtenir le catalogue disponible sur une période
-   * GET /api/produits/catalogue-disponible?dateDebut={date}&dateFin={date}
    *
    * API PRINCIPALE POUR LE CATALOGUE CLIENT
    * Retourne uniquement les produits réellement disponibles pendant la période
@@ -235,7 +205,6 @@ export class ProduitService {
 
   /**
    *  Recherche multicritères avec période
-   * GET /api/produits/search-periode
    *
    * Permet de filtrer les produits disponibles selon plusieurs critères
    * ET une période de disponibilité
@@ -274,17 +243,12 @@ export class ProduitService {
 
   /**
    *  Obtenir tous les produits avec leur disponibilité pour une période
-   * GET /api/produits/disponibilite-periode?dateDebut={date}&dateFin={date}
    *
    * Cette méthode retourne TOUS les produits avec:
    * - quantiteTotale: le stock global du produit
    * - quantiteReservee: la quantité réservée sur la période
    * - quantiteDisponible: quantiteTotale - quantiteReservee
    *
-   * @param dateDebut Date de début au format ISO (YYYY-MM-DD)
-   * @param dateFin Date de fin au format ISO (YYYY-MM-DD)
-   * @returns Liste des produits avec leur disponibilité calculée
-   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
    */
   getProduitsAvecDisponibilitePourPeriode(
     dateDebut: string,
@@ -305,8 +269,6 @@ export class ProduitService {
 
   /**
    * Ajouter du stock à un produit SANS_REFERENCE
-   * POST /api/produits/{id}/ajout-stock?quantite={quantite}&motif={motif}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   ajouterStock(id: number, quantite: number, motif?: string): Observable<ProduitResponse> {
     let params = new HttpParams().set('quantite', quantite.toString());
@@ -318,8 +280,6 @@ export class ProduitService {
 
   /**
    * Retirer du stock d'un produit SANS_REFERENCE
-   * POST /api/produits/{id}/retrait-stock?quantite={quantite}&motif={motif}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   retirerStock(id: number, quantite: number, motif?: string): Observable<ProduitResponse> {
     let params = new HttpParams().set('quantite', quantite.toString());
@@ -331,8 +291,6 @@ export class ProduitService {
 
   /**
    * Ajuster le stock d'un produit EN_QUANTITE
-   * PUT /api/produits/{id}/ajuster-stock?nouvelleQuantite={qte}&motif={motif}
-   * @requires ROLE: ADMIN, MANAGER
    */
   ajusterStock(id: number, nouvelleQuantite: number, motif?: string): Observable<ProduitResponse> {
     let params = new HttpParams().set('nouvelleQuantite', nouvelleQuantite.toString());
@@ -347,8 +305,6 @@ export class ProduitService {
 
   /**
    * Obtenir l'historique des mouvements de stock d'un produit
-   * GET /api/produits/{id}/mouvements
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getHistoriqueMouvements(id: number): Observable<MouvementStockResponse[]> {
     return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/historique`);
@@ -356,8 +312,6 @@ export class ProduitService {
 
   /**
    * Obtenir l'historique des mouvements par type
-   * GET /api/produits/{id}/mouvements/type?typeMouvement={type}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getHistoriqueMouvementsByType(
     id: number,
@@ -371,26 +325,11 @@ export class ProduitService {
 
   /**
    * Obtenir l'historique des mouvements sur une période
-   * GET /api/produits/{id}/mouvements/periode?debut={date}&fin={date}
-   * @requires ROLE: ADMIN, EMPLOYE
    */
   getHistoriqueMouvementsPeriode(id: number, debut: string, fin: string): Observable<MouvementStockResponse[]> {
     const params = new HttpParams()
       .set('debut', debut)
       .set('fin', fin);
     return this.http.get<MouvementStockResponse[]>(`${this.API_URL}/${id}/mouvements/periode`, { params });
-  }
-
-  // ============================================
-  // STATISTIQUES
-  // ============================================
-
-  /**
-   * Obtenir les statistiques globales du stock
-   * GET /api/produits/statistiques
-   * @requires ROLE: ADMIN, EMPLOYE
-   */
-  getStatistiquesStock(): Observable<StockStatistiques> {
-    return this.http.get<StockStatistiques>(`${this.API_URL}/statistiques`);
   }
 }

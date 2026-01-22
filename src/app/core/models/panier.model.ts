@@ -28,20 +28,3 @@ export interface PanierState {
   montantTotal: number;
   observationsClient?: string;
 }
-
-/**
- * Options pour la validation du panier
- */
-export interface ValidationPanierOptions {
-  validationAutomatique: boolean; // true = commande directe, false = devis
-  observationsClient?: string;
-}
-
-/**
- * Résultat de vérification de disponibilité
- */
-export interface VerificationDisponibiliteResult {
-  disponible: boolean;
-  quantiteDisponible: number;
-  message?: string;
-}

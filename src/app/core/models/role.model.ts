@@ -1,5 +1,5 @@
 /**
- * Requête de création/modification de rôle (RoleRequestDto.java)
+ * Requête de création/modification de rôle
  */
 export interface RoleRequest {
   nom: string;
@@ -7,7 +7,7 @@ export interface RoleRequest {
 }
 
 /**
- * Réponse rôle (RoleResponseDto.java)
+ * Réponse rôle
  */
 export interface RoleResponse {
   id: number;

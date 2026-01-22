@@ -37,14 +37,14 @@ export class NouvelleReclamationComponent implements OnInit {
 
   // Types de réclamation
   typesReclamation = [
-    { value: TypeReclamation.PRODUIT_ENDOMMAGE, label: 'Produit endommagé', icon: '🔧' },
-    { value: TypeReclamation.QUANTITE_MANQUANTE, label: 'Quantité manquante', icon: '📦' },
-    { value: TypeReclamation.RETARD_LIVRAISON, label: 'Retard de livraison', icon: '⏱️' },
-    { value: TypeReclamation.QUALITE_SERVICE, label: 'Qualité du service', icon: '⭐' },
-    { value: TypeReclamation.PRODUIT_NON_CONFORME, label: 'Produit non conforme', icon: '❌' },
-    { value: TypeReclamation.PROBLEME_RETOUR, label: 'Problème de retour', icon: '↩️' },
-    { value: TypeReclamation.FACTURATION, label: 'Facturation', icon: '💰' },
-    { value: TypeReclamation.AUTRE, label: 'Autre', icon: '📝' }
+    { value: TypeReclamation.PRODUIT_ENDOMMAGE, label: 'Produit endommagé', icon: 'build' },
+    { value: TypeReclamation.QUANTITE_MANQUANTE, label: 'Quantité manquante', icon: 'package_2' },
+    { value: TypeReclamation.RETARD_LIVRAISON, label: 'Retard de livraison', icon: 'timer' },
+    { value: TypeReclamation.QUALITE_SERVICE, label: 'Qualité du service', icon: 'star' },
+    { value: TypeReclamation.PRODUIT_NON_CONFORME, label: 'Produit non conforme', icon: 'close' },
+    { value: TypeReclamation.PROBLEME_RETOUR, label: 'Problème de retour', icon: 'undo' },
+    { value: TypeReclamation.FACTURATION, label: 'Facturation', icon: 'payments' },
+    { value: TypeReclamation.AUTRE, label: 'Autre', icon: 'assignment' }
   ];
 
   ngOnInit(): void {
@@ -128,7 +128,7 @@ export class NouvelleReclamationComponent implements OnInit {
    */
   get selectedTypeIcon(): string {
     const type = this.reclamationForm.get('typeReclamation')?.value;
-    return this.typesReclamation.find(t => t.value === type)?.icon || '📋';
+    return this.typesReclamation.find(t => t.value === type)?.icon || 'assignment';
   }
 
   /**

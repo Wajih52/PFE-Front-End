@@ -9,10 +9,10 @@ import { StorageService } from '../../../core/services/storage.service';
  * Landing Component - Page d'accueil avec auto-redirection
  *
  * Fonctionnement :
- * - Si l'utilisateur est connecté (token valide) → Redirige vers /dashboard
+ * dans le cas oû l'url est invalide et n'existe pas
+ * - Si l'utilisateur est connecté (token valide) → Redirige vers /home
  * - Si l'utilisateur n'est pas connecté → Redirige vers /auth/login
  *
- * Cette page évite le "flash" de la page login en vérifiant l'auth AVANT de charger les composants
  */
 @Component({
   selector: 'app-landing',
@@ -156,7 +156,7 @@ export class LandingComponent implements OnInit {
 
   ngOnInit(): void {
 
-      // ⏱️ Petit délai pour éviter le flash (optionnel, ajustable)
+      // Petit délai pour éviter le flash (au choix et on peut l'ajuster)
       setTimeout(() => {
         this.checkAuthAndRedirect();
       }, 1000);  // 300ms = temps pour afficher l'animation
@@ -170,7 +170,7 @@ export class LandingComponent implements OnInit {
 
       if (token) {
         //  Utilisateur connecté avec token valide
-        console.log('✅ Token valide trouvé, redirection vers dashboard');
+        console.log('Token valide trouvé, redirection vers dashboard');
         this.loadingMessage = 'Connexion réussie ! Redirection...';
 
         this.router.navigate(['/home']);

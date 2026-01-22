@@ -19,7 +19,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   // Récupérer le token
   const token = storage.getToken();
 
-  console.log('🔍 Intercepteur JWT - Token présent:', !!token);
+  console.log('Intercepteur JWT - Token présent:', !!token);
 
   // Liste des URLs qui ne nécessitent PAS de token
   const excludedUrls = [
@@ -40,12 +40,12 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   // Si pas de token OU URL exclue → laisser passer sans modification
   if (!token || isExcluded) {
     if (!token && !isExcluded) {
-      console.warn('⚠️ Pas de token pour l\'URL protégée:', req.url);
+      console.warn(' Pas de token pour l\'URL protégée:', req.url);
     }
     return next(req);
   }
 
-  console.log('✅ Ajout du token à la requête:', req.url);
+  console.log('Ajout du token à la requête:', req.url);
 
   // Cloner la requête et ajouter le header Authorization
   const clonedRequest = req.clone({

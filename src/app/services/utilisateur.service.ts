@@ -1,7 +1,4 @@
 // src/app/services/utilisateur.service.ts
-// 👥 Service de gestion des utilisateurs
-// Correspond aux endpoints du UtilisateurController
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,10 +6,6 @@ import { variables } from '../core/environement/variables';
 import {StatutCompte, UserPatchRequest, UserRequest, UserResponse} from '../core/models';
 
 
-/**
- * Service Angular pour gérer les utilisateurs
- * API: api/utilisateurs
- */
 @Injectable({
   providedIn: 'root'
 })
@@ -25,26 +18,21 @@ export class UtilisateurService {
   // ============================================
 
   /**
-   * 📋 Récupérer tous les utilisateurs
-   * GET /utilisateurs
-   * @requires ROLE: ADMIN, MANAGER
+   * Récupérer tous les utilisateurs
    */
   getAllUtilisateurs(): Observable<UserResponse[]> {
     return this.http.get<UserResponse[]>(`${this.API_URL}/all`);
   }
 
   /**
-   * 👤 Récupérer un utilisateur par son ID
-   * GET /utilisateurs/{id}
-   * @requires ROLE: ADMIN ou propriétaire
+   * Récupérer un utilisateur par son ID
    */
   getUtilisateurById(id: number): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.API_URL}/${id}`);
   }
 
   /**
-   * 👤 Récupérer le profil de l'utilisateur connecté
-   * GET /utilisateurs/me
+   * Récupérer le profil de l'utilisateur connecté
    */
   getMonProfil(): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.API_URL}/me`);
@@ -55,27 +43,21 @@ export class UtilisateurService {
   // ============================================
 
   /**
-   * ➕ Ajouter un nouvel utilisateur
-   * POST /utilisateurs/ajouter
-   * @requires ROLE: ADMIN
+   * Ajouter un nouvel utilisateur
    */
   ajouterUtilisateur(utilisateur: UserRequest): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.API_URL}/ajouter`, utilisateur);
   }
 
   /**
-   * ✏️ Modifier complètement un utilisateur (PUT)
-   * PUT /utilisateurs/modifier/{id}
-   * @requires ROLE: ADMIN ou propriétaire
+   * Modifier complètement un utilisateur (PUT)
    */
   modifierUtilisateur(id: number, utilisateur: UserRequest): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.API_URL}/modifier/${id}`, utilisateur);
   }
 
   /**
-   * 🔧 Modifier partiellement un utilisateur (PATCH)
-   * PATCH /utilisateurs/modifierPartiel/{id}
-   * @requires ROLE: ADMIN ou propriétaire
+   * Modifier partiellement un utilisateur (PATCH)
    */
   modifierUtilisateurPartiel(id: number, modifications: UserPatchRequest): Observable<UserResponse> {
     return this.http.patch<UserResponse>(`${this.API_URL}/modifierPartiel/${id}`, modifications);
@@ -86,18 +68,14 @@ export class UtilisateurService {
   // ============================================
 
   /**
-   * 🔒 Verrouiller un compte
-   * PATCH /utilisateurs/{id}/suspendre
-   * @requires ROLE: ADMIN
+   * Verrouiller un compte
    */
   suspendAccount(id: number): Observable<UserResponse> {
     return this.http.patch<UserResponse>(`${this.API_URL}/${id}/suspendre`, {});
   }
 
   /**
-   * ✅ Activer un compte
-   * PATCH /utilisateurs/{id}/activer
-   * @requires ROLE: ADMIN
+   * Activer un compte
    */
   EnableAccount(id: number): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.API_URL}/${id}/activer`, {});
@@ -105,8 +83,6 @@ export class UtilisateurService {
 
   /**
    *  Désactiver un compte
-   * PATCH /utilisateurs/{id}/desactiver
-   * @requires ROLE: ADMIN
    */
   desactiverAccount(id: number): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.API_URL}/${id}/desactiver`, {});
@@ -114,8 +90,6 @@ export class UtilisateurService {
 
   /**
    *  archiver un compte
-   * PATCH /utilisateurs/{id}/archiver
-   * @requires ROLE: ADMIN
    */
   archiverAccount(id: number): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.API_URL}/${id}/archiver`, {});
@@ -126,9 +100,7 @@ export class UtilisateurService {
   // ============================================
 
   /**
-   * 🗑️ Supprimer un utilisateur
-   * DELETE /utilisateurs/{id}
-   * @requires ROLE: ADMIN
+   * Supprimer un utilisateur
    */
   supprimerUtilisateur(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`);
@@ -140,7 +112,7 @@ export class UtilisateurService {
   // ============================================
 
   /**
-   * 📋 Obtenir tous les employés (ADMIN, MANAGER, EMPLOYE) actifs
+   * Obtenir tous les employés (ADMIN, MANAGER, EMPLOYE) actifs
    * Utile pour les affectations de livraisons
    *
    */
@@ -148,7 +120,7 @@ export class UtilisateurService {
     return new Observable(observer => {
       this.getAllUtilisateurs().subscribe({
         next: (users) => {
-          // ✅ FILTRAGE
+          // FILTRAGE
           const employes = users.filter(user => {
             // Vérifier que le compte est actif
             const isActif = user.etatCompte === StatutCompte.ACTIVE;
@@ -174,7 +146,7 @@ export class UtilisateurService {
   }
 
   /**
-   * 📋 Obtenir seulement les employés (pas les admins/managers)
+   * Obtenir seulement les employés (pas les admins/managers)
    */
   getEmployesOnly(): Observable<UserResponse[]> {
     return new Observable(observer => {
@@ -194,7 +166,7 @@ export class UtilisateurService {
   }
 
   /**
-   * 📋 Obtenir seulement les clients actifs
+   * Obtenir seulement les clients actifs
    */
   getClientsActifs(): Observable<UserResponse[]> {
     return new Observable(observer => {
@@ -211,35 +183,6 @@ export class UtilisateurService {
         error: (err) => observer.error(err)
       });
     });
-  }
-
-  // ============================================
-  // HELPERS
-  // ============================================
-
-  /**
-   * Vérifier si un utilisateur a un rôle spécifique
-   */
-  hasRole(user: UserResponse, roleName: string): boolean {
-    return user.roles.includes(roleName);
-  }
-
-  /**
-   * Vérifier si un utilisateur est actif
-   */
-  isActif(user: UserResponse): boolean {
-    return user.etatCompte === StatutCompte.ACTIVE;
-  }
-
-  /**
-   * Vérifier si un utilisateur est un employé (EMPLOYE, MANAGER ou ADMIN)
-   */
-  isEmploye(user: UserResponse): boolean {
-    return user.roles.some(role =>
-      role === 'EMPLOYE' ||
-      role === 'MANAGER' ||
-      role === 'ADMIN'
-    );
   }
 
 }

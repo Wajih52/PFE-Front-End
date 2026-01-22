@@ -245,7 +245,7 @@ export class ListePaiementsComponent implements OnInit {
 
     this.paiementService.validerPaiement(paiement.idPaiement).subscribe({
       next: () => {
-        alert('Paiement validé avec succès ✅');
+        alert('Paiement validé avec succès');
         this.chargerPaiements();
       },
       error: (error) => {
@@ -277,7 +277,7 @@ export class ListePaiementsComponent implements OnInit {
 
     this.paiementService.refuserPaiement(this.paiementARefuser.idPaiement, this.motifRefus).subscribe({
       next: () => {
-        alert('Paiement refusé ❌');
+        alert('Paiement refusé');
         this.fermerModalRefus();
         this.chargerPaiements();
       },

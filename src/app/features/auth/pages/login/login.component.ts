@@ -80,14 +80,14 @@ export class LoginComponent implements OnInit {
         this.storage.clear();
         this.errorMessage = ' Votre session a expiré. Veuillez vous reconnecter.';
         setTimeout(()=>this.errorMessage='',2000)
-        console.log('🧹 Token expiré nettoyé , reconnect de nouveau ');
+
       }
 
-      //  CAS 5 : Déconnecté (optionnel)
+      //  CAS 5 : Déconnecté
       else if (params['logout'] === 'true') {
         this.successMessage = ' Vous avez été déconnecté avec succès.';
         setTimeout(()=>this.successMessage='',3000)
-        console.log('🧹 Token expiré nettoyé , déconnexion réussi ');
+
       }
       //Cas 6 si il y a une erreur d'access
       else if (params['access'] === 'false') {
@@ -130,7 +130,6 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(credentials).subscribe({
       next: (user) => {
-        console.log(' Connexion réussie', user);
 
         if (user.requirePasswordChange) {
           // Rediriger vers page de changement de mot de passe
@@ -140,7 +139,7 @@ export class LoginComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('❌ Erreur de connexion', error);
+        console.error('Erreur de connexion', error);
 
         // CAS 1: Compte non activé
         if (error.error?.error === 'ACCOUNT_NOT_ACTIVATED') {
@@ -172,13 +171,13 @@ export class LoginComponent implements OnInit {
 
     this.authService.resendActivationEmail(this.userEmail).subscribe({
       next: (response: any) => {
-        console.log('✅ Email renvoyé', response);
+
         this.successMessage = ' Email d\'activation renvoyé ! Vérifiez votre boîte email.';
         this.showResendButton = false;
         this.isResending = false;
       },
       error: (error) => {
-        console.error('❌ Erreur lors du renvoi', error);
+        console.error('Erreur lors du renvoi', error);
         this.errorMessage = error.error?.error || 'Erreur lors du renvoi de l\'email';
         this.isResending = false;
       }

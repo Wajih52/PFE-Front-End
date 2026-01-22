@@ -84,10 +84,10 @@ export class RegisterComponent {
     // Appeler le service d'inscription
     this.authService.register(userData).subscribe({
       next: (response) => {
-        console.log('✅ Inscription réussie', response);
+        console.log('Inscription réussie', response);
 
         // Afficher le message de succès
-        this.successMessage = '✅ Inscription réussie ! Un email d\'activation vous a été envoyé. Vérifiez votre boîte email.';
+        this.successMessage = 'Inscription réussie ! Un email d\'activation vous a été envoyé. Vérifiez votre boîte email.';
 
         // Réinitialiser le formulaire
         this.registerForm.reset();
@@ -103,7 +103,7 @@ export class RegisterComponent {
         }, 5000);
       },
       error: (error) => {
-        console.error('❌ Erreur d\'inscription', error);
+        console.error('Erreur d\'inscription', error);
 
         // Afficher le message d'erreur
         if (error.error?.message) {

@@ -141,12 +141,7 @@ export class PanierService {
     this.toastr.info('Panier vidé', 'Panier');
   }
 
-  /**
-   * Obtenir le panier pour création du devis
-   */
-  getPanierPourDevis(): LignePanier[] {
-    return this.panierState().lignes;
-  }
+
 
   /**
    * Définir les observations client

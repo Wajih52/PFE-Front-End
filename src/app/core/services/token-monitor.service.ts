@@ -9,7 +9,7 @@ import { JwtHelperService } from './jwt-helper.service';
 
 /**
  * Service de surveillance du token JWT
- * Vérifie périodiquement l'expiration et déconnecte automatiquement
+ * il Vérifie périodiquement l'expiration et déconnecte automatiquement
  *
  */
 @Injectable({
@@ -27,7 +27,7 @@ export class TokenMonitorService {
   // Vérifier toutes les 60 secondes
   private readonly CHECK_INTERVAL = 60 * 1000; // 60 secondes
 
-  // Afficher un warning 5 minutes avant expiration (optionnel)
+  // Afficher un warning 5 minutes avant expiration
   private readonly WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minutes
 
   /**
@@ -42,7 +42,7 @@ export class TokenMonitorService {
     // Arrêter une surveillance existante
     this.stopMonitoring();
 
-    console.log('🔍 Démarrage de la surveillance du token');
+    console.log('Démarrage de la surveillance du token');
 
     // Vérifier immédiatement
     this.checkToken();
@@ -59,7 +59,7 @@ export class TokenMonitorService {
   stopMonitoring(): void {
     if (this.monitorSubscription) {
       this.monitorSubscription.unsubscribe();
-      console.log('🛑 Arrêt de la surveillance du token');
+      console.log('Arrêt de la surveillance du token');
     }
     this.warningShown = false;
   }
@@ -77,7 +77,7 @@ export class TokenMonitorService {
 
     // Vérifier si le token est expiré
     if (this.jwtHelper.isTokenExpired(token)) {
-      console.warn('⏰ Token expiré détecté par la surveillance');
+      console.warn('Token expiré détecté par la surveillance');
       this.handleTokenExpired();
       return;
     }
@@ -114,7 +114,7 @@ export class TokenMonitorService {
 
     const minutesRemaining = Math.floor(timeRemaining / 60000);
 
-    console.warn(`⚠️ Votre session expire dans ${minutesRemaining} minute(s)`);
+    console.warn(`Votre session expire dans ${minutesRemaining} minute(s)`);
 
   }
 }

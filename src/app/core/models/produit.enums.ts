@@ -1,12 +1,5 @@
 // src/app/core/models/produit.enums.ts
 
-/**
- * Énumérations pour la gestion des produits
- * Correspondant aux enums Java du backend
- */
-
-
-
 
 /**
  * Catégories de produits

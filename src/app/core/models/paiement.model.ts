@@ -102,7 +102,3 @@ export function formatDatePaiement(dateStr: string): string {
   });
 }
 
-export function calculerPourcentagePaye(montantPaye: number, montantTotal: number): number {
-  if (montantTotal === 0) return 0;
-  return Math.min(100, (montantPaye / montantTotal) * 100);
-}

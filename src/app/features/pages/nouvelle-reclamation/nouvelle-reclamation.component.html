@@ -1,15 +1,14 @@
-<!-- nouvelle-reclamation.component.html - Design personnalisé -->
+<!-- nouvelle-reclamation.component.html -->
 
 <div class="reclamation-container">
   <!-- Header -->
   <div class="page-header">
     <div class="header-content">
       <button class="btn-back" (click)="onCancel()">
-        <span class="back-icon">←</span>
-        Retour
+        <span class="material-symbols-outlined  cl-dark">arrow_left_alt</span> <strong>Retour</strong>
       </button>
       <div class="header-text">
-        <h1 class="page-title">{{ selectedTypeIcon }} Nouvelle Réclamation</h1>
+        <h1 class="page-title"><span class="material-symbols-outlined md-48 cl-dark">{{ selectedTypeIcon }}</span> Nouvelle Réclamation</h1>
         <p class="page-description">Décrivez votre problème, nous nous engageons à vous répondre rapidement</p>
       </div>
     </div>
@@ -65,7 +64,7 @@
                 formControlName="typeReclamation"
                 class="type-radio">
               <div class="type-content">
-                <span class="type-icon">{{ type.icon }}</span>
+                <span class="type-icon"><span class="material-symbols-outlined md-48 cl-dark">{{ type.icon }}</span></span>
                 <span class="type-label">{{ type.label }}</span>
               </div>
             </label>
@@ -175,7 +174,7 @@
           </select>
         } @else {
           <div class="no-reservations">
-            <span class="info-icon">ℹ️</span>
+            <span class="info-icon"><span class="material-symbols-outlined md-48 cl-secondary">info</span></span>
             <p>Vous n'avez pas de réservations actives</p>
           </div>
         }
@@ -198,7 +197,7 @@
             <span class="spinner-small"></span>
             <span>Envoi en cours...</span>
           } @else {
-            <span>Soumettre la réclamation</span>
+            <span>Soumettre</span>
           }
         </button>
       </div>

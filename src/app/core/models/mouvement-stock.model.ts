@@ -2,9 +2,7 @@
 
 import { TypeMouvement } from './produit.enums';
 
-/**
- * Réponse mouvement de stock (MouvementStockResponseDto.java)
- */
+
 export interface MouvementStockResponse {
   idMouvement: number;
   typeMouvement: TypeMouvement;

@@ -30,7 +30,7 @@ import { FooterComponent } from '../footer/footer.component';
   styles: [`
     @use 'sass:color';
 
-    // ✅ Wrapper global pour gérer le positionnement
+    // Wrapper global pour gérer le positionnement
     .layout-wrapper {
       min-height: 100vh;
       display: flex;
@@ -41,7 +41,7 @@ import { FooterComponent } from '../footer/footer.component';
       display: flex;
       flex: 1;
       margin-top: 80px;
-      position: relative; // ✅ Important pour le positionnement relatif
+      position: relative; // Important pour le positionnement relatif
     }
 
     .main-content {
@@ -50,7 +50,7 @@ import { FooterComponent } from '../footer/footer.component';
       background: #F8F9FA;
       transition: margin-left 0.3s ease;
 
-      // ✅ Utiliser flexbox pour pousser le footer en bas
+      // flexbox pour pousser le footer en bas
       display: flex;
       flex-direction: column;
       min-height: calc(100vh - 80px);
@@ -69,13 +69,13 @@ import { FooterComponent } from '../footer/footer.component';
       }
     }
 
-    // ✅ Wrapper pour le contenu qui pousse le footer en bas
+    // Wrapper pour le contenu qui pousse le footer en bas
     .content-wrapper {
       flex: 1;
       padding: 2rem;
     }
 
-    // ✅ Le footer reste en bas naturellement grâce au flexbox
+    // Le footer reste en bas naturellement grâce au flexbox
     ::ng-deep app-footer {
       margin-top: auto; // Pousse le footer en bas
     }

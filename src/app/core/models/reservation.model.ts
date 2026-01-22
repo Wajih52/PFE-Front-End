@@ -13,13 +13,13 @@ export interface VerificationDisponibiliteDto {
 export interface DevisRequestDto {
   lignesReservation: LigneReservationRequestDto[];
   observationsClient?: string;
-  validationAutomatique: boolean; // ⭐ true = commande directe, false = devis
+  validationAutomatique: boolean; //  true = commande directe, false = devis
 }
 
 export interface LigneReservationRequestDto {
   idProduit: number;
   quantite: number;
- // prixUnitaire: number; // ⚠️ Ajouté pour correspondre au backend
+ // prixUnitaire: number;
   dateDebut: string; // Format: YYYY-MM-DD
   dateFin: string;
   observations?: string;
@@ -33,7 +33,6 @@ export interface ValidationDevisDto {
 
 /**
  * DTO pour modification devis par l'ADMIN
- * Correspond à: DevisModificationDto.java
  */
 export interface DevisModificationDto {
   idReservation: number;
@@ -45,7 +44,6 @@ export interface DevisModificationDto {
 
 /**
  * DTO pour une ligne modifiée (dans le devis admin)
- * Correspond à: LigneModificationDto.java
  */
 export interface LigneModificationDto {
   idLigneReservation: number;
@@ -70,7 +68,6 @@ export interface ReservationSearchDto {
 
 /**
  * DTO pour valider une période de dates
- * Correspond à: DatePeriodeDto.java
  */
 export interface DatePeriodeDto {
   dateDebut: string; // Format: YYYY-MM-DD
@@ -190,7 +187,6 @@ export interface ReservationResponseDto {
 
 /**
  * DTO de réponse pour une ligne de réservation
- * Correspond à: LigneReservationResponseDto.java
  */
 export interface LigneReservationResponseDto {
   idLigneReservation: number;
@@ -240,7 +236,6 @@ export interface DetailDisponibiliteProduitDto {
 
 /**
  * DTO de réponse pour la vérification de disponibilité
- * Correspond à: DisponibiliteResponseDto.java
  */
 export interface DisponibiliteResponseDto {
   idProduit: number;
@@ -338,17 +333,7 @@ export const StatutLivraisonLabels: Record<StatutLivraison, string> = {
   'RETOUR':'Retour'
 };
 
-export const ModePaiementLabels: Record<ModePaiement, string> = {
-  [ModePaiement.ESPECES]: 'Espèces',
-  [ModePaiement.D17]: 'D17',
-  [ModePaiement.VIREMENT]: 'Virement bancaire'
-};
 
-export const StatutPaiementResLabels: Record<StatutPaiementRes, string> = {
-  'EN_ATTENTE_PAIEMENT': 'En attente Paiement',
-  'PARTIELLEMENT_PAYE': 'Partiellement Payé',
-  'TOTALEMENT_PAYE': 'Totalement Payé',
-};
 
 
 

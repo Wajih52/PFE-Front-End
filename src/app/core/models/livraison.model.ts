@@ -2,10 +2,6 @@
 
 import { StatutLivraison } from './reservation.model';
 
-/**
- * Modèles pour la gestion des livraisons
- * Sprint 6 - Gestion des livraisons
- */
 
 // ============================================
 // INTERFACES PRINCIPALES
@@ -137,20 +133,6 @@ export const StatutLivraisonIcons: Record<StatutLivraison, string> = {
 // ============================================
 
 /**
- * Obtenir la classe CSS du badge de statut
- */
-export function getStatutLivraisonBadgeClass(statut: StatutLivraison): string {
-  return `badge bg-${StatutLivraisonColors[statut]}`;
-}
-
-/**
- * Obtenir l'icône du statut
- */
-export function getStatutLivraisonIcon(statut: StatutLivraison): string {
-  return StatutLivraisonIcons[statut];
-}
-
-/**
  * Vérifier si une livraison peut être modifiée
  */
 export function canModifierLivraison(livraison: LivraisonResponseDto): boolean {
@@ -195,19 +177,6 @@ export function formatDateHeureLivraison(date: string, heure: string): string {
   return `${dateObj.toLocaleDateString('fr-FR', options)} à ${heure}`;
 }
 
-/**
- * Formatter la date de création/modification
- */
-export function formatDateTimeAudit(dateTime: string): string {
-  const date = new Date(dateTime);
-  return date.toLocaleString('fr-FR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
 
 
 

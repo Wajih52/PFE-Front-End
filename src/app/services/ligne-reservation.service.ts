@@ -28,7 +28,7 @@ export class LigneReservationService {
   // ============================================
 
   /**
-   * 🛒 Ajouter une ligne à une réservation
+   * Ajouter une ligne à une réservation
    * POST /api/lignes-reservation/{idReservation}
    * @requires ROLE: CLIENT, ADMIN, MANAGER
    */
@@ -47,7 +47,7 @@ export class LigneReservationService {
   // ============================================
 
   /**
-   * 📋 Récupérer une ligne par son ID
+   * Récupérer une ligne par son ID
    * GET /api/lignes-reservation/{id}
    */
   getLigneById(id: number): Observable<LigneReservationResponseDto> {
@@ -55,7 +55,7 @@ export class LigneReservationService {
   }
 
   /**
-   * 📋 Récupérer toutes les lignes d'une réservation
+   * Récupérer toutes les lignes d'une réservation
    * GET /api/lignes-reservation/reservation/{idReservation}
    */
   getLignesByReservation(idReservation: number): Observable<LigneReservationResponseDto[]> {
@@ -65,9 +65,8 @@ export class LigneReservationService {
   }
 
   /**
-   * 📋 Récupérer les lignes contenant un produit
+   * Récupérer les lignes contenant un produit
    * GET /api/lignes-reservation/produit/{idProduit}
-   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
    */
   getLignesByProduit(idProduit: number): Observable<LigneReservationResponseDto[]> {
     return this.http.get<LigneReservationResponseDto[]>(
@@ -76,9 +75,8 @@ export class LigneReservationService {
   }
 
   /**
-   * 📋 Récupérer les lignes par statut de livraison
+   * Récupérer les lignes par statut de livraison
    * GET /api/lignes-reservation/statut/{statut}
-   * @requires ROLE: ADMIN, MANAGER, EMPLOYE
    */
   getLignesByStatut(statut: string): Observable<LigneReservationResponseDto[]> {
     return this.http.get<LigneReservationResponseDto[]>(
@@ -93,7 +91,6 @@ export class LigneReservationService {
   /**
    *  Modifier une ligne de réservation
    * PUT /api/lignes-reservation/{id}
-   * @requires ROLE: CLIENT, ADMIN, MANAGER
    */
   modifierLigne(
     id: number,
@@ -114,7 +111,6 @@ export class LigneReservationService {
   /**
    *  Supprimer une ligne de réservation
    * DELETE /api/lignes-reservation/{id}
-   * @requires ROLE: CLIENT, ADMIN, MANAGER
    */
   supprimerLigne(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.API_URL}/${id}`);
@@ -147,7 +143,6 @@ export class LigneReservationService {
   /**
    * Obtenir les instances d'une ligne
    * GET /api/lignes-reservation/{id}/instances
-   * @requires ROLE: ADMIN, MANAGER
    */
   getInstancesLigneReservation(id: number): Observable<InstanceProduitResponse[]> {
     return this.http.get<InstanceProduitResponse[]>(

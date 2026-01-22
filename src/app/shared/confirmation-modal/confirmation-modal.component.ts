@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService } from '../../core/services/confirmation.service';
 
@@ -9,7 +9,7 @@ import { ConfirmationService } from '../../core/services/confirmation.service';
   templateUrl: './confirmation-modal.component.html',
   styleUrl: './confirmation-modal.component.scss'
 })
-export class ConfirmationModalComponent {
+export class ConfirmationModalComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
 
   showModal = false;

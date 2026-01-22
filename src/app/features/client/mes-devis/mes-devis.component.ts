@@ -1,5 +1,4 @@
 // src/app/features/client/mes-devis/mes-devis.component.ts
-// 📋 Composant CLIENT - Mes devis en attente de validation
 
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -115,7 +114,7 @@ export class MesDevisComponent implements OnInit {
 
     this.reservationService.validerDevisParClient(devis.idReservation, validationDto).subscribe({
       next: () => {
-        this.successMessage.set('✅ Devis accepté avec succès ! Votre réservation est maintenant confirmée.');
+        this.successMessage.set('Devis accepté avec succès ! Votre réservation est maintenant confirmée.');
         this.showConfirmModal.set(false);
         this.chargerMesDevis(); // Recharger la liste
         this.notificationPersist.refreshCount();

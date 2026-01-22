@@ -5,7 +5,35 @@
   <app-navbar></app-navbar>
 </div>
 <!-- ========== HERO SECTION ========== -->
-<section id="hero" class="hero-section">
+<section id="hero" class="hero-section" (mouseenter)="pauseCarousel()" (mouseleave)="resumeCarousel()">
+
+  <!-- Carrousel d'images de fond -->
+  <div class="hero-background-carousel">
+    <div *ngFor="let image of heroImages; let i = index"
+         class="hero-slide"
+         [class.active]="i === currentHeroIndex"
+         [style.background-image]="'url(' + image + ')'">
+    </div>
+  </div>
+
+  <!-- Indicateurs de diapositives -->
+  <div class="hero-slide-indicators">
+    <button *ngFor="let image of heroImages; let i = index"
+            class="slide-indicator"
+            [class.active]="i === currentHeroIndex"
+            (click)="goToHeroSlide(i)"
+            [attr.aria-label]="'Aller à la diapositive ' + (i + 1)">
+    </button>
+  </div>
+
+  <!-- Boutons de navigation -->
+  <button class="carousel-btn prev-btn" (click)="prevHeroSlide()" aria-label="Diapositive précédente">
+    ‹
+  </button>
+  <button class="carousel-btn next-btn" (click)="nextHeroSlide()" aria-label="Diapositive suivante">
+    ›
+  </button>
+
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="container">

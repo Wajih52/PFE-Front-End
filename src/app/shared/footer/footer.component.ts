@@ -3,6 +3,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import {color} from 'chart.js/helpers';
 
 interface FooterLink {
   label: string;
@@ -11,14 +12,12 @@ interface FooterLink {
 
 interface SocialLink {
   icon: string;
+  color:string;
   url: string;
   name: string;
 }
 
-/**
- * Composant Footer
- * Footer moderne avec liens, infos et réseaux sociaux
- */
+
 @Component({
   selector: 'app-footer',
   standalone: true,
@@ -57,11 +56,11 @@ export class FooterComponent {
 
   // Réseaux sociaux
   socialLinks: SocialLink[] = [
-    { icon: '📘', url: 'https://facebook.com', name: 'Facebook' },
-    { icon: '📷', url: 'https://instagram.com', name: 'Instagram' },
-    { icon: '🐦', url: 'https://twitter.com', name: 'Twitter' },
-    { icon: '💼', url: 'https://linkedin.com', name: 'LinkedIn' },
-    { icon: '📺', url: 'https://youtube.com', name: 'YouTube' }
+    { icon: 'fab fa-facebook-f fa-2x',color:'#103bf1', url: 'https://facebook.com', name: 'Facebook' },
+    { icon: 'fab fa-instagram fa-2x', url: 'https://instagram.com',color:'#ac2bac', name: 'Instagram' },
+    { icon: 'fab fa-twitter fa-2x', url: 'https://twitter.com',color:'#55acee', name: 'Twitter' },
+    { icon: 'fab fa-linkedin-in fa-2x', url: 'https://linkedin.com',color:'#0082ca', name: 'LinkedIn' },
+    { icon: 'fab fa-youtube fa-2x', url: 'https://youtube.com',color:'#ed302f', name: 'YouTube' }
   ];
 
   /**
@@ -70,4 +69,6 @@ export class FooterComponent {
   scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  protected readonly color = color;
 }

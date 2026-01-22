@@ -48,7 +48,7 @@ export class ResetPasswordComponent implements OnInit {
 
       if (!this.token) {
         this.tokenValid = false;
-        this.errorMessage = '❌ Lien invalide ou expiré. Veuillez demander un nouveau lien.';
+        this.errorMessage = 'Lien invalide ou expiré. Veuillez demander un nouveau lien.';
       }
     });
   }
@@ -84,10 +84,10 @@ export class ResetPasswordComponent implements OnInit {
 
     this.authService.resetPassword(data).subscribe({
       next: (response) => {
-        console.log('✅ Mot de passe réinitialisé', response);
+        console.log('Mot de passe réinitialisé', response);
 
         this.successMessage = response.message ||
-          '✅ Votre mot de passe a été réinitialisé avec succès !';
+          'Votre mot de passe a été réinitialisé avec succès !';
 
         // Désactiver le formulaire
         this.resetPasswordForm.disable();
@@ -102,14 +102,14 @@ export class ResetPasswordComponent implements OnInit {
         }, 3000);
       },
       error: (error) => {
-        console.error('❌ Erreur', error);
+        console.error('Erreur', error);
 
         if (error.error?.message) {
           this.errorMessage = error.error.message;
         }
         // Token expiré ou invalide
         else if (error.status === 400) {
-          this.errorMessage = '❌ Lien expiré ou invalide. Veuillez demander un nouveau lien.';
+          this.errorMessage = 'Lien expiré ou invalide. Veuillez demander un nouveau lien.';
           this.tokenValid = false;
         }
         // Erreur générique

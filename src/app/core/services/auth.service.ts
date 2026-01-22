@@ -72,7 +72,7 @@ export class AuthService {
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.AUTH_URL}/login`, credentials).pipe(
       switchMap((response: any) => {
-        console.log('🔍 Réponse backend login:', response);
+        console.log('Réponse backend login:', response);
 
         // Stocker le token
         this.storage.saveToken(response.token);
@@ -118,20 +118,6 @@ export class AuthService {
           this.currentUserSubject.next(null);
         })
       );
-  }
-
-  /**
-   * Déconnexion locale sans appel backend (en cas d'erreur ou token expiré)
-   */
-  logoutLocal(): void {
-    // Arrêter la surveillance
-    this.tokenMonitor.stopMonitoring();
-
-    // Supprimer les données locales
-    this.storage.clear();
-
-    // Mettre à jour l'état de connexion
-    this.isAuthenticatedSubject.next(false);
   }
 
   // ==================== RÉCUPÉRATION UTILISATEUR ====================
@@ -195,24 +181,4 @@ export class AuthService {
     return this.storage.isLoggedIn();
   }
 
-  /**
-   * Obtenir le token JWT
-   */
-  getToken(): string | null {
-    return this.storage.getToken();
-  }
-
-  /**
-   * Vérifier si l'utilisateur a un rôle spécifique
-   */
-  hasRole(role: string): boolean {
-    return this.storage.hasRole(role);
-  }
-
-  /**
-   * Obtenir les rôles de l'utilisateur
-   */
-  getUserRoles(): string[] {
-    return this.storage.getUserRoles();
-  }
 }

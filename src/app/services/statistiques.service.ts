@@ -18,7 +18,6 @@ export class StatistiquesService {
 
   /**
    * Obtenir toutes les statistiques du dashboard
-   * GET /api/statistiques/dashboard
    */
   getDashboardStatistiques(): Observable<DashboardStatistiques> {
     return this.http.get<DashboardStatistiques>(`${this.API_URL}/dashboard`);

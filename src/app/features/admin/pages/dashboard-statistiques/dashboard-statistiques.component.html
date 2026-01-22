@@ -82,7 +82,7 @@
 
   <!-- ============ ERROR STATE ============ -->
   <div *ngIf="error()" class="error-container">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"><span class="material-symbols-outlined md-36 cl-warning">warning</span></div>
     <p>{{ error() }}</p>
     <button class="btn-retry" (click)="loadStatistiques()">Réessayer</button>
   </div>

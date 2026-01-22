@@ -1,6 +1,6 @@
 // src/app/features/admin/pages/dashboard-statistiques/dashboard-statistiques.component.ts
 
-import { Component, OnInit, inject, signal, effect, ViewChild, ElementRef } from '@angular/core';
+import {Component, OnInit, inject, signal, effect, ViewChild, ElementRef, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
@@ -17,7 +17,7 @@ Chart.register(...registerables);
   templateUrl: './dashboard-statistiques.component.html',
   styleUrl: './dashboard-statistiques.component.scss'
 })
-export class DashboardStatistiquesComponent implements OnInit {
+export class DashboardStatistiquesComponent implements OnInit,OnDestroy {
   private readonly statistiquesService = inject(StatistiquesService);
 
   // ============ STATE ============
@@ -68,7 +68,7 @@ export class DashboardStatistiquesComponent implements OnInit {
         setTimeout(() => this.createAllCharts(), 100);
       },
       error: (err) => {
-        console.error('❌ Erreur chargement statistiques:', err);
+        console.error('Erreur chargement statistiques:', err);
         this.error.set('Impossible de charger les statistiques');
         this.loading.set(false);
       }
@@ -572,7 +572,7 @@ export class DashboardStatistiquesComponent implements OnInit {
   }
 
   // ============================================
-  // HELPERS
+  // méthodes utilitires
   // ============================================
 
   /**
@@ -620,7 +620,7 @@ export class DashboardStatistiquesComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('❌ Erreur téléchargement PDF:', err);
+        console.error('Erreur téléchargement PDF:', err);
         this.loading.set(false);
       }
     });
@@ -639,7 +639,7 @@ export class DashboardStatistiquesComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('❌ Erreur téléchargement Excel:', err);
+        console.error('Erreur téléchargement Excel:', err);
         alert('Erreur lors du téléchargement du rapport Excel');
         this.loading.set(false);
       }

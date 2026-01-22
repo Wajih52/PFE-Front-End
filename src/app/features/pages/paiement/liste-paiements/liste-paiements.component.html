@@ -139,13 +139,13 @@
     <p>Chargement des paiements...</p>
   </div>
 
-  <!--  ERREUR -->
+  <!-- ERREUR -->
   <div *ngIf="erreur" class="alert alert-danger">
     <i class="fas fa-exclamation-triangle"></i>
     {{ erreur }}
   </div>
 
-  <!--  TABLEAU -->
+  <!-- TABLEAU -->
   <div *ngIf="!loading && !erreur" class="table-container">
     <div class="table-info">
       <p><strong>{{ paiementsFiltres.length }}</strong> paiement(s) trouvé(s)</p>
@@ -267,7 +267,7 @@
   </div>
 </div>
 
-<!-- 🔍 MODAL DÉTAILS -->
+<!-- MODAL DÉTAILS -->
 <div *ngIf="showModalDetails" class="modal-overlay" (click)="fermerModalDetails()">
   <div class="modal-content modal-large" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -365,7 +365,7 @@
   </div>
 </div>
 
-<!-- ❌ MODAL REFUS -->
+<!-- MODAL REFUS -->
 <div *ngIf="showModalRefus" class="modal-overlay" (click)="fermerModalRefus()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">

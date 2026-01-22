@@ -21,7 +21,7 @@ import { AuthService } from '../../../../core/services/auth.service';
         </div>
 
         <div *ngIf="errorMessage" class="error">
-          <h2>❌ Erreur de connexion</h2>
+          <h2>Erreur de connexion</h2>
           <p>{{ errorMessage }}</p>
           <button (click)="goToLogin()">Retour à la connexion</button>
         </div>
@@ -129,7 +129,7 @@ export class OAuth2RedirectComponent implements OnInit {
         // Cas d'erreur
         this.isLoading = false;
         this.errorMessage = error;
-        console.error('❌ Erreur OAuth2:', error);
+        console.error('Erreur OAuth2:', error);
         return;
       }
 
@@ -148,7 +148,7 @@ export class OAuth2RedirectComponent implements OnInit {
    * Gérer l'authentification réussie
    */
   private handleSuccessfulAuth(token: string): void {
-    console.log('✅ Token OAuth2 reçu');
+    console.log('Token OAuth2 reçu');
 
     //  Sauvegarder le token
     this.storage.saveToken(token);
@@ -164,7 +164,7 @@ export class OAuth2RedirectComponent implements OnInit {
         this.router.navigate(['/profile']);
       },
       error: (error) => {
-        console.error('❌ Erreur lors du chargement de l\'utilisateur OAuth2:', error);
+        console.error('Erreur lors du chargement de l\'utilisateur OAuth2:', error);
         this.isLoading = false;
 
         // Message d'erreur selon le type

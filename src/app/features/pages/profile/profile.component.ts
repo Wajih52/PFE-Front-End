@@ -86,7 +86,7 @@ export class ProfileComponent implements OnInit {
    */
   async logout() {
     const confirmed = await this.confirmationService.confirm({
-      title: '👋 Déconnexion',
+      title: 'Déconnexion',
       message: 'Voulez-vous vraiment vous déconnecter ?',
       confirmText: 'Oui, me déconnecter',
       type: 'info'
@@ -97,13 +97,13 @@ export class ProfileComponent implements OnInit {
 
       this.authService.logout().subscribe({
         next: () => {
-          console.log('✅ Déconnexion réussie');
+          console.log('Déconnexion réussie');
           this.router.navigate(['/auth/login'], {
             queryParams: { logout: 'true' }
           });
         },
         error: (error) => {
-          console.error('❌ Erreur de déconnexion', error);
+          console.error('Erreur de déconnexion', error);
           // Déconnecter quand même côté client
           this.storage.clear();
           this.router.navigate(['/auth/login']);
@@ -147,12 +147,12 @@ export class ProfileComponent implements OnInit {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      this.errorMessage = '❌ Veuillez sélectionner une image';
+      this.errorMessage = 'Veuillez sélectionner une image';
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      this.errorMessage = '❌ Image trop volumineuse (max 5MB)';
+      this.errorMessage = 'Image trop volumineuse (max 5MB)';
       return;
     }
 
@@ -164,7 +164,7 @@ export class ProfileComponent implements OnInit {
       // Sauvegarder automatiquement
       this.saveImage();
     } catch (error) {
-      this.errorMessage = '❌ Erreur lors du traitement de l\'image';
+      this.errorMessage = 'Erreur lors du traitement de l\'image';
       console.error(error);
     }
   }
@@ -212,7 +212,7 @@ export class ProfileComponent implements OnInit {
    */
  async deleteImage() {
     const confirmed = await this.confirmationService.confirm({
-      title: '🗑️ Supprimer la photo',
+      title: 'Supprimer la photo',
       message: 'Voulez-vous vraiment supprimer votre photo de profil ?',
       confirmText: 'Supprimer',
       type: 'danger'
@@ -301,7 +301,7 @@ export class ProfileComponent implements OnInit {
     const { nouveauMotDePasse, confirmMotDePasse } = this.passwordForm.value;
 
     if (nouveauMotDePasse !== confirmMotDePasse) {
-      this.errorMessage = '❌ Les mots de passe ne correspondent pas';
+      this.errorMessage = 'Les mots de passe ne correspondent pas';
       this.scrollService.scrollToTop();
       setTimeout(() => this.errorMessage = '', 3000);
       return;
@@ -339,7 +339,7 @@ export class ProfileComponent implements OnInit {
 
   async deactivateAccount() {
     const confirmed = await this.confirmationService.confirm({
-      title: '⚠️ Désactiver le compte',
+      title: 'Désactiver le compte',
       message: 'Votre compte sera désactivé et vous serez déconnecté. Vous pourrez le réactiver en vous reconnectant.',
       confirmText: 'Désactiver',
       cancelText: 'Annuler',
@@ -349,7 +349,7 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/desactiver`, {}).subscribe({
       next: () => {
-        alert('✅ Compte désactivé. Vous allez être déconnecté.');
+        alert('Compte désactivé. Vous allez être déconnecté.');
         this.authService.logout().subscribe({
           next: () => this.router.navigate(['/auth/login']),
           error: () => {
@@ -368,7 +368,7 @@ export class ProfileComponent implements OnInit {
 
   async supprimerAccount() {
     const confirmed = await this.confirmationService.confirm({
-      title: '⚠️ Supprimer le compte',
+      title: 'Supprimer le compte',
       message: 'Votre compte sera Supprimer et vous serez déconnecté. Vous ne pourrez plus se connecter par la suite ',
       confirmText: 'Supprimer',
       cancelText: 'Annuler',
@@ -378,7 +378,7 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/archiver`, {}).subscribe({
       next: () => {
-        alert('✅ Compte Supprimé. Vous allez être déconnecté.');
+        alert('Compte Supprimé. Vous allez être déconnecté.');
         this.authService.logout().subscribe({
           next: () => this.router.navigate(['/auth/login']),
           error: () => {

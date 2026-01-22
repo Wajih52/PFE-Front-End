@@ -1,6 +1,6 @@
 // src/app/features/pages/home/home.component.ts
 
-import {Component, OnInit, inject, PLATFORM_ID, afterNextRender, signal} from '@angular/core';
+import {Component, OnInit, inject, PLATFORM_ID, afterNextRender, signal, OnDestroy} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../../../core/services/storage.service';
@@ -33,7 +33,7 @@ interface FeaturedProduct {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit,OnDestroy{
   private router = inject(Router);
   private storage = inject(StorageService);
   private panierService = inject(PanierService);
@@ -115,6 +115,16 @@ export class HomeComponent implements OnInit {
     objet: '' // N'apparaît que si type = AUTRE
   };
 
+  // Propriétés pour le carrousel Hero
+  heroImages = [
+    'assets/images/mariage.jpg',
+    'assets/images/mariage-2.jpg',
+    'assets/images/mariage-3.jpg',
+    'assets/images/hero-wedding.jpg'
+  ];
+  currentHeroIndex = 0;
+  private heroCarouselInterval: any;
+
   // Signals
   isSubmitting = signal(false);
   submitSuccess = signal(false);
@@ -152,9 +162,16 @@ export class HomeComponent implements OnInit {
     }
   }
   ngOnInit(): void {
-
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkAuthentication();
+      this.startHeroCarousel();
+    }
   }
-
+  ngOnDestroy(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.stopHeroCarousel();
+    }
+  }
   /**
    * Vérifie si l'utilisateur est connecté
    */
@@ -391,10 +408,74 @@ export class HomeComponent implements OnInit {
     this.codeReclamation.set(null);
   }
 
+ // ============== animations imagess home =========================
   /**
-   * Fermer le message d'erreur
+   * Démarrer le carrousel automatique
    */
-  closeError(): void {
-    this.submitError.set(null);
+  private startHeroCarousel(): void {
+    // Démarrer le changement d'images toutes les 5 secondes
+    this.heroCarouselInterval = setInterval(() => {
+      this.nextHeroSlide();
+    }, 5000); // 5000ms = 5 secondes
   }
+
+  /**
+   * Arrêter le carrousel
+   */
+  private stopHeroCarousel(): void {
+    if (this.heroCarouselInterval) {
+      clearInterval(this.heroCarouselInterval);
+    }
+  }
+
+  /**
+   * Passer à la diapositive suivante
+   */
+  protected nextHeroSlide(): void {
+    this.currentHeroIndex = (this.currentHeroIndex + 1) % this.heroImages.length;
+  }
+
+  /**
+   * Passer à une diapositive spécifique (pour navigation manuelle)
+   */
+  goToHeroSlide(index: number): void {
+    this.currentHeroIndex = index;
+    // Redémarrer le timer après une interaction manuelle
+    this.stopHeroCarousel();
+    this.startHeroCarousel();
+  }
+
+  /**
+   * Diapositive précédente
+   */
+  prevHeroSlide(): void {
+    this.currentHeroIndex = (this.currentHeroIndex - 1 + this.heroImages.length) % this.heroImages.length;
+    this.restartCarousel();
+  }
+
+
+  /**
+   * Mettre en pause le carrousel au survol
+   */
+  pauseCarousel(): void {
+    if (this.heroCarouselInterval) {
+      clearInterval(this.heroCarouselInterval);
+    }
+  }
+
+  /**
+   * Reprendre le carrousel après le survol
+   */
+  resumeCarousel(): void {
+    this.restartCarousel();
+  }
+
+  /**
+   * Redémarrer le carrousel
+   */
+  private restartCarousel(): void {
+    this.stopHeroCarousel();
+    this.startHeroCarousel();
+  }
+
 }

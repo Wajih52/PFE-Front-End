@@ -180,9 +180,8 @@
       }
     </aside>
 
-    <!-- ============================================ -->
     <!-- CALENDRIER PRINCIPAL -->
-    <!-- ============================================ -->
+
     <main class="calendrier-main">
       @if (loading()) {
         <div class="loading-overlay">
@@ -209,9 +208,9 @@
     </main>
   </div>
 
-  <!-- ============================================ -->
+
   <!-- MODAL DÉTAILS ÉVÉNEMENT -->
-  <!-- ============================================ -->
+
   @if (afficherModal() && evenementSelectionne(); as event) {
     <div class="modal-overlay" (click)="fermerModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">

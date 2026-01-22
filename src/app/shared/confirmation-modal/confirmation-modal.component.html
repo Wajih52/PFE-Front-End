@@ -3,9 +3,9 @@
   <div class="modal" (click)="$event.stopPropagation()" [class]="config?.type || 'warning'">
 
     <div class="modal-icon">
-      <span *ngIf="config?.type === 'danger'">🔴</span>
-      <span *ngIf="config?.type === 'warning'">⚠️</span>
-      <span *ngIf="config?.type === 'info'">ℹ️</span>
+      <span *ngIf="config?.type === 'danger'"><span class="material-symbols-outlined  cl-danger">dangerous</span></span>
+      <span *ngIf="config?.type === 'warning'"><span class="material-symbols-outlined  cl-warning">warning</span></span>
+      <span *ngIf="config?.type === 'info'"><span class="material-symbols-outlined  cl-info">info</span></span>
     </div>
 
     <h2>{{ config?.title }}</h2>

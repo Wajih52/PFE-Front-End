@@ -8,7 +8,6 @@ import { AuthService } from '../core/services/auth.service';
 
 /**
  * Service de gestion des menus de la sidebar et du dropdown profil
- * Configuration centralisée et extensible des menus par rôle
  */
 @Injectable({
   providedIn: 'root'
@@ -23,7 +22,6 @@ export class SidebarMenuService {
 
   /**
    * Configuration complète des menus par rôle
-   * ⚡ Pour ajouter un nouvel élément, modifiez simplement cette configuration
    */
   private readonly MENU_CONFIG: Record<string, MenuSection[]> = {
     // ========== MENUS CLIENT ==========
@@ -493,7 +491,7 @@ export class SidebarMenuService {
 
   /**
    * Obtenir les éléments du dropdown profil
-   * Ajoute les menus spécifiques aux rôles (ex: Dashboard pour ADMIN)
+   * Ajoute les menus spécifiques aux rôles
    */
   getProfileDropdownItems(): Observable<MenuItem[]> {
     return this.authService.currentUser$.pipe(
@@ -575,26 +573,6 @@ export class SidebarMenuService {
     );
   }
 
-  /**
-   * Vérifier si l'utilisateur a accès à un menu item
-   */
-  hasAccess(item: MenuItem): Observable<boolean> {
-    if (!item.requiredRoles || item.requiredRoles.length === 0) {
-      return this.authService.isAuthenticated$;
-    }
-
-    return this.authService.currentUser$.pipe(
-      map(user => {
-        if (!user || !user.roles) {
-          return false;
-        }
-
-        const userRoles = user.roles.map((r: any) => r.nom || r);
-        return item.requiredRoles!.some(role => userRoles.includes(role));
-      })
-    );
-  }
-
   // ==================== MÉTHODES PRIVÉES ====================
 
   /**
@@ -643,7 +621,7 @@ export class SidebarMenuService {
         });
       },
       error: (error) => {
-        console.error('❌ Erreur lors de la déconnexion:', error);
+        console.error(' Erreur lors de la déconnexion:', error);
       }
     });
   }
