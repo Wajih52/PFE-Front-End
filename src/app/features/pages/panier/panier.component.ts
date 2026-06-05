@@ -13,6 +13,7 @@ import {DevisRequestDto} from '../../../core/models/reservation.model';
 import {ToastrService} from 'ngx-toastr';
 import {ConfirmationService} from '../../../core/services/confirmation.service';
 import {NotificationPersistantService} from '../../../services/notification-persistant.service';
+import {variables} from '../../../core/environement/variables';
 
 @Component({
   selector: 'app-panier',
@@ -459,13 +460,13 @@ export class PanierComponent implements OnInit {
     if (ligne.imageProduit) {
       // Si l'image est un chemin relatif, ajouter le base URL du serveur
       if (ligne.imageProduit.startsWith('/') || ligne.imageProduit.startsWith('uploads/')) {
-        return `http://localhost:8080${ligne.imageProduit.startsWith('/') ? '' : '/'}${ligne.imageProduit}`;
+        return `${variables.apiImg}${ligne.imageProduit.startsWith('/') ? '' : '/'}${ligne.imageProduit}`;
       }
       // Si c'est déjà une URL complète, la retourner telle quelle
       return ligne.imageProduit;
     }
     // Image placeholder si pas d'image
-    return `https://via.placeholder.com/120x120/C8A882/FFFFFF?text=${encodeURIComponent(ligne.nomProduit)}`;
+    return `https://placehold.co/600x400?text=${encodeURIComponent(ligne.nomProduit)}`;
   }
 
   /**
@@ -473,6 +474,6 @@ export class PanierComponent implements OnInit {
    */
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
-    target.src = 'https://via.placeholder.com/120x120/CCCCCC/FFFFFF?text=Image+Non+Disponible';
+    target.src = 'https://placehold.co/600x400?text=No\nImage';
   }
 }

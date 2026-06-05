@@ -10,6 +10,7 @@ import {PanierService} from '../../../services/panier.service';
 import {Categorie, ProduitResponse} from '../../../core/models';
 import {ToastrService} from 'ngx-toastr';
 import {FooterComponent} from '../../../shared/footer/footer.component';
+import {variables} from '../../../core/environement/variables';
 
 @Component({
   selector: 'app-catalogue-list',
@@ -372,13 +373,13 @@ export class CatalogueListComponent implements OnInit {
     if (produit.imageProduit) {
       // Si l'image est un chemin relatif, ajouter le base URL du serveur
       if (produit.imageProduit.startsWith('/') || produit.imageProduit.startsWith('uploads/')) {
-        return `http://localhost:8080${produit.imageProduit.startsWith('/') ? '' : '/'}${produit.imageProduit}`;
+        return `${variables.apiImg}${produit.imageProduit.startsWith('/') ? '' : '/'}${produit.imageProduit}`;
       }
       // Si c'est déjà une URL complète, la retourner telle quelle
       return produit.imageProduit;
     }
     // Image placeholder si pas d'image
-    return 'https://via.placeholder.com/300x250/C8A882/FFFFFF?text=' + encodeURIComponent(produit.nomProduit);
+    return 'https://placehold.co/600x400?text=' + encodeURIComponent(produit.nomProduit);
   }
 
   /**
@@ -386,7 +387,7 @@ export class CatalogueListComponent implements OnInit {
    */
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
-    target.src = 'https://via.placeholder.com/300x250/CCCCCC/FFFFFF?text=Image+Non+Disponible';
+    target.src = 'https://placehold.co/600x400?text=Image+Non+Disponible';
   }
 
   /**

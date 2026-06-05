@@ -13,6 +13,7 @@ import {
 } from '../models';
 import { StorageService } from './storage.service';
 import { TokenMonitorService } from './token-monitor.service';
+import{variables} from '../environement/variables';
 
 /**
  * Service d'authentification
@@ -27,9 +28,9 @@ export class AuthService {
   private storage = inject(StorageService);
   private tokenMonitor = inject(TokenMonitorService);
 
-  private readonly API_URL = 'http://localhost:8080/api';
-  private readonly AUTH_URL = `${this.API_URL}/auth`;
-  private readonly INSCRIPTION_URL = `${this.API_URL}/inscriptions`;
+  private readonly API_URL = `${variables.apiUrl}`;
+  private readonly AUTH_URL = `${variables.apiUrl}/auth`;
+  private readonly INSCRIPTION_URL = `${variables.apiUrl}/inscriptions`;
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.storage.isLoggedIn());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();

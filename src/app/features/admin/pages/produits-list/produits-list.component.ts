@@ -15,11 +15,8 @@ import {
 } from '../../../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import {NotificationService} from '../../../../services/notification.service';
+import {variables} from '../../../../core/environement/variables'
 
-/**
- * Composant de liste des produits avec recherche, filtres et gestion
- * Sprint 3 : Gestion des produits et du stock
- */
 @Component({
   selector: 'app-produits-list',
   standalone: true,
@@ -470,7 +467,7 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * ✅ MODIFIÉ: Réactiver un produit avec modal
+   * Réactiver un produit avec modal
    */
   async reactiverProduit(): Promise<void> {
     if (!this.produitReactivation) return;
@@ -514,7 +511,7 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * ✅ NOUVEAU: Ouvrir le modal de réactivation
+   * Ouvrir le modal de réactivation
    */
   openReactivationModal(produit: ProduitResponse): void {
     this.produitReactivation = produit;
@@ -523,7 +520,7 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * ✅ NOUVEAU: Fermer le modal de réactivation
+   * Fermer le modal de réactivation
    */
   closeReactivationModal(): void {
     this.showReactivationModal = false;
@@ -576,7 +573,7 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * ✅ NOUVEAU: Réinitialiser le filtre de date
+   * Réinitialiser le filtre de date
    */
   resetDateFilter(): void {
     this.filterDateDebut = '';
@@ -586,16 +583,18 @@ export class ProduitsListComponent implements OnInit {
   }
 
   /**
-   * ✅ NOUVEAU: Obtenir la disponibilité pour un produit
+   * Obtenir la disponibilité pour un produit
    */
   getDisponibilitePourProduit(idProduit: number): any {
     return this.produitsDisponibilite.find(p => p.idProduit === idProduit);
   }
 
   /**
-   * ✅ MODIFIÉ: Helper pour formatter les dates
+   * Helper pour formatter les dates
    */
   formatDate(date: string): string {
     return new Date(date).toLocaleDateString('fr-FR');
   }
+
+  protected readonly variables = variables;
 }

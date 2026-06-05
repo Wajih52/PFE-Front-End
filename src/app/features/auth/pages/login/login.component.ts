@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService  } from '../../../../core/services/auth.service';
 import { StorageService  } from '../../../../core/services/storage.service';
+import {variables} from '../../../../core/environement/variables' ;
 
 @Component({
   selector: 'app-login',
@@ -214,4 +215,6 @@ export class LoginComponent implements OnInit {
 
     return '';
   }
+
+  protected readonly variables = variables;
 }

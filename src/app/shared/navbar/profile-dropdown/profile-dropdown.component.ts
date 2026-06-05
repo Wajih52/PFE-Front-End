@@ -7,6 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { SidebarMenuService } from '../../../services/sidebar-menu.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MenuItem } from '../../../core/models/menu-item.model';
+import {variables} from '../../../core/environement/variables'
 
 /**
  * Composant Dropdown du profil utilisateur
@@ -40,7 +41,7 @@ export class ProfileDropdownComponent implements OnInit, OnDestroy {
   /** État du dropdown (ouvert/fermé) */
   isOpen: boolean = false;
 
-  IMAGE_BASE_URL = 'http://localhost:8080';
+  IMAGE_BASE_URL = `${variables.apiImg}`;
 
   private destroy$ = new Subject<void>();
 

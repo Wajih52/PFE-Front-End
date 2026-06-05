@@ -58,7 +58,7 @@ export class UsersManagementComponent implements OnInit {
   private datePipe = inject(DatePipe);
 
   API_URL = `${variables.apiUrl}/utilisateurs`;
-  IMAGE_BASE_URL = 'http://localhost:8080';
+  IMAGE_BASE_URL = `${variables.apiImg}`;
 
   //icone lucide
   readonly UsersRound = UsersRound;
@@ -162,14 +162,21 @@ export class UsersManagementComponent implements OnInit {
     // Recherche
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      result = result.filter(u =>
-        u.nom.toLowerCase().includes(term) ||
-        u.prenom.toLowerCase().includes(term) ||
-        u.pseudo.toLowerCase().includes(term) ||
-        u.email.toLowerCase().includes(term) ||
-        u.codeUtilisateur.toLowerCase().includes(term) ||
-        u.telephone.toString().includes(term)
-      );
+      result = result.filter(u => {
+        const nom = u.nom?.toLowerCase() ?? '';
+        const prenom = u.prenom?.toLowerCase() ?? '';
+        const pseudo = u.pseudo?.toLowerCase() ?? '';
+        const email = u.email?.toLowerCase() ?? '';
+        const code = u.codeUtilisateur?.toLowerCase() ?? '';
+        const telephone = u.telephone?.toString() ?? '';
+
+        return nom.includes(term) ||
+          prenom.includes(term) ||
+          pseudo.includes(term) ||
+          email.includes(term) ||
+          code.includes(term) ||
+          telephone.includes(term);
+      });
     }
 
     // Filtre rôle

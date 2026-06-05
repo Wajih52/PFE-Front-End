@@ -223,7 +223,7 @@
           <div class="product-image">
             <img
               *ngIf="produit.imageProduit"
-              [src]="'http://localhost:8080' + produit.imageProduit"
+              [src]="variables.apiImg + produit.imageProduit"
               [alt]="produit.nomProduit"
             />
             <div *ngIf="!produit.imageProduit" class="no-image">

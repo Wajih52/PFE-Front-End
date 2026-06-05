@@ -45,17 +45,17 @@ export class ManageUserRolesModalComponent implements OnInit {
    * Ouvre le modal
    */
   open(): void {
-    console.log('🔍 DEBUG open() - utilisateurId:', this.utilisateurId);
-    console.log('🔍 DEBUG open() - utilisateurPseudo:', this.utilisateurPseudo);
+    console.log('utilisateurId:', this.utilisateurId);
+    console.log('utilisateurPseudo:', this.utilisateurPseudo);
 
-    // ✅ Vérification avant d'ouvrir
+    // Vérification avant d'ouvrir
     if (!this.utilisateurId) {
-      console.error('❌ Impossible d\'ouvrir le modal : utilisateurId est null/undefined');
+      console.error('Impossible d\'ouvrir le modal : utilisateurId est null/undefined');
       return;
     }
 
     this.isVisible = true;
-    this.loadData();  // ✅ Charger les données ICI, pas dans ngOnInit
+    this.loadData();
   }
 
   /**
@@ -77,7 +77,6 @@ export class ManageUserRolesModalComponent implements OnInit {
 
     if (!this.utilisateurId) {
       this.errorMessage = 'Erreur : ID utilisateur manquant';
-      console.error('❌ loadData() appelé sans utilisateurId valide');
       return;
     }
 

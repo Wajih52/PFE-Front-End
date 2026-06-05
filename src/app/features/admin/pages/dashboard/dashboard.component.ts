@@ -6,6 +6,7 @@ import {Router, RouterLink} from '@angular/router';
 import { StorageService } from '../../../../core/services/storage.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import {ConfirmationService} from '../../../../core/services/confirmation.service';
+import {variables} from '../../../../core/environement/variables';
 
 @Component({
   selector: 'app-dashboard',
@@ -49,7 +50,7 @@ export class DashboardComponent implements OnInit {
       this.userEmail = user.email;
       this.userCode = user.codeUtilisateur;
       this.userRoles = user.roles || [];
-      this.userImage = user.image ? `http://localhost:8080${user.image}` : '';
+      this.userImage = user.image ? `${variables.apiImg}${user.image}` : '';
       this.userPhone = user.telephone?.toString() || '';
       this.isLoading = false;
 

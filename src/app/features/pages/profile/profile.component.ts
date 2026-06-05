@@ -10,6 +10,7 @@ import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {ConfirmationService} from '../../../core/services/confirmation.service';
 import {ScrollService} from '../../../services/scroll.service';
+import{variables} from '../../../core/environement/variables';
 
 @Component({
   selector: 'app-profile',
@@ -52,7 +53,7 @@ export class ProfileComponent implements OnInit {
   isLoggingOut = false;
   isLoading = true;
 
-  API_URL = 'http://localhost:8080/api/utilisateurs';
+  API_URL = `${variables.apiUrl}/utilisateurs`;
 
   constructor() {
     // Formulaire profil (sans image, sans mot de passe)
@@ -125,7 +126,7 @@ export class ProfileComponent implements OnInit {
         this.user = data;
 
         if (data.image) {
-          this.previewImage = `http://localhost:8080${data.image}`;
+          this.previewImage = `${variables.apiImg}${data.image}`;
         } else {
           this.previewImage = '';
         }
@@ -185,7 +186,7 @@ export class ProfileComponent implements OnInit {
         setTimeout(() => this.successMessage = '', 3000);
         this.user.image = response.image;
         if (response.image) {
-          this.previewImage = `http://localhost:8080${response.image}`;
+          this.previewImage = `${variables.apiImg}${response.image}`;
         }
 
         // Mettre à jour le localStorage

@@ -719,9 +719,9 @@
             <div class="form-field">
               <label>État du compte *</label>
               <select formControlName="etatCompte">
-                <option value="ACTIVE"><span class="material-symbols-outlined  cl-success">check_box</span> Actif</option>
-                <option value="SUSPENDU"><span class="material-symbols-outlined  cl-danger">block</span> Suspendu</option>
-                <option value="DESACTIVE"><span class="material-symbols-outlined  cl-warning">disabled_by_default</span> Désactivé</option>
+                <option value="ACTIVE"><!--<span class="material-symbols-outlined  cl-success">check_box</span>--> Actif</option>
+                <option value="SUSPENDU"><!--<span class="material-symbols-outlined  cl-danger">block</span>--> Suspendu</option>
+                <option value="DESACTIVE"><!--<span class="material-symbols-outlined  cl-warning">disabled_by_default</span>--> Désactivé</option>
               </select>
               <span class="error-message" *ngIf="getErrorMessage('etatCompte', addForm)">
                 {{ getErrorMessage('etatCompte', addForm) }}
