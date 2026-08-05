@@ -180,6 +180,22 @@
             <span class="material-symbols-outlined  cl-dark">shoppingmode</span> Voir le produit
           </button>
         </div>
+        <br>
+        <div class="action-section" *ngIf="qrCodeDataUrl">
+          <h4>Code QR de l’instance</h4>
+
+          <div class="qr-box">
+            <img [src]="qrCodeDataUrl" alt="QR code instance">
+          </div>
+          <button class="btn btn-secondary btn-block" (click)="printQrCode()">
+            <span class="material-symbols-outlined cl-dark">print</span>
+            Imprimer le QR code
+          </button>
+          <p class="qr-help">
+            Ce QR code permet à l’employé ou Manager d’ouvrir rapidement la fiche du matériel.
+          </p>
+
+        </div>
       </div>
 
       <!-- Zone danger -->

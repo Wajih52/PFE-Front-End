@@ -59,6 +59,7 @@ export class InstanceHistoriqueComponent implements OnInit {
     return new Date(date).toLocaleString('fr-FR');
   }
 
+
   /**
    * Obtenir l'icône pour un type de mouvement
    */

@@ -79,6 +79,10 @@
                 <div class="detail-item" *ngIf="mouvement.idReservation">
                   <span class="label">Réservation:</span>
                   <span class="value">{{ mouvement.referenceReservation }}</span>
+                  <span class="value">
+                    Du {{ mouvement.dateDebut | date:'dd/MM/yyyy' }}
+                    au {{ mouvement.dateFin | date:'dd/MM/yyyy' }}
+                  </span>
                 </div>
               </div>
             </div>

@@ -1,0 +1,399 @@
+.scan-detail-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #C8A882;
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #000;
+
+    .material-symbols-outlined {
+      font-size: 2.2rem;
+      color: #C8A882;
+    }
+  }
+
+  p {
+    margin: 0.5rem 0 0;
+    color: #6c757d;
+    font-size: 0.95rem;
+  }
+}
+
+/* ================= BUTTONS ================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: none;
+  border-radius: 9px;
+  padding: 0.75rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  .material-symbols-outlined {
+    font-size: 1.25rem;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  background: #f1f3f5;
+  color: #212529;
+  border: 1px solid #dee2e6;
+
+  &:hover {
+    background: #e9ecef;
+  }
+}
+
+/* ================= ALERTS / LOADING ================= */
+
+.alert {
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.alert-error {
+  background: #fff5f5;
+  color: #dc3545;
+  border: 1px solid #f5c2c7;
+}
+
+.loading {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  p {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #C8A882;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= MAIN CARD ================= */
+
+.instance-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #eeeeee;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.7rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-bottom: 2px solid #C8A882;
+
+  h2 {
+    margin: 0;
+    color: #000;
+    font-size: 1.7rem;
+    font-weight: 700;
+  }
+
+  .serial {
+    margin: 0.6rem 0 0;
+    color: #6c757d;
+    font-size: 0.95rem;
+  }
+
+  code {
+    background: #f1f3f5;
+    color: #000;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    font-weight: 700;
+  }
+}
+
+/* ================= INFO GRID ================= */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.info-item {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #eeeeee;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  .label {
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .value {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    word-break: break-word;
+  }
+}
+
+/* ================= SECTIONS ================= */
+
+.section {
+  margin: 0 1.5rem 1.5rem;
+  padding: 1.2rem;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+
+  h3 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    color: #495057;
+    line-height: 1.6;
+  }
+
+  strong {
+    color: #000;
+  }
+
+  code {
+    background: #f1f3f5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    color: #000;
+    font-weight: 700;
+  }
+}
+
+.maintenance {
+  border-left: 4px solid #ffc107;
+  background: #fffdf5;
+}
+
+.reservation {
+  border-left: 4px solid #0d6efd;
+  background: #f8fbff;
+}
+
+/* ================= STATUS BADGES ================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.42rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #ffffff;
+}
+
+/* Statut instance */
+
+.status-disponible {
+  background: #28a745;
+}
+
+.status-attente {
+  background: #ffc107;
+  color: #000;
+}
+
+.status-livraison {
+  background: #0d6efd;
+}
+
+.status-retour {
+  background: #6f42c1;
+}
+
+.status-maintenance {
+  background: #fd7e14;
+}
+
+.status-hors-service {
+  background: #6c757d;
+}
+
+.status-perdu {
+  background: #dc3545;
+}
+
+.status-utilisation {
+  background: #20c997;
+}
+
+/* État physique */
+
+.status-neuf {
+  background: #198754;
+}
+
+.status-bon-etat {
+  background: #28a745;
+}
+
+.status-etat-moyen {
+  background: #ffc107;
+  color: #000;
+}
+
+.status-usage {
+  background: #fd7e14;
+}
+
+.status-endommage {
+  background: #dc3545;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .scan-detail-container {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.2rem;
+
+    h1 {
+      font-size: 1.45rem;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.2rem;
+
+    h2 {
+      font-size: 1.35rem;
+    }
+
+    .status-badge {
+      align-self: flex-start;
+    }
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .section {
+    margin: 0 1rem 1rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .scan-detail-container {
+    padding: 0.75rem;
+  }
+
+  .header {
+    border-radius: 12px;
+
+    h1 {
+      font-size: 1.25rem;
+
+      .material-symbols-outlined {
+        font-size: 1.8rem;
+      }
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .instance-card {
+    border-radius: 12px;
+  }
+
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+  }
+}

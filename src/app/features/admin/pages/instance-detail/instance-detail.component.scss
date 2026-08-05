@@ -536,3 +536,33 @@
   color: white;
 }
 
+// ========== CODE QR INSTANCE ==========
+.qr-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2px dashed #c8a882;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.qr-help {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+  margin: 0;
+}
+

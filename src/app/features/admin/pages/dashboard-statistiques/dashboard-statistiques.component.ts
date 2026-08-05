@@ -5,7 +5,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { StatistiquesService } from '../../../../services/statistiques.service';
-import { DashboardStatistiques, TopProduit, TopEmploye } from '../../../../core/models/statistiques.model';
+import { DashboardStatistiques } from '../../../../core/models/statistiques.model';
+import { AiManagerService, AnalyseAiHistoriqueResponse,AiSummaryResponse } from '../../../../services/ai-manager-service.service';
 
 // Enregistrer tous les composants Chart.js
 Chart.register(...registerables);
@@ -41,8 +42,21 @@ export class DashboardStatistiquesComponent implements OnInit,OnDestroy {
   @ViewChild('evolutionReservationsChart') evolutionReservationsCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('notesParCategorieChart') notesParCategorieCanvas!: ElementRef<HTMLCanvasElement>;
 
+  //============= ai Manager ===============
+  private aiManagerService = inject(AiManagerService);
+
+  aiSummary = signal<string | null>(null);
+  aiLoading = signal(false);
+  aiError = signal<string | null>(null);
+
+  aiHistory = signal<AnalyseAiHistoriqueResponse[]>([]);
+  selectedAiAnalysis = signal<AnalyseAiHistoriqueResponse | null>(null);
+  historyLoading = signal(false);
+  historyError = signal<string | null>(null);
+
   ngOnInit(): void {
     this.loadStatistiques();
+    this.loadAiHistory();
   }
 
   /**
@@ -569,6 +583,98 @@ export class DashboardStatistiquesComponent implements OnInit,OnDestroy {
     };
 
     this.charts['notesParCategorie'] = new Chart(ctx, config);
+  }
+
+
+  // ======================== chargement Summary ======================
+  genererAnalyseIa(): void {
+    if (this.aiLoading()) {
+      return;
+    }
+
+    this.aiLoading.set(true);
+    this.aiError.set(null);
+    this.aiSummary.set(null);
+    this.selectedAiAnalysis.set(null);
+
+    this.aiManagerService.getSummary().subscribe({
+      next: (response) => {
+        this.aiSummary.set(response.summary);
+        this.aiLoading.set(false);
+        // Après génération, on recharge l'historique depuis la base
+        this.loadAiHistory();
+      },
+      error: (error) => {
+        console.error(error);
+        this.aiError.set("Impossible de générer l'analyse IA pour le moment.");
+        this.aiLoading.set(false);
+      }
+    });
+  }
+
+  loadAiHistory(): void {
+    this.historyLoading.set(true);
+    this.historyError.set(null);
+
+    this.aiManagerService.getHistory().subscribe({
+      next: (history) => {
+        this.aiHistory.set(history);
+        this.historyLoading.set(false);
+
+        // Afficher automatiquement la dernière analyse si aucune n'est sélectionnée
+        if (!this.selectedAiAnalysis() && history.length > 0) {
+          this.selectedAiAnalysis.set(history[0]);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement historique IA:', err);
+        this.historyError.set("Impossible de charger l'historique IA.");
+        this.historyLoading.set(false);
+      }
+    });
+  }
+
+  selectAiAnalysis(analysis: AnalyseAiHistoriqueResponse): void {
+    this.selectedAiAnalysis.set(analysis);
+    this.aiSummary.set(null);
+    this.aiError.set(null);
+  }
+
+  telechargerAnalyseTxt(analysis: AnalyseAiHistoriqueResponse): void {
+    const content = `Analyse IA - Assistant Manager
+
+Date : ${this.formatAiDate(analysis.createdAt)}
+Générée par : ${analysis.generatedBy || 'SYSTEM'}
+
+${analysis.summary}
+`;
+
+    const blob = new Blob([content], {
+      type: 'text/plain;charset=utf-8'
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `analyse-ia-${analysis.id}-${this.formatDateForFileName(analysis.createdAt)}.txt`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+  }
+
+  formatAiDate(date: string): string {
+    return new Date(date).toLocaleString('fr-FR');
+  }
+
+  formatDateForFileName(date: string): string {
+    return new Date(date)
+      .toLocaleString('fr-FR')
+      .replace(/[/: ]/g, '-')
+      .replace(',', '');
   }
 
   // ============================================

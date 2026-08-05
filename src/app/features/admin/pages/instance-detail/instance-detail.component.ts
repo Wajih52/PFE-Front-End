@@ -13,6 +13,7 @@ import {
   EtatPhysiqueLabels
 } from '../../../../core/models';
 import {NotificationService} from '../../../../services/notification.service';
+import * as QRCode from 'qrcode';
 
 /**
  * Composant de détails d'une instance
@@ -47,6 +48,9 @@ export class InstanceDetailComponent implements OnInit {
   EtatPhysique = EtatPhysique;
   EtatPhysiqueLabels = EtatPhysiqueLabels;
 
+  qrCodeDataUrl: string | null = null ;
+  qrCodeUrl: string | null = null ;
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -67,6 +71,7 @@ export class InstanceDetailComponent implements OnInit {
     this.instanceService.getInstanceById(this.instanceId).subscribe({
       next: (instance) => {
         this.instance = instance;
+        this.generateQrCode();
         this.isLoading = false;
       },
       error: (error) => {
@@ -77,6 +82,17 @@ export class InstanceDetailComponent implements OnInit {
     });
   }
 
+  async generateQrCode(): Promise<void> {
+    if (!this.instance?.qrCodeToken) return;
+
+    this.qrCodeUrl = `${window.location.origin}/scan/instance/${this.instance.qrCodeToken}`;
+
+    this.qrCodeDataUrl = await QRCode.toDataURL(this.qrCodeUrl, {
+      width: 220,
+      margin: 2,
+      errorCorrectionLevel : 'M'
+    });
+  }
   /**
    * Navigation vers l'édition
    */
@@ -223,5 +239,66 @@ export class InstanceDetailComponent implements OnInit {
       [EtatPhysique.ENDOMMAGE]: 'status-endommage'
     };
     return classes[etat] || '';
+  }
+
+
+  printQrCode(): void {
+    if (!this.qrCodeDataUrl || !this.instance) return;
+
+    const printWindow = window.open('', '_blank');
+
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+    <html>
+      <head>
+        <title>QR Code - ${this.instance.numeroSerie}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+          }
+
+          .qr-card {
+            display: inline-block;
+            border: 2px solid #000;
+            padding: 20px;
+            border-radius: 12px;
+          }
+
+          img {
+            width: 220px;
+            height: 220px;
+          }
+
+          h2 {
+            margin-bottom: 5px;
+          }
+
+          p {
+            margin: 5px 0;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="qr-card">
+          <h2>${this.instance.nomProduit}</h2>
+          <p><strong>N° série :</strong> ${this.instance.numeroSerie}</p>
+          <p><strong>Code produit :</strong> ${this.instance.codeProduit}</p>
+          <img src="${this.qrCodeDataUrl}" />
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+
+    printWindow.document.close();
   }
 }

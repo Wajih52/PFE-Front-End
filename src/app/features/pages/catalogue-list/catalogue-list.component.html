@@ -57,6 +57,27 @@
         <span class="badge">{{ nombreProduits() }}</span>
       }
     </a>
+
+    <div class="ai-recommendation-banner">
+      <div class="ai-banner-content">
+        <div class="ai-banner-text">
+      <span class="ai-badge">
+        <i class="fas fa-wand-magic-sparkles"></i>
+      </span>
+
+          <div>
+            <h3>Besoin d’aide pour choisir vos produits ?</h3>
+            <p>Obtenez une recommandation intelligente selon votre événement, vos dates et votre budget.</p>
+          </div>
+        </div>
+
+        <app-ai-recommendation-widget
+          [startDate]="dateDebutLocation"
+          [endDate]="dateFinLocation"
+          [datesValid]="!!dateDebutLocation && !!dateFinLocation && !isDateDebutSuperieureDateFin()"
+        ></app-ai-recommendation-widget>
+      </div>
+    </div>
   </div>
 
   <!-- ========== MESSAGE D'ERREUR ========== -->
@@ -384,4 +405,5 @@
     </div>
   }
 </div>
+
 <app-footer></app-footer>

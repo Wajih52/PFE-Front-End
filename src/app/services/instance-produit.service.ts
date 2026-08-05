@@ -73,6 +73,14 @@ export class InstanceProduitService {
   }
 
   /**
+   * Obtenir une instance par QR Code
+   * GET /api/instances/qr/{token}
+   */
+  getInstanceByQrCode(token: string): Observable<InstanceProduitResponse> {
+    return this.http.get<InstanceProduitResponse>(`${this.API_URL}/qr/${encodeURIComponent(token)}`);
+  }
+
+  /**
    * Rechercher par numéro de série
    * GET /api/instances/numero-serie/{numeroSerie}
    */

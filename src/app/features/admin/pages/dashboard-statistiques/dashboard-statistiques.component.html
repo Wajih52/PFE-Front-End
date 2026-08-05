@@ -227,6 +227,157 @@
       </div>
     </section>
 
+    <!-- ============ SECTION: ASSISTANT MANAGER IA ============ -->
+    <section class="ai-manager-section">
+      <h2>
+        <span class="material-symbols-outlined md-48 cl-dark">psychology</span>
+        Assistant Manager IA
+      </h2>
+
+      <div class="ai-manager-card">
+        <div class="ai-manager-header">
+          <div>
+            <h3>Analyse intelligente de l’activité</h3>
+            <p>
+              Génère une synthèse basée sur les réservations, paiements, livraisons,
+              stocks et réclamations.
+            </p>
+          </div>
+
+          <button
+            class="btn-ai-generate"
+            (click)="genererAnalyseIa()"
+            [disabled]="aiLoading()">
+
+  <span
+    *ngIf="!aiLoading()"
+    class="material-symbols-outlined ai-btn-icon">
+    auto_awesome
+  </span>
+
+            <span
+              *ngIf="aiLoading()"
+              class="ai-button-spinner">
+  </span>
+
+            <span class="ai-btn-content">
+    <span class="ai-btn-label">
+      {{ aiLoading() ? 'Analyse IA en cours...' : 'Générer une analyse' }}
+    </span>
+
+  </span>
+          </button>
+        </div>
+
+        <div *ngIf="aiLoading()" class="ai-loading-box">
+<!--          <div class="ai-spinner"></div>-->
+          <p>analyse des indicateurs de la plateforme...</p>
+          <small>Cette opération peut prendre quelques secondes.</small>
+        </div>
+
+        <div *ngIf="aiError()" class="ai-error-box">
+          {{ aiError() }}
+        </div>
+
+        <div *ngIf="aiSummary() && !aiLoading()" class="ai-result-box">
+          <div class="ai-result-header">
+            <h4>Nouvelle analyse générée</h4>
+
+            <button
+              class="btn-download-ai"
+              *ngIf="aiHistory().length > 0"
+              (click)="telechargerAnalyseTxt(aiHistory()[0])">
+              Télécharger TXT
+            </button>
+          </div>
+
+          <div class="ai-summary-text">
+            {{ aiSummary() }}
+          </div>
+        </div>
+        <div class="ai-history-layout">
+
+          <div class="ai-history-list">
+            <div class="ai-history-title">
+              <h4>Historique des analyses</h4>
+
+              <button
+                class="btn-refresh-history"
+                (click)="loadAiHistory()"
+                [disabled]="historyLoading()">
+                Actualiser
+              </button>
+            </div>
+
+            <div *ngIf="historyLoading()" class="history-loading">
+              Chargement de l’historique...
+            </div>
+
+            <div *ngIf="historyError()" class="ai-error-box">
+              {{ historyError() }}
+            </div>
+
+            <div *ngIf="!historyLoading() && aiHistory().length === 0" class="empty-history">
+              Aucune analyse enregistrée pour le moment.
+            </div>
+
+            <div
+              *ngFor="let analysis of aiHistory()"
+              class="ai-history-item"
+              [class.active]="selectedAiAnalysis()?.id === analysis.id"
+              (click)="selectAiAnalysis(analysis)">
+
+              <div class="history-date">
+                {{ analysis.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+
+              <div class="history-user">
+                Générée par : {{ analysis.generatedBy || 'SYSTEM' }}
+              </div>
+
+              <p>
+                {{ analysis.summary | slice:0:120 }}...
+              </p>
+            </div>
+          </div>
+
+          <div class="ai-history-detail">
+            <ng-container *ngIf="selectedAiAnalysis(); else noSelectedAnalysis">
+
+              <div class="ai-detail-header">
+                <div>
+                  <h4>Analyse sélectionnée</h4>
+                  <p>
+                    {{ selectedAiAnalysis()?.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                    —
+                    {{ selectedAiAnalysis()?.generatedBy || 'SYSTEM' }}
+                  </p>
+                </div>
+
+                <button
+                  class="btn-download-ai"
+                  (click)="telechargerAnalyseTxt(selectedAiAnalysis()!)">
+                  Télécharger TXT
+                </button>
+              </div>
+
+              <div class="ai-summary-text">
+                {{ selectedAiAnalysis()?.summary }}
+              </div>
+
+            </ng-container>
+
+            <ng-template #noSelectedAnalysis>
+              <div class="no-analysis-selected">
+                Sélectionnez une analyse dans l’historique pour voir son contenu.
+              </div>
+            </ng-template>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- ============ SECTION: GRAPHIQUES PRINCIPAUX ============ -->
     <section class="charts-section">
       <h2><span class="material-symbols-outlined md-48 cl-dark">insert_chart</span> Analyses graphiques</h2>

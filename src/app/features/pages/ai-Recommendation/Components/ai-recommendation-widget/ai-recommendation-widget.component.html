@@ -1,0 +1,92 @@
+<button
+  class="ai-help-button"
+  (click)="open()"
+  [disabled]="!datesValid"
+  [title]="!datesValid ? 'Veuillez choisir une période valide avant d’utiliser l’assistant IA' : 'Assistant IA'"
+>
+  <span class="material-symbols-outlined md-24 cl-white">wand_stars</span>
+  Assistant IA
+</button>
+
+<div class="ai-modal-backdrop" *ngIf="isOpen">
+  <div class="ai-modal">
+
+    <div class="ai-modal-header">
+      <div class="ai-title">
+        <div class="ai-icon">
+          <i class="fas fa-wand-magic-sparkles"></i>
+        </div>
+
+        <div>
+          <h3>Recommandation assistée par IA</h3>
+          <p>Suggestion intelligente selon vos dates et votre événement</p>
+        </div>
+      </div>
+
+      <button class="ai-close-btn" (click)="close()">×</button>
+    </div>
+
+    <div class="ai-modal-body">
+
+      <label>Type d'événement</label>
+      <select [(ngModel)]="form.eventType">
+        <option value="">Choisir</option>
+        <option value="Mariage">Mariage</option>
+        <option value="Anniversaire">Anniversaire</option>
+        <option value="Conférence">Conférence</option>
+        <option value="Fête privée">Fête privée</option>
+        <option value="Autre">Autre</option>
+      </select>
+
+      <label>Nombre d'invités</label>
+      <input type="number" [(ngModel)]="form.guestCount" min="1">
+
+      <label>Budget</label>
+      <select [(ngModel)]="form.budget">
+        <option value="Faible">Faible</option>
+        <option value="Moyen">Moyen</option>
+        <option value="Élevé">Élevé</option>
+      </select>
+
+      <label>Type de lieu</label>
+      <select [(ngModel)]="form.locationType">
+        <option value="Intérieur">Intérieur</option>
+        <option value="Extérieur">Extérieur</option>
+      </select>
+
+      <div class="ai-date-summary" *ngIf="startDate && endDate">
+        <i class="fas fa-calendar-check"></i>
+        <span>
+    Période sélectionnée :
+    <strong>{{ startDate }}</strong> → <strong>{{ endDate }}</strong>
+  </span>
+      </div>
+      <div class="ai-date-error" *ngIf="!datesValid">
+        <i class="fas fa-exclamation-triangle"></i>
+        Veuillez choisir une période valide avant de générer une recommandation.
+      </div>
+
+      <label>Remarques</label>
+      <textarea
+        rows="3"
+        [(ngModel)]="form.notes"
+        placeholder="Exemple : ambiance élégante, éclairage, décoration..."
+      ></textarea>
+
+      <button
+        class="generate-btn"
+        (click)="generateRecommendation()"
+        [disabled]="!canGenerate()"
+      >
+        {{ loading ? 'Génération...' : 'Générer la recommandation' }}
+      </button>
+
+      <div class="ai-result" *ngIf="recommendation">
+        <h4>Suggestion IA</h4>
+        <p>{{ recommendation }}</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>

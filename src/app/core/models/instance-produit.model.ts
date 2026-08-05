@@ -17,6 +17,7 @@ export interface InstanceProduitResponse {
   numeroSerie: string;
   statut: StatutInstance;
   etatPhysique:EtatPhysique;
+  qrCodeToken ?: string;
 
   // Informations du produit parent
   idProduit: number;

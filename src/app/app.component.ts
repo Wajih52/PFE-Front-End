@@ -5,10 +5,17 @@ import {StorageService} from './core/services/storage.service';
 import {ConfirmationModalComponent} from './shared/confirmation-modal/confirmation-modal.component';
 import {NotificationWrapperComponent} from './shared/notification-wrapper/notification-wrapper.component';
 import {NavbarComponent} from './shared/navbar/navbar.component';
+import { ChatbotWidgetComponent } from './features/pages/chatbot/components/chatbot-widget/chatbot-widget.component';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmationModalComponent, NotificationWrapperComponent, NavbarComponent],
+  imports: [RouterOutlet,
+    ConfirmationModalComponent,
+    NotificationWrapperComponent,
+    NavbarComponent,
+    ChatbotWidgetComponent,
+    NgIf],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.scss'
@@ -27,5 +34,9 @@ export class AppComponent implements OnInit,OnDestroy{
   ngOnDestroy(): void {
     // Arrêter la surveillance quand l'application se ferme
     this.tokenMonitor.stopMonitoring();
+  }
+
+  showChatbot(): boolean {
+    return this.storage.isLoggedIn() && this.storage.isClient()  ;
   }
 }

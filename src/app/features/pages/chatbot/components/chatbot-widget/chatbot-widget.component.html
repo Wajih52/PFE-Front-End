@@ -1,0 +1,99 @@
+<button class="chatbot-floating-button" (click)="toggleChatbot()">
+  <span *ngIf="!isOpen"><span class="material-symbols-outlined md-48 cl-white">contact_support</span></span>
+  <span *ngIf="isOpen"><span class="material-symbols-outlined md-48 cl-white">close</span></span>
+</button>
+
+<div class="chatbot-window" *ngIf="isOpen">
+
+  <div class="chatbot-header">
+    <div>
+      <h3>Assistant Elegant Hive</h3>
+      <p>Besoin d’aide ?</p>
+    </div>
+
+    <button class="new-chat-btn" (click)="startNewConversation()">
+      Nouveau
+    </button>
+  </div>
+
+  <div class="chatbot-body">
+
+    <aside class="chatbot-sidebar">
+      <h4>Conversations</h4>
+
+      <div
+        class="conversation-item"
+        *ngFor="let conversation of conversations"
+        [class.active]="conversation.id === selectedConversationId"
+        (click)="selectConversation(conversation.id)"
+      >
+        <span>{{ conversation.title }}</span>
+
+        <button
+          class="delete-btn"
+          (click)="deleteConversation(conversation.id, $event)"
+        >
+          ×
+        </button>
+      </div>
+
+      <p class="empty-text" *ngIf="conversations.length === 0">
+        Aucune conversation.
+      </p>
+    </aside>
+
+    <section class="chatbot-main">
+
+      <div class="chatbot-messages">
+
+        <div class="welcome-message" *ngIf="messages.length === 0 && !loadingMessages">
+          <strong>Bonjour <span class="material-symbols-outlined md-18 cl-dark">waving_hand</span></strong>
+          <p>
+            Je peux vous aider à comprendre le catalogue, les devis,
+            les réservations, les paiements et les livraisons.
+          </p>
+        </div>
+
+        <div class="loading-messages" *ngIf="loadingMessages">
+          Chargement des messages...
+        </div>
+
+        <div
+          class="message"
+          *ngFor="let message of messages"
+          [class.user-message]="message.sender === 'USER'"
+          [class.assistant-message]="message.sender === 'ASSISTANT'"
+        >
+          <div class="message-content">
+            {{ message.content }}
+          </div>
+        </div>
+
+        <div class="message assistant-message" *ngIf="loading">
+          <div class="message-content typing">
+            Assistant en train d’écrire...
+          </div>
+        </div>
+
+      </div>
+
+      <div class="chatbot-input-area">
+        <textarea
+          [(ngModel)]="currentMessage"
+          placeholder="Écrivez votre message..."
+          rows="2"
+          (keydown.enter)="onEnter($event)"
+        ></textarea>
+
+        <button
+          (click)="sendMessage()"
+          [disabled]="loading || !currentMessage.trim()"
+        >
+          Envoyer
+        </button>
+      </div>
+
+    </section>
+
+  </div>
+</div>

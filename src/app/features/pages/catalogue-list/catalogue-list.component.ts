@@ -11,11 +11,14 @@ import {Categorie, ProduitResponse} from '../../../core/models';
 import {ToastrService} from 'ngx-toastr';
 import {FooterComponent} from '../../../shared/footer/footer.component';
 import {variables} from '../../../core/environement/variables';
+import {
+  AiRecommendationWidgetComponent
+} from '../ai-Recommendation/Components/ai-recommendation-widget/ai-recommendation-widget.component';
 
 @Component({
   selector: 'app-catalogue-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ProduitAvisPublicComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ProduitAvisPublicComponent, FooterComponent, AiRecommendationWidgetComponent],
   templateUrl: './catalogue-list.component.html',
   styleUrls: ['./catalogue-list.component.scss']
 })

@@ -1,0 +1,111 @@
+<div class="scan-detail-container">
+  <div class="header">
+    <div>
+      <h1>
+        <span class="material-symbols-outlined">qr_code_scanner</span>
+        Détails du matériel scanné
+      </h1>
+      <p>Consultation rapide de l’instance physique via QR code</p>
+    </div>
+
+    <button class="btn btn-secondary" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_left_alt</span>
+      Retour
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <span class="material-symbols-outlined">error</span>️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement du matériel scanné...</p>
+  </div>
+
+  <div *ngIf="!isLoading && instance" class="instance-card">
+    <div class="card-header">
+      <div>
+        <h2>{{ instance.nomProduit }}</h2>
+        <p class="serial">
+          N° série :
+          <code>{{ instance.numeroSerie }}</code>
+        </p>
+      </div>
+
+      <span class="status-badge" [ngClass]="getStatutClass(instance.statut)">
+        {{ StatutInstanceLabels[instance.statut] }}
+      </span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Code produit</span>
+        <span class="value">{{ instance.codeProduit }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="label">État physique</span>
+        <span class="value">
+          <span class="status-badge" [ngClass]="getEtatPhysiqueClass(instance.etatPhysique)">
+            {{ EtatPhysiqueLabels[instance.etatPhysique] }}
+          </span>
+        </span>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Date d’acquisition</span>
+        <span class="value">{{ formatDate(instance.dateAcquisition) }}</span>
+      </div>
+
+      <div class="info-item" *ngIf="instance.ajoutPar">
+        <span class="label">Ajouté par</span>
+        <span class="value">{{ instance.ajoutPar }}</span>
+      </div>
+    </div>
+
+    <div class="section" *ngIf="instance.observation">
+      <h3>Observation</h3>
+      <p>{{ instance.observation }}</p>
+    </div>
+
+    <div class="section maintenance"
+         *ngIf="instance.statut === StatutInstance.EN_MAINTENANCE || instance.maintenanceRequise">
+      <h3>Maintenance</h3>
+
+      <p *ngIf="instance.dateDerniereMaintenance">
+        <strong>Dernière maintenance :</strong>
+        {{ formatDate(instance.dateDerniereMaintenance) }}
+      </p>
+
+      <p *ngIf="instance.dateProchaineMaintenance">
+        <strong>Prochaine maintenance :</strong>
+        {{ formatDate(instance.dateProchaineMaintenance) }}
+      </p>
+
+      <p *ngIf="instance.motif">
+        <strong>Motif :</strong>
+        {{ instance.motif }}
+      </p>
+    </div>
+
+    <div class="section reservation" *ngIf="instance.idLigneReservation">
+      <h3>Réservation liée</h3>
+
+      <p *ngIf="instance.numeroReservation">
+        <strong>Réservation :</strong>
+        <code>{{ instance.numeroReservation }}</code>
+      </p>
+
+      <p *ngIf="instance.clientReservation">
+        <strong>Client :</strong>
+        {{ instance.clientReservation }}
+      </p>
+
+      <p *ngIf="instance.clientNom || instance.clientPrenom">
+        <strong>Client :</strong>
+        {{ instance.clientNom }} {{ instance.clientPrenom }}
+      </p>
+    </div>
+  </div>
+</div>

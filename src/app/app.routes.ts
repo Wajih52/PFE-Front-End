@@ -40,6 +40,7 @@ import {DashboardEmployeComponent} from './features/employee/dashboard-employe/d
 import {ReservationsEmployeComponent} from './features/employee/reservations-employe/reservations-employe.component';
 import {LivraisonsEmployeComponent} from './features/employee/livraisons-employe/livraisons-employe.component';
 import {GestionEquipeComponent} from './features/manager/gestion-equipe/gestion-equipe.component';
+import {InstanceScanDetailComponent} from './features/employee/instance-scan-detail/instance-scan-detail.component';
 
 
 export const routes: Routes = [
@@ -378,6 +379,11 @@ export const routes: Routes = [
         component: PointageEmployeeComponent,
         canActivate: [authGuard,roleGuard(['EMPLOYE','MANAGER','ADMIN'])],
       },
+      {
+        path: 'scan/instance/:token',
+        component: InstanceScanDetailComponent,
+        canActivate: [authGuard, roleGuard(['EMPLOYE', 'MANAGER', 'ADMIN'])]
+      },
       // ==================== ROUTES EMPLOYÉ ====================
       {
         path: 'employe',
@@ -397,7 +403,7 @@ export const routes: Routes = [
             path: 'livraisons',
             component: LivraisonsEmployeComponent,
             canActivate: [roleGuard(['EMPLOYE'])],
-          },
+          }
         ]
       },
       // ==================== ROUTES MANAGER ====================

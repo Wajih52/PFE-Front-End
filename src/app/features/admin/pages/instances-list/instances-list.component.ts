@@ -375,7 +375,7 @@ export class InstancesListComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur:', error);
-        this.notificationService.error('Erreur lors de l\'envoi en maintenance');
+        this.notificationService.error(error.error.message);
         this.closeMaintenanceModal()
       }
     });
