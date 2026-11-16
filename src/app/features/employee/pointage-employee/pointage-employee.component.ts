@@ -8,18 +8,20 @@ import { StatutPointageLabels, StatutPointageColors, StatutPointageIcons } from 
 import {NotificationService} from '../../../services/notification.service';
 import {UserResponse} from '../../../core/models';
 import {UtilisateurService} from '../../../services/utilisateur.service';
+import {RouterModule} from '@angular/router';
+import {ConfirmationService} from '../../../core/services/confirmation.service';
 
 @Component({
   selector: 'app-pointage-employee',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './pointage-employee.component.html',
   styleUrl: './pointage-employee.component.scss'
 })
 export class PointageEmployeeComponent implements OnInit, OnDestroy {
 
   private notificationService=inject(NotificationService)
-
+  private confirmationService = inject(ConfirmationService);
 
   // Signals
   pointageDuJour = signal<PointageResponse | null>(null);
@@ -99,9 +101,19 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
   /**
    * Pointer l'arrivée
    */
-  pointerArrivee(): void {
-    this.isLoading.set(true);
+  async pointerArrivee(): Promise<void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Confirmation de pointage',
+      message: "Confirmez-vous le pointage de votre arrivée pour aujourd'hui ?",
+      confirmText: 'Oui, pointer',
+      type: 'info'
+    });
 
+    if (!confirmed) {
+      return; // Annule l'action si l'utilisateur clique sur "Annuler"
+    }
+
+    this.isLoading.set(true);
     this.pointageService.pointerArrivee().subscribe({
       next: (pointage) => {
         this.pointageDuJour.set(pointage);
@@ -118,9 +130,19 @@ export class PointageEmployeeComponent implements OnInit, OnDestroy {
   /**
    * Pointer le départ
    */
-  pointerDepart(): void {
-    this.isLoading.set(true);
+  async pointerDepart(): Promise<void> {
+    const confirmed = await this.confirmationService.confirm({
+      title: 'Clôture de la journée',
+      message: "Voulez-vous vraiment pointer votre départ ? Cette action clôturera votre journée de travail.",
+      confirmText: 'Oui, clôturer',
+      type: 'warning'
+    });
 
+    if (!confirmed) {
+      return; // Annule l'action si l'utilisateur clique sur "Annuler"
+    }
+
+    this.isLoading.set(true);
     this.pointageService.pointerDepart().subscribe({
       next: (pointage) => {
         this.pointageDuJour.set(pointage);

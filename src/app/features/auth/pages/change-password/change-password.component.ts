@@ -3,9 +3,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {StorageService} from '../../../../core/services/storage.service'
+import {variables} from '../../../../core/environement/variables'
 
 @Component({
   selector: 'app-change-password',
@@ -19,6 +20,7 @@ export class ChangePasswordComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private storage = inject(StorageService)
+  private route = inject(ActivatedRoute);
 
   changePasswordForm: FormGroup;
   isLoading = false;
@@ -28,11 +30,13 @@ export class ChangePasswordComponent implements OnInit {
   showNewPassword = false;
   showConfirmPassword = false;
 
-  userId: number = 0; // À récupérer depuis le service d'auth
+  activationToken: string | null = null;
+
+
 
   constructor() {
     this.changePasswordForm = this.fb.group({
-      ancienMotDePasse: ['', Validators.required],
+      ancienMotDePasse: [''],
       nouveauMotDePasse: ['', [
         Validators.required,
         Validators.minLength(8),
@@ -43,11 +47,10 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Récupérer l'ID de l'utilisateur connecté
-    const user = this.storage.getUser();
-    if (user) {
-      this.userId = user.idUtilisateur;
-    } else {
+    // 1. Vérifier si on arrive depuis le lien d'invitation (mode Activation par Token)
+    this.activationToken = this.route.snapshot.queryParamMap.get('token');
+    // 2. Si PAS de token, rederige vers login
+    if (!this.activationToken) {
       this.router.navigate(['/auth/login']);
     }
   }
@@ -75,26 +78,28 @@ export class ChangePasswordComponent implements OnInit {
 
     this.isLoading = true;
 
-    const data = {
-      ancienMotDePasse: this.changePasswordForm.value.ancienMotDePasse,
+    if (this.activationToken) {
+    const payload = {
+      token: this.activationToken,
       nouveauMotDePasse: this.changePasswordForm.value.nouveauMotDePasse
     };
 
-    this.http.post(`http://localhost:8080/utilisateurs/${this.userId}/change-password`, data).subscribe({
+    this.http.post(`${variables.apiUrl}/utilisateurs/activer-compte`, payload).subscribe({
       next: () => {
-        this.successMessage = 'Mot de passe modifié avec succès !';
+        this.successMessage = 'Compte activé avec succès ! Redirection vers la connexion...';
         this.isLoading = false;
 
-        // Rediriger vers le profil après 2 secondes
+        // Rediriger vers page connexion après 2 secondes
         setTimeout(() => {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/auth/login']);
         }, 2000);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors du changement de mot de passe';
+        this.errorMessage = err.error?.message || 'Lien invalide ou expiré';
         this.isLoading = false;
       }
     });
+  }
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
@@ -106,7 +111,16 @@ export class ChangePasswordComponent implements OnInit {
 
   hasError(fieldName: string): boolean {
     const field = this.changePasswordForm.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    const isFieldInvalid = !!(field && field.invalid && field.touched);
+
+
+    // Si on vérifie le champ de confirmation, on regarde aussi l'erreur du groupe
+    if (fieldName === 'confirmationMotDePasse') {
+      const hasMismatch = this.changePasswordForm.hasError('passwordMismatch');
+      return isFieldInvalid || !!(hasMismatch && field?.touched);
+    }
+
+    return isFieldInvalid;
   }
 
   getErrorMessage(fieldName: string): string {

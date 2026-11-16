@@ -50,7 +50,8 @@ export interface UserResponse {
   dateEmbauche?: Date;
   dateFinContrat?: Date;
   statutEmploye?: StatutEmp;
-  requirePasswordChange : boolean ;
+  doitChangerMotDePasse : boolean ;
+  soldeConges?: number;
   bio?: string;
   roles: string[];
 }
@@ -76,6 +77,7 @@ export interface UserRequest {
   statutEmploye?: StatutEmp;
   bio?: string;
   role?: string;
+  soldeConges?: number;
 }
 
 /**

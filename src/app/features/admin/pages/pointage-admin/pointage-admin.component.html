@@ -14,10 +14,15 @@
       </button>
 
       <button
-        class="btn-action btn-warning"
+        class="btn-action btn-absents"
         (click)="marquerAbsents()">
-        <span class="material-symbols-outlined md-36 cl-dark">person_alert</span> Marquer les absents
+        <span class="material-symbols-outlined md-36 cl-dark">person_off</span> Marquer les absents
       </button>
+
+      <a routerLink="/admin/conges" class="btn-action btn-conges-admin">
+        <span class="material-symbols-outlined">beach_access</span>
+        Gestion des Congés
+      </a>
     </div>
   </div>
 
@@ -44,6 +49,45 @@
       <span class="material-symbols-outlined md-36 cl-dark">bar_chart_4_bars</span> Statistiques
     </button>
   </div>
+
+  <!-- ============================================ -->
+  <!-- VUE PAR EMPLOYÉ -->
+  <!-- ============================================ -->
+
+  @if (activeView() === 'employe') {
+    <div class="employe-selection-container">
+      <div class="card">
+        <div class="card-header">
+          <h2><span class="material-symbols-outlined md-36 cl-white">groups</span> Sélectionner un employé</h2>
+        </div>
+        <div class="card-body">
+          <div class="employes-grid">
+            @for (employe of employes(); track employe.idUtilisateur) {
+              <div
+                class="employe-card"
+                (click)="voirDetailsEmploye(employe.idUtilisateur)">
+                <div class="employe-info">
+                  <div class="employe-avatar">
+                    {{ employe.prenom.charAt(0) }}{{ employe.nom.charAt(0) }}
+                  </div>
+                  <div class="employe-details">
+                    <strong>{{ employe.prenom }} {{ employe.nom }}</strong>
+                    <small>{{ employe.pseudo }}</small>
+                    @if (employe.poste) {
+                      <span class="badge-poste">{{ employe.poste }}</span>
+                    }
+                  </div>
+                </div>
+                <div class="employe-action">
+                  <i class="bi bi-chevron-right"></i>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- ============================================ -->
   <!-- VUE GLOBALE -->
@@ -334,44 +378,7 @@
 
 </div>
 
-<!-- ============================================ -->
-<!-- VUE PAR EMPLOYÉ -->
-<!-- ============================================ -->
 
-@if (activeView() === 'employe') {
-  <div class="employe-selection-container">
-    <div class="card">
-      <div class="card-header">
-        <h2><span class="material-symbols-outlined md-36 cl-white">groups</span> Sélectionner un employé</h2>
-      </div>
-      <div class="card-body">
-        <div class="employes-grid">
-          @for (employe of employes(); track employe.idUtilisateur) {
-            <div
-              class="employe-card"
-              (click)="voirDetailsEmploye(employe.idUtilisateur)">
-              <div class="employe-info">
-                <div class="employe-avatar">
-                  {{ employe.prenom.charAt(0) }}{{ employe.nom.charAt(0) }}
-                </div>
-                <div class="employe-details">
-                  <strong>{{ employe.prenom }} {{ employe.nom }}</strong>
-                  <small>{{ employe.pseudo }}</small>
-                  @if (employe.poste) {
-                    <span class="badge-poste">{{ employe.poste }}</span>
-                  }
-                </div>
-              </div>
-              <div class="employe-action">
-                <i class="bi bi-chevron-right"></i>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-  </div>
-}
 
 <!-- ============================================ -->
 <!-- MODAL CRÉATION -->

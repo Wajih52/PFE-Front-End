@@ -140,4 +140,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.isCollapsed = !this.isCollapsed;
     this.collapsedChange.emit(this.isCollapsed);
   }
+
+  onMouseEnter(): void {
+    this.isCollapsed = false;
+    this.collapsedChange.emit(this.isCollapsed);
+  }
+
+  onMouseLeave(): void {
+    this.isCollapsed = true;
+    this.collapsedChange.emit(this.isCollapsed);
+  }
+
 }

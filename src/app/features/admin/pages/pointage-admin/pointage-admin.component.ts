@@ -8,6 +8,7 @@ import { PointageResponse, StatistiquesPointage, PointageRequest } from '../../.
 import { StatutPointage, StatutPointageLabels, StatutPointageColors, StatutPointageIcons } from '../../../../core/models/pointage.enums';
 import {UtilisateurService} from '../../../../services/utilisateur.service';
 import {UserResponse} from '../../../../core/models';
+import {RouterModule} from '@angular/router';
 
 interface Utilisateur {
   idUtilisateur: number;
@@ -20,7 +21,7 @@ interface Utilisateur {
 @Component({
   selector: 'app-pointage-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './pointage-admin.component.html',
   styleUrl: './pointage-admin.component.scss'
 })

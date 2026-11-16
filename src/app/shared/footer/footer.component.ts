@@ -30,12 +30,10 @@ export class FooterComponent {
 
   // Liens services
   servicesLinks: FooterLink[] = [
-    { label: 'Mobilier', path: '/services/mobilier' },
-    { label: 'Décoration', path: '/services/decoration' },
-    { label: 'Éclairage', path: '/services/eclairage' },
-    { label: 'Sonorisation', path: '/services/sonorisation' },
-    { label: 'Structures', path: '/services/structures' },
-    { label: 'Restauration', path: '/services/restauration' }
+    { label: 'Mariages', path: '/services/mariages' },
+    { label: 'Anniversaires', path: '/services/anniversaires' },
+    { label: 'Fiançailles', path: '/services/fiancailles' },
+    { label: 'Événements Professionnels', path: '/services/evenements-pros' }
   ];
 
   // Liens informations

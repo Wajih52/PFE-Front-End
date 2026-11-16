@@ -90,6 +90,9 @@
     <div class="services-grid">
       <div class="service-card"
            *ngFor="let service of services"
+           (click)="ouvrirService(service.id)"
+           role="button"
+           tabindex="0"
            [style.background-image]="'url(' + service.image + ')'">
         <div class="service-overlay">
           <h3>{{ service.title }}</h3>
@@ -127,6 +130,7 @@
             <span class="product-category">{{ product.category }}</span>
             <h3 class="product-name">{{ product.name }}</h3>
             <div class="product-footer">
+              <h5 >à partir de </h5>
               <span class="product-price">{{ product.price }}</span>
             </div>
           </div>

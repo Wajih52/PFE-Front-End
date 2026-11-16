@@ -235,17 +235,24 @@ $transition-normal: 0.3s ease;
 
       // Filtres date et champs
       .filter-fields {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: $spacing-md;
+        display: flex; // Remplace le grid pour un meilleur alignement
+        flex-wrap: wrap;
+        align-items: flex-start; // Aligne tous les blocs par le haut
+        gap: $spacing-lg; // 1.5rem
 
         .filter-group {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          min-width: 250px;
+
           .filter-label {
             font-weight: 600;
             color: $text-dark;
             margin-bottom: $spacing-sm;
             font-size: 0.9rem;
             display: block;
+            line-height: 1.2;
           }
 
           .input-group {
@@ -254,10 +261,14 @@ $transition-normal: 0.3s ease;
             border: 1px solid $border-color;
             border-radius: 6px;
             overflow: hidden;
+            height: 40px; // Fixe une hauteur uniforme
 
             .input-icon {
               background: $background-light;
-              padding: $spacing-sm $spacing-md;
+              padding: 0 $spacing-md;
+              height: 100%;
+              display: flex;
+              align-items: center;
               color: $text-gray;
               border-right: 1px solid $border-color;
 
@@ -269,7 +280,8 @@ $transition-normal: 0.3s ease;
             input {
               flex: 1;
               border: none;
-              padding: $spacing-sm $spacing-md;
+              padding: 0 $spacing-md;
+              height: 100%; // Remplit le conteneur de 40px
               font-size: 0.95rem;
               background: $white;
 
@@ -291,7 +303,8 @@ $transition-normal: 0.3s ease;
           input {
             width: 100%;
             border: 1px solid $border-color;
-            padding: $spacing-sm $spacing-md;
+            padding: 0 $spacing-md;
+            height: 40px; // Fixe une hauteur uniforme identique à la barre de recherche
             font-size: 0.95rem;
             border-radius: 6px;
             transition: all $transition-fast;
@@ -313,7 +326,11 @@ $transition-normal: 0.3s ease;
             font-weight: 600;
             cursor: pointer;
             transition: all $transition-normal;
-            margin-left: $spacing-md;
+
+            // CORRECTION DE L'ESPACEMENT
+            margin-left: 0;
+            margin-top: $spacing-sm;
+            align-self: flex-start; // Empêche le bouton de s'étirer
 
             &:hover {
               background: $primary-dark;
@@ -323,13 +340,15 @@ $transition-normal: 0.3s ease;
 
         .filter-actions {
           display: flex;
-          align-items: flex-end;
+          align-items: flex-start; // CORRECTION DE L'ALIGNEMENT VERTICAL
+          margin-top: 1.7rem; // Compense la hauteur du label pour s'aligner parfaitement avec les inputs
 
           .search-button {
             background: $primary-color;
             border: none;
             color: $white;
-            padding: $spacing-sm $spacing-lg;
+            padding: 0 $spacing-lg;
+            height: 40px; // Même hauteur que les inputs
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;

@@ -71,8 +71,11 @@ export class ProduitService {
   /**
    * Réactiver un produit désactivé
    */
-  reactiverProduit(id: number, quantite: number): Observable<ProduitResponse> {
-    const params = new HttpParams().set('quantite', quantite.toString());
+  reactiverProduit(id: number, quantite?: number): Observable<ProduitResponse> {
+    let params = new HttpParams();
+    if (quantite !== undefined && quantite !== null) {
+      params = params.set('quantite', quantite.toString());
+    }
     return this.http.post<ProduitResponse>(`${this.API_URL}/${id}/reactiver`, null, { params });
   }
   /**

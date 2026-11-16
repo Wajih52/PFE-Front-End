@@ -789,52 +789,51 @@
       display: contents;
     }
   }
+}
 
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 25px;
+// ========== MODAL ADD (NOUVEAU DESIGN) ==========
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 25px;
 
-    button {
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.3s;
+  button {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+  }
+
+  .btn-cancel {
+    background: #e0e0e0;
+    color: #2c3e50;
+
+    &:hover {
+      background: #d6d6d6;
+    }
+  }
+
+  .btn-save {
+    background: linear-gradient(135deg, #166703 0%, #166703 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
-    .btn-cancel {
-      background: #e0e0e0;
-      color: #2c3e50;
-
-      &:hover {
-        background: #d6d6d6;
-      }
-    }
-
-    .btn-save {
-      background: linear-gradient(135deg, #166703 0%, #166703 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
   }
 }
-
-// ✅ ========== MODAL ADD (NOUVEAU DESIGN) ==========
 
 .modal-add-container {
   background: white;
@@ -850,7 +849,7 @@
   overflow: hidden; /* Important pour le sticky header */
 }
 
-/* ✅ Header sticky */
+/* Header sticky */
 .modal-header-add {
   background: linear-gradient(135deg, #c8a882 0%, #c8a882 100%);
   padding: 25px 30px;
@@ -869,7 +868,7 @@
   }
 }
 
-/* ✅ Messages sticky (toujours visibles sous le header) */
+/* Messages sticky (toujours visibles sous le header) */
 .modal-messages-sticky {
   position: sticky;
   top: 75px; /* Juste sous le header */
@@ -883,7 +882,7 @@
   }
 }
 
-/* ✅ Contenu scrollable */
+/* Contenu scrollable */
 .modal-add-content {
   flex: 1;
   overflow-y: auto;
@@ -915,7 +914,7 @@
   }
 }
 
-/* ✅ Section image en haut (séparée du formulaire) */
+/* Section image en haut (séparée du formulaire) */
 .image-section-top {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
   padding: 20px;
@@ -1008,7 +1007,7 @@
   }
 }
 
-// ✅ Grille du formulaire (identique au modal edit mais sans l'image dedans)
+// Grille du formulaire (identique au modal edit mais sans l'image dedans)
 .modal-add-content .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

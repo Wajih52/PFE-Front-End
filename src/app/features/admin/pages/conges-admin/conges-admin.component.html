@@ -1,0 +1,210 @@
+<link rel="stylesheet" href="conges-admin.component.scss">
+<div class="conges-admin-container">
+  <!-- En-tête -->
+  <div class="admin-header">
+    <div class="header-title">
+      <h1>
+        <span class="material-symbols-outlined md-48">beach_access</span>
+        Gestion des Congés & Soldes
+      </h1>
+      <p>Validez les demandes de congés et gérez le quota annuel de vos employés</p>
+    </div>
+    <a routerLink="/admin/pointages" class="btn-back">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Retour aux Pointages
+    </a>
+  </div>
+
+  <!-- Cartes KPI -->
+  <div class="stats-grid">
+    <div class="stat-card stat-attente">
+      <span class="material-symbols-outlined stat-icon">hourglass_top</span>
+      <div>
+        <div class="stat-value">{{ stats().enAttente }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
+    </div>
+    <div class="stat-card stat-acceptees">
+      <span class="material-symbols-outlined stat-icon">check_circle</span>
+      <div>
+        <div class="stat-value">{{ stats().acceptees }}</div>
+        <div class="stat-label">Acceptées</div>
+      </div>
+    </div>
+    <div class="stat-card stat-refusees">
+      <span class="material-symbols-outlined stat-icon">cancel</span>
+      <div>
+        <div class="stat-value">{{ stats().refusees }}</div>
+        <div class="stat-label">Refusées</div>
+      </div>
+    </div>
+    <div class="stat-card stat-total">
+      <span class="material-symbols-outlined stat-icon">folder_Shared</span>
+      <div>
+        <div class="stat-value">{{ stats().total }}</div>
+        <div class="stat-label">Total demandes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onglets de navigation -->
+  <div class="view-navigation">
+    <button class="nav-btn" [class.active]="activeTab() === 'demandes'" (click)="activeTab.set('demandes')">
+      <span class="material-symbols-outlined">list_alt</span>
+      Demandes & Historique ({{ stats().enAttente }} en attente)
+    </button>
+    <button class="nav-btn" [class.active]="activeTab() === 'soldes'" (click)="activeTab.set('soldes')">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      Quotas & Soldes par Employé
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ONGLET 1 : DEMANDES & HISTORIQUE           -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'demandes') {
+    <div class="card">
+      <div class="filters-bar">
+        <div class="filter-buttons">
+          <button class="filter-btn" [class.active]="filtreStatut() === 'TOUTES'" (click)="filtreStatut.set('TOUTES')">
+            Toutes
+          </button>
+          <button class="filter-btn" [class.active]="filtreStatut() === StatutDemandeConge.EN_ATTENTE" (click)="filtreStatut.set(StatutDemandeConge.EN_ATTENTE)">
+            En attente
+          </button>
+          <button class="filter-btn" [class.active]="filtreStatut() === StatutDemandeConge.ACCEPTEE" (click)="filtreStatut.set(StatutDemandeConge.ACCEPTEE)">
+            Acceptées
+          </button>
+          <button class="filter-btn" [class.active]="filtreStatut() === StatutDemandeConge.REFUSEE" (click)="filtreStatut.set(StatutDemandeConge.REFUSEE)">
+            Refusées
+          </button>
+        </div>
+
+        <input
+          type="text"
+          class="search-input"
+          placeholder="🔍 Rechercher un employé ou motif..."
+          [ngModel]="rechercheTexte()"
+          (ngModelChange)="rechercheTexte.set($event)">
+      </div>
+
+      @if (demandesFiltrees().length === 0) {
+        <div class="no-data">
+          <span class="material-symbols-outlined md-48">inbox</span>
+          <p>Aucune demande de congé trouvée.</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="conges-table">
+            <thead>
+            <tr>
+              <th>Employé</th>
+              <th>Période demandée</th>
+              <th>Jours ouvrables</th>
+              <th>Solde actuel</th>
+              <th>Motif</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (d of demandesFiltrees(); track d.idDemande) {
+                <tr>
+                  <td class="employe-col">
+                    <strong>{{ d.nomCompletEmploye }}</strong>
+                    @if (d.posteEmploye) {
+                      <small>{{ d.posteEmploye }}</small>
+                    }
+                  </td>
+                  <td>
+                    Du <strong>{{ d.dateDebut | date:'dd/MM/yyyy' }}</strong>
+                    au <strong>{{ d.dateFin | date:'dd/MM/yyyy' }}</strong>
+                  </td>
+                  <td><strong>{{ d.nombreJoursOuvrables }} j</strong></td>
+                  <td>
+                    <span class="solde-pill">{{ d.soldeCongesRestant }} j restants</span>
+                  </td>
+                  <td>{{ d.motif }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getBadgeClass(d.statut)">
+                      {{ statutLabels[d.statut] }}
+                    </span>
+                  </td>
+                  <td class="actions-col">
+                    @if (d.statut === StatutDemandeConge.EN_ATTENTE) {
+                      <button class="btn-icon btn-accept" (click)="traiterDemande(d, true)" title="Accepter">
+                        <span class="material-symbols-outlined">check</span> Accepter
+                      </button>
+                      <button class="btn-icon btn-reject" (click)="traiterDemande(d, false)" title="Refuser">
+                        <span class="material-symbols-outlined">close</span> Refuser
+                      </button>
+                    } @else {
+                      <span class="text-muted">Traitée</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- ONGLET 2 : QUOTAS & SOLDES DES EMPLOYÉS    -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'soldes') {
+    <div class="employes-grid">
+      @for (emp of employes(); track emp.idUtilisateur) {
+        <div class="employe-card">
+          <div class="emp-info">
+            <h3>{{ emp.prenom }} {{ emp.nom }}</h3>
+            <p>{{ emp.email }}</p>
+            <span class="badge-statut" [class.en-conge]="emp.statutEmploye === 'EnConge'">
+              {{ emp.statutEmploye === 'EnConge' ? '🏖️ En Congé' : '💼 En Travail' }}
+            </span>
+          </div>
+          <div class="emp-solde">
+            <div class="solde-number">{{ getSoldeEmploye(emp) }}</div>
+            <div class="solde-label">jours restants</div>
+            <button class="btn-edit-solde" (click)="ouvrirModalSolde(emp)">
+              <span class="material-symbols-outlined">edit</span> Modifier le quota
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- MODAL : MODIFIER LE SOLDE ANNUEL           -->
+  <!-- ========================================== -->
+  @if (showSoldeModal() && selectedEmploye(); as emp) {
+    <div class="modal-overlay" (click)="fermerModalSolde()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Modifier le solde de congés</h3>
+          <button class="btn-close" (click)="fermerModalSolde()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Employé : <strong>{{ emp.prenom }} {{ emp.nom }}</strong></p>
+          <div class="form-group">
+            <label>Nouveau solde de congés (en jours) :</label>
+            <input
+              type="number"
+              min="0"
+              max="365"
+              [ngModel]="nouveauSolde()"
+              (ngModelChange)="nouveauSolde.set($event)"
+              class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="fermerModalSolde()">Annuler</button>
+          <button class="btn-save" (click)="enregistrerSolde()">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

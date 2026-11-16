@@ -1,6 +1,6 @@
 // src/app/core/models/produit.model.ts (VERSION FINALE CORRIGÉE)
 
-import { Categorie, TypeProduit } from './produit.enums';
+import {Categorie, StatutProduit, TypeProduit} from './produit.enums';
 
 /**
  * Requête de création/modification de produit (ProduitRequestDto.java)
@@ -12,6 +12,7 @@ export interface ProduitRequest {
   prixUnitaire: number;
   quantiteInitial: number;
   typeProduit: TypeProduit;
+  statutProduit?: StatutProduit;
   maintenanceRequise?: boolean;
   imageProduit?: string;
   seuilCritique?: number;
@@ -33,6 +34,7 @@ export interface ProduitResponse {
   quantiteDisponible: number;
   maintenanceRequise: boolean;
   typeProduit: TypeProduit;
+  statutProduit?: StatutProduit;
   seuilCritique: number;
 
   // Indicateurs (calculés par le backend)

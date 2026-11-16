@@ -29,6 +29,7 @@ export class ResetPasswordComponent implements OnInit {
 
   token: string = '';
   tokenValid = true;
+  isCheckingToken = true;
 
   constructor() {
     this.resetPasswordForm = this.fb.group({
@@ -49,6 +50,18 @@ export class ResetPasswordComponent implements OnInit {
       if (!this.token) {
         this.tokenValid = false;
         this.errorMessage = 'Lien invalide ou expiré. Veuillez demander un nouveau lien.';
+      }
+    });
+    // Vérification immédiate du token
+    this.authService.verifyPasswordResetToken(this.token).subscribe({
+      next: () => {
+        this.isCheckingToken = false;
+        this.tokenValid = true;
+      },
+      error: (err) => {
+        this.isCheckingToken = false;
+        this.tokenValid = false;
+        this.errorMessage = err.error?.message || 'Lien invalide ou expiré. Veuillez demander un nouveau lien.';
       }
     });
   }

@@ -571,7 +571,7 @@ export class UsersManagementComponent implements OnInit {
         setTimeout(() => this.editSuccessMessage = '', 3000);
       },
       error: (err) => {
-        this.editErrorMessage = err.error?.message || '❌ Erreur lors de la mise à jour de l\'image';
+        this.editErrorMessage = err.error?.message || 'Erreur lors de la mise à jour de l\'image';
         setTimeout(() => this.editErrorMessage = '', 5000);
       }
     });
@@ -586,12 +586,12 @@ export class UsersManagementComponent implements OnInit {
     // Passer l'utilisateur au modal et l'ouvrir
 
     if (!this.manageRolesModal) {
-      console.error('❌ Le modal n\'est pas initialisé !');
+      console.error('Le modal n\'est pas initialisé !');
       return;
     }
 
     if (!utilisateur || !utilisateur.idUtilisateur) {
-      console.error('❌ Utilisateur invalide ou sans ID:', utilisateur);
+      console.error('Utilisateur invalide ou sans ID:', utilisateur);
       return;
     }
 
@@ -599,7 +599,7 @@ export class UsersManagementComponent implements OnInit {
     this.manageRolesModal.utilisateurPseudo = utilisateur.pseudo;
 
 
-    console.log('✅ Valeurs assignées au modal:');
+    console.log('Valeurs assignées au modal:');
     console.log('   - utilisateurId:', this.manageRolesModal.utilisateurId);
     console.log('   - utilisateurPseudo:', this.manageRolesModal.utilisateurPseudo);
 
@@ -653,12 +653,6 @@ export class UsersManagementComponent implements OnInit {
       ]],
       adresse: ['', [Validators.maxLength(200)]],
       bio: ['', [Validators.maxLength(500)]],
-      motDePasse: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.maxLength(100),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-])[A-Za-z\d@$!%*?&.#_-]{8,}$/)
-      ]],
       etatCompte: ['ACTIVE', Validators.required],
       role: ['', Validators.required],
       poste: ['', [Validators.maxLength(100)]],
@@ -841,7 +835,7 @@ export class UsersManagementComponent implements OnInit {
       email: [user.email, [
         Validators.required,
         Validators.email,
-        Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
       ]],
       telephone: [user.telephone, [
         Validators.required,
@@ -923,17 +917,14 @@ export class UsersManagementComponent implements OnInit {
       if (errors['pattern']) return 'Le genre doit être: HOMME, FEMME ou AUTRE';
     }
 
-    // Messages d'erreur pour le mot de passe
-    if (fieldName === 'motDePasse') {
-      if (errors['required']) return 'Le mot de passe est obligatoire';
-      if (errors['minlength']) return `Le mot de passe doit contenir au moins ${errors['minlength'].requiredLength} caractères`;
-      if (errors['maxlength']) return `Le mot de passe ne peut pas dépasser ${errors['maxlength'].requiredLength} caractères`;
-      if (errors['pattern']) return 'Le mot de passe doit contenir: 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial';
-    }
-
     // Messages d'erreur pour le rôle
     if (fieldName === 'role') {
       if (errors['required']) return 'Le rôle est obligatoire';
+    }
+
+    // Messages d'erreur pour l'adresse
+    if (fieldName === 'adresse') {
+      if (errors['maxlength']) return `L'adresse ne peut pas dépasser ${errors['maxlength'].requiredLength} caractères`;
     }
 
     return '';

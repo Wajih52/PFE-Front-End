@@ -438,7 +438,7 @@ export class SidebarMenuService {
       id: 'profile-settings',
       label: 'Menu',
       icon: 'settings',
-      route: '/profile',
+      route: '/menu-principal',
       order: 2
     },
 

@@ -7,7 +7,7 @@ import {FormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {ProduitService} from '../../../services/produit.service';
 import {PanierService} from '../../../services/panier.service';
-import {Categorie, ProduitResponse} from '../../../core/models';
+import {Categorie, ProduitResponse, StatutProduit} from '../../../core/models';
 import {ToastrService} from 'ngx-toastr';
 import {FooterComponent} from '../../../shared/footer/footer.component';
 import {variables} from '../../../core/environement/variables';
@@ -63,7 +63,9 @@ export class CatalogueListComponent implements OnInit {
 
   //  Computed pour filtrer les produits
   produitsFiltres = computed(() => {
-    let liste = this.produits();
+    //let liste = this.produits();
+    // 1. Sécurité : Ne garder que les produits ACTIFS
+    let liste = this.produits().filter(p => p.statutProduit === StatutProduit.ACTIF);
 
     // Filtre par nom
     if (this.rechercheNom()) {
@@ -254,7 +256,8 @@ export class CatalogueListComponent implements OnInit {
         dateFin
       ).subscribe({
         next: (produits) => {
-          this.produits.set(produits);
+          const produitsActifs = produits.filter(p => p.statutProduit === StatutProduit.ACTIF);
+          this.produits.set(produitsActifs);
 
           produits.forEach(produit => {
             this.calculerDisponibilite(produit);
@@ -472,6 +475,11 @@ export class CatalogueListComponent implements OnInit {
    *  Vérifier si on peut encore ajouter ce produit au panier
    */
   peutAjouterAuPanier(produit: ProduitResponse): boolean {
+
+    if (produit.statutProduit !== StatutProduit.ACTIF) {
+      return false;
+    }
+
     const quantiteDisponible = this.getQuantiteDisponible(produit.idProduit);
 
     if (quantiteDisponible === null || quantiteDisponible === 0) {

@@ -1,5 +1,5 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import {TokenMonitorService} from './core/services/token-monitor.service';
 import {StorageService} from './core/services/storage.service';
 import {ConfirmationModalComponent} from './shared/confirmation-modal/confirmation-modal.component';
@@ -26,6 +26,17 @@ export class AppComponent implements OnInit,OnDestroy{
 
   private tokenMonitor = inject(TokenMonitorService);
   private storage = inject(StorageService);
+  private router = inject(Router);
+
+  // Liste des routes où la navbar et le chatbot DOIVENT être cachés
+  private hiddenNavbarRoutes = [
+    '/auth/first-login',
+    '/auth/change-password',
+    //'/auth/login',
+    //'/auth/register',
+    //'/auth/forgot-password',
+    //'/auth/reset-password'
+  ];
 
   ngOnInit(): void {
 
@@ -36,7 +47,13 @@ export class AppComponent implements OnInit,OnDestroy{
     this.tokenMonitor.stopMonitoring();
   }
 
+  // Vérifie si on doit afficher la navbar
+  showNavbar(): boolean {
+    const currentUrl = this.router.url.split('?')[0]; // Ignore les queryParams
+    return !this.hiddenNavbarRoutes.includes(currentUrl);
+  }
+
   showChatbot(): boolean {
-    return this.storage.isLoggedIn() && this.storage.isClient()  ;
+    return this.storage.isLoggedIn() && this.storage.isClient() && this.showNavbar();
   }
 }

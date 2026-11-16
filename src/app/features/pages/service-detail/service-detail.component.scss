@@ -1,0 +1,214 @@
+@use 'sass:color';
+$gold: #c8a882;
+$dark: #1c1a17;
+
+.service-view {
+  background: #faf8f5;
+  min-height: 100vh;
+  padding-bottom: 5rem;
+
+  .service-hero {
+    background-size: cover;
+    background-position: center;
+    padding: 7rem 2rem 5rem;
+    color: #ffffff;
+    text-align: center;
+    position: relative;
+
+    .btn-back {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: background 0.3s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    .hero-text {
+      max-width: 850px;
+      margin: 0 auto;
+
+      .gold-pill {
+        display: inline-block;
+        color: $gold;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: rgba($gold, 0.15);
+        padding: 6px 16px;
+        border-radius: 30px;
+        margin-bottom: 1rem;
+        border: 1px solid $gold;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        font-family: 'Playfair Display', Georgia, serif;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: #e2e2e2;
+      }
+    }
+  }
+
+  .service-body {
+    max-width: 1100px;
+    margin: -3rem auto 0;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 2;
+
+    .presentation-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      margin-bottom: 2rem;
+
+      h2 {
+        font-size: 1.5rem;
+        color: $dark;
+        margin-bottom: 1rem;
+      }
+
+      .desc {
+        font-size: 1.05rem;
+        color: #555;
+        line-height: 1.8;
+      }
+    }
+
+    .grid-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
+      .card-item {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+
+        h3 {
+          font-size: 1.25rem;
+          color: $dark;
+          margin-bottom: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .gold-icon {
+            color: $gold;
+          }
+        }
+
+        .items-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+            color: #444;
+            font-size: 0.95rem;
+
+            .check {
+              color: $gold;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+
+    .cta-banner {
+      background: linear-gradient(135deg, #222 0%, $dark 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      border: 1px solid rgba($gold, 0.3);
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .cta-info {
+        h3 {
+          font-size: 1.4rem;
+          margin-bottom: 0.5rem;
+        }
+        p {
+          color: #aaa;
+          font-size: 0.95rem;
+          margin: 0;
+        }
+      }
+
+      .btn-catalogue {
+        background: $gold;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: transform 0.2s, background 0.2s;
+
+        &:hover {
+          background: color.adjust($gold, $lightness: 8%);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+// Animations simples
+.fade-in-up {
+  animation: fadeInUp 0.7s ease-out;
+}
+.fade-in-left {
+  animation: fadeInLeft 0.7s ease-out;
+}
+.fade-in-right {
+  animation: fadeInRight 0.7s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}

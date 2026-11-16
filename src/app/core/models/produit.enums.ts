@@ -123,3 +123,16 @@ export const TypeMouvementLabels: Record<TypeMouvement, string> = {
   [TypeMouvement.ENTREE_STOCK] :'Entrée Stock',
   [TypeMouvement.DESACTIVATION] : 'Désactivation',
 };
+
+export enum StatutProduit {
+  ACTIF = 'ACTIF',
+  DESACTIVE = 'DESACTIVE',
+  ARCHIVE = 'ARCHIVE'
+}
+
+export const StatutProduitLabels: Record<StatutProduit, string> = {
+  [StatutProduit.ACTIF]: 'Actif',
+  [StatutProduit.DESACTIVE]: 'Désactivé',
+  [StatutProduit.ARCHIVE]: 'Archivé'
+};
+

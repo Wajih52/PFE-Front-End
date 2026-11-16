@@ -1,0 +1,56 @@
+@if (service(); as s) {
+  <div class="service-view">
+    <!-- En-tête héro -->
+    <header class="service-hero" [style.background-image]="'linear-gradient(rgba(17,17,17,0.65), rgba(17,17,17,0.75)), url(' + s.imageHero + ')'">
+      <button class="btn-back" (click)="retourAccueil()">
+        ← Retour à l’accueil
+      </button>
+      <div class="hero-text fade-in-up">
+        <span class="gold-pill">Prestation Événementielle</span>
+        <h1>{{ s.titre }}</h1>
+        <p class="subtitle">{{ s.sousTitre }}</p>
+      </div>
+    </header>
+
+    <!-- Contenu détaillé -->
+    <main class="service-body">
+      <div class="presentation-card fade-in">
+        <h2>Description de la prestation</h2>
+        <p class="desc">{{ s.descriptionComplete }}</p>
+      </div>
+
+      <div class="grid-sections">
+        <!-- Équipements inclus -->
+        <section class="card-item fade-in-left">
+          <h3><span class="gold-icon">✦</span> Équipements & Matériel Inclus</h3>
+          <ul class="items-list">
+            @for (eq of s.equipements; track eq) {
+              <li><span class="check">✓</span> {{ eq }}</li>
+            }
+          </ul>
+        </section>
+
+        <!-- Points forts -->
+        <section class="card-item fade-in-right">
+          <h3><span class="gold-icon">★</span> Les Avantages Elegant Hive</h3>
+          <ul class="items-list">
+            @for (pf of s.pointsForts; track pf) {
+              <li><span class="check">✓</span> {{ pf }}</li>
+            }
+          </ul>
+        </section>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="cta-banner">
+        <div class="cta-info">
+          <h3>Composez votre événement dès maintenant</h3>
+          <p>Sélectionnez les articles nécessaires dans notre catalogue en ligne ou contactez-nous pour un devis personnalisé.</p>
+        </div>
+        <a routerLink="/client/catalogue" class="btn-catalogue">
+          Explorer le Catalogue
+        </a>
+      </div>
+    </main>
+  </div>
+}

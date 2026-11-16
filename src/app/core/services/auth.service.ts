@@ -70,9 +70,9 @@ export class AuthService {
    * que lorsque l'utilisateur est complètement chargé.
    * Ne redirigez qu'après que cet Observable soit complete !
    */
-  login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.AUTH_URL}/login`, credentials).pipe(
-      switchMap((response: any) => {
+  login(credentials: any): Observable<UserResponse> {
+    return this.http.post<{token: string}>(`${this.AUTH_URL}/login`, credentials).pipe(
+      switchMap((response) => {
         console.log('Réponse backend login:', response);
 
         // Stocker le token
@@ -87,10 +87,6 @@ export class AuthService {
             //  APRÈS avoir chargé l'utilisateur, émettre le currentUser
             this.currentUserSubject.next(user);
             console.log(' CurrentUser émis:', user);
-          }),
-          map((user) => {
-            //  Ajouter requirePasswordChange au user
-            return { ...user, requirePasswordChange: response.requirePasswordChange };
           })
         );
       })
@@ -161,6 +157,10 @@ export class AuthService {
    */
   resetPassword(data: PasswordReset): Observable<any> {
     return this.http.post(`${this.AUTH_URL}/reset-password`, data);
+  }
+
+  verifyPasswordResetToken(token: string): Observable<any> {
+    return this.http.get(`${this.AUTH_URL}/verifier-token-reset`, { params: { token } });
   }
 
   /**

@@ -1,0 +1,32 @@
+<div class="menu-page-container">
+  <div class="page-header">
+    <h1>Menu Principal</h1>
+    <p>Sélectionnez une option pour continuer</p>
+  </div>
+
+  @for (section of menuSections; track section.title) {
+    <div class="sections-container">
+      @if (section.title) {
+        <h2 class="section-title">
+          @if (section.icon) {
+            <span class="material-symbols-outlined">{{ section.icon }}</span>
+          }
+          {{ section.title }}
+        </h2>
+      }
+
+      <div class="cards-grid">
+        @for (item of section.items; track item.label) {
+          @if (item.label !== '---') {
+            <div class="menu-card" (click)="naviguer(item.route)">
+              <div class="icon-wrapper">
+                <span class="material-symbols-outlined">{{ item.icon }}</span>
+              </div>
+              <span class="card-label">{{ item.label }}</span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

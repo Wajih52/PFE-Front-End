@@ -1,6 +1,9 @@
 <!-- src/app/shared/sidebar/sidebar.component.html -->
 
-<aside class="sidebar" [class.collapsed]="isCollapsed">
+<aside class="sidebar"
+       [class.collapsed]="isCollapsed"
+       (mouseenter)="onMouseEnter()"
+       (mouseleave)="onMouseLeave()">
   <!-- Header de la sidebar -->
   <div class="sidebar-header">
     <!-- Bouton pour collapse/expand -->

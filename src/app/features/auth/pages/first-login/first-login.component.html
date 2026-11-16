@@ -5,20 +5,31 @@
 
     <div class="logo-section">
       <div class="logo-circle"><span class="material-symbols-outlined md-48 cl-dark">login</span></div>
-      <h1>Première connexion détectée</h1>
-      <p>Redirection vers le changement de mot de passe...</p>
+      <h1>Activation de votre compte</h1>
+      <p *ngIf="isLoading">Préparation de votre espace en cours...</p>
+      <p *ngIf="hasError" style="color: #dc3545; font-weight: bold;">Échec de l'activation</p>
     </div>
 
-    <div class="loading-section">
-      <div class="spinner"></div>
-      <p>Veuillez patienter</p>
-    </div>
-
-    <div class="info-section">
-      <div class="info-box">
-        <span class="icon"><span class="material-symbols-outlined  cl-warning">warning</span></span>
-        <p>Vous devez changer votre mot de passe temporaire pour des raisons de sécurité</p>
+    <!-- Section visible pendant la vérification -->
+    <ng-container *ngIf="isLoading">
+      <div class="loading-section">
+        <div class="spinner"></div>
+        <p>Vérification de la validité du lien sécurisé...</p>
       </div>
+
+      <div class="info-section">
+        <div class="info-box">
+          <span class="icon"><span class="material-symbols-outlined cl-warning">warning</span></span>
+          <p>Veuillez patienter pendant l'authentification de votre accès.</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Section visible si le token est expiré ou invalide -->
+    <div class="error-section" *ngIf="hasError">
+      <div class="error-icon"><span class="material-symbols-outlined cl-warning">error_outline</span></div>
+      <p>{{ errorMessage }}</p>
+      <button class="btn-retry" routerLink="/auth/login">Retour à la connexion</button>
     </div>
 
   </div>

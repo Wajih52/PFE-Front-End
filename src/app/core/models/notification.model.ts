@@ -43,7 +43,12 @@ export enum TypeNotification {
 
   // Notifications système
   SYSTEME_INFO = 'SYSTEME_INFO',
-  SYSTEME_ALERTE = 'SYSTEME_ALERTE'
+  SYSTEME_ALERTE = 'SYSTEME_ALERTE',
+
+  //notifications Congé
+  NOUVELLE_DEMANDE_CONGE = 'NOUVELLE_DEMANDE_CONGE',
+  CONGE_ACCEPTE = 'CONGE_ACCEPTE' ,
+  CONGE_REFUSE = 'CONGE_REFUSE'
 
 }
 

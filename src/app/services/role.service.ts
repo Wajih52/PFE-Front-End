@@ -51,6 +51,13 @@ export class RoleService {
   }
 
   /**
+   * Activer ou désactiver un rôle
+   */
+  toggleRoleStatus(id: number): Observable<RoleResponse> {
+    return this.http.patch<RoleResponse>(`${this.baseUrl}/${id}/status`, {});
+  }
+
+  /**
    * Récupérer les utilisateurs associés à un rôle
    */
   getUsersByRole(roleId: number): Observable<any[]> {

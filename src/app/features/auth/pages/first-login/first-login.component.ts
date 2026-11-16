@@ -2,7 +2,9 @@
 
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {Router, RouterModule} from '@angular/router';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
+import { variables } from '../../../../core/environement/variables';
 
 @Component({
   selector: 'app-first-login',
@@ -13,29 +15,47 @@ import {Router, RouterModule} from '@angular/router';
 })
 export class FirstLoginComponent implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private http = inject(HttpClient);
+
+  isLoading = true;
+  hasError = false;
+  errorMessage = '';
 
   ngOnInit(): void {
 
-    // Rediriger automatiquement vers change-password après 4 secondes
-    setTimeout(() => {
+    // Récupérer le token d'activation dans l'URL
+    const token = this.route.snapshot.queryParamMap.get('token');
 
-      this.router.navigate(['/auth/change-password']).then(success => {
-        if (success) {
+    if (!token) {
+      this.afficherErreur("Aucun lien d'activation n'a été fourni.");
+      return;
+    }
 
-          console.log('redirection vers /auth/change-password terminé avec succées');
-
-        } else {
-
-          console.error('redirection vers /auth/change-password est echoué');
-          // Fallback: try alternative navigation
-          this.router.navigate(['/auth/change-password'], {
-            replaceUrl: true
+    // Vérification du token auprès de Spring Boot
+    this.http.get(`${variables.apiUrl}/utilisateurs/verifier-token?token=${token}`).subscribe({
+      next: () => {
+        // Token valide : on maintient l'animation 3 secondes puis on redirige
+        setTimeout(() => {
+          this.router.navigate(['/auth/creer-motDePasse'], {
+            queryParams: { token }
+          }).catch(error => {
+            console.error('Navigation error:', error);
+            this.router.navigate(['/auth/login'], { replaceUrl: true });
           });
-        }
-      }).catch(error => {
-        console.error('Navigation error:', error);
-      });
+        }, 3000);
+      },
+      error: (err) => {
+        // Token expiré ou invalide
+        this.afficherErreur(err.error?.message || 'Ce lien d\'activation est invalide ou a expiré.');
+      }
+    });
 
-    }, 4000);
+  }
+
+  private afficherErreur(message: string): void {
+    this.isLoading = false;
+    this.hasError = true;
+    this.errorMessage = message;
   }
 }

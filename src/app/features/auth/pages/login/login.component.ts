@@ -132,11 +132,11 @@ export class LoginComponent implements OnInit {
     this.authService.login(credentials).subscribe({
       next: (user) => {
 
-        if (user.requirePasswordChange) {
+        if (user.doitChangerMotDePasse) {
           // Rediriger vers page de changement de mot de passe
           this.router.navigate(['/auth/first-login']);
         } else {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/menu-principal']);
         }
       },
       error: (error) => {

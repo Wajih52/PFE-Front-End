@@ -1,0 +1,100 @@
+<div class="conges-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div>
+      <h1>
+        <span class="material-symbols-outlined md-48 cl-dark">beach_access</span>
+        Mes Demandes de Congés
+      </h1>
+      <p class="subtitle">Gérez vos périodes de congé et consultez votre solde annuel</p>
+    </div>
+    <a routerLink="/pointage" class="btn-retour">
+      <span class="material-symbols-outlined">arrow_back</span> Retour au pointage
+    </a>
+  </div>
+
+  <!-- Carte Solde -->
+  <div class="solde-banner">
+    <div class="solde-info">
+      <span class="material-symbols-outlined md-48">event_available</span>
+      <div>
+        <h3>Solde de congés disponible</h3>
+        <p>Quota annuel restant à consommer</p>
+      </div>
+    </div>
+    <div class="solde-valeur">{{ soldeConges() }} <span>jours</span></div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Formulaire de demande -->
+    <div class="card form-card">
+      <h2>Nouvelle demande</h2>
+      <form [formGroup]="congeForm" (ngSubmit)="soumettreDemande()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date de début *</label>
+            <input type="date" formControlName="dateDebut" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Date de fin *</label>
+            <input type="date" formControlName="dateFin" class="form-control">
+          </div>
+        </div>
+
+        <div class="estimation-box" [class.invalid]="joursEstimes() > soldeConges() || joursEstimes() === 0">
+          Durée estimée (hors week-end) : <strong>{{ joursEstimes() }} jour(s) ouvrable(s)</strong>
+        </div>
+
+        <div class="form-group">
+          <label>Motif du congé *</label>
+          <textarea formControlName="motif" rows="3" placeholder="Précisez la raison de votre demande..." class="form-control"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="congeForm.invalid || isSubmitting() || joursEstimes() <= 0 || joursEstimes() > soldeConges()">
+          {{ isSubmitting() ? 'Envoi en cours...' : 'Envoyer la demande' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Historique des demandes -->
+    <div class="card history-card">
+      <h2>Mon historique de demandes</h2>
+
+      @if (isLoading()) {
+        <p class="empty-text">Chargement...</p>
+      } @else if (mesDemandes().length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined md-48">inbox</span>
+          <p>Aucune demande de congé enregistrée.</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="conges-table">
+            <thead>
+            <tr>
+              <th>Période</th>
+              <th>Jours</th>
+              <th>Motif</th>
+              <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (d of mesDemandes(); track d.idDemande) {
+                <tr>
+                  <td>Du <strong>{{ d.dateDebut | date:'dd/MM/yyyy' }}</strong> au <strong>{{ d.dateFin | date:'dd/MM/yyyy' }}</strong></td>
+                  <td>{{ d.nombreJoursOuvrables }} j</td>
+                  <td>{{ d.motif }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getBadgeClass(d.statut)">
+                      {{ statutLabels[d.statut] }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

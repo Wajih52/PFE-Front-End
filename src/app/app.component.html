@@ -335,7 +335,7 @@
 -->
 
 
-<app-navbar></app-navbar>
+<app-navbar *ngIf="showNavbar()"></app-navbar>
 <app-chatbot-widget *ngIf="showChatbot()"></app-chatbot-widget>
 <router-outlet />
 

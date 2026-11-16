@@ -1,5 +1,5 @@
 // src/app/features/client/mes-commandes/mes-commandes.component.ts
-// 📦 Composant CLIENT - Mes réservations confirmées
+//  Composant CLIENT - Mes réservations confirmées
 
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';

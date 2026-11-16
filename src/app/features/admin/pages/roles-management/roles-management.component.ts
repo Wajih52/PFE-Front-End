@@ -212,7 +212,7 @@ export class RolesManagementComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors de la création du rôle:', error);
-        this.showError(error.error?.message || 'Erreur lors de la création du rôle');
+        this.showError(error.error?.message || error.error?.error || 'Erreur lors de la création du rôle');
         this.isSubmitting = false;
       }
     });
@@ -227,6 +227,15 @@ export class RolesManagementComponent implements OnInit {
       nom: role.nom,
       description: role.description
     });
+
+    // Bloquer le champ 'nom' si c'est un rôle système
+    const systemRoles = ['ADMIN', 'CLIENT', 'MANAGER', 'EMPLOYE'];
+    if (systemRoles.includes(role.nom)) {
+      this.editForm.get('nom')?.disable();
+    } else {
+      this.editForm.get('nom')?.enable();
+    }
+
     this.showEditModal = true;
     this.clearMessages();
   }
@@ -251,7 +260,7 @@ export class RolesManagementComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const roleData: RoleRequest = this.editForm.value;
+    const roleData: RoleRequest = this.editForm.getRawValue();
 
     this.roleService.updateRole(this.selectedRole.id, roleData).subscribe({
       next: (response) => {
@@ -262,7 +271,7 @@ export class RolesManagementComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors de la modification du rôle:', error);
-        this.showError(error.error?.message || 'Erreur lors de la modification du rôle');
+        this.showError(error.error?.message || error.error?.error || 'Erreur lors de la modification du rôle');
         this.isSubmitting = false;
       }
     });
@@ -286,7 +295,32 @@ export class RolesManagementComponent implements OnInit {
           },
           error: (error) => {
             console.error('Erreur lors de la suppression du rôle:', error);
-            this.showError(error.error?.message || 'Erreur lors de la suppression du rôle');
+            this.showError(error.error?.message || error.error?.error || 'Erreur lors de la suppression du rôle');
+          }
+        });
+      }
+    });
+  }
+
+  toggleRoleStatus(role: RoleResponse): void {
+    const action = role.active ? 'désactiver' : 'activer';
+
+    this.confirmationService.confirm({
+      title: 'Confirmer la modification',
+      message: `Êtes-vous sûr de vouloir ${action} le rôle "${role.nom}" ? Tous les utilisateurs ayant ce rôle perdront instantanément l'accès associé.`,
+      confirmText: role.active ? 'Désactiver' : 'Activer',
+      type: role.active ? 'danger' : 'warning'
+    }).then((confirmed) => {
+      if (confirmed) {
+        this.roleService.toggleRoleStatus(role.id).subscribe({
+          next: () => {
+            this.showSuccess(`Rôle ${action} avec succès !`);
+            this.loadRoles(); // Rafraîchit le tableau
+          },
+          error: (err) => {
+            console.error('Erreur:', err);
+            const errorText = err.error?.message || err.error?.error || 'Erreur lors du changement de statut';
+            this.showError(errorText);
           }
         });
       }

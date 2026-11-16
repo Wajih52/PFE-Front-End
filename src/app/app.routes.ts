@@ -41,6 +41,7 @@ import {ReservationsEmployeComponent} from './features/employee/reservations-emp
 import {LivraisonsEmployeComponent} from './features/employee/livraisons-employe/livraisons-employe.component';
 import {GestionEquipeComponent} from './features/manager/gestion-equipe/gestion-equipe.component';
 import {InstanceScanDetailComponent} from './features/employee/instance-scan-detail/instance-scan-detail.component';
+import {CongesEmployeComponent} from './features/employee/conges-employe/conges-employe.component';
 
 
 export const routes: Routes = [
@@ -79,7 +80,7 @@ export const routes: Routes = [
           .then(m => m.FirstLoginComponent)
       },
       {
-        path: 'change-password',
+        path: 'creer-motDePasse',
         loadComponent: () => import('./features/auth/pages/change-password/change-password.component')
           .then(m => m.ChangePasswordComponent)
       }
@@ -96,6 +97,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/pages/produit-avis-public/produit-avis-public.component')
       .then(m => m.ProduitAvisPublicComponent),
     title: 'Avis du Produit'
+  },
+  {
+    path: 'services/:id',
+    loadComponent: () => import('./features/pages/service-detail/service-detail.component')
+      .then(m => m.ServiceDetailComponent),
+    title: 'Détails du Service - Elegant Hive'
   },
   // ==================== ROUTES AVEC SIDEBAR (PROTÉGÉES) ====================
   {
@@ -295,6 +302,15 @@ export const routes: Routes = [
             component: PointageAdminComponent,
             canActivate:  [roleGuard(['ADMIN','MANAGER'])],
           },
+          //========== GESTION GONGES ============
+          {
+            path: 'conges',
+            canActivate: [authGuard, roleGuard(['ADMIN', 'MANAGER'])],
+            loadComponent: () =>
+              import('./features/admin/pages/conges-admin/conges-admin.component')
+                .then(m => m.CongesAdminComponent),
+            title: 'Gestion des Congés - Administration'
+          },
           // ======== STATISTIQUES ========
           {
             path: 'statistiques',
@@ -403,6 +419,11 @@ export const routes: Routes = [
             path: 'livraisons',
             component: LivraisonsEmployeComponent,
             canActivate: [roleGuard(['EMPLOYE'])],
+          },
+          { path: 'conges',
+            component: CongesEmployeComponent,
+            canActivate: [roleGuard(['EMPLOYE', 'MANAGER', 'ADMIN'])],
+            title: 'Mes Congés - Elegant Hive'
           }
         ]
       },
@@ -442,6 +463,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/pages/panier/panier.component')
       .then(m => m.PanierComponent),
     canActivate: [authGuard,roleGuard(['CLIENT'])]
+  },
+  {
+    path: 'menu-principal',
+    canActivate: [authGuard],
+    loadComponent: () => import('./shared/menu-principal/menu-principal.component').then(m => m.MenuPrincipalComponent)
   },
   // ==================== ROUTES UTILITAIRES ====================
   {

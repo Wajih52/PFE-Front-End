@@ -12,7 +12,7 @@ import {ReclamationRequest} from '../../../core/models/reclamation.model';
 import {FormsModule} from '@angular/forms';
 import {FooterComponent} from '../../../shared/footer/footer.component';
 interface Service {
-  icon: string;
+  id: string;
   title: string;
   description: string;
   image: string;
@@ -48,25 +48,25 @@ export class HomeComponent implements OnInit,OnDestroy{
   // Services proposés
   services: Service[] = [
     {
-      icon: '💍',
+      id: 'mariages',
       title: 'Mariages',
       description: 'Des célébrations inoubliables avec une décoration élégante et sur mesure',
       image:'assets/images/image-mariage.jpg'
     },
     {
-      icon: '🎂',
+      id: 'anniversaires',
       title: 'Anniversaires',
       description: 'Fêtez vos moments spéciaux avec style et créativité',
       image:'assets/images/image-anniversaire.jpg'
     },
     {
-      icon: '💐',
+      id: 'fiancailles',
       title: 'Fiançailles',
       description: 'Marquez le début de votre histoire avec une soirée romantique',
       image:'assets/images/image-fiancaille.jpg'
     },
     {
-      icon: '🎪',
+      id: 'evenements-pros',
       title: 'Événements Professionnels',
       description: 'Des solutions complètes pour vos conférences et séminaires',
       image:'assets/images/image-seminaire.jpg'
@@ -184,7 +184,9 @@ export class HomeComponent implements OnInit,OnDestroy{
     }
   }
 
-
+  ouvrirService(id: string): void {
+    this.router.navigate(['/services', id]);
+  }
 
 
   /**

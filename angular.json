@@ -99,6 +99,14 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "allowedHosts": [
+              "localhost",
+              "192.168.114.113",
+              "172.20.224.1",
+              "192.168.1.166"
+            ]
+          },
           "configurations": {
             "production": {
               "buildTarget": "agenceEvenementielleFront:build:production"

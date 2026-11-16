@@ -159,6 +159,14 @@
               >
                 <span class="material-symbols-outlined cl-dark">supervised_user_circle</span>
               </button>
+              <button  *ngIf="role.nom !== 'ADMIN'"
+                      class="btn-action"
+                      [class.btn-warning]="role.active"
+                      [class.btn-success]="!role.active"
+                      (click)="toggleRoleStatus(role)"
+                      [title]="role.active ? 'Désactiver le rôle' : 'Activer le rôle'">
+                <i [class]="role.active ? 'fas fa-ban' : 'fas fa-check'"></i>
+              </button>
               <button
                 class="btn-action btn-edit"
                 (click)="openEditModal(role)"

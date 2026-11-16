@@ -11,7 +11,7 @@ import {
   Categorie,
   TypeProduit,
   CategorieLabels,
-  TypeProduitLabels
+  TypeProduitLabels, StatutProduit, StatutProduitLabels
 } from '../../../../core/models';
 import { ToastrService } from 'ngx-toastr';
 import {NotificationService} from '../../../../services/notification.service';
@@ -41,14 +41,15 @@ export class ProduitsListComponent implements OnInit {
     total: 0,
     disponibles: 0,
     rupture: 0,
-    critique: 0
+    critique: 0,
+    desactives: 0
   };
 
   // Recherche et filtres
   searchTerm = '';
   filterCategorie: Categorie | '' = '';
   filterType: TypeProduit | '' = '';
-  filterStatut: 'disponible' | 'rupture' | 'critique' | '' = '';
+  filterStatut: 'disponible' | 'rupture' | 'critique' | 'desactive' | '' = '';
 
   // Pagination
   currentPage = 1;
@@ -58,6 +59,10 @@ export class ProduitsListComponent implements OnInit {
   // Tri
   sortColumn: keyof ProduitResponse | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+
+  StatutProduit = StatutProduit;
+  StatutProduitLabels = StatutProduitLabels;
+  selectedStatutProduit: string = 'TOUS';
 
   // UI
   showDetailsModal = false;
@@ -131,6 +136,8 @@ export class ProduitsListComponent implements OnInit {
     this.stats.disponibles = this.allProduits.filter(p => p.quantiteDisponible > 0).length;
     this.stats.rupture = this.allProduits.filter(p => p.quantiteDisponible === 0).length;
     this.stats.critique = this.allProduits.filter(p => p.alerteStockCritique).length;
+    this.stats.desactives = this.allProduits.filter(p => p.statutProduit === StatutProduit.DESACTIVE
+    ).length;
   }
 
 
@@ -167,6 +174,8 @@ export class ProduitsListComponent implements OnInit {
       result = result.filter(p => p.quantiteDisponible === 0);
     } else if (this.filterStatut === 'critique') {
       result = result.filter(p => p.alerteStockCritique);
+    } else if (this.filterStatut === 'desactive') {
+      result = result.filter(p => p.statutProduit === StatutProduit.DESACTIVE);
     }
 
     this.filteredProduits = result;
@@ -287,7 +296,7 @@ export class ProduitsListComponent implements OnInit {
         <p>Choisissez le type de suppression:</p>
         <ul>
           <li><strong>Désactiver</strong>: Le produit sera masqué mais conservé dans la base</li>
-          <li><strong>Supprimer définitivement</strong>: ⚠️ Suppression permanente de la base de données</li>
+          <li><strong>Supprimer définitivement</strong>: Suppression permanente de la base de données</li>
         </ul>
       </div>
     `,
@@ -347,6 +356,8 @@ export class ProduitsListComponent implements OnInit {
    * Obtenir la classe CSS pour le statut de stock
    */
   getStockStatusClass(produit: ProduitResponse): string {
+    if (produit.statutProduit === StatutProduit.DESACTIVE) return 'stock-desactive';
+    if (produit.statutProduit === StatutProduit.ARCHIVE) return 'stock-archive';
     if (produit.quantiteDisponible === 0) return 'stock-rupture';
     if (produit.alerteStockCritique) return 'stock-critique';
     return 'stock-ok';
@@ -356,9 +367,11 @@ export class ProduitsListComponent implements OnInit {
    * Obtenir le label du statut de stock
    */
   getStockStatusLabel(produit: ProduitResponse): string {
-    if (produit.quantiteDisponible === 0) return 'Rupture';
-    if (produit.alerteStockCritique) return 'Critique';
-    return 'Disponible';
+    if (produit.statutProduit === StatutProduit.DESACTIVE) return 'Désactivé';
+    if (produit.statutProduit === StatutProduit.ARCHIVE) return 'Archivé';
+    if (produit.quantiteDisponible === 0) return 'Rupture de stock';
+    if (produit.alerteStockCritique) return 'Stock critique';
+    return 'En stock';
   }
 
   /**
@@ -483,8 +496,7 @@ export class ProduitsListComponent implements OnInit {
     const confirmed = await this.confirmationService.confirm({
       title: 'Réactiver le produit',
       message: `<p>Voulez-vous réactiver "${this.produitReactivation.nomProduit}" ?</p>
-              ${this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE ?
-        `<p><strong>Quantité initiale:</strong> ${this.quantiteReactivation}</p>` : ''}`,
+              <p><strong>Stock disponible :</strong> ${this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE ? this.quantiteReactivation : this.produitReactivation.quantiteDisponible}</p>`,
       confirmText: 'Oui, réactiver',
       type: 'info'
     });
@@ -492,12 +504,11 @@ export class ProduitsListComponent implements OnInit {
     if (!confirmed) return;
 
     const idProduit = this.produitReactivation.idProduit;
+    const quantite = this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE
+      ? this.quantiteReactivation
+      : undefined;
 
-    this.produitService.reactiverProduit(
-      idProduit,
-      this.produitReactivation.typeProduit === TypeProduit.EN_QUANTITE ?
-        this.quantiteReactivation : 0
-    ).subscribe({
+    this.produitService.reactiverProduit(idProduit, quantite).subscribe({
       next: () => {
         this.notificationService.success('Produit réactivé avec succès');
         this.closeReactivationModal();
@@ -597,4 +608,12 @@ export class ProduitsListComponent implements OnInit {
   }
 
   protected readonly variables = variables;
+
+  /**
+   * Vérifie si le produit est actif
+   */
+  isProduitActif(produit: ProduitResponse): boolean {
+    return produit.statutProduit === StatutProduit.ACTIF;
+  }
+
 }

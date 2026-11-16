@@ -446,3 +446,28 @@
     }
   }
 }
+.btn-conges {
+  background: #e2e8f0;
+  color: #2c3e50;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+
+  .material-symbols-outlined {
+    color: #2c3e50;
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    color: #ffffff;
+
+
+    .material-symbols-outlined {
+      color: #ffffff;
+    }
+  }
+}

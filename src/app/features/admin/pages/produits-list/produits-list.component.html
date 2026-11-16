@@ -286,12 +286,9 @@
           </div>
         </td>
         <td>
-            <span
-              class="badge stock-info"
-              [class]="getStockStatusClass(produit)"
-            >
-              {{ getStockStatusLabel(produit) }}
-            </span>
+            <span class="badge stock-info" [ngClass]="getStockStatusClass(produit)">
+          {{ getStockStatusLabel(produit) }}
+       </span>
         </td>
         <td>
           <div class="action-buttons">
@@ -333,23 +330,23 @@
               <span class="material-symbols-outlined  cl-dark">bar_chart_4_bars</span>
             </button>
             <!-- Boutons selon l'état du produit -->
-            <ng-container *ngIf="produit.quantiteDisponible > 0">
+            <ng-container *ngIf="produit.statutProduit === StatutProduit.ACTIF">
               <!-- Produit actif -->
               <button
                 class="btn btn-sm btn-warning"
                 (click)="desactiverProduit(produit)"
-                title="Désactiver"
+                title="Désactiver le produit "
               >
                 <span class="material-symbols-outlined cl-dark">toggle_off</span>
               </button>
             </ng-container>
 
-            <ng-container *ngIf="produit.quantiteDisponible === 0">
+            <ng-container *ngIf="produit.statutProduit !== StatutProduit.ACTIF">
               <!-- Produit désactivé -->
               <button
                 class="btn btn-sm btn-success"
                 (click)="openReactivationModal(produit)"
-                title="Réactiver"
+                title="Réactiverle produit"
               >
                 <span class="material-symbols-outlined cl-dark">toggle_on</span>
               </button>

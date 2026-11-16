@@ -20,6 +20,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const storage = inject(StorageService);
   const tokenMonitor = inject(TokenMonitorService);
+  const notificationService = inject(NotificationService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -74,6 +75,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         } else {
           // Autres erreurs 403
           console.error('Erreur 403 : Permissions insuffisantes');
+          // Affiche une alerte (adaptez la méthode 'error' selon votre NotificationService)
+          notificationService.error('Accès refusé', 3);
           router.navigate(['/access-denied']);
         }
       }
