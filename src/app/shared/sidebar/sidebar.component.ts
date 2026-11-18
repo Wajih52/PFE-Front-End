@@ -29,7 +29,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   currentRoute: string = '';
 
   /** État du menu (collapsed ou non) */
-  isCollapsed: boolean = false;
+  isCollapsed: boolean = true;
 
   /** Émet l'état collapsed pour le composant parent */
   @Output() collapsedChange = new EventEmitter<boolean>();
@@ -37,6 +37,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+
+    // Synchroniser immédiatement le composant parent au chargement
+    this.collapsedChange.emit(this.isCollapsed);
+
     // Charger les menus selon les rôles de l'utilisateur
     this.loadMenus();
 

@@ -82,7 +82,7 @@ import { FooterComponent } from '../footer/footer.component';
   `]
 })
 export class LayoutWithSidebarComponent {
-  isSidebarCollapsed = false;
+  isSidebarCollapsed = true;
 
   onSidebarCollapsedChange(isCollapsed: boolean): void {
     this.isSidebarCollapsed = isCollapsed;
