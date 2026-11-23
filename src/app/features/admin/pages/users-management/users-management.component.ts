@@ -11,6 +11,7 @@ import {
   LucideAngularModule,
   UsersRound, UserPlus, ShieldX, ShieldCheck, ShieldMinus, Eye, FileUser, Trash2, FilePenLine} from 'lucide-angular';
 import{variables} from '../../../../core/environement/variables';
+import {ActionSensibleService} from '../../../../core/services/action-sensible.service';
 
 interface User {
   idUtilisateur: number;
@@ -56,6 +57,7 @@ export class UsersManagementComponent implements OnInit {
   private fb = inject(FormBuilder);
   private imageService = inject(ImageService);
   private datePipe = inject(DatePipe);
+  private actionSensibleService = inject(ActionSensibleService);
 
   API_URL = `${variables.apiUrl}/utilisateurs`;
   IMAGE_BASE_URL = `${variables.apiImg}`;
@@ -407,9 +409,13 @@ export class UsersManagementComponent implements OnInit {
 
     if (!confirmed) return;
 
-    this.http.patch(`${this.API_URL}/${user.idUtilisateur}/suspendre`, {}).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      `Saisissez votre mot de passe pour suspendre le compte de ${user.prenom} ${user.nom} :`,
+      (headers) => this.http.patch(`${this.API_URL}/${user.idUtilisateur}/suspendre`, {}, { headers })
+    ).subscribe({
       next: () => {
-        this.successMessage = ` Compte de ${user.prenom} ${user.nom} suspendu`;
+        this.successMessage = `Compte de ${user.prenom} ${user.nom} suspendu`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -433,9 +439,13 @@ export class UsersManagementComponent implements OnInit {
 
     if (!confirmed) return;
 
-    this.http.post(`${this.API_URL}/${user.idUtilisateur}/desactiver`, {}).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      `Saisissez votre mot de passe pour désactiver le compte de ${user.prenom} ${user.nom} :`,
+      (headers) => this.http.post(`${this.API_URL}/${user.idUtilisateur}/desactiver`, {}, { headers })
+    ).subscribe({
       next: () => {
-        this.successMessage = ` Compte de ${user.prenom} ${user.nom} désactivé`;
+        this.successMessage = `Compte de ${user.prenom} ${user.nom} désactivé`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -459,9 +469,13 @@ export class UsersManagementComponent implements OnInit {
 
     if (!confirmed) return;
 
-    this.http.post(`${this.API_URL}/${user.idUtilisateur}/activer`, {}).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      `Saisissez votre mot de passe pour activer le compte de ${user.prenom} ${user.nom} :`,
+      (headers) => this.http.post(`${this.API_URL}/${user.idUtilisateur}/activer`, {}, { headers })
+    ).subscribe({
       next: () => {
-        this.successMessage = ` Compte de ${user.prenom} ${user.nom} activé`;
+        this.successMessage = `Compte de ${user.prenom} ${user.nom} activé`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
@@ -485,16 +499,29 @@ export class UsersManagementComponent implements OnInit {
 
     if (!confirmed) return;
 
-    this.http.delete(`${this.API_URL}/${user.idUtilisateur}`, {
-      responseType: 'text'
-    }).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      `Saisissez votre mot de passe pour supprimer définitivement ${user.prenom} ${user.nom} :`,
+      (headers) => this.http.delete(`${this.API_URL}/${user.idUtilisateur}`, {
+        headers,
+        responseType: 'text' // Important : le contrôleur renvoie un String
+      })
+    ).subscribe({
       next: () => {
-        this.successMessage = ` Utilisateur ${user.prenom} ${user.nom} supprimé`;
+        this.successMessage = `Utilisateur ${user.prenom} ${user.nom} supprimé`;
         this.loadUsers();
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors de la suppression';
+        // Comme responseType est 'text', err.error peut être une chaîne JSON
+        let msg = 'Erreur lors de la suppression';
+        try {
+          const parsed = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
+          msg = parsed?.message || msg;
+        } catch {
+          msg = err.error || msg;
+        }
+        this.errorMessage = msg;
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });

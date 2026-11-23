@@ -10,14 +10,36 @@
 
     <h2>{{ config?.title }}</h2>
     <div class="message-text" [innerHTML]="config?.message"></div>
-
+    <div class="prompt-input-wrapper" *ngIf="config?.isPrompt">
+      <input
+        [type]="currentInputType"
+        [(ngModel)]="inputValue"
+        [placeholder]="config?.placeholder || ''"
+        (keyup.enter)="confirm()"
+        autocomplete="current-password"
+        autofocus
+      />
+      <button
+        *ngIf="config?.inputType === 'password'"
+        type="button"
+        class="toggle-password"
+        (click)="togglePasswordVisibility()"
+        tabindex="-1"
+      >
+    <span class="material-symbols-outlined">
+      {{ showPassword ? 'visibility_off' : 'visibility' }}
+    </span>
+      </button>
+    </div>
 
 
     <div class="modal-actions">
       <button class="btn-cancel" (click)="cancel()">
         {{ config?.cancelText || 'Annuler' }}
       </button>
-      <button class="btn-confirm" (click)="confirm()">
+      <button class="btn-confirm"
+              (click)="confirm()"
+              [disabled]="config?.isPrompt && !inputValue.trim()">
         {{ config?.confirmText || 'Confirmer' }}
       </button>
     </div>

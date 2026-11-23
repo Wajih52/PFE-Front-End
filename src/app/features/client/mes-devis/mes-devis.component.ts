@@ -8,6 +8,7 @@ import { ReservationResponseDto, ValidationDevisDto } from '../../../core/models
 import {FormsModule} from '@angular/forms';
 import { FactureService } from '../../../services/facture.service';
 import {NotificationPersistantService} from '../../../services/notification-persistant.service';
+import {OnboardingTourService} from '../../../services/onboarding-tour.service';
 
 @Component({
   selector: 'app-mes-devis',
@@ -21,6 +22,7 @@ export class MesDevisComponent implements OnInit {
   private router = inject(Router);
   private factureService = inject(FactureService);
   private notificationPersist = inject(NotificationPersistantService)
+  private onboardingTour = inject(OnboardingTourService);
 
 
 
@@ -38,7 +40,11 @@ export class MesDevisComponent implements OnInit {
 
   downloadingFacture = signal<number | null>(null);
 
+  afficherPulseGuide = signal<boolean>(false);
+  private guideDejaTente = false;
+
   ngOnInit(): void {
+    this.afficherPulseGuide.set(!this.onboardingTour.aDejaVuGuideDevis());
     this.chargerMesDevis();
   }
 
@@ -53,6 +59,7 @@ export class MesDevisComponent implements OnInit {
       next: (data) => {
         this.devis.set(data);
         this.isLoading.set(false);
+        this.declencherGuideSiPremierUsage(data.length > 0);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des devis:', error);
@@ -246,5 +253,20 @@ export class MesDevisComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  private declencherGuideSiPremierUsage(aDesDevis: boolean): void {
+    if (!this.guideDejaTente && aDesDevis) {
+      this.guideDejaTente = true;
+      setTimeout(() => {
+        this.onboardingTour.lancerGuideDevis(false);
+        this.afficherPulseGuide.set(false);
+      }, 450);
+    }
+  }
+
+  relancerGuide(): void {
+    this.afficherPulseGuide.set(false);
+    this.onboardingTour.lancerGuideDevis(true);
   }
 }

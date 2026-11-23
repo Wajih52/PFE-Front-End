@@ -14,6 +14,7 @@ import {variables} from '../../../core/environement/variables';
 import {
   AiRecommendationWidgetComponent
 } from '../ai-Recommendation/Components/ai-recommendation-widget/ai-recommendation-widget.component';
+import {OnboardingTourService} from '../../../services/onboarding-tour.service';
 
 @Component({
   selector: 'app-catalogue-list',
@@ -27,11 +28,11 @@ export class CatalogueListComponent implements OnInit {
   private panierService = inject(PanierService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
+  private onboardingTour = inject(OnboardingTourService);
+  private guideDejaTente = false;
 
 
   //  DATES DE LOCATION (CRITIQUES)
-
-
   // Dates par défaut : Demain et après-demain
   dateDebutLocation: string = '';
   dateFinLocation: string = '';
@@ -118,6 +119,8 @@ export class CatalogueListComponent implements OnInit {
   showProduitModal = signal<boolean>(false);
   produitSelectionne = signal<ProduitResponse | null>(null);
 
+  afficherPulseGuide = signal(false);
+
 
   constructor() {
     this.minDate = this.formatDateForInput(new Date());
@@ -126,6 +129,7 @@ export class CatalogueListComponent implements OnInit {
   ngOnInit(): void {
     this.initialiserDatesParDefaut();
     this.chargerCatalogue();
+    this.afficherPulseGuide.set(!this.onboardingTour.aDejaVuGuideCatalogue());
   }
 
   /**
@@ -242,6 +246,7 @@ export class CatalogueListComponent implements OnInit {
             this.calculerDisponibilite(produit);
           });
           this.isLoading.set(false);
+          this.declencherGuideSiPremierUsage();
         },
         error: (error) => {
           console.error('Erreur chargement catalogue:', error);
@@ -264,6 +269,7 @@ export class CatalogueListComponent implements OnInit {
           });
 
           this.isLoading.set(false);
+          this.declencherGuideSiPremierUsage();
           console.log(`${produits.length} produits disponibles du ${this.dateDebutLocation} au ${this.dateFinLocation}`);
         },
         error: (error) => {
@@ -500,5 +506,20 @@ export class CatalogueListComponent implements OnInit {
     this.produitSelectionne.set(null);
   }
 
+// pour le guide catalogue
+  private declencherGuideSiPremierUsage(): void {
+    if (!this.guideDejaTente) {
+      this.guideDejaTente = true;
+      // Petit délai pour laisser Angular afficher le bloc @if (!isLoading())
+      setTimeout(() => {
+        this.onboardingTour.lancerGuideCatalogue(false);
+      }, 450);
+    }
+  }
+
+  relancerGuide(): void {
+    this.afficherPulseGuide.set(false);
+    this.onboardingTour.lancerGuideCatalogue(true);
+  }
 
 }

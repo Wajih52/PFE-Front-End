@@ -6,10 +6,22 @@
   <!-- ========== HEADER ========== -->
   <div class="panier-header">
     <div class="header-content">
-      <h1>
-        <i class="fas fa-shopping-cart"></i>
-        Mon Panier
-      </h1>
+      <div class="titre-avec-aide">
+        <h1>
+          <i class="fas fa-shopping-cart"></i>
+          Mon Panier
+        </h1>
+        <button
+          type="button"
+          class="btn-guide-aide"
+          [class.pulse-aide]="afficherPulseGuide()"
+          (click)="relancerGuide()"
+          title="Guide du panier et du devis"
+          aria-label="Ouvrir le guide du panier"
+        >
+          <i class="fas fa-question"></i>
+        </button>
+      </div>
       <p class="subtitle">
         {{ totalArticles() }} article(s) · {{ montantTotal() | number:'1.2-2' }} TND
       </p>
@@ -57,7 +69,7 @@
     <div class="panier-content">
 
       <!-- Colonne gauche : Liste des produits -->
-      <div class="panier-liste">
+      <div id="tour-panier-liste" class="panier-liste">
 
 
         <div class="lignes-container">

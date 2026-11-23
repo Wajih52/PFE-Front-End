@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 import {ConfirmationService} from '../../../core/services/confirmation.service';
 import {ScrollService} from '../../../services/scroll.service';
 import{variables} from '../../../core/environement/variables';
+import {ActionSensibleService} from '../../../core/services/action-sensible.service';
 
 @Component({
   selector: 'app-profile',
@@ -28,6 +29,7 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
   private scrollService =inject(ScrollService);
+  private actionSensibleService = inject(ActionSensibleService);
 
 
   // Formulaires
@@ -348,7 +350,11 @@ export class ProfileComponent implements OnInit {
     });
     if (!confirmed) return;
 
-    this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/desactiver`, {}).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      'Saisissez votre mot de passe pour confirmer la désactivation de votre compte :',
+      (headers) => this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/desactiver`, {}, { headers })
+    ).subscribe({
       next: () => {
         alert('Compte désactivé. Vous allez être déconnecté.');
         this.authService.logout().subscribe({
@@ -377,9 +383,13 @@ export class ProfileComponent implements OnInit {
     });
     if (!confirmed) return;
 
-    this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/archiver`, {}).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      'Saisissez votre mot de passe pour confirmer la suppression de votre compte :',
+      (headers) => this.http.post(`${this.API_URL}/${this.user.idUtilisateur}/archiver`, {}, { headers })
+    ).subscribe({
       next: () => {
-        alert('Compte Supprimé. Vous allez être déconnecté.');
+        alert('Compte supprimé. Vous allez être déconnecté.');
         this.authService.logout().subscribe({
           next: () => this.router.navigate(['/auth/login']),
           error: () => {
@@ -389,7 +399,7 @@ export class ProfileComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors de la Suppression';
+        this.errorMessage = err.error?.message || 'Erreur lors de la suppression';
         this.scrollService.scrollToTop();
         setTimeout(() => this.errorMessage = '', 3000);
       }

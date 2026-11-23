@@ -153,3 +153,47 @@ p {
 .modal.info .btn-confirm {
   background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
 }
+
+.prompt-input-wrapper {
+  position: relative;
+  margin: 16px 0 24px 0;
+  width: 100%;
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 42px 12px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      border-color: #2c3e50;
+    }
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+
+    &:hover {
+      color: #111827;
+    }
+  }
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

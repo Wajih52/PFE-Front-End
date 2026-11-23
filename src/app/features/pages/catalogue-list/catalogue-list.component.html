@@ -4,11 +4,22 @@
 
   <!-- ========== HEADER ========== -->
   <div class="catalogue-header">
-    <h1>Notre Catalogue</h1>
+    <div class="titre-avec-aide">
+      <h1>Notre Catalogue</h1>
+      <button
+        type="button"
+        class="btn-guide-aide"
+        [class.pulse-aide]="afficherPulseGuide()"
+        (click)="relancerGuide()"
+        title="Guide d'utilisation"
+        aria-label="Ouvrir le guide d'utilisation"
+      >
+        <i class="fas fa-question"></i>
+      </button>
+    </div>
     <p class="subtitle">Découvrez notre sélection de produits disponibles pour vos événements</p>
-
     <!--  SÉLECTEUR DE DATES CRITIQUES -->
-    <div class="date-selector">
+    <div id="tour-dates" class="date-selector">
       <div class="date-input-group">
         <label for="dateDebut">
           <i class="fas fa-calendar-alt"></i>
@@ -51,14 +62,14 @@
     </div>
 
     <!-- Badge Panier -->
-    <a routerLink="/client/panier" class="panier-badge">
+    <a id="tour-panier" routerLink="/client/panier" class="panier-badge">
       <i class="fas fa-shopping-cart"></i>
       @if (nombreProduits() > 0) {
         <span class="badge">{{ nombreProduits() }}</span>
       }
     </a>
 
-    <div class="ai-recommendation-banner">
+    <div id="tour-ai-banner" class="ai-recommendation-banner">
       <div class="ai-banner-content">
         <div class="ai-banner-text">
       <span class="ai-badge">
@@ -101,7 +112,7 @@
     <div class="catalogue-content">
 
       <!-- ========== SIDEBAR FILTRES ========== -->
-      <aside class="filtres-sidebar">
+      <aside id="tour-filtres" class="filtres-sidebar">
         <div class="filtre-section">
           <h3>
             <i class="fas fa-filter"></i>

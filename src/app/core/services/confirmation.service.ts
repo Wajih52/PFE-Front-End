@@ -7,6 +7,9 @@ export interface ConfirmationConfig {
   confirmText?: string;
   cancelText?: string;
   type?: 'warning' | 'danger' | 'info';
+  isPrompt?: boolean;
+  inputType?: string;
+  placeholder?: string;
 }
 
 @Injectable({
@@ -14,7 +17,7 @@ export interface ConfirmationConfig {
 })
 export class ConfirmationService {
   private confirmationSubject = new Subject<ConfirmationConfig & {
-    onConfirm: () => void;
+    onConfirm: (value?: string) => void;
     onCancel: () => void;
   }>();
 
@@ -24,6 +27,7 @@ export class ConfirmationService {
     return new Promise((resolve) => {
       this.confirmationSubject.next({
         ...config,
+        isPrompt: false,
         onConfirm: () => resolve(true),
         onCancel: () => resolve(false)
       });
@@ -38,12 +42,23 @@ export class ConfirmationService {
     message: string;
     placeholder?: string;
     inputType?: string;
+    confirmText?: string;
+    cancelText?: string;
+    type?: 'warning' | 'danger' | 'info';
   }): Promise<string | null> {
-    // Implémentation selon votre système de confirmation
-    // Peut utiliser un modal avec input
     return new Promise((resolve) => {
-      const userInput = window.prompt(`${options.title}\n\n${options.message}`);
-      resolve(userInput);
+      this.confirmationSubject.next({
+        title: options.title,
+        message: options.message,
+        placeholder: options.placeholder || 'Saisissez votre mot de passe',
+        inputType: options.inputType || 'text',
+        confirmText: options.confirmText || 'Confirmer',
+        cancelText: options.cancelText || 'Annuler',
+        type: options.type || 'danger',
+        isPrompt: true,
+        onConfirm: (value?: string) => resolve(value ?? null),
+        onCancel: () => resolve(null)
+      });
     });
   }
 }

@@ -13,6 +13,7 @@ import {
 import { ReservationResponseDto } from '../../../../core/models/reservation.model';
 import {ToastrService} from 'ngx-toastr';
 import {NotificationPersistantService} from '../../../../services/notification-persistant.service';
+import {OnboardingTourService} from '../../../../services/onboarding-tour.service';
 
 @Component({
   selector: 'app-ajouter-paiement',
@@ -37,6 +38,9 @@ export class AjouterPaiementComponent implements OnInit {
   readonly modesPaiement = Object.values(ModePaiement);
   readonly modePaiementLabels = ModePaiementLabels;
 
+  afficherPulseGuide: boolean = false;
+  private guideDejaTente: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -44,8 +48,9 @@ export class AjouterPaiementComponent implements OnInit {
     private paiementService: PaiementService,
     private reservationService: ReservationService,
     private toastr : ToastrService,
-  private storage: StorageService,
-    private notificationPersist : NotificationPersistantService
+    private storage: StorageService,
+    private notificationPersist : NotificationPersistantService,
+    private onboardingTour: OnboardingTourService
   ) {}
 
   ngOnInit(): void {
@@ -56,6 +61,11 @@ export class AjouterPaiementComponent implements OnInit {
     this.paiementForm.get('modePaiement')?.valueChanges.subscribe(mode => {
       this.onModePaiementChange(mode);
     });
+
+    if (this.isClient) {
+      this.afficherPulseGuide = !this.onboardingTour.aDejaVuGuidePaiement();
+    }
+
     this.chargerReservation();
   }
 
@@ -96,6 +106,8 @@ export class AjouterPaiementComponent implements OnInit {
 
         if (data.paiementComplet) {
           this.erreur = 'Cette réservation est déjà payée intégralement';
+        }else {
+          this.declencherGuideSiPremierUsage();
         }
       },
       error: (error) => {
@@ -233,6 +245,25 @@ export class AjouterPaiementComponent implements OnInit {
     return icons[mode as ModePaiement] || 'fas fa-wallet';
   }
 
+  get isClient(): boolean {
+    return this.storage.isClient();
+  }
+
   protected readonly ModePaiement = ModePaiement;
   protected readonly Validators = Validators;
+
+  private declencherGuideSiPremierUsage(): void {
+    if (!this.guideDejaTente && this.isClient) {
+      this.guideDejaTente = true;
+      setTimeout(() => {
+        this.onboardingTour.lancerGuidePaiement(false);
+        this.afficherPulseGuide = false;
+      }, 450);
+    }
+  }
+
+  relancerGuide(): void {
+    this.afficherPulseGuide = false;
+    this.onboardingTour.lancerGuidePaiement(true);
+  }
 }

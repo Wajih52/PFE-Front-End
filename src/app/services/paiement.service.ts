@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { variables } from '../core/environement/variables';
 import {
@@ -11,6 +11,7 @@ import {
   StatistiquesPaiementsDto,
   StatutPaiement
 } from '../core/models/paiement.model';
+import {ActionSensibleService} from '../core/services/action-sensible.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,19 +20,21 @@ export class PaiementService {
 
   private readonly apiUrl = `${variables.apiUrl}/paiements`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private actionSensibleService: ActionSensibleService) { }
 
   creerPaiement(paiementDto: PaiementRequestDto): Observable<PaiementResponseDto> {
     return this.http.post<PaiementResponseDto>(this.apiUrl, paiementDto);
   }
 
-  validerPaiement(idPaiement: number): Observable<PaiementResponseDto> {
-    return this.http.put<PaiementResponseDto>(`${this.apiUrl}/${idPaiement}/valider`, {});
+  validerPaiement(idPaiement: number, headers?: HttpHeaders): Observable<PaiementResponseDto> {
+    return this.http.put<PaiementResponseDto>(`${this.apiUrl}/${idPaiement}/valider`, {}, { headers });
   }
 
-  refuserPaiement(idPaiement: number, motifRefus: string): Observable<PaiementResponseDto> {
+  refuserPaiement(idPaiement: number, motifRefus: string, headers?: HttpHeaders): Observable<PaiementResponseDto> {
     const body: RefuserPaiementDto = { motifRefus };
-    return this.http.put<PaiementResponseDto>(`${this.apiUrl}/${idPaiement}/refuser`, body);
+    return this.http.put<PaiementResponseDto>(`${this.apiUrl}/${idPaiement}/refuser`, body, { headers });
   }
 
   getPaiementById(idPaiement: number): Observable<PaiementResponseDto> {
@@ -77,8 +80,8 @@ export class PaiementService {
     return this.http.get<PaiementCompletDto>(`${this.apiUrl}/reservation/${idReservation}/est-complet`);
   }
 
-  supprimerPaiement(idPaiement: number): Observable<{message: string}> {
-    return this.http.delete<{message: string}>(`${this.apiUrl}/${idPaiement}`);
+  supprimerPaiement(idPaiement: number, headers?: HttpHeaders): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${idPaiement}`, { headers });
   }
 
   getStatistiquesPaiements(): Observable<StatistiquesPaiementsDto> {

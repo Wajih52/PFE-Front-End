@@ -113,6 +113,35 @@
         <p class="subtitle">Voir la disponibilité réelle des produits sur une période donnée</p>
       </div>
 
+      <!-- Raccourcis rapides de période -->
+      <div class="quick-date-shortcuts">
+        <span class="shortcuts-label">Accès rapide :</span>
+        <button
+          type="button"
+          class="btn-shortcut"
+          (click)="appliquerPeriodeRapide('aujourdhui')"
+          [disabled]="isLoadingDisponibilite"
+        >
+          <i class="fas fa-calendar-day"></i> Aujourd'hui
+        </button>
+        <button
+          type="button"
+          class="btn-shortcut"
+          (click)="appliquerPeriodeRapide('demain')"
+          [disabled]="isLoadingDisponibilite"
+        >
+          <i class="fas fa-calendar-plus"></i> Demain
+        </button>
+        <button
+          type="button"
+          class="btn-shortcut"
+          (click)="appliquerPeriodeRapide('7jours')"
+          [disabled]="isLoadingDisponibilite"
+        >
+          <i class="fas fa-calendar-week"></i> 7 prochains jours
+        </button>
+      </div>
+
       <div class="date-filter-inputs">
         <div class="input-group">
           <label for="dateDebut">
@@ -163,6 +192,15 @@
         </div>
       </div>
 
+      <div *ngIf="produitsDisponibilite.length === 0" class="date-filter-hint">
+        <i class="fas fa-info-circle"></i>
+        <span>
+    <strong>Remarque :</strong> Le tableau affiche actuellement le <strong>stock global</strong>.
+    Sélectionnez une <strong>date de début</strong> et une <strong>date de fin</strong> puis cliquez sur
+    <strong>Appliquer</strong> pour consulter la disponibilité réelle (Disponible, Réservé et Total) sur la période.
+       </span>
+      </div>
+
       <div *ngIf="filterDateDebut && filterDateFin && produitsDisponibilite.length > 0"
            class="active-filter-badge">
         <i class="fas fa-check-circle"></i>
@@ -207,6 +245,9 @@
           <span *ngIf="sortColumn === 'quantiteDisponible'">
               {{ sortDirection === 'asc' ? '▲' : '▼' }}
             </span>
+          <span *ngIf="produitsDisponibilite.length === 0" class="filter-info-global">
+              (Global)
+           </span>
           <span *ngIf="filterDateDebut && filterDateFin" class="filter-info">
              ({{ formatDate(filterDateDebut) }} - {{ formatDate(filterDateFin) }})
           </span>
@@ -355,7 +396,7 @@
             <button
               class="btn btn-sm btn-danger"
               (click)="deleteProduit(produit)"
-              title="Supprimer"
+              title="Supprimer définitivement"
             >
               <span class="material-symbols-outlined cl-dark">delete</span>
             </button>

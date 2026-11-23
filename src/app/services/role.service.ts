@@ -1,7 +1,7 @@
 // src/app/core/services/role.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoleRequest, RoleResponse } from '../core/models';
 import{variables} from '../core/environement/variables';
@@ -46,15 +46,15 @@ export class RoleService {
   /**
    * Supprimer un rôle
    */
-  deleteRole(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/supprimerRole/${id}`);
+  deleteRole(id: number, headers?: HttpHeaders): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/supprimerRole/${id}`,{headers});
   }
 
   /**
    * Activer ou désactiver un rôle
    */
-  toggleRoleStatus(id: number): Observable<RoleResponse> {
-    return this.http.patch<RoleResponse>(`${this.baseUrl}/${id}/status`, {});
+  toggleRoleStatus(id: number, headers?: HttpHeaders): Observable<RoleResponse> {
+    return this.http.patch<RoleResponse>(`${this.baseUrl}/${id}/status`, {},{headers});
   }
 
   /**

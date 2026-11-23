@@ -22,6 +22,7 @@ import { FactureService } from '../../../services/facture.service';
 import { FactureResponse } from '../../../core/models/facture.model';
 import {AvisService} from '../../../services/avis.service';
 import {ScrollService} from '../../../services/scroll.service';
+import {OnboardingTourService} from '../../../services/onboarding-tour.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class ReservationDetailsComponent implements OnInit {
   private authService = inject(AuthService);
   private avisService = inject(AvisService);
   private scrollService =inject(ScrollService);
+  private onboardingTour = inject(OnboardingTourService);
 
   // Signals
   reservation = signal<ReservationResponseDto | null>(null);
@@ -88,9 +90,10 @@ export class ReservationDetailsComponent implements OnInit {
   factures = signal<FactureResponse[]>([]);
   loadingFactures = signal<boolean>(false);
 
-
-
   idReservation?: number;
+
+  afficherPulseGuide = signal<boolean>(false);
+  private guideDejaTente = false;
 
   ngOnInit(): void {
 
@@ -114,6 +117,7 @@ export class ReservationDetailsComponent implements OnInit {
 
     if (this.isClient()) {
       this.verifierAvisExistants();
+      this.afficherPulseGuide.set(!this.onboardingTour.aDejaVuGuideReservationDetails());
     }
 
   }
@@ -129,6 +133,7 @@ export class ReservationDetailsComponent implements OnInit {
       next: (data) => {
         this.reservation.set(data);
         this.isLoading.set(false);
+        this.declencherGuideSiPremierUsage();
 
         // Si c'est un client, vérifier quels produits ont déjà un avis
         if (this.isClient()) {
@@ -678,5 +683,20 @@ export class ReservationDetailsComponent implements OnInit {
     };
 
     return badges[statut] || 'badge-secondary';
+  }
+
+  private declencherGuideSiPremierUsage(): void {
+    if (!this.guideDejaTente && this.isClient()) {
+      this.guideDejaTente = true;
+      setTimeout(() => {
+        this.onboardingTour.lancerGuideReservationDetails(false);
+        this.afficherPulseGuide.set(false);
+      }, 450);
+    }
+  }
+
+  relancerGuide(): void {
+    this.afficherPulseGuide.set(false);
+    this.onboardingTour.lancerGuideReservationDetails(true);
   }
 }

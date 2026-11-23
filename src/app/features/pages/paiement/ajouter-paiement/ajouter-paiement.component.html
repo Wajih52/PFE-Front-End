@@ -2,10 +2,24 @@
   <!-- HEADER -->
   <div class="page-header">
     <div class="header-content">
-      <h1>
-        <i class="fas fa-credit-card"></i>
-        Ajouter un Paiement
-      </h1>
+      <div class="titre-avec-aide">
+        <h1>
+          <i class="fas fa-credit-card"></i>
+          Ajouter un Paiement
+        </h1>
+        @if (isClient) {
+          <button
+            type="button"
+            class="btn-guide-aide"
+            [class.pulse-aide]="afficherPulseGuide"
+            (click)="relancerGuide()"
+            title="Guide de paiement"
+            aria-label="Ouvrir le guide de paiement"
+          >
+            <i class="fas fa-question"></i>
+          </button>
+        }
+      </div>
       <a [routerLink]="[getRouteRetour(reservation?.idReservation)]" class="btn-retour">
         <i class="fas fa-arrow-left"></i>
         Retour

@@ -2,10 +2,22 @@
 <div class="mes-commandes-container">
   <!-- Header -->
   <div class="page-header">
-    <h1>
-      <span class="material-symbols-outlined md-48 cl-beige">inventory_2</span>
-      Mes Commandes
-    </h1>
+    <div class="titre-avec-aide">
+      <h1>
+        <span class="material-symbols-outlined md-48 cl-beige">inventory_2</span>
+        Mes Commandes
+      </h1>
+      <button
+        type="button"
+        class="btn-guide-aide"
+        [class.pulse-aide]="afficherPulseGuide()"
+        (click)="relancerGuide()"
+        title="Guide de suivi des commandes"
+        aria-label="Ouvrir le guide de suivi des commandes"
+      >
+        <i class="fas fa-question"></i>
+      </button>
+    </div>
     <p class="subtitle">Consultez et gérez vos réservations confirmées</p>
   </div>
 
@@ -35,7 +47,7 @@
   </div>
 
   <!-- Filtres -->
-  <div class="filtres-section">
+  <div id="tour-commandes-filtres" class="filtres-section">
     <div class="filtre-group">
       <label for="statut">Statut</label>
       <select
@@ -51,7 +63,7 @@
       </select>
     </div>
 
-    <div class="filtre-group">
+    <div  class="filtre-group">
       <label for="recherche">Rechercher</label>
       <input
         type="text"
@@ -85,7 +97,7 @@
       @for (reservation of reservationsFiltrees; track reservation.idReservation) {
         <div class="reservation-card">
           <!-- Header de la carte -->
-          <div class="card-header">
+          <div  class="card-header">
             <div>
               <h3>{{ reservation.referenceReservation }}</h3>
               <p class="date-range">

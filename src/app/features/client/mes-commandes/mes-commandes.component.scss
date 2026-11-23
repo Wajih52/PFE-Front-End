@@ -22,6 +22,58 @@
       }
     }
 
+    .titre-avec-aide {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5rem;
+
+      h1 {
+        font-size: 2rem;
+        color: #1a202c;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+
+        i {
+          color: #c4a37d;
+        }
+      }
+
+      .btn-guide-aide {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #c4a37d;
+        background: #ffffff;
+        color: #c4a37d;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 6px rgba(196, 163, 125, 0.25);
+
+        &.pulse-aide {
+          animation: pulseGuideCommandes 2.2s ease-out infinite;
+
+          &:hover {
+            animation: none;
+          }
+        }
+
+        &:hover {
+          background: #c4a37d;
+          color: #ffffff;
+          transform: scale(1.1);
+          box-shadow: 0 4px 10px rgba(196, 163, 125, 0.4);
+        }
+      }
+    }
+
     .subtitle {
       color: #718096;
       font-size: 1rem;
@@ -692,4 +744,16 @@ h4 {
 .badge-danger {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: white;
+}
+
+@keyframes pulseGuideCommandes {
+  0% {
+    box-shadow: 0 0 0 0 rgba(196, 163, 125, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(196, 163, 125, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 163, 125, 0);
+  }
 }

@@ -16,6 +16,7 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import {NotificationService} from '../../../../services/notification.service';
 import {variables} from '../../../../core/environement/variables'
+import {ActionSensibleService} from '../../../../core/services/action-sensible.service';
 
 @Component({
   selector: 'app-produits-list',
@@ -27,6 +28,7 @@ import {variables} from '../../../../core/environement/variables'
 export class ProduitsListComponent implements OnInit {
   private produitService = inject(ProduitService);
   private confirmationService = inject(ConfirmationService);
+  private actionSensibleService = inject(ActionSensibleService);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private toastr = inject(ToastrService);
@@ -288,45 +290,13 @@ export class ProduitsListComponent implements OnInit {
    * Supprimer un produit avec choix: soft delete ou hard delete
    */
   async deleteProduit(produit: ProduitResponse): Promise<void> {
-    const typeConfirmed = await this.confirmationService.confirm({
-      title: 'Type de suppression',
-      message: `
-      <div>
-        <p><strong>Produit:</strong> ${produit.nomProduit}</p>
-        <p>Choisissez le type de suppression:</p>
-        <ul>
-          <li><strong>Désactiver</strong>: Le produit sera masqué mais conservé dans la base</li>
-          <li><strong>Supprimer définitivement</strong>: Suppression permanente de la base de données</li>
-        </ul>
-      </div>
-    `,
-      confirmText: 'Désactiver',
-      cancelText: 'Supprimer définitivement',
-      type: 'warning'
-    });
 
-    if (typeConfirmed) {
-      // Soft delete
-      this.produitService.supprimerProduit(produit.idProduit).subscribe({
-        next: () => {
-          this.notificationService.success(`Produit "${produit.nomProduit}" désactivé avec succès`);
-          this.loadProduits();
-        },
-        error: (error) => {
-          console.error('Erreur désactivation produit:', error);
-          const errorMsg = error.error?.message || error.error || 'Erreur lors de la désactivation';
-          this.notificationService.error(errorMsg);
-        }
-      });
-    } else {
-      // Hard delete - confirmation supplémentaire
       const hardDeleteConfirmed = await this.confirmationService.confirm({
-        title: 'Suppression définitive',
+        title: 'Suppression',
         message: `
 
          <div style="color: #d32f2f;">
-          <p><strong>ATTENTION: Cette action est IRRÉVERSIBLE!</strong></p>
-          <p>Le produit "${produit.nomProduit}" sera supprimé DÉFINITIVEMENT de la base de données.</p>
+          <p>Le produit "${produit.nomProduit}" sera supprimé Définitevement de la base de données.</p>
           <p>Toutes les données associées seront perdues.</p>
           <p><strong>Êtes-vous absolument sûr?</strong></p>
         </div>
@@ -336,8 +306,13 @@ export class ProduitsListComponent implements OnInit {
         type: 'danger'
       });
 
-      if (hardDeleteConfirmed) {
-        this.produitService.supprimerProduitDefinitivement(produit.idProduit).subscribe({
+    if (!hardDeleteConfirmed) return;
+
+        this.actionSensibleService.executer(
+          'Vérification de sécurité',
+          `Saisissez votre mot de passe pour supprimer définitivement "${produit.nomProduit}" :`,
+          (headers) => this.produitService.supprimerProduitDefinitivement(produit.idProduit, headers)
+        ).subscribe({
           next: (response) => {
             this.notificationService.success(response.message);
             this.loadProduits();
@@ -348,8 +323,8 @@ export class ProduitsListComponent implements OnInit {
             this.notificationService.error(errorMsg);
           }
         });
-      }
-    }
+
+
   }
 
   /**
@@ -466,7 +441,10 @@ export class ProduitsListComponent implements OnInit {
 
     if (!confirmed) return;
 
-    this.produitService.supprimerProduit(produit.idProduit).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      'Saisissez votre mot de passe pour confirmer cette opération :',
+      (headers) => this.produitService.supprimerProduit(produit.idProduit,headers)).subscribe({
       next: () => {
         this.notificationService.success(`Produit "${produit.nomProduit}" désactivé avec succès`);
         this.loadProduits();
@@ -614,6 +592,36 @@ export class ProduitsListComponent implements OnInit {
    */
   isProduitActif(produit: ProduitResponse): boolean {
     return produit.statutProduit === StatutProduit.ACTIF;
+  }
+
+  /**
+   * Pré-remplit rapidement une période et lance immédiatement le calcul
+   * (Disponible / Réservé / Total)
+   */
+  appliquerPeriodeRapide(type: 'aujourdhui' | 'demain' | '7jours'): void {
+    const debut = new Date();
+    const fin = new Date();
+
+    if (type === 'demain') {
+      debut.setDate(debut.getDate() + 1);
+      fin.setDate(fin.getDate() + 1);
+    } else if (type === '7jours') {
+      fin.setDate(fin.getDate() + 6);
+    }
+
+    this.filterDateDebut = this.formatDateForInput(debut);
+    this.filterDateFin = this.formatDateForInput(fin);
+    this.applyDateFilter();
+  }
+
+  /**
+   * Formate une Date locale en YYYY-MM-DD pour input[type="date"]
+   */
+  private formatDateForInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
 }

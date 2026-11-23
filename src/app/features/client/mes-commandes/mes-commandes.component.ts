@@ -13,6 +13,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import { FactureService } from '../../../services/facture.service';
 import { FactureResponse } from '../../../core/models/facture.model';
+import {OnboardingTourService} from '../../../services/onboarding-tour.service';
 
 @Component({
   selector: 'app-mes-commandes',
@@ -25,6 +26,7 @@ export class MesCommandesComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
   private factureService = inject(FactureService);
+  private onboardingTour = inject(OnboardingTourService);
 
 
   // Signals
@@ -42,7 +44,12 @@ export class MesCommandesComponent implements OnInit {
 
   factures = signal<Map<number, FactureResponse[]>>(new Map());
   loadingFactures = signal<number | null>(null);
+
+  afficherPulseGuide = signal<boolean>(false);
+  private guideDejaTente = false;
+
   ngOnInit(): void {
+    this.afficherPulseGuide.set(!this.onboardingTour.aDejaVuGuideCommandes());
     this.chargerMesReservations();
   }
 
@@ -59,6 +66,7 @@ export class MesCommandesComponent implements OnInit {
         const reservationsConfirmees = data.filter(r => r.statutReservation !== 'EN_ATTENTE' || !r.estDevis);
         this.reservations.set(reservationsConfirmees);
         this.isLoading.set(false);
+        this.declencherGuideSiPremierUsage(data.length > 0);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des réservations:', error);
@@ -215,5 +223,20 @@ export class MesCommandesComponent implements OnInit {
     };
 
     return badges[statut] || 'badge-secondary';
+  }
+
+  private declencherGuideSiPremierUsage(aDesCommandes: boolean): void {
+    if (!this.guideDejaTente && aDesCommandes) {
+      this.guideDejaTente = true;
+      setTimeout(() => {
+        this.onboardingTour.lancerGuideCommandes(false);
+        this.afficherPulseGuide.set(false);
+      }, 450);
+    }
+  }
+
+  relancerGuide(): void {
+    this.afficherPulseGuide.set(false);
+    this.onboardingTour.lancerGuideCommandes(true);
   }
 }

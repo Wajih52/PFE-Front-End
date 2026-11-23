@@ -1465,3 +1465,56 @@ $shadow-md: 0 4px 12px;
   color: white;
 }
 
+.titre-avec-aide {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  h1 {
+    margin: 0;
+  }
+
+  .btn-guide-aide {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid $primary-color;
+    background: #ffffff;
+    color: $primary-color;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(201, 163, 99, 0.25);
+
+    &.pulse-aide {
+      animation: pulseGuideDetails 2.2s ease-out infinite;
+
+      &:hover {
+        animation: none;
+      }
+    }
+
+    &:hover {
+      background: $primary-color;
+      color: #ffffff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(201, 163, 99, 0.4);
+    }
+  }
+}
+
+@keyframes pulseGuideDetails {
+  0% {
+    box-shadow: 0 0 0 0 rgba(201, 163, 99, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(201, 163, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 163, 99, 0);
+  }
+}

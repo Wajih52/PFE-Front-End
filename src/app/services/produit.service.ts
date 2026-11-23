@@ -1,7 +1,7 @@
 // src/app/services/produit.service.ts
 
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   Categorie,
@@ -56,16 +56,16 @@ export class ProduitService {
   /**
    * Supprimer (désactiver) un produit
    */
-  supprimerProduit(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}`);
+  supprimerProduit(id: number, headers?: HttpHeaders): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}`,{headers});
   }
 
   /**
    * Supprimer définitivement un produit de la base de données
    */
-  supprimerProduitDefinitivement(id: number): Observable<{ message: string }> {
+  supprimerProduitDefinitivement(id: number, headers?: HttpHeaders): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(
-      `${this.API_URL}/${id}/supprimer-definitivement`
+      `${this.API_URL}/${id}/supprimer-definitivement`,{headers} // <-- Transmission du header X-Confirm-Password
     );
   }
   /**

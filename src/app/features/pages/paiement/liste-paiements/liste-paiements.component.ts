@@ -12,6 +12,7 @@ import {
   formatMontantTND,
   formatDatePaiement
 } from '../../../../core/models/paiement.model';
+import {ActionSensibleService} from '../../../../core/services/action-sensible.service';
 
 type TriOption = 'date' | 'montant' | 'client' | 'reservation';
 
@@ -58,7 +59,8 @@ export class ListePaiementsComponent implements OnInit {
   paiementARefuser: PaiementResponseDto | null = null;
   motifRefus: string = '';
 
-  constructor(private paiementService: PaiementService) { }
+  constructor(private paiementService: PaiementService,
+              private actionSensibleService: ActionSensibleService) { }
 
   ngOnInit(): void {
     this.chargerPaiements();
@@ -243,14 +245,18 @@ export class ListePaiementsComponent implements OnInit {
       return;
     }
 
-    this.paiementService.validerPaiement(paiement.idPaiement).subscribe({
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      `Saisissez votre mot de passe pour valider le paiement ${paiement.codePaiement} (${formatMontantTND(paiement.montantPaiement)}) :`,
+      (headers) => this.paiementService.validerPaiement(paiement.idPaiement, headers)
+    ).subscribe({
       next: () => {
         alert('Paiement validé avec succès');
         this.chargerPaiements();
       },
       error: (error) => {
         console.error('Erreur lors de la validation:', error);
-        alert('Erreur lors de la validation du paiement');
+        alert(error.error?.message || 'Erreur lors de la validation du paiement');
       }
     });
   }
@@ -275,7 +281,13 @@ export class ListePaiementsComponent implements OnInit {
 
     if (!this.paiementARefuser) return;
 
-    this.paiementService.refuserPaiement(this.paiementARefuser.idPaiement, this.motifRefus).subscribe({
+    const paiement = this.paiementARefuser;
+    const motif = this.motifRefus;
+
+    this.actionSensibleService.executer(
+      'Vérification de sécurité',
+      `Saisissez votre mot de passe pour refuser le paiement ${paiement.codePaiement} :`,
+      (headers) => this.paiementService.refuserPaiement(paiement.idPaiement, motif,headers)).subscribe({
       next: () => {
         alert('Paiement refusé');
         this.fermerModalRefus();

@@ -27,6 +27,48 @@
       font-size: 1rem;
       line-height: 1.5;
     }
+    .titre-avec-aide {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5rem;
+
+      h1 {
+        margin: 0;
+      }
+
+      .btn-guide-aide {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #c9a363;
+        background: #ffffff;
+        color: #c9a363;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 6px rgba(201, 163, 99, 0.2);
+
+        &.pulse-aide {
+          animation: pulseGuideDevis 2.2s ease-out infinite;
+
+          &:hover {
+            animation: none;
+          }
+        }
+
+        &:hover {
+          background: #c9a363;
+          color: #ffffff;
+          transform: scale(1.1);
+          box-shadow: 0 4px 10px rgba(201, 163, 99, 0.35);
+        }
+      }
+    }
   }
 
   // ============ MESSAGES ============
@@ -694,5 +736,17 @@
     .btn {
       width: 100%;
     }
+  }
+}
+
+@keyframes pulseGuideDevis {
+  0% {
+    box-shadow: 0 0 0 0 rgba(201, 163, 99, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(201, 163, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 163, 99, 0);
   }
 }

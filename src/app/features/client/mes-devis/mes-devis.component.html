@@ -2,10 +2,22 @@
 <div class="mes-devis-container">
   <!-- Header -->
   <div class="page-header">
-    <h1>
-      <i class="fas fa-file-invoice"></i>
-      Mes Devis
-    </h1>
+    <div class="titre-avec-aide">
+      <h1>
+        <i class="fas fa-file-invoice"></i>
+        Mes Devis
+      </h1>
+      <button
+        type="button"
+        class="btn-guide-aide"
+        [class.pulse-aide]="afficherPulseGuide()"
+        (click)="relancerGuide()"
+        title="Guide d'utilisation des devis"
+        aria-label="Ouvrir le guide d'utilisation des devis"
+      >
+        <i class="fas fa-question"></i>
+      </button>
+    </div>
     <p class="subtitle">Consultez vos devis en attente de validation et acceptez-les pour confirmer vos réservations</p>
   </div>
 

@@ -34,7 +34,21 @@
 
       <div class="header-content">
         <div>
-          <h1>{{ res.referenceReservation }}</h1>
+          <div class="titre-avec-aide">
+            <h1>{{ res.referenceReservation }}</h1>
+            @if (isClient()) {
+              <button
+                type="button"
+                class="btn-guide-aide"
+                [class.pulse-aide]="afficherPulseGuide()"
+                (click)="relancerGuide()"
+                title="Guide des détails de réservation"
+                aria-label="Ouvrir le guide des détails de réservation"
+              >
+                <i class="fas fa-question"></i>
+              </button>
+            }
+          </div>
           <p class="date-creation">Créée le {{ formatDateTime(res.dateCreation) }}</p>
         </div>
         <span

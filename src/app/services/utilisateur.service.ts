@@ -1,6 +1,6 @@
 // src/app/services/utilisateur.service.ts
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { variables } from '../core/environement/variables';
 import {StatutCompte, UserPatchRequest, UserRequest, UserResponse} from '../core/models';

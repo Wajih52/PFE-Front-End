@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { RoleService } from '../../../../services/role.service';
 import {RoleResponse, RoleRequest, UserResponse, UtilisateurRoleWithUserDto} from '../../../../core/models';
 import { ConfirmationService } from '../../../../core/services/confirmation.service';
+import {ActionSensibleService} from '../../../../core/services/action-sensible.service';
 
 
 @Component({
@@ -64,7 +65,8 @@ export class RolesManagementComponent implements OnInit {
   constructor(
     private roleService: RoleService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private actionSensibleService: ActionSensibleService
   ) {
     this.initForms();
   }
@@ -288,7 +290,11 @@ export class RolesManagementComponent implements OnInit {
       type : 'danger'
     }).then((confirmed) => {
       if (confirmed) {
-        this.roleService.deleteRole(role.id).subscribe({
+        this.actionSensibleService.executer(
+          'Vérification de sécurité',
+          `Saisissez votre mot de passe pour supprimer le rôle "${role.nom}" :`,
+          (headers) => this.roleService.deleteRole(role.id, headers)
+        ).subscribe({
           next: () => {
             this.showSuccess('Rôle supprimé avec succès !');
             this.loadRoles();
@@ -312,15 +318,17 @@ export class RolesManagementComponent implements OnInit {
       type: role.active ? 'danger' : 'warning'
     }).then((confirmed) => {
       if (confirmed) {
-        this.roleService.toggleRoleStatus(role.id).subscribe({
+        this.actionSensibleService.executer(
+          'Vérification de sécurité',
+          `Saisissez votre mot de passe pour ${action} le rôle "${role.nom}" :`,
+          (headers) => this.roleService.toggleRoleStatus(role.id, headers)
+        ).subscribe({
           next: () => {
             this.showSuccess(`Rôle ${action} avec succès !`);
-            this.loadRoles(); // Rafraîchit le tableau
+            this.loadRoles();
           },
-          error: (err) => {
-            console.error('Erreur:', err);
-            const errorText = err.error?.message || err.error?.error || 'Erreur lors du changement de statut';
-            this.showError(errorText);
+          error: (error) => {
+            this.showError(error.error?.message || 'Erreur lors du changement de statut');
           }
         });
       }

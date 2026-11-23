@@ -14,6 +14,7 @@ import {ToastrService} from 'ngx-toastr';
 import {ConfirmationService} from '../../../core/services/confirmation.service';
 import {NotificationPersistantService} from '../../../services/notification-persistant.service';
 import {variables} from '../../../core/environement/variables';
+import {OnboardingTourService} from '../../../services/onboarding-tour.service';
 
 @Component({
   selector: 'app-panier',
@@ -30,6 +31,7 @@ export class PanierComponent implements OnInit {
   private toastr = inject(ToastrService);
   private confirmationService = inject(ConfirmationService);
   private notificationPersist = inject(NotificationPersistantService)
+  private onboardingTour = inject(OnboardingTourService);
 
   // STATE SIGNALS
   lignes = this.panierService.lignes;
@@ -50,6 +52,8 @@ export class PanierComponent implements OnInit {
   //  Disponibilité PAR LIGNE (pas par produit global)
   disponibilitesParLigne = signal<Map<string, { disponible: boolean; quantiteMax: number }>>(new Map());
 
+  afficherPulseGuide = signal<boolean>(false);
+
   ngOnInit(): void {
     const savedObservations = this.panierService.getObservations();
     if (savedObservations) {
@@ -58,6 +62,14 @@ export class PanierComponent implements OnInit {
 
     //  Vérifier automatiquement à l'init (pas de bouton nécessaire)
     this.verifierDisponibilitesAutomatique();
+
+    // Attendre que PanierService charge les lignes côté navigateur
+    setTimeout(() => {
+      if (!this.estVide()) {
+        this.onboardingTour.lancerGuidePanier(false);
+        this.afficherPulseGuide.set(false);
+      }
+    }, 500);
   }
 
   /**
@@ -475,5 +487,10 @@ export class PanierComponent implements OnInit {
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     target.src = 'https://placehold.co/600x400?text=No\nImage';
+  }
+
+  relancerGuide(): void {
+    this.afficherPulseGuide.set(false);
+    this.onboardingTour.lancerGuidePanier(true);
   }
 }

@@ -1,5 +1,4 @@
 // src/app/features/pages/panier/panier.component.scss
-// ✅ DESIGN COMPLET DU PANIER - Version professionnelle
 
 @use 'sass:color';
 
@@ -22,12 +21,12 @@ $transition: all 0.3s ease;
 .panier-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 120px 20px 40px 20px; // ✅ 120px en haut pour la navbar
+  padding: 120px 20px 40px 20px; //  120px en haut pour la navbar
   min-height: 100vh;
   background: $background-light;
 
   @media (max-width: 768px) {
-    padding-top: 100px; // ✅ Ajustement mobile
+    padding-top: 100px; // Ajustement mobile
   }
 }
 
@@ -64,6 +63,48 @@ $transition: all 0.3s ease;
       font-size: 1.1rem;
       color: $text-gray;
       margin: 0;
+    }
+
+    .titre-avec-aide {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5rem;
+
+      h1 {
+        margin: 0;
+      }
+
+      .btn-guide-aide {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid $primary-color;
+        background: $background-white;
+        color: $primary-color;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: $transition;
+        padding: 0;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 6px rgba($primary-color, 0.2);
+
+        &.pulse-aide {
+          animation: pulseGuidePanier 2.2s ease-out infinite;
+
+          &:hover {
+            animation: none;
+          }
+        }
+
+        &:hover {
+          background: $primary-color;
+          color: $background-white;
+          transform: scale(1.1);
+        }
+      }
     }
   }
 
@@ -658,7 +699,7 @@ $transition: all 0.3s ease;
       align-items: center;
       justify-content: center;
       gap: 0.75rem;
-      margin-bottom: 1rem; // ✅ Espace entre les deux boutons
+      margin-bottom: 1rem; // Espace entre les deux boutons
 
       i {
         font-size: 1.2rem;
@@ -774,5 +815,17 @@ $transition: all 0.3s ease;
 
   .resume-card {
     padding: 1.5rem;
+  }
+}
+
+@keyframes pulseGuidePanier {
+  0% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba($primary-color, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
   }
 }

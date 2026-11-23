@@ -724,3 +724,57 @@ textarea.form-control {
     }
   }
 }
+
+.titre-avec-aide {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  h1 {
+    margin: 0;
+  }
+
+  .btn-guide-aide {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid $primary-color;
+    background: $white;
+    color: $primary-color;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: $transition;
+    padding: 0;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba($primary-color, 0.25);
+
+    &.pulse-aide {
+      animation: pulseGuidePaiement 2.2s ease-out infinite;
+
+      &:hover {
+        animation: none;
+      }
+    }
+
+    &:hover {
+      background: $primary-color;
+      color: $white;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba($primary-color, 0.4);
+    }
+  }
+}
+
+@keyframes pulseGuidePaiement {
+  0% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba($primary-color, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
+  }
+}
