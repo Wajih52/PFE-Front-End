@@ -26,7 +26,7 @@
     {{ errorMessage }}
   </div>
 
-  <!-- Contenu principal -->
+  <!-- Statistiques -->
   <div *ngIf="!isLoading && !errorMessage" class="content">
     <!-- Statistiques -->
     <div class="stats-grid" *ngIf="mouvements.length > 0">
@@ -47,12 +47,88 @@
       </div>
     </div>
 
+    <!-- Section Filtres -->
+    <div class="filters-section" *ngIf="!isLoading && mouvements.length > 0">
+      <div class="filters-header">
+        <h3><i class="fas fa-filter"></i> Filtrer les mouvements</h3>
+        <button
+          *ngIf="hasActiveFilters()"
+          class="btn-reset"
+          (click)="resetFilters()">
+          <i class="fas fa-undo"></i> Réinitialiser
+        </button>
+      </div>
+
+      <div class="filters-grid">
+        <!-- Recherche globale -->
+        <div class="filter-item full-width">
+          <label>Recherche</label>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilters()"
+            placeholder="Motif, référence réservation (RES-...), utilisateur..."
+          />
+        </div>
+
+        <!-- Type de mouvement -->
+        <div class="filter-item">
+          <label>Type de mouvement</label>
+          <select [(ngModel)]="filterType" (ngModelChange)="applyFilters()">
+            <option value="">Tous les types</option>
+            <option *ngFor="let type of typesDisponibles" [value]="type">
+              {{ getIconForMouvement(type) }} {{ TypeMouvementLabels[type] }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Utilisateur -->
+        <div class="filter-item">
+          <label>Effectué par</label>
+          <input
+            type="text"
+            [(ngModel)]="filterUtilisateur"
+            (ngModelChange)="applyFilters()"
+            placeholder="Nom d'utilisateur..."
+          />
+        </div>
+
+        <!-- Date de début -->
+        <div class="filter-item">
+          <label>Du</label>
+          <input
+            type="date"
+            [(ngModel)]="filterDateDebut"
+            (ngModelChange)="applyFilters()"
+          />
+        </div>
+
+        <!-- Date de fin -->
+        <div class="filter-item">
+          <label>Au</label>
+          <input
+            type="date"
+            [(ngModel)]="filterDateFin"
+            (ngModelChange)="applyFilters()"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- Timeline -->
-    <div class="timeline-section" *ngIf="mouvements.length > 0">
-      <h2>Chronologie des mouvements</h2>
+    <div class="timeline-section" *ngIf="filteredMouvements.length > 0">
+      <div class="timeline-header">
+        <h2>Chronologie des mouvements</h2>
+        <span class="results-badge">
+        {{ filteredMouvements.length }} résultat(s)
+        <ng-container *ngIf="filteredMouvements.length !== mouvements.length">
+          sur {{ mouvements.length }}
+        </ng-container>
+      </span>
+      </div>
 
       <div class="timeline">
-        <div *ngFor="let mouvement of mouvements" class="timeline-item">
+        <div *ngFor="let mouvement of filteredMouvements" class="timeline-item">
           <div class="timeline-marker">
             <span class="marker-icon">{{ getIconForMouvement(mouvement.typeMouvement) }}</span>
           </div>
@@ -60,9 +136,9 @@
           <div class="timeline-content">
             <div class="content-header">
               <div class="header-left">
-                <span class="type-badge" [class]="'badge-' + mouvement.typeMouvement">
-                  {{ TypeMouvementLabels[mouvement.typeMouvement] }}
-                </span>
+              <span class="type-badge" [class]="'badge-' + mouvement.typeMouvement">
+                {{ TypeMouvementLabels[mouvement.typeMouvement] }}
+              </span>
                 <span class="date">{{ formatDate(mouvement.dateMouvement) }}</span>
               </div>
             </div>
@@ -79,10 +155,10 @@
                 <div class="detail-item" *ngIf="mouvement.idReservation">
                   <span class="label">Réservation:</span>
                   <span class="value">{{ mouvement.referenceReservation }}</span>
-                  <span class="value">
-                    Du {{ mouvement.dateDebut | date:'dd/MM/yyyy' }}
+                  <span class="value" *ngIf="mouvement.dateDebut && mouvement.dateFin">
+                  Du {{ mouvement.dateDebut | date:'dd/MM/yyyy' }}
                     au {{ mouvement.dateFin | date:'dd/MM/yyyy' }}
-                  </span>
+                </span>
                 </div>
               </div>
             </div>
@@ -91,8 +167,16 @@
       </div>
     </div>
 
-    <!-- État vide -->
-    <div *ngIf="mouvements.length === 0" class="empty-state">
+    <!-- État vide après filtrage -->
+    <div *ngIf="!isLoading && mouvements.length > 0 && filteredMouvements.length === 0" class="empty-state">
+      <i class="fas fa-search"></i>
+      <h3>Aucun mouvement correspondant</h3>
+      <p>Aucun mouvement ne correspond aux filtres sélectionnés</p>
+      <button class="btn-reset" (click)="resetFilters()">Réinitialiser les filtres</button>
+    </div>
+
+    <!-- État vide initial -->
+    <div *ngIf="!isLoading && mouvements.length === 0" class="empty-state">
       <i class="fas fa-history"></i>
       <h3>Aucun mouvement enregistré</h3>
       <p>Cette instance n'a pas encore d'historique</p>

@@ -388,3 +388,106 @@ $border-color: #e0e0e0;
     }
   }
 }
+
+// ============ FILTRES ============
+.filters-section {
+  background: white;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid $border-color;
+
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: $text-dark;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+      }
+
+      input,
+      select {
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #d5d9df;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: $text-dark;
+        background: #fafafa;
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #c7a781;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(199, 167, 129, 0.2);
+        }
+      }
+    }
+  }
+}
+
+.btn-reset {
+  background: #f0f2f5;
+  border: 1px solid #dcdfe4;
+  color: $text-dark;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #c7a781;
+    border-color: #c7a781;
+    color: white;
+  }
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+
+  .results-badge {
+    background: rgba(199, 167, 129, 0.15);
+    color: #8c6d46;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.88rem;
+  }
+}

@@ -8,12 +8,13 @@ import {
   MouvementStockResponse, TypeMouvement,
   TypeMouvementLabels
 } from '../../../../core/models';
+import {FormsModule} from '@angular/forms';
 
 
 @Component({
   selector: 'app-instance-historique',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './instance-historique.component.html',
   styleUrls: ['./instance-historique.component.scss']
 })
@@ -24,10 +25,19 @@ export class InstanceHistoriqueComponent implements OnInit {
 
   numeroSerie: string = '';
   mouvements: MouvementStockResponse[] = [];
+  filteredMouvements: MouvementStockResponse[] = [];
   isLoading = true;
   errorMessage = '';
 
+  // Critères de filtrage
+  searchTerm: string = '';
+  filterType: TypeMouvement | '' = '';
+  filterDateDebut: string = '';
+  filterDateFin: string = '';
+  filterUtilisateur: string = '';
+
   readonly TypeMouvementLabels = TypeMouvementLabels;
+  typesDisponibles: TypeMouvement[] = [];
 
   ngOnInit(): void {
     this.numeroSerie = this.route.snapshot.params['numeroSerie'];
@@ -41,6 +51,9 @@ export class InstanceHistoriqueComponent implements OnInit {
     this.instanceService.getHistoriqueMouvementsInstance(this.numeroSerie).subscribe({
       next: (data) => {
         this.mouvements = data;
+        // Récupérer uniquement les types de mouvements présents pour cette instance
+        this.typesDisponibles = [...new Set(data.map(m => m.typeMouvement))];
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -49,6 +62,68 @@ export class InstanceHistoriqueComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  applyFilters(): void {
+    let result = [...this.mouvements];
+
+    // Filtre par type de mouvement
+    if (this.filterType) {
+      result = result.filter(m => m.typeMouvement === this.filterType);
+    }
+
+    // Filtre par date de début
+    if (this.filterDateDebut) {
+      const debut = new Date(this.filterDateDebut);
+      debut.setHours(0, 0, 0, 0);
+      result = result.filter(m => new Date(m.dateMouvement) >= debut);
+    }
+
+    //Filtre par date de fin
+    if (this.filterDateFin) {
+      const fin = new Date(this.filterDateFin);
+      fin.setHours(23, 59, 59, 999);
+      result = result.filter(m => new Date(m.dateMouvement) <= fin);
+    }
+
+    //Filtre par utilisateur
+    if (this.filterUtilisateur.trim()) {
+      const userTerm = this.filterUtilisateur.toLowerCase().trim();
+      result = result.filter(m =>
+        m.effectuePar?.toLowerCase().includes(userTerm)
+      );
+    }
+
+    // Recherche globale (motif, référence réservation, utilisateur)
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase().trim();
+      result = result.filter(m =>
+        m.motif?.toLowerCase().includes(term) ||
+        m.referenceReservation?.toLowerCase().includes(term) ||
+        m.effectuePar?.toLowerCase().includes(term)
+      );
+    }
+
+    this.filteredMouvements = result;
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.filterType = '';
+    this.filterDateDebut = '';
+    this.filterDateFin = '';
+    this.filterUtilisateur = '';
+    this.applyFilters();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(
+      this.searchTerm ||
+      this.filterType ||
+      this.filterDateDebut ||
+      this.filterDateFin ||
+      this.filterUtilisateur
+    );
   }
 
   goBack(): void {
